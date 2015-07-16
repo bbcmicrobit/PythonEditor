@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Python editor</title>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div id="main" class="vbox">
+            <div id="commands" class="hbox">
+                <a href="#" class="roundbutton" id="command-quit">
+                    <div class="roundsymbol">
+                        <i class="fa fa-arrow-left"></i>
+                    </div>
+                    <div class="roundlabel">my scripts</div>
+                </a>
+                <a href="#" class="roundbutton" id="command-download">
+                    <div class="roundsymbol">
+                        <i class="fa fa-download"></i>
+                    </div>
+                    <div class="roundlabel">download</div>
+                </a>
+                <a href="#" class="roundbutton" id="command-snippet">
+                    <div class="roundsymbol">
+                        <i class="fa fa-cogs"></i>
+                    </div>
+                    <div class="roundlabel">code snippets</div>
+                </a>
+                <a href="#" class="roundbutton" id="command-snippet">
+                    <div class="roundsymbol">
+                        <i class="fa fa-question"></i>
+                    </div>
+                    <div class="roundlabel">help</div>
+                </a>
+            </div>
+            <div class="vbox" id="script-box">
+                <div id="script-name" class="flex1" contenteditable>
+                </div>
+                <div id="script-description" contenteditable>
+                </div>
+                <div id="script-icons" class="hbox">
+                    <div id="cloud-status" class="flex1">
+                        <i class="fa fa-cloud-upload"
+                            title="Script loaded"></i>
+                    </div>
+                    <div>
+                        <i id="link-log" class="fa fa-bug"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="hbox flex1">
+                <div id="editor" class="flex3"></div>
+            </div>
+        </div>
+        <script src="ace/ace.js" type="application/javascript"
+            charset="utf-8"></script>
+        <script src="python-main.js" type="application/javascript"></script>
+        <script>
+            var editor = ace.edit("editor");
+            editor.setTheme("theme/monokai");
+            editor.getSession().setMode("ace/mode/python");
+        </script>
+    </body>
+</html>
