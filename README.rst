@@ -50,8 +50,7 @@ They essentially boil down to the following steps:
 To build and run the "vanilla" (i.e. non-microbit brandedi) version of
 TouchDevelop you'll need to do one of the following:
 
-* To build the site (it's written in Microsoft's TypeScript language
-[http://www.typescriptlang.org/] that compiles to Javascript)::
+* To build the site (it's written in Microsoft's TypeScript language [http://www.typescriptlang.org/] that compiles to Javascript)::
 
     jake
 
