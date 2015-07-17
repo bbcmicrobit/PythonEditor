@@ -67,8 +67,9 @@ Configure TouchDevelop
 ++++++++++++++++++++++
 
 Copy the file contrib/mbit.html into the www directory in the root of the
-TouchDevelop repository. This turns the "vanilla" flavoured TouchDevelop into
-something with the micro:bit branding and features available.
+TouchDevelop repository you will have cloned. This turns the "vanilla"
+flavoured TouchDevelop into something with the micro:bit branding and features
+available.
 
 Because this modification depends on assets stored at stage.microbit.co.uk you
 must log into the staging platform as follows:
@@ -91,8 +92,9 @@ You're not finished yet!
 Configure the Editor
 ++++++++++++++++++++
 
-In the editor/external.ts file at around line 26 where externalEditorsCache
-is assigned as a list of objects, ensure you add the following object::
+In the editor/external.ts file within the TouchDevelop repos, at around line
+26 where externalEditorsCache is assigned as a list of objects, ensure you add
+the following object::
 
     {
         company: "The Python Software Foundation",
@@ -103,18 +105,22 @@ is assigned as a list of objects, ensure you add the following object::
         path: path + "python/editor.html",
     }
 
-You're not done yet! TouchDevelop expects its embedded editors to be served
-from the same domain it is also running on (usually localhost:4242). To
-facilitate this we simply link the root directory of this project into the
-www directory of TouchDevelop. In Linux, assuming you remember to change the
-paths appropriately, the command is::
+You're still not done yet!
 
-    ln -s ~/src/editor ~/src/TouchDevelop/www/python
+TouchDevelop expects its embedded editors to be served from the same domain it
+is also running on (usually localhost:4242). To facilitate this we simply link
+the root directory of this project into the www directory of TouchDevelop
+repository. In Linux, assuming you remember to change the paths appropriately,
+the command is::
+
+    ln -s ~/src/micropython-bit ~/src/TouchDevelop/www/python
 
 Please make sure you restart your locally running TouchDevelop instance.
 
 Testing Your Setup
 ++++++++++++++++++
+
+Almost there!
 
 As mentioned above, you should visit the following URL to see the locally
 running version of TouchDevelop:
@@ -164,7 +170,8 @@ All new scripts default to::
 
     import microbit
 
-... which seems an obvious thing to do.
+... which seems an obvious thing to do since this module is how user's will
+access the micro:bit hardware.
 
 The layout and functionality apes Microsoft's own editors. Importantly this
 includes saving scripts to Microsoft's cloud and sharing them with others via
@@ -177,15 +184,19 @@ The four buttons at the top left, act as follows:
 * code snippets - currently a stub, will allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc).
 * help - currently a stub, Python specific help will be available from here.
 
-In other editors there are "compile" and "run" buttons. These target the
-TouchDevelop platform to create an AST and either use a third party service
-contacted via the network to create a downloadable .hex
+There's a YouTube demo of an early version of this editor here:
+
+https://www.youtube.com/watch?v=8bP4pgiT2MU
+
+In other TouchDevelop editors there are "compile" and "run" buttons. These
+target the TouchDevelop platform to create an AST and either use a third party
+service contacted via the network to create a downloadable .hex
 file (for the former) or run the code on the embedded simulator (for the
 latter).
 
-Since we're targeting MicroPython we simply allow the user to download their
-script. They simply drag the resulting file onto the device (that's already
-been flashed with MicroPython).
+Since we're targeting MicroPython instead, we simply allow the user to
+download their script. They simply drag the resulting file onto the device
+(that's already been flashed with MicroPython).
 
 As you'll see, TouchDevelop automatically puts the device simulator to the
 right of the editor if there's enough room on the screen. Since we don't need
