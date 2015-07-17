@@ -8,6 +8,7 @@
     </head>
     <body>
         <div id="main" class="vbox">
+          <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
                 <a href="#" class="roundbutton" id="command-quit">
                     <div class="roundsymbol">
@@ -27,12 +28,14 @@
                     </div>
                     <div class="roundlabel">code snippets</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-snippet">
+                <a href="#" class="roundbutton" id="command-help">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
                     </div>
                     <div class="roundlabel">help</div>
                 </a>
+            </div>
+            <div id="merge-commands" class="vbox flex1">
             </div>
             <div class="vbox" id="script-box">
                 <div id="script-name" class="flex1" contenteditable>
@@ -49,17 +52,23 @@
                     </div>
                 </div>
             </div>
-            <div class="hbox flex1">
-                <div id="editor" class="flex3"></div>
+          </div>
+          <div class="hbox flex1">
+              <div id="editor" class="flex3"></div>
+          </div>
+        </div>
+        <div style="left: 735px; top: 126px;" class="popup hidden" id="popup-log">
+            <div class="popup-inner">
+                <div id="log">
+                    <div id="status">✔ loaded</div>
+                </div>
             </div>
         </div>
         <script src="ace/ace.js" type="application/javascript"
             charset="utf-8"></script>
+        <script src="jquery-2.1.4.min.js"
+            type="application/javascript"></script>
+        <script src="FileSaver.min.js" type="application/javascript"></script>
         <script src="python-main.js" type="application/javascript"></script>
-        <script>
-            var editor = ace.edit("editor");
-            editor.setTheme("theme/monokai");
-            editor.getSession().setMode("ace/mode/python");
-        </script>
     </body>
 </html>
