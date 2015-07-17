@@ -105,6 +105,9 @@ the following object::
         path: path + "python/editor.html",
     }
 
+(I've added a copy of my own externals.ts file in the contrib directory of this
+project.)
+
 You're still not done yet!
 
 TouchDevelop expects its embedded editors to be served from the same domain it
