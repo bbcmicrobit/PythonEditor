@@ -181,7 +181,7 @@ access the micro:bit hardware.
 
 The layout and functionality apes Microsoft's own editors. Importantly this
 includes saving scripts to Microsoft's cloud and sharing them with others via
-TouchDevelop's publish functionalty.
+TouchDevelop's publish functionality.
 
 The four buttons at the top left, act as follows:
 
