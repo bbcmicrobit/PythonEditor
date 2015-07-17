@@ -118,6 +118,9 @@ the command is::
 
     ln -s ~/src/micropython-bit ~/src/TouchDevelop/www/python
 
+I have no idea what the Windows version of this command is - but essentially
+you need to make it look as if there's a python directory in the www directory.
+
 Please make sure you restart your locally running TouchDevelop instance.
 
 Testing Your Setup
