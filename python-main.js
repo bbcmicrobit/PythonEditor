@@ -1,4 +1,7 @@
 var EDITOR = ace.edit("editor");
+EDITOR.setOptions({
+    enableSnippets: true
+})
 EDITOR.setTheme("theme/monokai");
 EDITOR.getSession().setMode("ace/mode/python");
 
@@ -296,6 +299,10 @@ var TDev;
         saveAs(blob, filename + ".py");
     }
     function doSnippets() {
+        // Snippets are triggered by typing a keyword followed by pressing TAB.
+        // For example, type "wh" followed by TAB.
+        var snippetManager = ace.require("ace/snippets").snippetManager;
+        //snippetManager.insertSnippet(EDITOR, snippet);
         alert("Snippets");
     }
     function doHelp() {

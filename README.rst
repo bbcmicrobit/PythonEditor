@@ -187,7 +187,7 @@ The four buttons at the top left, act as follows:
 
 * my scripts - returns you to the main menu listing all your scripts.
 * download - downloads the Python code directly to the local filesystem. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py. This is all done locally in the user's browser - no network based services are needed.
-* code snippets - currently a stub, will allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc).
+* code snippets - currently a stub, will allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc). They are triggered by typing a keyword followed by TAB. For example, type "wh" followed by TAB to insert a while... loop.
 * help - currently a stub, Python specific help will be available from here.
 
 There's a YouTube demo of an early version of this editor here:
