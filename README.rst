@@ -1,7 +1,7 @@
 BBC micro:bit MicroPython Editor for TouchDevelop
 =================================================
 
-This project is for an editor that targets the MicroPython
+This project is an editor that targets the MicroPython
 (http://micropython.org) version of the Python programming language
 (http://python.org/). Code written with this editor is expected to run on the
 BBC's micro:bit device (https://en.wikipedia.org/wiki/Micro_Bit).
@@ -47,7 +47,7 @@ They essentially boil down to the following steps:
     tsd reinstall
     npm install
 
-To build and run the "vanilla" (i.e. non-microbit brandedi) version of
+To build and run the "vanilla" (i.e. non-microbit branded) version of
 TouchDevelop you'll need to do one of the following:
 
 * To build the site (it's written in Microsoft's TypeScript language [http://www.typescriptlang.org/] that compiles to Javascript)::
