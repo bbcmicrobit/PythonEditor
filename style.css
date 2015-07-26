@@ -254,3 +254,25 @@ a.command:hover {
         font-size: 12px !important;
     }
 }
+
+.snippet-selection:hover {
+    background: #DDD;
+    cursor: pointer;
+}
+
+.snippet-table {
+    width: 100%;
+}
+
+.snippet-table th {
+    text-align: left;
+    padding-right: 48px;
+}
+
+.snippet-table td {
+    border-bottom: 1px dotted #CCC;
+}
+
+.snippet-name {
+    display: none;
+}
