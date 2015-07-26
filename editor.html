@@ -4,9 +4,39 @@
         <meta charset="utf-8">
         <title>Python editor</title>
         <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="stylesheet" type="text/css" href="vex.css" />
+        <link rel="stylesheet" type="text/css" href="vex-theme-wireframe.css" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     </head>
     <body>
+        <script id="snippet-template" type="x-tmpl-mustache">
+            <i class="fa fa-cogs"></i> <strong>Code Snippets</strong>
+            <p>Code snippets are short blocks of code to re-use in your
+            own programs. There are snippets for most common things you'll
+            want to do using MicroPython.</p>
+            <p>Select one of the snippets below, or type the snippet's
+            <em>trigger</em> then tap the TAB key.</p>
+
+            <table class="snippet-table">
+                <tr>
+                    <th>trigger</th>
+                    <th>description</th>
+                </tr>
+                {{#snippets}}
+                <tr class="snippet-selection">
+                    <td>{{trigger}}<span class="snippet-name">{{name}}</span></td>
+                    <td>{{#describe}}{{name}}{{/describe}}</td>
+                </tr>
+                {{/snippets}}
+            </table>
+
+        </script>
+        <script id="help-template" type="x-tmpl-mustache">
+            <i class="fa fa-question"></i> <strong>Python Help</strong>
+            <p>We could put anything in this placeholder. For example, here's
+            a short video about the editor:</p>
+            <iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/8bP4pgiT2MU?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+        </script>
         <div id="main" class="vbox">
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
@@ -71,6 +101,10 @@
         <script src="jquery-2.1.4.min.js"
             type="application/javascript"></script>
         <script src="FileSaver.min.js" type="application/javascript"></script>
+        <script src="vex.combined.min.js"
+            type="application/javascript"></script>
+        <script src="mustache.min.js" type="application/javascript"></script>
         <script src="python-main.js" type="application/javascript"></script>
+        <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
     </body>
 </html>

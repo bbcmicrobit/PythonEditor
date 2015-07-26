@@ -163,6 +163,54 @@ var TDev;
         statusMsg("✎ got assigned our first base version", 0 /* Ok */);
         currentVersion = msg.baseSnapshot;
     }
+    function promptMerge(merge) {
+        if (mergeDisabled) {
+            inMerge = false;
+            currentVersion = merge.theirs.baseSnapshot;
+            statusMsg("✎ ignoring merge, forcing changes", 0 /* Ok */);
+            doSave(true);
+            return;
+        }
+        console.log("[merge] merge request, base = " + merge.base.baseSnapshot + ", theirs = " + merge.theirs.baseSnapshot + ", mine = " + currentVersion);
+        var mkButton = function (symbol, label, f) {
+            return $("<div>").html(symbol + " " + label).click(f);
+        };
+        var box = $("#merge-commands");
+        var clearMerge = function () {
+            box.empty();
+        };
+        var mineText = savePython();
+        var mineName = getName();
+        var mineDescription = getDescription();
+        var mineButton = mkButton('<i class="fa fa-search"></i>', "see mine", function () {
+            EDITOR.setValue(mineText);
+            setName(mineName);
+            setDescription(mineDescription);
+        });
+        var theirsButton = mkButton('<i class="fa fa-search"></i>', "see theirs", function () {
+            EDITOR.setValue(merge.theirs.scriptText);
+            setName(merge.theirs.metadata.name);
+            setDescription(merge.theirs.metadata.comment);
+        });
+        var baseButton = mkButton('<i class="fa fa-search"></i>', "see base", function () {
+            EDITOR.setValue(merge.base.scriptText);
+            setName(merge.base.metadata.name);
+            setDescription(merge.base.metadata.comment);
+        });
+        var mergeButton = mkButton('<i class="fa fa-thumbs-o-up"></i>', "finish merge", function () {
+            inMerge = false;
+            currentVersion = merge.theirs.baseSnapshot;
+            clearMerge();
+            doSave(true);
+        });
+        clearMerge();
+        inMerge = true;
+        box.append($("<div>").addClass("label").text("Merge conflict"));
+        [mineButton, theirsButton, baseButton, mergeButton].forEach(function (button) {
+            box.append(button);
+            box.append($(" "));
+        });
+    }
     function setupCurrentVersion(message) {
         currentVersion = message.script.baseSnapshot;
         console.log("[revisions] current version is " + currentVersion);
@@ -303,10 +351,43 @@ var TDev;
         // For example, type "wh" followed by TAB.
         var snippetManager = ace.require("ace/snippets").snippetManager;
         //snippetManager.insertSnippet(EDITOR, snippet);
-        alert("Snippets");
+        //alert("Snippets");
+        var template = $('#snippet-template').html();
+        Mustache.parse(template);
+        var context = {
+            'snippets': snippetManager.snippetMap.python,
+            'describe': function() {
+                return function(text, render) {
+                    name = render(text);
+                    description = name.substring(name.indexOf(' - '),
+                                                 name.length);
+                    return description.replace(' - ', '');
+                }
+            }
+        }
+        vex.open({
+            content: Mustache.render(template, context),
+            afterOpen: function(vexContent) {
+                $(vexContent).find('.snippet-selection').click(function(e){
+                    var snippet_name = $(this).find('.snippet-name').text();
+                    var content = snippetManager.snippetNameMap.python[snippet_name].content;
+                    snippetManager.insertSnippet(EDITOR, content);
+                    vex.close();
+                    EDITOR.focus();
+                });
+            }
+        });
     }
     function doHelp() {
-        alert("Help");
+        var template = $('#help-template').html();
+        Mustache.parse(template);
+        var context = {}
+        vex.open({
+            content: Mustache.render(template, context),
+            afterClose: function() {
+                EDITOR.focus();
+            }
+        });
     }
     function setupButtons() {
         $("#command-quit").click(function () {
