@@ -341,10 +341,10 @@ var TDev;
     }
     function doDownload() {
         doSave();
-        var text = savePython();
+        var text = $("#firmware").text(); //savePython();
         var filename = getName().replace(" ", "_");
-        var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, filename + ".py");
+        var blob = new Blob([text], {type: "application/octet-stream"});
+        saveAs(blob, filename + ".hex");
     }
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
