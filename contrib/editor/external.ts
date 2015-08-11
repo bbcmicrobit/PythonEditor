@@ -2,7 +2,7 @@
 
 module TDev {
   export interface ExternalEditor {
-    // 3 ields are for our UI
+    // 3 fields are for our UI
     company: string;
     name: string;
     description: string;
@@ -12,6 +12,8 @@ module TDev {
     origin: string;
     // The path from the domain root to the editor main document.
     path: string;
+    // url to the logo image
+    logoUrl: string;
   }
 
   var externalEditorsCache: ExternalEditor[] = null;
@@ -23,21 +25,50 @@ module TDev {
       var match = url.match(/(https?:\/\/[^\/]+)(.*)/);
       var origin = match[1];
       var path = match[2];
-      externalEditorsCache = [ {
-        company: "The Python Software Foundation",
-        name: "Python Editor",
-        description: "A simple editor for writing MicroPython scripts.",
+      externalEditorsCache = [ /* {
+        name: "C++ Editor",
+        description: "Directly write C++ code using Ace (OUTDATED)",
         id: "ace",
         origin: origin,
-        path: path + "python/editor.html",
-      }, {
-        company: "Microsoft Research",
-        name: "Blocks",
-        description: "Drag and drop",
-        id: "blockly",
-        origin: origin,
-        path: path + "blockly/editor.html"
-      }];
+        path: path + "ace/editor.html"
+        icon: ""
+      }, */
+        {
+          company: "Microsoft",
+          name: "Block Editor",
+          description: "Drag and drop blocks to code!",
+          id: "blockly",
+          origin: origin,
+          path: path + "blockly/editor.html",
+          logoUrl: "https://microbit0.blob.core.windows.net/pub/vrvndwmo"
+        }];
+
+      if (TDev.isBeta) {
+        externalEditorsCache.push({
+          company: "Code Kingdoms",
+          name: "CK JavaScript",
+          description: "Code JavaScript with the CK editor",
+          id: 'codekingdoms',
+
+          origin: 'https://microbit-staging.codekingdoms.com',
+          path: '/',
+
+          // Local testing
+          // origin: 'http://localhost:8888',
+          // path: '/ck-client/game/',
+
+          logoUrl: origin + path + 'img/codekingdoms-microbit.png'
+        },
+        {
+          company: "The Python Software Foundation",
+          name: "MicroPython",
+          description: "Hack your micro:bit with MicroPython!",
+          id: "python",
+          origin: "http://localhost:8000",
+          path: "/editor.html",
+          logoUrl: origin + '/static/img/python-powered.png'
+        })
+      }
     }
     return externalEditorsCache;
   }
@@ -50,11 +81,10 @@ module TDev {
 
   export module External {
     export var TheChannel: Channel = null;
-    // [initAsync] will find the latest version of this script by walking up the
-    // update chain, but in order to save on some API calls, this script id
-    // should be refreshed at regular intervals.
-    export var deviceScriptId = "lwhfye";
-    export var deviceLibraryName = "micro:bit";
+    // We need that to setup the simulator.
+    export var microbitScriptId = "lwhfye";
+
+    var bbcLogoUrl = "https://az742082.vo.msecnd.net/files/images/logo.png";
 
     import J = AST.Json;
 
@@ -62,51 +92,61 @@ module TDev {
       var errorMsg = "unknown error";
       // This JSON format is *very* unstructured...
       if (json.mbedresponse) {
-        var messages = json.messages.filter(m =>
-          m.severity == "error" || m.type == "Error"
-        );
-        errorMsg = messages.map(m => m.message + "\n" + m.text).join("\n");
+        if (json.messages) {
+          var messages = json.messages.filter(m =>
+            m.severity == "error" || m.type == "Error"
+          );
+          errorMsg = messages.map(m => m.message + "\n" + m.text).join("\n");
+        } else if (json.mbedresponse.result) {
+          errorMsg = json.mbedresponse.result.exception;
+        }
       }
       return errorMsg;
     }
 
-    export function pullLatestLibraryVersion(): Promise { // of nothing
-      var r = new PromiseInv()
-
-      var set = (script: JsonScript) => {
-          if (!script || !r.isPending()) return
-          deviceScriptId = script.updateid;
-          r.success(null)
-      }
-
-      Browser.TheApiCacheMgr.getAsync(deviceScriptId, false)
-        .then(set)
-        .done()
-
-      // in case the one above fails, we also try the stale one from the cache
-      Browser.TheApiCacheMgr.getAsync(deviceScriptId, true)
-          .then(() => Promise.delay(2000))
-          .then(set)
-          .done()
-
-      return r
+    export function pullLatestLibraryVersion(pubId: string): Promise { // of string
+      return Browser.TheApiCacheMgr.getAsync(pubId, Cloud.isOffline())
+        .then((script: JsonScript) => {
+          if (script) {
+            return script.updateid;
+          } else {
+            // in case the one above fails, we also try the stale one from the
+            // cache
+            return Browser.TheApiCacheMgr.getAsync(pubId, true)
+              .then(() => Promise.delay(2000))
+              .then((script: JsonScript) => {
+                if (script)
+                  return script.updateid;
+                else
+                  return pubId;
+              });
+          }
+        });
     }
 
     // This function modifies its argument by adding an extra [J.JLibrary]
     // to its [decls] field that references the device's library.
-    function addDeviceLibrary(app: J.JApp) {
+    function addLibrary(name: string, pubId: string, app: J.JApp) {
       var lib = <AST.LibraryRef> AST.Parser.parseDecl(
-        'meta import ' + AST.Lexer.quoteId(deviceLibraryName) + ' {' +
-        '  pub "' + deviceScriptId + '"'+
+        'meta import ' + AST.Lexer.quoteId(name) + ' {' +
+        '  pub "' + pubId + '"'+
         '}'
       );
       var jLib = <J.JLibrary> J.addIdsAndDumpNode(lib);
-      // There's an implicit convention here. The external editor needs to
-      // generate references to the device library (to talk about the image
-      // type, for instance), but doesn't know yet which id will be assigned to
-      // it. So both the external editor and this module agree on a common id.
-      jLib.id = "__DEVICE__";
+      jLib.id = name;
       app.decls.push(jLib);
+    }
+
+    function addLibraries(app: J.JApp, libs: { [i: string]: string }): Promise {
+      var keys = Object.keys(libs);
+      var latestVersions = keys.map((name: string) => {
+        return pullLatestLibraryVersion(libs[name]);
+      });
+      return Promise.join(latestVersions).then((latestVersions: string[]) => {
+        latestVersions.map((pubId: string, i: number) => {
+          addLibrary(keys[i], pubId, app);
+        });
+      });
     }
 
     function parseScript(text: string): Promise { // of AST.App
@@ -127,15 +167,17 @@ module TDev {
 
     // Takes a [JApp] and runs its through various hoops to make sure
     // everything is type-checked and resolved properly.
-    function roundtrip(a: J.JApp): Promise { // of J.JApp
-      addDeviceLibrary(a);
-      var text = J.serialize(a);
-      return parseScript(text).then((a: AST.App) => {
-        if (AST.TypeChecker.tcApp(a) > 0) {
-          throw new Error("We received a script with errors and cannot compile it. " +
-              "Try converting then fixing the errors manually.");
-        }
-        return Promise.as(J.dump(a)); });
+    function roundtrip(a: J.JApp, libs: { [i: string]: string }): Promise { // of J.JApp
+      return addLibraries(a, libs).then(() => {
+        var text = J.serialize(a);
+        return parseScript(text).then((a: AST.App) => {
+          if (AST.TypeChecker.tcApp(a) > 0) {
+            throw new Error("We received a script with errors and cannot compile it. " +
+                "Try converting then fixing the errors manually.");
+          }
+          return Promise.as(J.dump(a)); }
+        );
+      });
     }
 
     class ExternalHost extends EditorHost {
@@ -148,9 +190,10 @@ module TDev {
         var w = <HTMLElement> document.querySelector(".wallFullScreenContainer");
         w.style.height = "100%";
         w.style.display = "";
-        var logo = div("wallFullScreenLogo", HTML.mkImg(Cloud.artUrl("hrztfaux")));
+        var bbcLogo = div("wallFullScreenLogo", HTML.mkImg(bbcLogoUrl));
+        var logo = div("wallFullScreenLogo", HTML.mkImg(TheChannel.editor.logoUrl));
 
-        elt("externalEditorSide").setChildren([w, logo]);
+        elt("externalEditorSide").setChildren([bbcLogo, w, logo]);
       }
 
       public fullWallWidth() {
@@ -185,6 +228,8 @@ module TDev {
         if (!(rt.host instanceof ExternalHost))
           rt.setHost(new ExternalHost());
         rt.initPageStack();
+        // Requires [TheChannel] to be setup properly (so that we know which
+        // editor logo to show).
         (<EditorHost> rt.host).showWall();
 
         var main = compiledScript.actionsByName[mainName];
@@ -197,17 +242,9 @@ module TDev {
       });
     }
 
-    export function mkChannelAsync(
-      editor: ExternalEditor,
-      iframe: HTMLIFrameElement,
-      guid: string): Promise // of Channel
-    {
-      return pullLatestLibraryVersion().then(() => new Channel(editor, iframe, guid));
-    }
-
     export class Channel {
       constructor(
-        private editor: ExternalEditor,
+        public editor: ExternalEditor,
         private iframe: HTMLIFrameElement,
         public guid: string) {
       }
@@ -336,7 +373,7 @@ module TDev {
                 cpp = Promise.as(message1.text);
                 break;
               case Language.TouchDevelop:
-                cpp = roundtrip(message1.text).then((a: J.JApp) => {
+                cpp = roundtrip(message1.text, message1.libs).then((a: J.JApp) => {
                   return Embedded.compile(a);
                 });
                 break;
@@ -375,26 +412,31 @@ module TDev {
           case MessageType.Upgrade:
             var message2 = <Message_Upgrade> event.data;
             var ast: AST.Json.JApp = message2.ast;
-            addDeviceLibrary(ast);
-            console.log("Attempting to serialize", ast);
-            var text = J.serialize(ast);
-            console.log("Attempting to edit script text", text);
-            Browser.TheHost.openNewScriptAsync({
-              editorName: "touchdevelop",
-              scriptName: message2.name,
-              scriptText: text
+            addLibraries(ast, message2.libs).then(() => {;
+              console.log("Attempting to serialize", ast);
+              var text = J.serialize(ast);
+              console.log("Attempting to edit script text", text);
+              Browser.TheHost.openNewScriptAsync({
+                editorName: "touchdevelop",
+                scriptName: message2.name,
+                scriptText: text
+              }).done();
             }).done();
             break;
 
           case MessageType.Run:
             var message3 = <Message_Run> event.data;
-            document.getElementById("externalEditorSide").classList.remove("dismissed");
+            var side = document.getElementById("externalEditorSide");
+            if (message3.onlyIfSplit && side.offsetWidth == 0)
+              break;
+            side.classList.remove("dismissed");
             // So that key events such as escape are caught by the editor, not
             // the inner iframe.
             var ast: AST.Json.JApp = message3.ast;
-            addDeviceLibrary(ast);
-            var text = J.serialize(ast);
-            typeCheckAndRun(text);
+            addLibraries(ast, message3.libs).then(() => {
+              var text = J.serialize(ast);
+              typeCheckAndRun(text);
+            }).done();
             break;
 
           default:
@@ -413,6 +455,7 @@ module TDev {
       scriptVersionInCloud: string;
       baseSnapshot: string;
       metadata: Metadata;
+      pubId: string;
     };
 
     // The [scriptVersionInCloud] name is the one that's used by [world.ts];
@@ -442,14 +485,24 @@ module TDev {
       var iframe = document.createElement("iframe");
       // allow-popups is for the Blockly help menu item
       iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-popups");
-      iframe.addEventListener("load", function () {
-        mkChannelAsync(editor, iframe, data.guid).done((channel: Channel) => {
-          TheChannel = channel;
+      iframe.addEventListener("load", () => {
+        TheChannel = new Channel(editor, iframe, data.guid);
+
+        // Start the simulator. This assumes that [TheChannel] is properly
+        // setup.
+        pullLatestLibraryVersion(microbitScriptId)
+        .then((pubId: string) => ScriptCache.getScriptAsync(pubId))
+        .then((s: string) => typeCheckAndRun(s, "_libinit"))
+        .done(() => {
+          // Send the initialization message once the simulator is properly
+          // setup.
           var extra = JSON.parse(data.scriptVersionInCloud || "{}");
           TheChannel.post(<Message_Init> {
             type: MessageType.Init,
             script: data,
-            merge: ("theirs" in extra) ? extra : null
+            merge: ("theirs" in extra) ? extra : null,
+            fota: Cloud.isFota(),
+            pubId: data.pubId,
           });
         });
       });
@@ -458,14 +511,6 @@ module TDev {
 
       // Change the hash and the window title.
       TheEditor.historyMgr.setHash("edit:" + data.guid, editor.name);
-
-      // Start the simulator
-      pullLatestLibraryVersion()
-      .then(() => ScriptCache.getScriptAsync(deviceScriptId))
-      .then((s: string) => {
-        typeCheckAndRun(s, "_libinit");
-      })
-      .done();
     }
 
     export function pickUpNewBaseVersion() {

@@ -66,13 +66,20 @@ TouchDevelop you'll need to do one of the following:
 Configure TouchDevelop
 ++++++++++++++++++++++
 
-Copy the file contrib/mbit.html into the www directory in the root of the
-TouchDevelop repository you will have cloned. This turns the "vanilla"
-flavoured TouchDevelop into something with the micro:bit branding and features
-available.
+To turn the "vanilla" flavoured TouchDevelop into something with the micro:bit
+branding and features you need to copy some files.
 
-Because this modification depends on assets stored at stage.microbit.co.uk you
-must log into the staging platform as follows:
+The contrib directory in this project contains files and sub-directories that
+should be copied over the to equivalent place in the TouchDevelop repository
+(where contrib is equivalent of the TouchDevelop repository root). For example,
+copy the file contrib/www/mbit.html into the www directory in the root of the
+TouchDevelop repository.
+
+Remember to restart the TouchDevelop application in order to compile the
+changes contained within the copied files.
+
+Because these modifications depend on assets stored at stage.microbit.co.uk
+you must log into the staging platform as follows:
 
 * Go to https://stage.microbit.co.uk/home
 * Login with username: microbit password: bitbug42
@@ -92,34 +99,18 @@ You're not finished yet!
 Configure the Editor
 ++++++++++++++++++++
 
-In the editor/external.ts file within the TouchDevelop repos, at around line
-26 where externalEditorsCache is assigned as a list of objects, ensure you add
-the following object::
+TouchDevelop expects its embedded editors to be served from the domain it
+expects. In the case of the Python editor for local development you simply
+run it on localhost:8000.
 
-    {
-        company: "The Python Software Foundation",
-        name: "Python Editor",
-        description: "A simple editor for writing MicroPython scripts.",
-        id: "ace",
-        origin: origin,
-        path: path + "python/editor.html",
-    }
+If you're using Python 2 this can be achieved by running the following command
+in the root directory of this project::
 
-(I've added a copy of my own externals.ts file in the contrib directory of this
-project.)
+    $ python -m SimpleHTTPServer
 
-You're still not done yet!
+For Python 3 the command is::
 
-TouchDevelop expects its embedded editors to be served from the same domain it
-is also running on (usually localhost:4242). To facilitate this we simply link
-the root directory of this project into the www directory of TouchDevelop
-repository. In Linux, assuming you remember to change the paths appropriately,
-the command is::
-
-    ln -s ~/src/micropython-bit ~/src/TouchDevelop/www/python
-
-I have no idea what the Windows version of this command is - but essentially
-you need to make it look as if there's a python directory in the www directory.
+    $ python -m http.server
 
 Please make sure you restart your locally running TouchDevelop instance.
 
@@ -150,10 +141,8 @@ Code
 * ace - a directory containing the Ace editor (http://ace.c9.io).
 * contrib - a directory containing code required for set-up.
 * editor.html - the page to be embedded within the iFrame in TouchDevelop.
-* FileSaver.min.js - https://github.com/eligrey/FileSaver.js/
-* jquery-2.1.4.min.js - https://jquery.com/
-* python-main.js - JavaScript code needed for the editor to function.
-* style.css - based upon Microsoft's own CSS for editor consistency.
+* help.html - a single page user facing help page.
+* static - contains css, js and img sub-directories.
 
 Usage
 -----
@@ -168,7 +157,7 @@ applies to the description - it's automatically set to "A MicroPython script".
 You can change these at any time by clicking on them.
 
 Directly underneath the name and description of the script are two icons - the
-one on the left indicates the scripts status (changed, saved locally, saved to
+one on the left indicates the script's status (changed, saved locally, saved to
 the cloud) and the other, shaped like a bug, will display a log of the events
 that occured during the current session of using the editor.
 
@@ -186,13 +175,16 @@ TouchDevelop's publish functionality.
 The four buttons at the top left, act as follows:
 
 * my scripts - returns you to the main menu listing all your scripts.
-* download - downloads the Python code directly to the local filesystem. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py. This is all done locally in the user's browser - no network based services are needed.
+* download - creates a .hex file locally in the user's browser and prompts the user to download it. The resulting file should be copied over to the micro:bit device just like when using all the other editors. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py.
 * code snippets - allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc). They are triggered by typing a keyword followed by TAB. For example, type "wh" followed by TAB to insert a while... loop. Clicking on the code snippets button opens up a modal dialog window containing instructions and a table of the available snippets along with their trigger and a short and simple description.
-* help - Python specific help will be available from here. It's just a div element so we can put any arbitrarily helpful information here. For the time being I've added a paragraph and embedded the YouTube video referenced below.
+* help - opens a single page in a new tab that contains user-facing help.
 
-There's a YouTube demo of an early version of this editor here:
+Here are three YouTube demos of early versions of this editor / and
+MicroPython:
 
-https://www.youtube.com/watch?v=8bP4pgiT2MU
+* https://www.youtube.com/watch?v=6MoBKf3jTIY - this editor running on a local instance of TouchDevelop. This is, ultimately, what we need to integrate with Microsoft. It's very simple to use and pretty much works as advertised.
+* https://www.youtube.com/watch?v=duyqxrvDXzU - connecting to the micro:bit and interacting with it via the standard Python REPL. A very 1980's 8 bit feel. It's also a nice demonstration of just how capable MicroPython is. Kudos to Damien for such an amazing feat.
+* https://www.youtube.com/watch?v=jCIWY485bx0 - flashing the device with .hex files generated via this editor.
 
 In other TouchDevelop editors there are "compile" and "run" buttons. These
 target the TouchDevelop platform to create an AST and either use a third party
@@ -201,15 +193,40 @@ file (for the former) or run the code on the embedded simulator (for the
 latter).
 
 Since we're targeting MicroPython instead, we simply allow the user to
-download their script. They simply drag the resulting file onto the device
-(that's already been flashed with MicroPython).
+download their locally generated .hex file. They simply drag the resulting
+file onto the device. If you connect to the device (and the script ISN'T in an
+infinite loop) you'll be presented with the Python REPL. If there was an error
+you should also see an error message.
 
-As you'll see, TouchDevelop automatically puts the device simulator to the
-right of the editor if there's enough room on the screen. Since we don't need
-this functionality we need to replace this with something more appropriate -
-perhaps instructions for downloading and flashing MicroPython onto the
-micro:bit. We'll need to collaborate with Microsoft (send them a patch) to
-make this happen.
+If you plug in your micro:bit and want to get the REPL you'll need to install
+pyserial and run the following command with the appropriate permissions (such
+as root, as shockingly demonstrated below)::
+
+    $ sudo python -m serial.tools.miniterm -b 115200 /dev/ttyACM3
+
+Remember to replace tty/ACM3 with the appropriate device for your computer.
+
+The .hex file is generated in the following way:
+
+* A "vanilla" version of the MicroPython hex is hidden within the DOM.
+* We take the Python code in the editor and turn it into a hex representation.
+* We insert the Python derived hex into the correct place within the MicroPython hex.
+* The resulting combination is downloaded onto the user's local filesystem for flashing onto the device.
+
+The hidden MicroPython hex is just over 600k. While this sounds large, it's
+relatively small when you consider:
+
+* The Guardian's front page is around 1.5mb
+* compression is built into the server
+* the web has caching built in (we should trust it)
+* we actually want kids to view source and find the .hex file in as raw a form as possible.
+
+Finally, as you'll see, TouchDevelop automatically puts the device simulator to
+the right of the editor if there's enough room on the screen. Since we don't
+need this functionality we need to replace this with something more
+appropriate - perhaps instructions for downloading and flashing MicroPython
+onto the micro:bit. We'll need to collaborate with Microsoft (send them a
+patch) to make this happen.
 
 Documentation
 -------------
@@ -217,4 +234,4 @@ Documentation
 For documentation for this project - you're reading it. ;-)
 
 For in-editor documentation aimed at the user, this is to be done but will
-encompass both code snippets and generic help.
+encompass both code snippets and generic help in the help.html file.

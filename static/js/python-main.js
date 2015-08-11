@@ -83,9 +83,6 @@ var TDev;
             case 7 /* Merge */:
                 promptMerge(message.merge);
                 break;
-            case 6 /* CompileAck */:
-                compileAck(message);
-                break;
             case 11 /* NewBaseVersion */:
                 newBaseVersion(message);
                 break;
@@ -146,19 +143,7 @@ var TDev;
                 break;
         }
     }
-    function compileAck(message) {
-        $("#command-compile > .roundsymbol").removeClass("compiling");
-        switch (message.status) {
-            case 1 /* Error */:
-                statusMsg("compilation error: " + message.error, message.status);
-                showPopup($("#link-log"), $("#popup-log"));
-                break;
-            case 0 /* Ok */:
-                statusMsg("compilation successful", message.status);
-                break;
-        }
-    }
-    var mergeDisabled = true;
+    var mergeDisabled = false;
     function newBaseVersion(msg) {
         statusMsg("✎ got assigned our first base version", 0 /* Ok */);
         currentVersion = msg.baseSnapshot;
@@ -301,7 +286,7 @@ var TDev;
         });
         setName(message.script.metadata.name);
         setDescription(message.script.metadata.comment);
-        if (!message.script.baseSnapshot && !message.script.metadata.comment)
+        if (!message.script.metadata.comment)
             setDescription("A MicroPython script");
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
@@ -339,11 +324,68 @@ var TDev;
         });
         dirty = false;
     }
+    function hexlifyScript(script) {
+        /*
+        Turn a Python script into Intel HEX format to be concatenated at the
+        end of the MicroPython firmware.hex.  A simple header is added to the
+        script.
+
+        - takes a Python script as a string
+        - returns hexlified string, with newlines between lines
+        */
+
+        function hexlify(ar) {
+            var result = '';
+            for (var i = 0; i < ar.length; ++i) {
+                if (ar[i] < 16) {
+                    result += '0';
+                }
+                result += ar[i].toString(16);
+            }
+            return result;
+        }
+
+        // add header, pad to multiple of 16 bytes
+        data = new Uint8Array(4 + script.length + (16 - (4 + script.length) % 16));
+        data[0] = 77; // 'M'
+        data[1] = 80; // 'P'
+        data[2] = script.length & 0xff;
+        data[3] = (script.length >> 8) & 0xff;
+        for (var i = 0; i < script.length; ++i) {
+            data[4 + i] = script.charCodeAt(i);
+        }
+        // TODO check data.length < 0x2000
+
+        // convert to .hex format
+        var addr = 0x3e000; // magic start address in flash
+        var chunk = new Uint8Array(5 + 16);
+        var output = [];
+        for (var i = 0; i < data.length; i += 16, addr += 16) {
+            chunk[0] = 16; // length of data section
+            chunk[1] = (addr >> 8) & 0xff; // high byte of 16-bit addr
+            chunk[2] = addr & 0xff; // low byte of 16-bit addr
+            chunk[3] = 0; // type (data)
+            for (var j = 0; j < 16; ++j) {
+                chunk[4 + j] = data[i + j];
+            }
+            var checksum = 0;
+            for (var j = 0; j < 4 + 16; ++j) {
+                checksum += chunk[j];
+            }
+            chunk[4 + 16] = (-checksum) & 0xff;
+            output.push(':' + hexlify(chunk).toUpperCase())
+        }
+
+        return output.join('\n');
+    }
     function doDownload() {
         doSave();
-        var text = $("#firmware").text(); //savePython();
+        var firmware = $("#firmware").text();
+        var hexlified_python = hexlifyScript(savePython());
+        var insertion_point = ":::::::::::::::::::::::::::::::::::::::::::";
+        var output = firmware.replace(insertion_point, hexlified_python);
         var filename = getName().replace(" ", "_");
-        var blob = new Blob([text], {type: "application/octet-stream"});
+        var blob = new Blob([output], {type: "application/octet-stream"});
         saveAs(blob, filename + ".hex");
     }
     function doSnippets() {
@@ -378,17 +420,6 @@ var TDev;
             }
         });
     }
-    function doHelp() {
-        var template = $('#help-template').html();
-        Mustache.parse(template);
-        var context = {}
-        vex.open({
-            content: Mustache.render(template, context),
-            afterClose: function() {
-                EDITOR.focus();
-            }
-        });
-    }
     function setupButtons() {
         $("#command-quit").click(function () {
             doSave();
@@ -399,9 +430,6 @@ var TDev;
         });
         $("#command-snippet").click(function () {
             doSnippets();
-        });
-        $("#command-help").click(function () {
-            doHelp();
         });
     }
 })(TDev || (TDev = {}));
