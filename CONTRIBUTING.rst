@@ -17,9 +17,9 @@ yet robust argument is most welcome.
 Checklist
 +++++++++
 
-* If you're submitting executable code, include tests!
 * Your code should be commented in *plain English* (British spelling).
 * If your contribution is for a major block of work and you've not done so
   already, add yourself to the AUTHORS file following the convention found
   therein.
+* Try to include tests!
 * Have fun!
