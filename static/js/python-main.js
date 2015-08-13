@@ -79,7 +79,7 @@ var TDev;
 })(TDev || (TDev = {}));
 
 /*
-The following code contains the various functions that define the bahaviour of
+The following code contains the various functions that define the behaviour of
 the editor.
 
 See the comments in-line for more information.
