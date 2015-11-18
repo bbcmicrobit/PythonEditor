@@ -4,7 +4,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: transparent;
+    background: #000000;
     font-size: 22px;
 }
 
@@ -61,6 +61,7 @@ body, input {
   left: 0;
   right: 0;
   overflow: hidden;
+  background: #F2F2F2;
 }
 
 #editor {
@@ -75,16 +76,49 @@ body, input {
 
 #script-name {
   font-size: 3rem;
+  color: #1a354c;
+}
+
+#script-description {
+  color: #336699;
+  padding-bottom: 2rem;
 }
 
 #script-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
-  padding-left: .5rem;
 }
 
-#script-icons {
-  font-size: 1.5rem;
+#script-icons .status-icon {
+  width: 2rem;
+  height: 2rem;
+  border: 6px solid #FFCC33;
+  border-radius: 50%;
+  margin: .2rem;
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 1.3rem;
+  line-height: 2.1rem;
+  padding: .1em;
+  font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
+  color: #336699;
+  background: #FFFFFF;
+}
+
+#script-icons .holder {
+  width: 100%;
+  height: 100%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  color: #336699;
+  text-decoration: none;
+  background-image: url("/static/img/triangle.svg");
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 /* Popups */
@@ -93,6 +127,7 @@ body, input {
   border: 5px solid #666;
   position: relative;
   background-color: white;
+  z-index: 999;
 }
 
 .popup::after {
@@ -133,13 +168,12 @@ body, input {
 
 #commands a {
   text-align: center;
-  padding-right: .5em;
-  margin-right: 1em;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
 }
 
 
 #toolbox {
-  padding: .5em;
 }
 
 #log {
@@ -176,14 +210,17 @@ body, input {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  color: black;
+  color: #336699;
   text-decoration: none;
+  background-image: url("/static/img/triangle.svg");
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 .roundsymbol {
   width: 4rem;
   height: 4rem;
-  border: 2px solid black;
+  border: 6px solid #FFCC33;
   border-radius: 50%;
   margin: .2rem;
   margin-bottom: 0;
@@ -192,12 +229,16 @@ body, input {
   line-height: 3.8rem;
   padding: .1em;
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
+  color: #336699;
+  background: #FFFFFF;
 }
 
 .roundlabel {
-  padding-top: .6rem;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
   font-size: 80%;
   text-align: center;
+  color: #336699;
 }
 
 body:not(.hasFota) .fota {
