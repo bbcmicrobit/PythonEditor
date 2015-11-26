@@ -72,6 +72,9 @@ body, input {
 /* Script info box */
 #script-box {
   margin-right: 1rem;
+  margin-left: 1rem;
+  text-align: right;
+  width: 100%;
 }
 
 #script-name {
@@ -87,6 +90,10 @@ body, input {
 #script-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
+}
+
+.zoomer {
+  cursor: pointer !important;
 }
 
 #script-icons .status-icon {
@@ -261,9 +268,14 @@ a.command:hover {
 }
 
 /* Some overrides for narrow displays */
-@media (max-width: 1024px) {
+@media (max-width: 890px) {
   .roundbutton {
     display: inline;
+    padding: 0.75em;
+  }
+
+  #script-icons {
+    display: none;
   }
 
   .roundsymbol {
@@ -276,15 +288,11 @@ a.command:hover {
 
   .roundlabel {
     padding-top: 0;
+    display: none;
   }
 
   .roundbutton > * {
-    display: inline-block;
-  }
-
-  #toolbox {
-    flex-direction: column;
-    -ms-flex-direction: column;
+    /*display: inline-block;*/
   }
 
   #script-name {
@@ -301,6 +309,20 @@ a.command:hover {
 
   .blocklyTreeLabel {
     font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #toolbox {
+    flex-direction: column;
+    -ms-flex-direction: column;
+  }
+
+  #script-box {
+    margin-right: 1rem;
+    margin-left: 1rem;
+    text-align: left;
+    width: 100%;
   }
 }
 
