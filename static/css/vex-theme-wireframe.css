@@ -115,7 +115,7 @@
 
 /* line 9, ../sass/vex-theme-wireframe.sass */
 .vex.vex-theme-wireframe {
-  padding-top: 160px;
+  padding-top: 60px;
   padding-bottom: 160px;
 }
 /* line 13, ../sass/vex-theme-wireframe.sass */
@@ -133,7 +133,7 @@
   position: relative;
   margin: 0 auto;
   max-width: 100%;
-  width: 600px;
+  width: 800px;
 }
 /* line 29, ../sass/vex-theme-wireframe.sass */
 .vex.vex-theme-wireframe .vex-content h1, .vex.vex-theme-wireframe .vex-content h2, .vex.vex-theme-wireframe .vex-content h3, .vex.vex-theme-wireframe .vex-content h4, .vex.vex-theme-wireframe .vex-content h5, .vex.vex-theme-wireframe .vex-content h6, .vex.vex-theme-wireframe .vex-content p, .vex.vex-theme-wireframe .vex-content ul, .vex.vex-theme-wireframe .vex-content li {
