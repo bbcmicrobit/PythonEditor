@@ -72,9 +72,8 @@ you must log into the staging platform as follows:
 * Go to https://stage.microbit.co.uk/home
 * Login with username: microbit password: bitbug42
 * Go to "My Scripts" in the top right hand corner, then go to "Sign In"
-* Click on "I'm an Adult"
-* Tick the box to accept the T&C's
 * Login with one of the 3rd party OAuth choices
+* Tick the box to accept the T&C's
 * Enter the code jnhrsrcsui
 
 Assuming you have completed the steps above and have TouchDevelop running
