@@ -429,7 +429,7 @@ var TDev;
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
             // Handles what to do if the user changes the content of the editor.
-            EDITOR.on_change(function () {
+            EDITOR.ACE.on_change(function () {
                 statusMsg("✎ local changes", 0 /* Ok */);
                 statusIcon("pencil");
                 dirty = true;
