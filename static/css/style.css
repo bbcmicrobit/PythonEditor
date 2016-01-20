@@ -96,6 +96,10 @@ body, input {
   cursor: pointer !important;
 }
 
+#script-icons {
+    width: 94px;
+}
+
 #script-icons .status-icon {
   width: 2rem;
   height: 2rem;
@@ -113,7 +117,6 @@ body, input {
 
 #script-icons .holder {
   width: 100%;
-  height: 100%;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
