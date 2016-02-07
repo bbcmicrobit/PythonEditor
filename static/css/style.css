@@ -78,13 +78,13 @@ body, input {
 }
 
 #script-name {
-  font-size: 3rem;
+  font-size: 2rem;
   color: #1a354c;
 }
 
 #script-description {
   color: #336699;
-  padding-bottom: 2rem;
+  padding-bottom: 0.2rem;
 }
 
 #script-icons > *:not(:first-child) {
@@ -97,7 +97,8 @@ body, input {
 }
 
 #script-icons {
-    width: 94px;
+    width: 54px;
+    min-width: 54px;
 }
 
 #script-icons .status-icon {
@@ -116,7 +117,7 @@ body, input {
 }
 
 #script-icons .holder {
-  width: 100%;
+  width: 54px;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -224,6 +225,7 @@ body, input {
   background-image: url("/static/img/triangle.svg");
   background-size: 100%;
   background-repeat: no-repeat;
+  min-width: 90px;
 }
 
 .roundsymbol {
