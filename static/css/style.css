@@ -176,6 +176,10 @@ body, input {
   font-weight: bold;
 }
 
+#commands {
+  min-width: 567px;
+}
+
 #commands a {
   text-align: center;
   padding-left: 0.75em;
@@ -315,6 +319,10 @@ a.command:hover {
 
   .blocklyTreeLabel {
     font-size: 12px !important;
+  }
+
+  #commands {
+    min-width: 289px;
   }
 }
 

@@ -232,7 +232,7 @@ var TDev;
             case 0 /* Initialise the editor */:
                 setupEditor(message);
                 setupButtons();
-                setupCurrentVersion(message);
+                //setupCurrentVersion(message);
                 break;
             case 4 /* Save Acknowledgement */:
                 saveAck(message);
@@ -241,7 +241,7 @@ var TDev;
                 promptMerge(message.merge);
                 break;
             case 11 /* NewBaseVersion */:
-                newBaseVersion(message);
+                //newBaseVersion(message);
                 break;
         }
     }
@@ -508,9 +508,14 @@ var TDev;
         doSave();
         var firmware = $("#firmware").text();
         var output = EDITOR.getHexFile(firmware);
-        var filename = getName().replace(" ", "_");
-        var blob = new Blob([output], {type: "application/octet-stream"});
-        saveAs(blob, filename + ".hex");
+        if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+            alert("Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.");
+            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+        } else {
+            var filename = getName().replace(" ", "_");
+            var blob = new Blob([output], {type: "application/octet-stream"});
+            saveAs(blob, filename + ".hex");
+        }
     }
 
     // This function describes what to do when the snippets button is clicked.

@@ -45,9 +45,10 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="#top">Start Here</a></li>
-            <li><a href="#code">Hack Code</a></li>
-            <li><a href="#connect">Connect</a></li>
-            <li><a href="#hacks">Fun Hacks</a></li>
+            <li><a href="#hello">Hello, World!</a></li>
+            <li><a href="#snippets">Snippets</a></li>
+            <li><a href="#bugs">Bug Fixes</a></li>
+            <li><a href="#fun">Fun Stuff</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -62,15 +63,210 @@
                 <img src="static/img/microbit.png"/><br/><br/>
             </div>
         </div>
-        <h1>Be brave! Break things! Learn and have fun!</h1>
       </div>
+    <img src="static/img/comic1.png" class="img-responsive center-block"
+            alt="http://goo.gl/SrIrIE"/>
     <h2 id="start">Start Here</h2>
-    <p>This is a very high level overview of Python, MicroPython, the micro:bit
-    and the general modus operandi.</p>
+    <p>So you're looking at the Python editor and wondering what to do. That's
+    easy! Let's learn about the different parts of the editor. First of all
+    there are some buttons across the top:</p>
 
-    <p>Some example Python code:</p>
+    <p><img src="static/img/header.png" class="img-responsive center-block"
+        alt="A picture of the buttons along the top of the editor."/></p>
 
-    <pre><code class="python">import microbit
+    <p>What do they do?</p>
+
+    <table class="table">
+        <tr>
+            <td>
+                <img src="static/img/my_scripts.png" alt="My Scripts button"/>
+            </td>
+            <td>
+            Clicking on the "My Scripts" button saves your work, takes you out
+            of the Python editor and returns you to your TouchDevelop script
+            selector.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="static/img/download.png" alt="Download button"/>
+            </td>
+            <td>
+            Click on the "Download" button to save a special "hex" file on
+            your computer. Plug in your BBC micro:bit (it'll show up as USB
+            storage) and drag the newly saved file onto the device. Your code
+            will run (or you'll see an error message scroll past on the
+            device's display).
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="static/img/snippets.png" alt="Snippets button"/>
+            </td>
+            <td>
+            Clicking on the "Snippets" button brings up a menu of Python
+            short-cuts (snippets). Code snippets are short blocks of code to
+            re-use in your own programs. There are snippets for most common
+            things you'll want to do with Python. Select the one you want and
+            fill in the gaps in the code editor to make it do what you want.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="static/img/help.png" alt="Help button"/>
+            </td>
+            <td>
+            Clicking on the "Help" button gets you here. But you knew that
+            already, right..? :-) Notice that your editor is still available
+            but in a separate tab in your browser.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="static/img/zoom.png" alt="Zoom buttons"/>
+            </td>
+            <td>
+            Everyone likes to show off their awesome Python skills. These
+            buttons are especially useful to zoom-in and zoom-out when you're
+            trying to show your code to a large group of people via a
+            projector.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="static/img/info.png" alt="Info icons"/>
+            </td>
+            <td>
+            The top icon can show one of three pictures:
+            <ul>
+                <li>An old fashioned disk (your work has been saved locally)</li>
+                <li>A pencil (the editor has spotted you making unsaved changes)</li>
+                <li>A cloud (your work has been saved on the website)</li>
+            </ul>
+            Click the bottom icon (of a bug) to display a log of all the
+            different things the editor has been up to.
+            </td>
+        </tr>
+    </table>
+
+    <p>The name and description for your script is shown on the top
+    right hand side. Click them to edit them.</p>
+
+    <p>The other part of the editor is the text window:</p>
+
+    <p><img src="static/img/editor_text.png" class="img-responsive center-block"
+        alt="A picture of the text area in the code editor."/></p>
+
+    <p>It's very simple to use. Just click and type.</p>
+
+    <p>The editor tries to help you out by colouring the text to show what
+    all the different parts of your program are. For example, Python keywords
+    (words built into the Python language) are grey. The brighter coloured
+    words are bits of the program <em>you</em> have created. Brown words
+    are constant values that never change and purple words represent
+    strings of characters to display. All the lines are numbered with the
+    current line highlighted.</p>
+
+    <img src="static/img/comic2.png" class="img-responsive center-block"
+        alt="http://goo.gl/ArpNbM"/>
+
+    <h2 id="hello">Hello, World!</h2>
+
+    <p><img src="static/img/comic3.png" class="img-responsive center-block"
+        alt="http://goo.gl/zpfrsY"/></p>
+
+    <p>The version of Python that runs on the BBC micro:bit is called
+    MicroPython. It's exactly like <em>real</em> Python except it's designed
+    to run on small devices like the BBC micro:bit. Here's the MicroPython code
+    you need to make your BBC micro:bit say "Hello, World!". Copy and paste it
+    into the Python editor, download it and copy it onto your device (just like
+    Yellow and Blue suggest):</p>
+
+    <pre><code class="python">from microbit import *
+
+
+display.scroll("Hello, World!")</code></pre>
+
+    <p>The first line (<code>from microbit import *</code>) tells MicroPython
+    to get all the bits of Python needed to program the micro:bit.</p>
+
+    <p>The second line(<code>display.scroll("Hello, World!")</code>) tells
+    MicroPython to use one of those bits of Python (the <code>display</code>
+    module) to scroll the text, <kbd>"Hello, World!"</kbd> across the physical
+    display on the front of the device. It's all remarkably obvious. If you
+    followed Yellow and Blue's instructions you should see something like
+    this:</p>
+
+    <p><img src="static/img/scroll-hello.gif" class="img-responsive center-block"
+        alt="An animation of 'hello world' scrolling over the display."/></p>
+
+    <p>Can you make it scroll any other messages? Why not try making your
+    BBC micro:bit scroll your name? Remember, MicroPython will scroll
+    everything between the <code>"</code>quotation marks<code>"</code>.</p>
+
+    <h2 id="snippets">Snippets</h2>
+
+    <p>Snippets are a cool way to avoid typing. The animation below shows you
+    how to use them:</p>
+
+    <p><img src="static/img/snippet_example.gif"
+        class="img-responsive center-block"
+        alt="An animation demonstrating how to use snippets."/></p>
+
+    <p>You can access snippets from the "Snippets" button (see above), but
+    it's a lot quicker and easier to learn the <em>triggers</em> for the
+    different fragments of code, hit the <kbd>TAB</kbd> key to expand the
+    snippet and then fill in the remaining blocks of code so it does what you
+    want.</p>
+
+
+    <p><img src="static/img/comic4.png" class="img-responsive center-block"
+        alt="http://goo.gl/bT8a8M"/></p>
+
+    <h2 id="bugs">Bug Fixes</h2>
+
+    <p>Things will go wrong!</p>
+
+    <p>You have to imagine Python is the most strict English teacher in the
+    universe... yes, even more strict than that really strict one you have at
+    your school. Put simply, <strong>you have to type Python without any
+    mistakes</strong> for it to work.</p>
+
+    <p><img src="static/img/bug.gif" class="img-responsive center-block"
+        alt="An example of a bug."/></p>
+
+    <p>All programmers make mistakes and create bugs. It's a fact of life.
+    When you have a bug MicroPython tries to help you out: it will scroll a
+    message on its display. It may even include a line number. This message is
+    like the first clue in a treasure hunt, you have to figure out the rest
+    yourself.</p>
+
+    <p>Common bugs include <em>Syntax Errors</em> (which means you've typed it in
+    wrong) and <em>Name Errors</em> (that mean you've typed in correct Python, but
+    it can't work out what you're coding about).</p>
+
+    <p>If you're unsure what to do
+    <a href="http://microbit-micropython.readthedocs.org/en/latest/">go read the
+    MicroPython docs</a>. Alternatively, just ask someone who knows what they're
+    doing. If no such person is available you could just follow this handy flow
+    chart:</p>
+
+    <p><img src="static/img/tech_support_cheat_sheet.png"
+        class="img-responsive center-block"
+        alt="The XKCD tech support cheat sheet."/></p>
+
+    <h2 id="fun">Fun Stuff</h2>
+
+    <p><img src="static/img/comic5.png" class="img-responsive center-block"
+        alt="http://goo.gl/q5DAAW"/></p>
+
+    <p>Python makes it simple to write powerful programs. Can you work out what
+    this program does?</p>
+
+    <pre><code class="python"># Press button A for a fortune cookie.
+from microbit import *
+import random
+
 
 fortunes = [
     "Never step off a moving bus",
@@ -81,30 +277,28 @@ fortunes = [
     "My hovercraft is full of eels",
     ]
 
+
 while True:
-    if microbit.button_a.is_pressed():
-         i = microbit.random(len(fortunes))
-         cookie = fortunes[i]
-         microbit.display.scroll_string(cookie)</code></pre>
+    if button_a.is_pressed():
+        cookie = random.choice(fortunes)
+        display.scroll(cookie)</code></pre>
 
-    <p>More stylistic conventions as follows:</p>
+    <p>How could you improve it? What changes could you make?</p>
 
-    <p>This is some <code>embedded code</code> within a sentence.</p>
+    <p><img src="static/img/comic6.png" class="img-responsive center-block"
+        alt="http://goo.gl/9lcLAf"/></p>
 
-    <p>This is an example of <kbd>user input</code> in a sentence.</p>
+    <p>If you're looking for inspiration (robots, cool light displays and goofy
+    games) you should check out the
+    <a href="http://microworldtour.github.io/">World Tour</a>. These projects
+    were created by volunteers from the global Python community (of which you're
+    now a member!).</p>
 
-    <p>Variables look like this: <var>wibble</var> = <var>x</var> + 1</p>
-    <h2 id="code">Hack Code</h2>
-    <p>How to use an editor (dealing with both online and offline modes) and
-    flash the device.</p>
-    <h2 id="connect">Connect</h2>
-    <p>Connect to the REPL. Speak parseltongue!</p>
-    <h2 id="hacks">Fun Hacks</h2>
-    <p>Demonstration scripts that do funky things on the micro:bit.</p>
     <footer style="text-align: center; margin-top: 64px;">
         <p>
         <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a> This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://python.org/psf" property="cc:attributionName" rel="cc:attributionURL">The Python Software Foundation</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
         </p>
+        <p>The flowchart comic from XKCD is covered by <a href="https://xkcd.com/license.html">this license</a> and used with thanks to Randall Munroe.</p>
     </footer>
     </div><!-- /.container -->
     <!-- Bootstrap core JavaScript
