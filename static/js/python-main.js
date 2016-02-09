@@ -425,7 +425,6 @@ var TDev;
                 "    display.show(Image.HEART)\n" +
                 "    sleep(2000)\n");
         }
-        EDITOR.focus();
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
             // Handles what to do if the user changes the content of the editor.
@@ -478,6 +477,14 @@ var TDev;
         });
         // Log the status of the editor.
         console.log("[loaded] cloud version " + message.script.baseSnapshot + "(dated from: " + state.lastSave + ")");
+        // Bind the ESCAPE key.
+        $(document).keyup(function(e) {
+            if (e.keyCode == 27) { // ESCAPE
+                $('#link-log').focus();
+            }
+        });
+        // Focus on the element with TAB-STATE=1
+        $("#command-quit").focus();
     }
 
     // Save the code back to TouchDevelop.

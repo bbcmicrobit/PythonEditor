@@ -80,11 +80,15 @@ body, input {
 #script-name {
   font-size: 2rem;
   color: #1a354c;
+  overflow: hidden;
+  max-height: 90px;
 }
 
 #script-description {
   color: #336699;
   padding-bottom: 0.2rem;
+  overflow: hidden;
+  max-height: 22px;
 }
 
 #script-icons > *:not(:first-child) {
@@ -129,6 +133,12 @@ body, input {
   background-image: url("/static/img/triangle.svg");
   background-size: 100%;
   background-repeat: no-repeat;
+  text-align: center;
+  padding: 0px;
+}
+
+#script-icons .holder:focus, #script-icons #holder:active {
+  background-image: url("/static/img/triangle2.svg");
 }
 
 /* Popups */
@@ -248,6 +258,10 @@ body, input {
   background: #FFFFFF;
 }
 
+.roundbutton:focus, .roundbutton:active {
+  background-image: url("/static/img/triangle2.svg");
+}
+
 .roundlabel {
   padding-top: .3rem;
   padding-bottom: .3rem;
@@ -307,6 +321,7 @@ a.command:hover {
   #script-name {
     font-size: 1.2rem;
     font-weight: bold;
+    max-height: 50px;
   }
 
   .blocklyTreeRow {
@@ -341,7 +356,7 @@ a.command:hover {
 }
 
 .snippet-selection:hover {
-    background: #DDD;
+    background: #FFCC33;
     cursor: pointer;
 }
 

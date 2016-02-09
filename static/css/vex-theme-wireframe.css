@@ -128,12 +128,18 @@
   font-size: 1rem;
   background: white;
   color: black;
-  border: 2px solid black;
+  border: 6px solid #FFCC33;
   padding: 2em;
   position: relative;
   margin: 0 auto;
   max-width: 100%;
   width: 800px;
+  border-radius: 15px;
+}
+.vex.vex-theme-wireframe .vex-content i,
+.vex.vex-theme-wireframe .vex-content th,
+.vex.vex-theme-wireframe .vex-content strong {
+  color: #336699;
 }
 /* line 29, ../sass/vex-theme-wireframe.sass */
 .vex.vex-theme-wireframe .vex-content h1, .vex.vex-theme-wireframe .vex-content h2, .vex.vex-theme-wireframe .vex-content h3, .vex.vex-theme-wireframe .vex-content h4, .vex.vex-theme-wireframe .vex-content h5, .vex.vex-theme-wireframe .vex-content h6, .vex.vex-theme-wireframe .vex-content p, .vex.vex-theme-wireframe .vex-content ul, .vex.vex-theme-wireframe .vex-content li {
@@ -145,6 +151,7 @@
   top: 0;
   right: 0;
   cursor: pointer;
+  color: #FFCC33;
 }
 /* line 38, ../sass/vex-theme-wireframe.sass */
 .vex.vex-theme-wireframe .vex-close:before {
@@ -158,7 +165,7 @@
   text-align: center;
   top: 3px;
   right: 3px;
-  color: black;
+  color: #336699;
 }
 /* line 51, ../sass/vex-theme-wireframe.sass */
 .vex.vex-theme-wireframe .vex-close:hover:before, .vex.vex-theme-wireframe .vex-close:active:before {
