@@ -515,7 +515,8 @@ var TDev;
         doSave();
         var firmware = $("#firmware").text();
         var output = EDITOR.getHexFile(firmware);
-        if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+        var ua = navigator.userAgent.toLowerCase();
+        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
             alert("Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.");
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
