@@ -1,5 +1,5 @@
 /*
-0.0.3
+0.0.4
 
 A simple editor that targets MicroPython for the BBC micro:bit for the
 TouchDevelop platform from Microsoft.
