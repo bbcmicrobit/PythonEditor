@@ -1,5 +1,5 @@
 /*
-0.0.2
+0.0.3
 
 A simple editor that targets MicroPython for the BBC micro:bit for the
 TouchDevelop platform from Microsoft.
@@ -422,6 +422,11 @@ var TDev;
         EDITOR = pythonEditor('editor');
         currentVersion = message.script.baseSnapshot;
         var state = message.script.editorState;
+        setName(message.script.metadata.name);
+        setDescription(message.script.metadata.comment);
+        if (!message.script.metadata.comment)
+            // If there's no description, default to something sensible.
+            setDescription("A MicroPython script");
         if(message.script.scriptText.length > 0) {
             EDITOR.setCode(message.script.scriptText);
         } else {
@@ -432,6 +437,8 @@ var TDev;
                 "    display.scroll('Hello, World!')\n" +
                 "    display.show(Image.HEART)\n" +
                 "    sleep(2000)\n");
+            // Ensure the sane default is saved.
+            doSave(true);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
@@ -454,11 +461,6 @@ var TDev;
             statusIcon("pencil");
             dirty = true;
         });
-        setName(message.script.metadata.name);
-        setDescription(message.script.metadata.comment);
-        if (!message.script.metadata.comment)
-            // If there's no description, default to something sensible.
-            setDescription("A MicroPython script");
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
