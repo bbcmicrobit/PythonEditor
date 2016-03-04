@@ -520,7 +520,7 @@ var TDev;
     }
     // This function describes what to do when the download button is clicked.
     function doDownload() {
-        doSave(true);
+        doSave();
         var firmware = $("#firmware").text();
         var output = EDITOR.getHexFile(firmware);
         var ua = navigator.userAgent.toLowerCase();
@@ -569,7 +569,7 @@ var TDev;
     function setupButtons() {
         $("#command-quit").click(function () {
             console.log('Quitting');
-            doSave(true);
+            doSave();
             post({ type: 8 /* Quit */ });
         });
         $("#command-download").click(function () {
