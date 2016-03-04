@@ -437,8 +437,8 @@ var TDev;
                 "    display.scroll('Hello, World!')\n" +
                 "    display.show(Image.HEART)\n" +
                 "    sleep(2000)\n");
-            // Ensure the sane default is saved.
-            doSave(true);
+            // Marked as dirty so when the user exits the script is saved.
+            dirty = true;
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
