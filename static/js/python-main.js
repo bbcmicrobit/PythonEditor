@@ -1,4 +1,6 @@
 /*
+0.0.1
+
 A simple editor that targets MicroPython for the BBC micro:bit for the
 TouchDevelop platform from Microsoft.
 
@@ -232,16 +234,19 @@ var TDev;
             case 0 /* Initialise the editor */:
                 setupEditor(message);
                 setupButtons();
-                //setupCurrentVersion(message);
+                console.log('Initialise message');
                 break;
             case 4 /* Save Acknowledgement */:
                 saveAck(message);
+                console.log('Save acknowledgement');
                 break;
             case 7 /* Merge */:
                 promptMerge(message.merge);
+                console.log('Prompt merge');
                 break;
             case 11 /* NewBaseVersion */:
                 //newBaseVersion(message);
+                console.log('New base version');
                 break;
         }
     }
@@ -250,6 +255,7 @@ var TDev;
     function post(message) {
         if (!outer)
             console.error("Invalid state");
+        console.log('Posting to TouchDevelop: ', message);
         outer.postMessage(message, origin);
     }
 
@@ -311,6 +317,7 @@ var TDev;
 
     // Displays a status message.
     function statusMsg(s, st) {
+        console.log(s);
         var box = $("#log");
         var elt = $("<div>").addClass("status").text(s);
         if (st == 1 /* Error */)
@@ -413,6 +420,7 @@ var TDev;
     function setupEditor(message) {
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
+        currentVersion = message.script.baseSnapshot;
         var state = message.script.editorState;
         if(message.script.scriptText.length > 0) {
             EDITOR.setCode(message.script.scriptText);
@@ -512,7 +520,7 @@ var TDev;
     }
     // This function describes what to do when the download button is clicked.
     function doDownload() {
-        doSave();
+        doSave(true);
         var firmware = $("#firmware").text();
         var output = EDITOR.getHexFile(firmware);
         var ua = navigator.userAgent.toLowerCase();
@@ -560,7 +568,8 @@ var TDev;
     // Join up the buttons in the user interface with some functions for handling what to do when they're clicked.
     function setupButtons() {
         $("#command-quit").click(function () {
-            doSave();
+            console.log('Quitting');
+            doSave(true);
             post({ type: 8 /* Quit */ });
         });
         $("#command-download").click(function () {
