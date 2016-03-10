@@ -96,7 +96,8 @@ body, input {
   cursor: pointer;
 }
 
-.zoomer {
+.zoomer, 
+.saved-state {
   cursor: pointer !important;
 }
 
