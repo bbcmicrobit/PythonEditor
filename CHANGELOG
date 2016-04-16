@@ -1,0 +1,20 @@
+0.5
+---
+
+* Update to the latest version of MicroPython:
+    - Various minor code refactors.
+    - More efficient ticker (reduces overhead of display update by 90%).
+    - Add builtin set and frozenset types (from core Python).
+    - Don't show SystemExit or KeyboardInterrupt exceptions on the display.
+* Update bug in editor that caused the status icon not to update to cloud.
+* Added test script here: https://stage.microbit.co.uk/hoqumw
+
+0.4
+---
+
+Initial tested public release.
+
+0.1-0.3
+-------
+
+Private test versions.
