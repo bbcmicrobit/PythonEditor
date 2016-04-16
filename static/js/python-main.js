@@ -1,5 +1,5 @@
 /*
-0.0.4
+0.0.5
 
 A simple editor that targets MicroPython for the BBC micro:bit for the
 TouchDevelop platform from Microsoft.
@@ -17,7 +17,7 @@ targeting MicroPython).
 * Renamed various bits from blockly -> Python.
 * Made use of the Ace JavaScript editor.
 * Exposed code snippets in a pop-up.
-* Switched on the merge functionality.
+* Switched off the merge functionality.
 
 This editor uses the TouchDevelop platform for loading and saving work. It will
 not respond to any other sort of messaging from TouchDevelop. It does not
