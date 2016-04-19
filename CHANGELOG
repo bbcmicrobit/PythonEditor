@@ -8,6 +8,8 @@
     - Don't show SystemExit or KeyboardInterrupt exceptions on the display.
 * Update bug in editor that caused the status icon not to update to cloud.
 * Added test script here: https://stage.microbit.co.uk/hoqumw
+* Revised button-press code to be simpler.
+* Minor documentation updates.
 
 0.4
 ---
