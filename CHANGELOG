@@ -1,3 +1,19 @@
+0.6
+---
+
+* Remove TouchDevelop specific elements.
+* Make a stand-alone version of the editor.
+* Simplification of the UI.
+* Add a "share" button to create a tiny URL to point at the current script.
+* Use query strings to override the script name, comment and code.
+* Update to the latest version of MicroPython:
+    - Various minor refactors.
+    - Audio
+    - Speech
+    - Radio
+    - input() builtin
+* Documentation work / tidy up.
+
 0.5
 ---
 

@@ -131,7 +131,7 @@ body, input {
   flex-direction: column;
   color: #336699;
   text-decoration: none;
-  background-image: url("/static/img/triangle.svg");
+  background-image: url("../img/triangle.svg");
   background-size: 100%;
   background-repeat: no-repeat;
   text-align: center;
@@ -139,7 +139,7 @@ body, input {
 }
 
 #script-icons .holder:focus, #script-icons #holder:active {
-  background-image: url("/static/img/triangle2.svg");
+  background-image: url("../img/triangle2.svg");
 }
 
 /* Popups */
@@ -237,7 +237,7 @@ body, input {
   flex-direction: column;
   color: #336699;
   text-decoration: none;
-  background-image: url("/static/img/triangle.svg");
+  background-image: url("../img/triangle.svg");
   background-size: 100%;
   background-repeat: no-repeat;
   min-width: 90px;
@@ -252,7 +252,7 @@ body, input {
   margin-bottom: 0;
   text-align: center;
   font-size: 2.6rem;
-  line-height: 3.8rem;
+  line-height: 4.4rem;
   padding: .1em;
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
   color: #336699;
@@ -260,7 +260,7 @@ body, input {
 }
 
 .roundbutton:focus, .roundbutton:active {
-  background-image: url("/static/img/triangle2.svg");
+  background-image: url("../img/triangle2.svg");
 }
 
 .roundlabel {

@@ -1,5 +1,5 @@
-BBC micro:bit MicroPython Editor for TouchDevelop
-=================================================
+BBC micro:bit MicroPython Editor for Browsers
+=============================================
 
 This project is an editor that targets the MicroPython
 (http://micropython.org) version of the Python programming language
@@ -9,107 +9,55 @@ BBC's micro:bit device (https://en.wikipedia.org/wiki/Micro_Bit).
 Developer Setup
 ---------------
 
-This editor is written to be embedded in Microsoft's TouchDevelop
-(https://www.touchdevelop.com/) platform. It means this project is served
-within an iFrame in TouchDevelop. For this to work for development purposes,
-you'll need both TouchDevelop and this project serving locally.
+This editor works with any modern web browser.
 
-Apologies for the "stand on one leg, stick your finger in your ear then
-whistle 'Yankee Doodle'" nature of these instructions, but they must be
-completed in order and to the very end before you'll have a working local
-development environment.
+Assuming you have Python 3 installed you can serve the editor like this::
 
-Honest, it's worth it! TouchDevelop is cool. ;-)
+    $ ./show.sh
+    http://localhost:8000/editor.html
+    Serving HTTP on 0.0.0.0 port 8000 ...
 
-Install TouchDevelop
-++++++++++++++++++++
+As the script tells us, point your browser to http://localhost:8000/editor.html.
 
-In order to set up a working local development environment you will need to
-download and install the (open source) TouchDevelop platform. It's a node.js
-application that's hosted on GitHub (https://github.com/Microsoft/TouchDevelop)
-and the setup instructions can be found in the README. For this to work you
-will need GIT and node.js installed.
+It's also possible to run the editor directly from the file system like this,
+for example::
 
-They essentially boil down to the following steps:
+    $ firefox editor.html
 
-* clone a copy of the repo::
+Or by double-clicking on the ``editor.html`` file from your file manager.
 
-    git clone https://github.com/Microsoft/TouchDevelop.git
+**IMPORTANT**: When the editor is run from the file system, the "sharing"
+button is hidden. Because of security reasons, many local browsers won't allow
+it to function correctly unless the editor is properly served from a network
+domain rather than directly from the file system.
 
-* change to the TouchDevelop directory::
+Tests
++++++
 
-    cd TouchDevelop
+Simply point your browser to the ``tests.html`` file.
 
-* install dependencies::
-
-    npm install jake -g
-    npm install tsd@next -g
-    tsd reinstall
-    npm install
-
-To build and run the "vanilla" (i.e. non-microbit branded) version of
-TouchDevelop you'll need to do one of the following:
-
-* To build the site (it's written in Microsoft's TypeScript language [http://www.typescriptlang.org/] that compiles to Javascript)::
-
-    jake
-
-* To build and run locally::
-
-    jake local
-
-* To clean::
-
-    jake clean
-
-
-Configure the Editor
-++++++++++++++++++++
-
-TouchDevelop expects its embedded editors to be served from the domain it
-expects. In the case of the Python editor for local development you simply
-run it on localhost:8000.
-
-If you're using Python 2 this can be achieved by running the following command
-in the root directory of this project::
-
-    $ python -m SimpleHTTPServer
-
-For Python 3 the command is::
-
-    $ python -m http.server
-
-Please make sure you restart your locally running TouchDevelop instance.
-
-Testing Your Setup
-++++++++++++++++++
-
-Almost there!
-
-As mentioned above, you should visit the following URL to see the locally
-running version of TouchDevelop:
-
-http://localhost:4242/editor/local/mbit.html?lite=stage.microbit.co.uk
-
-Click on "Create Code".
-
-In the resulting popup choose the Python editor from the selection you're
-presented with.
-
-You should find yourself in the Python editor..! See the "Usage" section
-below for details on what you can do.
+Tests are in the ``tests`` directory with their own README explaining how they
+work.
 
 Code
 ++++
 
 * ace - a directory containing the Ace editor (http://ace.c9.io).
-* design - a directory containing design resources created by Steve Hawkes.
-* editor.html - the page to be embedded within the iFrame in TouchDevelop.
+* editor.html - the page to be loaded by your browser.
 * firmware.hex - copy of the "vanilla" MicroPython firmware used by the editor.
 * help.html - a single page user facing help page.
+* python-main.js - the JavaScript code for running the editor.
 * tests.html - the browser based test runner.
+* show.sh - a script that allows you to serve the editor from localhost. Requires Python 3.
 * static - contains css, js and img sub-directories.
 * tests - contains the Python specific test suite.
+
+Contributing
+++++++++++++
+
+We love bug reports, contributions and help. Please read the CONTRIBUTING.rst
+file for how we work as a community and our expectations for workflow, code and
+behaviour.
 
 Usage
 -----
@@ -118,39 +66,35 @@ The Python editor is based upon the "Ace" JavaScript editor (http://ace.c9.io)
 and includes syntax highlighting, code folding and (semi) intelligent
 auto-indentation.
 
-Following the TouchDevelop conventions, naming scripts is done automatically -
-it'll be something like, "distinct script" or "awesome script 2". This also
-applies to the description - it's automatically set to "A MicroPython script".
-You can change these at any time by clicking on them.
-
 All new scripts default to something simple and sensible.
 
-The layout and functionality apes Microsoft's own editors. Importantly this
-includes saving scripts to Microsoft's cloud and sharing them with others via
-TouchDevelop's publish functionality.
+The default name for a new script is ``microbit``. The default comment is
+``A MicroPython script``. The default code is a short program to repeatedly
+display ``Hello, World!`` followed by a heart. You can change these at any time
+by clicking on them.
 
-The four buttons at the top left, act as follows:
+It is possible to override the default name, comment and code via query string
+arguments in the URL. For example, appending ``?name=My%20script`` to the
+editor's URL will update the name of the script. Furthermore, appending
+``?name=My%20script&comment=A%20different%20comment`` will override both the
+name and comment. Please note that all query string arguments must be correctly
+URL encoded - this especially applies to code. Use the "share" button in the
+editor to generate and share such URLs with appended query strings.
 
-* My Scripts - returns you to the main menu listing all your scripts.
+The layout and functionality is deliberately simple. The four buttons at the
+top left, act as follows:
+
 * Download - creates a .hex file locally in the user's browser and prompts the user to download it. The resulting file should be copied over to the micro:bit device just like when using all the other editors. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py.
 * Snippets - allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc). They are triggered by typing a keyword followed by TAB. For example, type "wh" followed by TAB to insert a while... loop. Clicking on the code snippets button opens up a modal dialog window containing instructions and a table of the available snippets along with their trigger and a short and simple description.
 * Help - opens a single page in a new tab that contains user-facing help.
+* Share - generate a short URL for the script. Share this with others. This
+button will be missing if run from the local file system.
 
-Directly next to the four large buttons are four smaller icons. In the first
-column are zoom in and zoom out buttons that make it easy for teachers to
-display code via a projector. In the second column the top icon indicates the
-script's status (changed, saved locally, saved to the cloud) and the other,
-shaped like a bug, will display a log of the events that occured during the
-current session of using the editor.
-
-In other TouchDevelop editors there are "compile" and "run" buttons. These
-target the TouchDevelop platform to create an AST and either use a third party
-service contacted via the network to create a downloadable .hex
-file (for the former) or run the code on an embedded simulator (for the
-latter).
+Directly next to the four large buttons are two smaller icons. The zoom in and
+zoom out buttons that make it easy for teachers to display code via a
 
 Since we're targeting MicroPython instead, we simply allow the user to
-download their locally generated .hex file. They simply drag the resulting
+download their locally generated .hex file. Simply drag the resulting
 file onto the device. If you connect to the device (and the script ISN'T in an
 infinite loop) you'll be presented with the Python REPL. If there was an error
 you should also see an error message.
@@ -174,17 +118,20 @@ The hidden MicroPython hex is just over 600k. While this sounds large, it's
 relatively small when you consider:
 
 * The Guardian's front page is around 1.5mb
-* compression is built into the server
-* the web has caching built in (we should trust it)
-* we actually want kids to view source and find the .hex file in as raw a form as possible.
-
-Finally, we have removed the device simulator from the right hand side and
-put something "Pythonic" in its place.
+* Compression is built into the server
+* The web has caching built in (we should trust it)
+* We actually want kids to view source and find the .hex file in as raw a form as possible.
 
 Documentation
 -------------
 
 For documentation for this project - you're reading it. ;-)
 
-For in-editor documentation aimed at the user, this is to be done but will
-encompass both code snippets and generic help in the help.html file.
+For in-editor documentation aimed at the user, this is in the help.html file.
+
+Legacy
+------
+
+This project was born from a TouchDevelop based editor created by Nicholas
+H.Tollervey for the BBC. This is no longer maintained, although you can find it
+still on the ``touch-develop-legacy`` branch in this repository.

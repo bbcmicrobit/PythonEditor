@@ -5,7 +5,7 @@ var faux_editor = pythonEditor('fooeditor');
 
 
 // Test suite for the pythonEditor object.
-describe("A Python editor for Touch Develop:", function() {
+describe("An editor for MicroPython on the BBC micro:bit:", function() {
 
     describe("The editor initialises as expected.", function() {
 
