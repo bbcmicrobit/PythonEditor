@@ -98,7 +98,7 @@ as root, as shockingly demonstrated below)::
 
     $ sudo python -m serial.tools.miniterm -b 115200 /dev/ttyACM0
 
-Remember to replace tty/ACM0 with the appropriate device for your computer.
+Remember to replace ``/dev/ttyACM0`` with the appropriate device for your computer.
 
 The .hex file is generated in the following way:
 
