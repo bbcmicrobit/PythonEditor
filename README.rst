@@ -87,17 +87,10 @@ top left, act as follows:
 * Download - creates a .hex file locally in the user's browser and prompts the user to download it. The resulting file should be copied over to the micro:bit device just like when using all the other editors. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py.
 * Snippets - allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc). They are triggered by typing a keyword followed by TAB. For example, type "wh" followed by TAB to insert a while... loop. Clicking on the code snippets button opens up a modal dialog window containing instructions and a table of the available snippets along with their trigger and a short and simple description.
 * Help - opens a single page in a new tab that contains user-facing help.
-* Share - generate a short URL for the script. Share this with others. This
-button will be missing if run from the local file system.
+* Share - generate a short URL for the script. Share this with others. This button will be missing if run from the local file system.
 
 Directly next to the four large buttons are two smaller icons. The zoom in and
-zoom out buttons that make it easy for teachers to display code via a
-
-Since we're targeting MicroPython instead, we simply allow the user to
-download their locally generated .hex file. Simply drag the resulting
-file onto the device. If you connect to the device (and the script ISN'T in an
-infinite loop) you'll be presented with the Python REPL. If there was an error
-you should also see an error message.
+zoom out buttons that make it easy for teachers to display code via a projector.
 
 If you plug in your micro:bit and want to get the REPL you'll need to install
 pyserial and run the following command with the appropriate permissions (such
