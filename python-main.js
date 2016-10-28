@@ -119,6 +119,50 @@ function pythonEditor(id) {
         return firmware.replace(insertion_point, hexlified_python);
     }
 
+    // Takes a hex blob and turns it into a decoded string.
+    editor.unhexlify = function(data) {
+
+        var hex2str = function(str) {
+            var result = '';
+            for (var i=0, l=str.length; i<l; i+=2) {
+                result += String.fromCharCode(parseInt(str.substr(i, 2), 16));
+            }
+            return result;
+        };
+
+        var lines = data.trimRight().split(/\r?\n/);
+        if (lines.length > 0) {
+            var output = [];
+            for (var i=0; i<lines.length; i++) {
+                var line = lines[i];
+                output.push(hex2str(line.slice(9, -2)));
+            }
+            output[0] = output[0].slice(4);
+            var last = output.length - 1;
+            output[last] = output[last].replace(/\0/g, '');
+            return output.join('');
+        } else {
+            return '';
+        }
+    }
+
+    // Given an existing hex file, return the Python script contained therein.
+    editor.extractScript = function(hexfile) {
+        var hex_lines = hexfile.trimRight().split(/\r?\n/);
+        var start_line = hex_lines.lastIndexOf(':020000040003F7');
+        if (start_line > 0) {
+            var lines = hex_lines.slice(start_line + 1, -2);
+            var blob = lines.join('\n');
+            if (blob=='') {
+                return '';
+            } else {
+                return this.unhexlify(blob);
+            }
+        } else {
+            return '';
+        }
+    }
+
     return editor;
 };
 
@@ -222,6 +266,16 @@ function web_editor() {
                 $('#link-log').focus();
             }
         });
+        // Bind drag and drop into editor.
+        $('#editor').on('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        $('#editor').on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
     }
@@ -238,6 +292,20 @@ function web_editor() {
             var filename = getName().replace(" ", "_");
             var blob = new Blob([output], {type: "application/octet-stream"});
             saveAs(blob, filename + ".hex");
+        }
+    }
+
+    // This function describes what to do when the save button is clicked.
+    function doSave() {
+        var output = EDITOR.getCode();
+        var ua = navigator.userAgent.toLowerCase();
+        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+            alert("Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.");
+            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+        } else {
+            var filename = getName().replace(" ", "_");
+            var blob = new Blob([output], {type: "text/plain"});
+            saveAs(blob, filename + ".py");
         }
     }
 
@@ -303,10 +371,43 @@ function web_editor() {
         });
     }
 
+    function doDrop(e) {
+        // Triggered when a user drops a file onto the editor.
+        e.stopPropagation();
+        e.preventDefault();
+        var file = e.originalEvent.dataTransfer.files[0];
+        var ext = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : null;
+        var reader = new FileReader();
+        if (ext == 'py') {
+            setName(file.name.replace('.py', ''));
+            setDescription('Extracted from a Python file');
+            reader.onload = function(e) {
+                EDITOR.setCode(e.target.result);
+            }
+            reader.readAsText(file);
+            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        } else if (ext == 'hex') {
+            setName(file.name.replace('.hex', ''));
+            setDescription('Extracted from a hex file');
+            reader.onload = function(e) {
+                var code = EDITOR.extractScript(e.target.result);
+                if (code.length < 8192) {
+                    EDITOR.setCode(code);
+                }
+            }
+            reader.readAsText(file);
+            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        }
+        $('#editor').focus();
+    }
+
     // Join up the buttons in the user interface with some functions for handling what to do when they're clicked.
     function setupButtons() {
         $("#command-download").click(function () {
             doDownload();
+        });
+        $("#command-save").click(function () {
+            doSave();
         });
         $("#command-snippet").click(function () {
             doSnippets();

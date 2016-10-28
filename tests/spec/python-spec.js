@@ -163,4 +163,50 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             expect(result).toEqual(expected);
         });
     });
+
+    describe("It's possible to extract scripts from a hex file.", function() {
+
+        var editor;
+
+        beforeEach(function() {
+            affix("#editor");
+            editor = pythonEditor('editor');
+        });
+
+        it("The editor converts from Intel's hex format to text", function() {
+            var raw_hex = ":10E000004D501700646973706C61792E7363726F81\n" +
+                ":10E010006C6C282248656C6C6F222900000000009F\n";
+            var result = editor.unhexlify(raw_hex);
+            var expected = 'display.scroll("Hello")';
+            expect(result).toEqual(expected);
+        });
+
+        it("A script is extracted from a hex file.", function() {
+            var raw_hex = ":10E000004D500B004D6963726F507974686F6E00EC\n" +
+                ":020000040003F7\n" +
+                ":10B2C00021620100E1780100198001000190010074\n" +
+                ":04B2D0000D0100006C\n" +
+                ":020000040003F7\n" +
+                ":10E000004D501700646973706C61792E7363726F81\n" +
+                ":10E010006C6C282248656C6C6F222900000000009F\n" +
+                ":04000005000153EDB6\n" +
+                ":00000001FF";
+            var result = editor.extractScript(raw_hex);
+            var expected = 'display.scroll("Hello")';
+            expect(result).toEqual(expected);
+        });
+
+        it("If no script in hex, return empty string.", function() {
+            var raw_hex = ":10E000004D500B004D6963726F507974686F6E00EC\n" +
+                ":10B2C00021620100E1780100198001000190010074\n" +
+                ":04B2D0000D0100006C\n" +
+                ":10E000004D501700646973706C61792E7363726F81\n" +
+                ":10E010006C6C282248656C6C6F222900000000009F\n" +
+                ":04000005000153EDB6\n" +
+                ":00000001FF";
+            var result = editor.extractScript(raw_hex);
+            var expected = '';
+            expect(result).toEqual(expected);
+        });
+    });
 });
