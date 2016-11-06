@@ -173,12 +173,16 @@ the editor to the DOM (web-page).
 See the comments in-line for more information.
 */
 function web_editor() {
-    // Sets the description associated with the code displayed in the UI
+
+    // Indicates if there are unsaved changes to the content of the editor.
+    var dirty = false;
+
+    // Sets the description associated with the code displayed in the UI.
     function setDescription(x) {
         $("#script-description").text(x);
     }
 
-    // Sets the name associated with the code displayed in the UI
+    // Sets the name associated with the code displayed in the UI.
     function setName(x) {
         $("#script-name").text(x);
     }
@@ -260,6 +264,28 @@ function web_editor() {
             e.stopPropagation();
             zoomOut();
         });
+        window.setTimeout(function () {
+            // What to do if the user changes the content of the editor.
+            EDITOR.on_change(function () {
+                dirty = true;
+            });
+        }, 1);
+        // Handles what to do if the name is changed.
+        $("#script-name").on("input keyup blur", function () {
+            dirty = true;
+        });
+        // Handles what to do if the description is changed.
+        $("#script-description").on("input keyup blur", function () {
+            dirty = true;
+        });
+        // Describes what to do if the user attempts to close the editor without first saving their work.
+        window.addEventListener("beforeunload", function (e) {
+            if (dirty) {
+                var confirmationMessage = "Some of your changes have not been saved. Quit anyway?";
+                (e || window.event).returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
@@ -307,6 +333,7 @@ function web_editor() {
             var blob = new Blob([output], {type: "text/plain"});
             saveAs(blob, filename + ".py");
         }
+        dirty = false;
     }
 
     // This function describes what to do when the snippets button is clicked.
