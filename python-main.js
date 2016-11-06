@@ -1,5 +1,5 @@
 /*
-0.0.6
+0.0.7
 
 A simple editor that targets MicroPython for the BBC micro:bit.
 
