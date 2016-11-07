@@ -1,12 +1,12 @@
-0.7
----
+0.0.7
+-----
 
 * If there's unsaved work, ask user for confirmation if moving away from editor.
 * Add save button to download raw Python script.
 * Add drag to load for Python scripts and hex files.
 
-0.6
----
+0.0.6
+-----
 
 * Remove TouchDevelop specific elements.
 * Make a stand-alone version of the editor.
@@ -21,8 +21,8 @@
     - input() builtin
 * Documentation work / tidy up.
 
-0.5
----
+0.0.5
+-----
 
 * Update to the latest version of MicroPython:
     - Various minor code refactors.
@@ -34,8 +34,8 @@
 * Revised button-press code to be simpler.
 * Minor documentation updates.
 
-0.4
----
+0.0.4
+-----
 
 Initial tested public release.
 
