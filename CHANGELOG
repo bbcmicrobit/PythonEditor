@@ -1,3 +1,10 @@
+0.7
+---
+
+* If there's unsaved work, ask user for confirmation if moving away from editor.
+* Add save button to download raw Python script.
+* Add drag to load for Python scripts and hex files.
+
 0.6
 ---
 
