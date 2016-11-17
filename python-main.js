@@ -70,6 +70,10 @@ function pythonEditor(id) {
     - returns hexlified string, with newlines between lines
     */
     editor.hexlify = function(script) {
+		if (script.length >= 8192) {
+			alert("Your script is too long!");
+			return;
+		}
         function hexlify(ar) {
             var result = '';
             for (var i = 0; i < ar.length; ++i) {
