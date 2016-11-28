@@ -8,6 +8,11 @@
     font-size: 22px;
 }
 
+#blockly {
+    display: none;
+    min-width: 570px;
+}
+
 /* Re-usable, generic rules */
 .hidden {
   display: none !important;
@@ -188,7 +193,7 @@ body, input {
 }
 
 #commands {
-  min-width: 567px;
+  min-width: 600px;
 }
 
 #commands a {

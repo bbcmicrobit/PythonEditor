@@ -336,6 +336,37 @@ function web_editor() {
         dirty = false;
     }
 
+    function doBlockly() {
+        // Triggered when a user clicks the blockly button. Toggles blocks on/off.
+        var blockly = $('#blockly');
+        if(blockly.is(':visible')) {
+            dirty = false;
+            blockly.hide();
+            editor.ACE.setReadOnly(false);
+        } else {
+            if(dirty) {
+                var msg = "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?";
+                if(!confirm(msg)) {
+                    return;
+                }
+            }
+            editor.ACE.setReadOnly(true);
+            blockly.show();
+            blockly.css('width', '33%');
+            blockly.css('height', '100%');
+            if(blockly.find('div.injectionDiv').length === 0) {
+                var workspace = Blockly.inject('blockly', {
+                    toolbox: document.getElementById('blockly-toolbox')
+                });
+                function myUpdateFunction(event) {
+                    var code = Blockly.Python.workspaceToCode(workspace);
+                    EDITOR.setCode(code);
+                }
+                workspace.addChangeListener(myUpdateFunction);
+            }
+        };
+    }
+
     // This function describes what to do when the snippets button is clicked.
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
@@ -435,6 +466,9 @@ function web_editor() {
         });
         $("#command-save").click(function () {
             doSave();
+        });
+        $("#command-blockly").click(function () {
+            doBlockly();
         });
         $("#command-snippet").click(function () {
             doSnippets();

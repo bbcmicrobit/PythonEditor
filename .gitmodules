@@ -1,3 +1,6 @@
 [submodule "blockly"]
 	path = blockly
 	url = git@github.com:google/blockly.git
+[submodule "microbit_blocks"]
+	path = microbit_blocks
+	url = git@github.com:PyBlocks/microbit_blocks.git
