@@ -11,6 +11,12 @@ Developer Setup
 
 This editor works with any modern web browser.
 
+To grab the GIT submodules you should issue the following command::
+
+    git submodule update --init --recursive
+
+**THIS NEEDS TO BE DONE BEFORE ANYTHING ELSE WILL WORK.**
+
 Assuming you have Python 3 installed you can serve the editor like this::
 
     $ ./show.sh
@@ -43,14 +49,21 @@ Code
 ++++
 
 * ace - a directory containing the Ace editor (http://ace.c9.io).
+* blockly - a GIT sub-module containing Google's blockly project.
+* CHANGELOG - a record of how things have changed between versions.
+* CONTRIBUTING.rst - a guide for people who want to contribute (you should!).
 * editor.html - the page to be loaded by your browser.
 * firmware.hex - copy of the "vanilla" MicroPython firmware used by the editor.
 * help.html - a single page user facing help page.
+* LICENSE - a copy of the MIT software license that covers this code.
+* microbit_blocks - a GIT sub-module containing custom MicroPython blocks.
 * python-main.js - the JavaScript code for running the editor.
+* README.rst - this file, the clue is in the name. ;-)
 * tests.html - the browser based test runner.
 * show.sh - a script that allows you to serve the editor from localhost. Requires Python 3.
 * static - contains css, js and img sub-directories.
 * tests - contains the Python specific test suite.
+* tests.html - point your browser at this file to run the tests.
 
 Contributing
 ++++++++++++
@@ -81,16 +94,21 @@ name and comment. Please note that all query string arguments must be correctly
 URL encoded - this especially applies to code. Use the "share" button in the
 editor to generate and share such URLs with appended query strings.
 
-The layout and functionality is deliberately simple. The four buttons at the
+The layout and functionality is deliberately simple. The buttons at the
 top left, act as follows:
 
-* Download - creates a .hex file locally in the user's browser and prompts the user to download it. The resulting file should be copied over to the micro:bit device just like when using all the other editors. The filename will be the name of the script with spaces replaced by "_" and ending in .py. So "extraordinary script" is saved as extraordinary_script.py.
+* Download - creates a .hex file locally in the user's browser and prompts the user to download it. The resulting file should be copied over to the micro:bit device just like when using all the other editors. The filename will be the name of the script with spaces replaced by "_" and ending in .hex. So "extraordinary script" is saved as extraordinary_script.hex.
+* Save - download a copy of the Python source code. The filename will be the name of the script with spaces replaced by "_" and ending in .py.
+* Blockly - arrange visual blocks to quickly create Python code. Moving such blocks will re-write your Python code and you may lose work. Furthermore, the arrangement of blocks is currently not saved, just the resulting Python code as described above.
 * Snippets - allow user's to write code from pre-defined Python fragments (functions, loops, if...else etc). They are triggered by typing a keyword followed by TAB. For example, type "wh" followed by TAB to insert a while... loop. Clicking on the code snippets button opens up a modal dialog window containing instructions and a table of the available snippets along with their trigger and a short and simple description.
 * Help - opens a single page in a new tab that contains user-facing help.
 * Share - generate a short URL for the script. Share this with others. This button will be missing if run from the local file system.
 
-Directly next to the four large buttons are two smaller icons. The zoom in and
+Directly next to the large buttons are two smaller icons. The zoom in and
 zoom out buttons that make it easy for teachers to display code via a projector.
+
+If you have a Python script or hex file on your local computer, you can load it
+into the editor by dragging it onto the text area.
 
 If you plug in your micro:bit and want to get the REPL you'll need to install
 pyserial and run the following command with the appropriate permissions (such
@@ -114,6 +132,13 @@ relatively small when you consider:
 * Compression is built into the server
 * The web has caching built in (we should trust it)
 * We actually want kids to view source and find the .hex file in as raw a form as possible.
+
+Configuration
+-------------
+
+To launch the editor you'll need to pass in a ``config`` JavaScript object
+containing translation strings and feature flags. Take a look in the
+``editor.html`` file to see how this is done.
 
 Documentation
 -------------

@@ -1,3 +1,14 @@
+0.0.8
+-----
+
+* Add blockly support (requires GIT sub-modules).
+* Add config object containing translation strings.
+* Add feature flags to the config object.
+* Check for size of Python script before flashing (added tests for this too).
+* Move editor instantiation to within the HTML.
+* Updated help to include latest UI changes.
+* Updated README in light of changes above.
+
 0.0.7
 -----
 
