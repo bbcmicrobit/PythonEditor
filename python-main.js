@@ -1,5 +1,5 @@
 /*
-0.0.7
+0.0.8
 
 A simple editor that targets MicroPython for the BBC micro:bit.
 
@@ -89,7 +89,10 @@ function pythonEditor(id) {
         for (var i = 0; i < script.length; ++i) {
             data[4 + i] = script.charCodeAt(i);
         }
-        // TODO check data.length < 0x2000
+        // check data.length < 0x2000
+        if(data.length > 8192) {
+            throw new RangeError('Too long');
+        }
         // convert to .hex format
         var addr = 0x3e000; // magic start address in flash
         var chunk = new Uint8Array(5 + 16);
@@ -172,7 +175,7 @@ the editor to the DOM (web-page).
 
 See the comments in-line for more information.
 */
-function web_editor() {
+function web_editor(config) {
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
@@ -227,6 +230,20 @@ function web_editor() {
         setFontSize(fontSize);
     };
 
+    // Checks for feature flags in the config object and shows/hides UI
+    // elements as required.
+    function setupFeatureFlags() {
+        if(config.flags.blocks) {
+            $("#command-blockly").removeClass('hidden');
+        }
+        if(config.flags.snippets) {
+            $("#command-snippet").removeClass('hidden');
+        }
+        if(config.flags.share) {
+            $("#command-share").removeClass('hidden');
+        }
+    };
+
     // This function is called by TouchDevelop to cause the editor to be initialised. It sets things up so the user sees their code or, in the case of a new program, uses some sane defaults.
     function setupEditor(message) {
         // Setup the Ace editor.
@@ -247,12 +264,7 @@ function web_editor() {
             EDITOR.setCode(message.code);
         } else {
             // A sane default starting point for a new script.
-            EDITOR.setCode("# Add your Python code here. E.g.\n" +
-                "from microbit import *\n\n\n" +
-                "while True:\n" +
-                "    display.scroll('Hello, World!')\n" +
-                "    display.show(Image.HEART)\n" +
-                "    sleep(2000)\n");
+            EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         // Configure the zoom related buttons.
@@ -281,7 +293,7 @@ function web_editor() {
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
-                var confirmationMessage = "Some of your changes have not been saved. Quit anyway?";
+                var confirmationMessage = config.translate.confirms.quit;
                 (e || window.event).returnValue = confirmationMessage;
                 return confirmationMessage;
             }
@@ -309,10 +321,15 @@ function web_editor() {
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         var firmware = $("#firmware").text();
-        var output = EDITOR.getHexFile(firmware);
+        try {
+            var output = EDITOR.getHexFile(firmware);
+        } catch(e) {
+            alert(config.translate.alerts.length);
+            return;
+        }
         var ua = navigator.userAgent.toLowerCase();
         if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-            alert("Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.");
+            alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
             var filename = getName().replace(" ", "_");
@@ -326,7 +343,7 @@ function web_editor() {
         var output = EDITOR.getCode();
         var ua = navigator.userAgent.toLowerCase();
         if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-            alert("Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.");
+            alert(config.translate.alerts.save);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
             var filename = getName().replace(" ", "_");
@@ -345,8 +362,7 @@ function web_editor() {
             editor.ACE.setReadOnly(false);
         } else {
             if(dirty) {
-                var msg = "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?";
-                if(!confirm(msg)) {
+                if(!confirm(config.translate.confirms.blocks)) {
                     return;
                 }
             }
@@ -375,13 +391,17 @@ function web_editor() {
         var template = $('#snippet-template').html();
         Mustache.parse(template);
         var context = {
+            'title': config.translate.code_snippets.title,
+            'description': config.translate.code_snippets.description,
+            'instructions': config.translate.code_snippets.instructions,
+            'trigger_heading': config.translate.code_snippets.trigger_heading,
+            'description_heading': config.translate.code_snippets.description_heading,
             'snippets': snippetManager.snippetMap.python,
             'describe': function() {
                 return function(text, render) {
-                    name = render(text);
-                    description = name.substring(name.indexOf(' - '),
-                                                 name.length);
-                    return description.replace(' - ', '');
+                    var name = render(text);
+                    var trigger = name.split(' - ')[0];
+                    return config.translate.code_snippets[trigger];
                 }
             }
         }
@@ -419,7 +439,7 @@ function web_editor() {
         }).done(function( data ) {
             console.log(data);
             vex.open({
-                content: Mustache.render(template, {})
+                content: Mustache.render(template, config.translate.share)
             })
             $('#direct-link').attr('href', data.id);
             $('#direct-link').text(data.id);
@@ -438,7 +458,7 @@ function web_editor() {
         var reader = new FileReader();
         if (ext == 'py') {
             setName(file.name.replace('.py', ''));
-            setDescription('Extracted from a Python file');
+            setDescription(config.translate.drop.python);
             reader.onload = function(e) {
                 EDITOR.setCode(e.target.result);
             }
@@ -446,7 +466,7 @@ function web_editor() {
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
             setName(file.name.replace('.hex', ''));
-            setDescription('Extracted from a hex file');
+            setDescription(config.translate.drop.hex);
             reader.onload = function(e) {
                 var code = EDITOR.extractScript(e.target.result);
                 if (code.length < 8192) {
@@ -495,9 +515,8 @@ function web_editor() {
         return result;
     }
 
+    setupFeatureFlags();
     setupEditor(get_qs_context());
     setupButtons();
 };
 
-// Call the web_editor function to start the editor running.
-web_editor();

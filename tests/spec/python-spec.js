@@ -149,6 +149,19 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             expect(hexified).toEqual(expected);
         });
 
+        it("The editor complains if the Python script is greater than 8k in length.", function() {
+            var hex_fail = function() {
+                var result = editor.hexlify(new Array(8189).join('a'));
+            }
+            expect(hex_fail).toThrowError(RangeError, 'Too long');
+        });
+
+        it("The editor is fine if the Python script is 8k in length.", function() {
+            var hexified = editor.hexlify(new Array(8188).join('a'));
+            expect(hexified).not.toBe(null);
+        });
+
+
         it("A hex file is generated from the script and template firmware.",
            function() {
             var template_hex = ":10E000004D500B004D6963726F507974686F6E00EC\n" +

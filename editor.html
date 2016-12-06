@@ -69,12 +69,9 @@ Nicholas and Damien.
     </head>
     <body>
         <script id="snippet-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-cogs"></i> <strong>Code Snippets</strong></h2>
-            <p>Code snippets are short blocks of code to re-use in your
-            own programs. There are snippets for most common things you'll
-            want to do using MicroPython.</p>
-            <p>Select one of the snippets below, or type the snippet's
-            <em>trigger</em> then tap the TAB key.</p>
+            <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
+            <p>{{ description }}</p>
+            <p>{{ instructions }}</p>
 
             <table class="snippet-table">
                 <tr>
@@ -91,8 +88,8 @@ Nicholas and Damien.
 
         </script>
         <script id="share-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-share-alt"></i> <strong>Share Code</strong></h2>
-            <p>This link points to your code:
+            <h2><i class="fa fa-share-alt"></i> <strong>{{ title }}</strong></h2>
+            <p>{{ description }}
             <a href="#" id="direct-link"></a></p>
             <span id="twitter-button"></span>
             <iframe id="facebook-button" src="" width="59" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
@@ -119,7 +116,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Save</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-blockly"
+                <a href="#" class="roundbutton hidden" id="command-blockly"
                     tabindex="3"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
@@ -129,8 +126,8 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Blockly</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-snippet"
-                    tabindex="3"
+                <a href="#" class="roundbutton hidden" id="command-snippet"
+                    tabindex="4"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -138,15 +135,15 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="help.html" target="_blank" class="roundbutton"
-                    id="command-help" tabindex="4"
+                    id="command-help" tabindex="5"
                     title="Open help for this editor in a new tab">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
                     </div>
                     <div class="roundlabel">Help</div>
                 </a>
-                <a href="#" class="roundbutton"
-                    id="command-share" tabindex="5"
+                <a href="#" class="roundbutton hidden"
+                    id="command-share" tabindex="6"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -154,14 +151,14 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer" tabindex="6" id="zoom-in"
+                    <a class="holder zoomer" tabindex="7" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer" tabindex="7" id="zoom-out"
+                    <a class="holder zoomer" tabindex="8" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -172,10 +169,10 @@ Nicholas and Damien.
             </div>
             <div class="vbox" id="script-box">
                 <div id="script-name" class="flex1" contenteditable
-                    tabindex="8">
+                    tabindex="9">
                 </div>
                 <div id="script-description" contenteditable
-                    tabindex="9">
+                    tabindex="10">
                 </div>
             </div>
           </div>
@@ -193,6 +190,7 @@ Nicholas and Damien.
         <script src="static/js/FileSaver.min.js" type="application/javascript"></script>
         <script src="static/js/vex.combined.min.js"
             type="application/javascript"></script>
+        <script src="static/js/encoding.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
         <script src="blockly/blockly_compressed.js"></script>
@@ -217,7 +215,60 @@ Nicholas and Damien.
             type="application/javascript"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script type="text/javascript" charset="utf-8" async="" src="https://platform.twitter.com/js/button.c9025956238e7d486d74379e14f50282.js"></script>
-
+        <script>
+// Call the web_editor function to start the editor running.
+web_editor({
+    'translate': {
+      'code_snippets': {
+        'title': 'Code Snippets',
+        'description': "Code snippets are short blocks of code to re-use in your own programs. There are snippets for most common things you'll want to do using MicroPython.",
+        'instructions': "Select one of the snippets below, or type the snippet's trigger then tap the TAB key.",
+        'trigger_heading': 'trigger',
+        'description_heading': 'description',
+        'docs': 'create a comment to describe your code',
+        'wh': 'while some condition is True, keep looping over some code',
+        'with': 'do some stuff with something assigned to a name',
+        'cl': 'create a new class that defines the behaviour of a new type of object',
+        'def': 'define a named function that takes some arguments and optionally add a description',
+        'if': 'if some condition is True, do something',
+        'ei': 'else if some other condition is True, do something',
+        'el': 'else do some other thing',
+        'for': 'for each item in a collection of items do something with each item',
+        'try': 'try doing something and handle exceptions (errors)'
+      },
+      'share': {
+        'title': 'Share Code',
+        'description': 'This link points to your code:',
+      },
+      'alerts': {
+        'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
+        'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
+        'length': 'Oops! Your script is to long given the limited memory on the device.'
+      },
+      'confirms': {
+        'quit': "Some of your changes have not been saved. Quit anyway?",
+        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?"
+      },
+      'code': {
+        'start': "# Add your Python code here. E.g.\n" +
+                 "from microbit import *\n\n\n" +
+                 "while True:\n" +
+                 "    display.scroll('Hello, World!')\n" +
+                 "    display.show(Image.HEART)\n" +
+                 "    sleep(2000)\n"
+      },
+      'drop': {
+        'python': 'Extracted from a Python file',
+        'hex': 'Extracted from a hex file'
+      }
+    },
+    'flags': {
+      'blocks': true,
+      'snippets': true,
+      'share': true
+    },
+});
+        </script>
         <xml id="blockly-toolbox" style="display: none">
 
   <category name="Accelerometer" colour="20">
