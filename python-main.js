@@ -14,6 +14,8 @@ is attached to the div with the referenced id.
 function pythonEditor(id) {
     // An object that encapsulates the behaviour of the editor.
     editor = {};
+    editor.initialFontSize = 22;
+    editor.fontSizeStep = 4;
 
     // Represents the ACE based editor.
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
@@ -24,6 +26,7 @@ function pythonEditor(id) {
     ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
+    ACE.setFontSize(editor.initialFontSize);
     editor.ACE = ACE;
 
     // Gets the textual content of the editor (i.e. what the user has written).
@@ -202,32 +205,50 @@ function web_editor(config) {
 
     // Get the font size of the text currently displayed in the editor.
     function getFontSize() {
-        return parseInt($('#editor').css('font-size'));
+        return EDITOR.ACE.getFontSize();
     }
 
     // Set the font size of the text currently displayed in the editor.
     function setFontSize(size) {
-        $('#editor').css('font-size', size + 'px');
+        EDITOR.ACE.setFontSize(size);
     }
 
     // Sets up the zoom-in functionality.
     function zoomIn() {
+        var continueZooming = true;
+        // Change editor zoom
         var fontSize = getFontSize();
-        fontSize += 8;
-        if(fontSize > 46) {
-            fontSize = 46;
+        fontSize += EDITOR.fontSizeStep;
+        var fontSizeLimit = EDITOR.initialFontSize + (EDITOR.fontSizeStep * 6);
+        if (fontSize > fontSizeLimit) {
+            fontSize = fontSizeLimit;
+            continueZooming = false;
         }
         setFontSize(fontSize);
+        // Change Blockly zoom
+        var workspace = Blockly.getMainWorkspace();
+        if (workspace && continueZooming) {
+            Blockly.getMainWorkspace().zoomCenter(1);
+        }
     };
 
     // Sets up the zoom-out functionality.
     function zoomOut() {
+        var continueZooming = true;
+        // Change editor zoom
         var fontSize = getFontSize();
-        fontSize -= 8;
-        if(fontSize < 22) {
-            fontSize = 22;
+        fontSize -= EDITOR.fontSizeStep;
+        var fontSizeLimit = EDITOR.initialFontSize - (EDITOR.fontSizeStep * 3);
+        if(fontSize < fontSizeLimit) {
+            fontSize = fontSizeLimit;
+            continueZooming = false;
         }
         setFontSize(fontSize);
+        // Change Blockly zoom
+        var workspace = Blockly.getMainWorkspace();
+        if (workspace && continueZooming) {
+            Blockly.getMainWorkspace().zoomCenter(-1);
+        }
     };
 
     // Checks for feature flags in the config object and shows/hides UI
@@ -371,8 +392,18 @@ function web_editor(config) {
             blockly.css('width', '33%');
             blockly.css('height', '100%');
             if(blockly.find('div.injectionDiv').length === 0) {
+                // Calculate initial zoom level
+                var zoomScaleSteps = 0.2;
+                var fontSteps = (getFontSize() - EDITOR.initialFontSize) / EDITOR.fontSizeStep;
+                var zoomLevel = (fontSteps * zoomScaleSteps) + 1.0;
                 var workspace = Blockly.inject('blockly', {
-                    toolbox: document.getElementById('blockly-toolbox')
+                    toolbox: document.getElementById('blockly-toolbox'),
+                    zoom: {
+                        controls: false,
+                        wheel: false,
+                        startScale: zoomLevel,
+                        scaleSpeed: zoomScaleSteps + 1.0
+                    }
                 });
                 function myUpdateFunction(event) {
                     var code = Blockly.Python.workspaceToCode(workspace);
