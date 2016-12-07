@@ -193,7 +193,7 @@ body, input {
 }
 
 #commands {
-  min-width: 600px;
+  min-width: 724px;
 }
 
 #commands a {
@@ -343,7 +343,7 @@ a.command:hover {
   }
 
   #commands {
-    min-width: 289px;
+    min-width: 425px;
   }
 }
 
