@@ -1,5 +1,5 @@
 /*
-0.0.8
+0.0.9
 
 A simple editor that targets MicroPython for the BBC micro:bit.
 
@@ -381,6 +381,10 @@ function web_editor(config) {
             dirty = false;
             blockly.hide();
             editor.ACE.setReadOnly(false);
+            $("#command-snippet").off('click');
+            $("#command-snippet").click(function () {
+              doSnippets();
+            });
         } else {
             if(dirty) {
                 if(!confirm(config.translate.confirms.blocks)) {
@@ -388,6 +392,10 @@ function web_editor(config) {
                 }
             }
             editor.ACE.setReadOnly(true);
+            $("#command-snippet").off('click');
+            $("#command-snippet").click(function () {
+              alert(config.translate.alerts.snippets);
+            });
             blockly.show();
             blockly.css('width', '33%');
             blockly.css('height', '100%');
