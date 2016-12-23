@@ -89,11 +89,23 @@ Nicholas and Damien.
         </script>
         <script id="share-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-share-alt"></i> <strong>{{ title }}</strong></h2>
-            <p>{{ description }}
-            <a href="#" id="direct-link"></a></p>
-            <span id="twitter-button"></span>
-            <iframe id="facebook-button" src="" width="59" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            <div id="make-link">
+                <p>{{ instructions }}</p>
+                <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="passphrase" type="password"/></p>
+                <p><label for="hint" class="share-label">{{ hint }}</label> <input id="hint"/></p>
+                <p><button id="button-create-link">{{ button }}</button></p>
+            </div>
+            <div id="share-link">
+                <p>{{ description }}
+                <a href="#" id="direct-link"></a></p>
+            </div>
+        </script>
+        <script id="decrypt-template" type="x-tmpl-mustache">
+            <h2><i class="fa fa-unlock-alt"></i> <strong>{{ title }}</strong></h2>
+            <p>{{ instructions }}</p>
+            <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="passphrase" type="password"/></p>
+            <p>{{ hint }}</p>
+            <p><button id="button-decrypt-link">{{ button }}</button></p>
         </script>
         <div id="main" class="vbox">
           <div id="toolbox" class="hbox">
@@ -187,6 +199,7 @@ Nicholas and Damien.
             charset="utf-8"></script>
         <script src="static/js/jquery-2.1.4.min.js"
             type="application/javascript"></script>
+        <script src="static/js/forge.min.js" type="application/javascript"></script>
         <script src="static/js/FileSaver.min.js" type="application/javascript"></script>
         <script src="static/js/vex.combined.min.js"
             type="application/javascript"></script>
@@ -238,7 +251,17 @@ web_editor({
       },
       'share': {
         'title': 'Share Code',
+        'instructions': 'Use a password and optional hint (to help you remember the password) to securely create a link to share your code with others.',
+        'passphrase': 'Password: ',
+        'hint': 'Password hint: ',
+        'button': 'Create Link',
         'description': 'This link points to your code:',
+      },
+      'decrypt': {
+        'title': 'Decrypt Source Code',
+        'instructions': 'Enter a password to decrypt the source code.',
+        'passphrase': 'Password: ',
+        'button': 'Decrypt'
       },
       'alerts': {
         'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
@@ -293,7 +316,18 @@ web_editor({
     <block type="microbit_compass_get_field_strength"></block>
   </category>
   <category name="Display" colour="0">
-    <block type="microbit_display_get_pixel"></block>
+    <block type="microbit_display_get_pixel">
+        <value name="x">
+            <shadow type="math_number">
+                <field name="x">0</field>
+            </shadow>
+        </value>
+        <value name="y">
+            <shadow type="math_number">
+                <field name="y">0</field>
+            </shadow>
+        </value>
+    </block>
     <block type="microbit_display_set_pixel"></block>
     <block type="microbit_display_clear"></block>
     <block type="microbit_display_show_image"></block>

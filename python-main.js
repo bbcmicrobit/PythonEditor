@@ -169,6 +169,45 @@ function pythonEditor(id) {
         }
     }
 
+    // Given a password and some plaintext, will return an encrypted version.
+    editor.encrypt = function(password, plaintext) {
+        var key_size = 24;
+        var iv_size = 8;
+        var salt = forge.random.getBytesSync(8);
+        var derived_bytes = forge.pbe.opensslDeriveBytes(password, salt, key_size + iv_size);
+        var buffer = forge.util.createBuffer(derived_bytes);
+        var key = buffer.getBytes(key_size);
+        var iv = buffer.getBytes(iv_size);
+        var cipher = forge.cipher.createCipher('AES-CBC', key);
+        cipher.start({iv: iv});
+        cipher.update(forge.util.createBuffer(plaintext, 'binary'));
+        cipher.finish();
+        var output = forge.util.createBuffer();
+        output.putBytes('Salted__');
+        output.putBytes(salt);
+        output.putBuffer(cipher.output);
+        return encodeURIComponent(btoa(output.getBytes()));
+    }
+
+    // Given a password and cyphertext will return the decrypted plaintext.
+    editor.decrypt = function(password, cyphertext) {
+        var input = atob(decodeURIComponent(cyphertext));
+        input = forge.util.createBuffer(input, 'binary');
+        input.getBytes('Salted__'.length);
+        var salt = input.getBytes(8);
+        var key_size = 24;
+        var iv_size = 8;
+        var derived_bytes = forge.pbe.opensslDeriveBytes(password, salt, key_size + iv_size);
+        var buffer = forge.util.createBuffer(derived_bytes);
+        var key = buffer.getBytes(key_size);
+        var iv = buffer.getBytes(iv_size);
+        var decipher = forge.cipher.createDecipher('AES-CBC', key);
+        decipher.start({iv: iv});
+        decipher.update(input);
+        var result = decipher.finish();
+        return decipher.output.getBytes();
+    }
+
     return editor;
 };
 
@@ -269,21 +308,29 @@ function web_editor(config) {
     function setupEditor(message) {
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
-        if(!message.name) {
+        if(message.n && message.c && message.s) {
+            var template = $('#decrypt-template').html();
+            Mustache.parse(template);
+            var context = config.translate.decrypt;
+            if (message.h) {
+                context.hint = '(Hint: ' + decodeURIComponent(message.h) + ')';
+            }
+            vex.open({
+                content: Mustache.render(template, context)
+            })
+            $('#button-decrypt-link').click(function() {
+                var password = $('#passphrase').val();
+                setName(EDITOR.decrypt(password, message.n));
+                setDescription(EDITOR.decrypt(password, message.c));
+                EDITOR.setCode(EDITOR.decrypt(password, message.s));
+                vex.close();
+                EDITOR.focus();
+            });
+        } else {
             // If there's no name, default to something sensible.
             setName("microbit")
-        } else {
-            setName(message.name);
-        }
-        if (!message.comment) {
             // If there's no description, default to something sensible.
             setDescription("A MicroPython script");
-        } else {
-            setDescription(message.comment);
-        }
-        if(message.code && message.code.length > 0) {
-            EDITOR.setCode(message.code);
-        } else {
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
@@ -461,30 +508,27 @@ function web_editor(config) {
         // Triggered when the user wants to generate a link to share their code.
         var template = $('#share-template').html();
         Mustache.parse(template);
-        var qs_array = [];
-        qs_array.push('name=' + encodeURIComponent(getName()));
-        qs_array.push('comment=' + encodeURIComponent(getDescription()));
-        qs_array.push('code=' + encodeURIComponent(EDITOR.getCode()));
-        var old_url = window.location.href.split('?');
-        var new_url = old_url[0].replace('#', '') + '?' + qs_array.join('&');
-        // shortener API
-        var url = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB2_Cwh5lKUX4a681ZERd3FAt8ijdwbukk";
-        $.ajax(url, {
-            type: "POST",
-            contentType: 'application/json',
-            data: JSON.stringify({
-                longUrl: new_url
-            })
-        }).done(function( data ) {
-            console.log(data);
-            vex.open({
-                content: Mustache.render(template, config.translate.share)
-            })
-            $('#direct-link').attr('href', data.id);
-            $('#direct-link').text(data.id);
-            $('#twitter-button').html('<a href="https://twitter.com/share" class="twitter-share-button" data-url="' + data.id +'" data-text="Check out this cool MicroPython script! :-)" data-via="ntoll" data-hashtags="bbcmicrobit" data-dnt="true">Tweet</a>');
-            $('#facebook-button').attr('src', 'https://www.facebook.com/plugins/share_button.php?href=' + encodeURIComponent(data.id) + '&layout=button&size=small&mobile_iframe=true&width=59&height=20&appId');
-            twttr.widgets.load();
+        vex.open({
+            content: Mustache.render(template, config.translate.share)
+        })
+        $('#button-create-link').click(function() {
+            var password = $('#passphrase').val();
+            var hint = $('#hint').val();
+            var qs_array = [];
+            // Name
+            qs_array.push('n=' + EDITOR.encrypt(password, getName()));
+            // Comment
+            qs_array.push('c=' + EDITOR.encrypt(password, getDescription()));
+            // Source
+            qs_array.push('s=' + EDITOR.encrypt(password, EDITOR.getCode()));
+            // Hint
+            qs_array.push('h=' + encodeURIComponent(hint));
+            var old_url = window.location.href.split('?');
+            var new_url = old_url[0].replace('#', '') + '?' + qs_array.join('&');
+            $('#make-link').hide();
+            $('#direct-link').attr('href', new_url);
+            $('#direct-link').text(new_url);
+            $('#share-link').show();
         });
     }
 

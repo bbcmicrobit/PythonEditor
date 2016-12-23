@@ -382,3 +382,12 @@ a.command:hover {
 .snippet-name {
     display: none;
 }
+
+.share-label {
+    display: inline-block;
+    width: 200px;
+}
+
+#share-link {
+    display: none;
+}
