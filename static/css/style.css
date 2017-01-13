@@ -391,3 +391,8 @@ a.command:hover {
 #share-link {
     display: none;
 }
+
+.blocklySvg {
+    background-image: url('/static/img/experimental.png');
+    background-repeat: repeat;
+}
