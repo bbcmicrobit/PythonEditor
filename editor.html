@@ -96,8 +96,9 @@ Nicholas and Damien.
                 <p><button id="button-create-link">{{ button }}</button></p>
             </div>
             <div id="share-link">
-                <p>{{ description }}
-                <a href="#" id="direct-link"></a></p>
+                <p>{{ description }}</p>
+                <textarea id="direct-link" readonly style="width:100%; height:200px;border:0;"></textarea>
+                <p id="shortener" style="display: none;">{{ shortener }} <a href="#" id="short-link"></a></p>
             </div>
         </script>
         <script id="decrypt-template" type="x-tmpl-mustache">
@@ -255,7 +256,8 @@ web_editor({
         'passphrase': 'Password: ',
         'hint': 'Password hint: ',
         'button': 'Create Link',
-        'description': 'This link points to your code:',
+        'description': 'This URL points to your code:',
+        'shortener': 'This is a short version of the link:'
       },
       'decrypt': {
         'title': 'Decrypt Source Code',

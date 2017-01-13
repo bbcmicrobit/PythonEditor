@@ -511,6 +511,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, config.translate.share)
         })
+        $('#passphrase').focus();
         $('#button-create-link').click(function() {
             var password = $('#passphrase').val();
             var hint = $('#hint').val();
@@ -526,9 +527,22 @@ function web_editor(config) {
             var old_url = window.location.href.split('?');
             var new_url = old_url[0].replace('#', '') + '?' + qs_array.join('&');
             $('#make-link').hide();
-            $('#direct-link').attr('href', new_url);
-            $('#direct-link').text(new_url);
+            $('#direct-link').val(new_url);
             $('#share-link').show();
+            // shortener API
+            var url = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB2_Cwh5lKUX4a681ZERd3FAt8ijdwbukk";
+            $.ajax(url, {
+                type: "POST",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    longUrl: new_url
+                })
+            }).done(function( data ) {
+                console.log(data);
+                $('#short-link').attr('href', data.id);
+                $('#short-link').text(data.id);
+                $('#shortener').show();
+            });
         });
     }
 
