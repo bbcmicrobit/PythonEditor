@@ -393,6 +393,6 @@ a.command:hover {
 }
 
 .blocklySvg {
-    background-image: url('/static/img/experimental.png');
+    background-image: url('../img/experimental.png');
     background-repeat: repeat;
 }
