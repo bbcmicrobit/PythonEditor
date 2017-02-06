@@ -68,6 +68,10 @@ Nicholas and Damien.
         <link rel="icon" href="static/img/favicon.ico">
     </head>
     <body>
+        <script type="application/javascript">
+        <!-- VERSION INFORMATION -->
+        VERSION = "0.1.0";
+        </script>
         <script id="snippet-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
             <p>{{ description }}</p>
@@ -108,7 +112,13 @@ Nicholas and Damien.
             <p>{{ hint }}</p>
             <p><button id="button-decrypt-link">{{ button }}</button></p>
         </script>
+        <script id="messagebar-template" type="x-tmpl-mustache">
+            <i class="fa fa-warning"></i> <strong>{{ title }}</strong>
+            <a href="#" id="messagebar-link">{{ link }}</a> {{ instructions }}
+            <a href="#" id="messagebar-close">{{ close }}</a>
+        </script>
         <div id="main" class="vbox">
+          <div id="messagebar" class="hbox"></div>
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
                 <a href="#" class="roundbutton" id="command-download"
@@ -228,7 +238,6 @@ Nicholas and Damien.
         <script src="python-main.js"
             type="application/javascript"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
-        <script type="text/javascript" charset="utf-8" async="" src="https://platform.twitter.com/js/button.c9025956238e7d486d74379e14f50282.js"></script>
         <script>
 // Call the web_editor function to start the editor running.
 web_editor({
@@ -286,6 +295,12 @@ web_editor({
       'drop': {
         'python': 'Extracted from a Python file',
         'hex': 'Extracted from a hex file'
+      },
+      'messagebar': {
+        'title': 'This editor is out of date!',
+        'link': 'Click here',
+        'instructions': 'to open the latest version.',
+        'close': 'Hide'
       }
     },
     'flags': {

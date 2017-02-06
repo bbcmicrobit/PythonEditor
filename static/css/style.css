@@ -396,3 +396,15 @@ a.command:hover {
     background-image: url('../img/experimental.png');
     background-repeat: repeat;
 }
+
+#messagebar {
+    display: none;
+    background-color: #ffcc33;
+    padding: 0.75em;
+    font-family: "Segoe UI Light", "Segoe UI", "Segoe WP Light", "Segoe WP", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", sans-serif;
+}
+
+#messagebar a, #messagebar a.visited {
+    color: #336699;
+    font-weight: bold;
+}
