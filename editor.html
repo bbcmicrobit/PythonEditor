@@ -72,6 +72,22 @@ Nicholas and Damien.
         <!-- VERSION INFORMATION -->
         VERSION = "0.1.0";
         </script>
+        <script id="load-template" type="x-tmpl-mustache">
+            <h2><i class="fa fa-upload"></i> <strong>{{ title }}</strong></h2>
+            <div class="load-drag-target" id="load-drag-target">
+                <p>{{ instructions }}</p>
+            </div>
+            <div class="load-form">
+                <form id="load-form-form">
+                    <input type="file" name="load-form-file-upload"/><br/>
+                    <input type="submit" value="{{ submit }}"/>
+                </form>
+            </div>
+            <div id="load-alt">
+                <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
+                <p><a href="#" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+            </div>
+        </script>
         <script id="snippet-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
             <p>{{ description }}</p>
@@ -139,8 +155,16 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Save</div>
                 </a>
-                <a href="#" class="roundbutton hidden" id="command-blockly"
+                <a href="#" class="roundbutton" id="command-load"
                     tabindex="3"
+                    title="Load Python code or hex file into the editor">
+                    <div class="roundsymbol">
+                        <i class="fa fa-upload"></i>
+                    </div>
+                    <div class="roundlabel">Load</div>
+                </a>
+                <a href="#" class="roundbutton hidden" id="command-blockly"
+                    tabindex="4"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -150,7 +174,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-snippet"
-                    tabindex="4"
+                    tabindex="5"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -158,7 +182,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="help.html" target="_blank" class="roundbutton"
-                    id="command-help" tabindex="5"
+                    id="command-help" tabindex="6"
                     title="Open help for this editor in a new tab">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -166,7 +190,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Help</div>
                 </a>
                 <a href="#" class="roundbutton hidden"
-                    id="command-share" tabindex="6"
+                    id="command-share" tabindex="7"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -174,14 +198,14 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer" tabindex="7" id="zoom-in"
+                    <a class="holder zoomer" tabindex="8" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer" tabindex="8" id="zoom-out"
+                    <a class="holder zoomer" tabindex="9" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -192,10 +216,10 @@ Nicholas and Damien.
             </div>
             <div class="vbox" id="script-box">
                 <div id="script-name" class="flex1" contenteditable
-                    tabindex="9">
+                    tabindex="10">
                 </div>
                 <div id="script-description" contenteditable
-                    tabindex="10">
+                    tabindex="11">
                 </div>
             </div>
           </div>
@@ -301,6 +325,13 @@ web_editor({
         'link': 'Click here',
         'instructions': 'to open the latest version.',
         'close': 'Hide'
+      },
+      'load': {
+        'title': 'Load Script or HEX file',
+        'instructions': 'Drag and drop a .hex or .py file in here to open it.',
+        'submit': 'Load',
+        'toggle-drop': 'Or drag and drop a file',
+        'toggle-file': 'Or pick a file'
       }
     },
     'flags': {

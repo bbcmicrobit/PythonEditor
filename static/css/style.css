@@ -193,7 +193,7 @@ body, input {
 }
 
 #commands {
-  min-width: 724px;
+  min-width: 900px;
 }
 
 #commands a {
@@ -407,4 +407,40 @@ a.command:hover {
 #messagebar a, #messagebar a.visited {
     color: #336699;
     font-weight: bold;
+}
+
+.load-form {
+    display: none;
+}
+
+div.load-drag-target {
+    height: 200px;
+    background: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 15px;
+}
+
+div.load-form {
+    padding-top: 20px;
+    height: 200px;
+}
+
+.load-form input {
+    margin-bottom: 20px;
+}
+
+.load-drag-target p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#load-alt a, #load-alt a.visited {
+    color: #336699;
+    font-weight: bold;
+}
+
+.is-dragover {
+    background: #ccc !important;
 }

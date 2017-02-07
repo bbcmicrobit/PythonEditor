@@ -421,8 +421,70 @@ function web_editor(config) {
         dirty = false;
     }
 
+    // Describes what to do when the load button is clicked.
+    function doLoad() {
+        var template = $('#load-template').html();
+        Mustache.parse(template);
+        vex.open({
+            content: Mustache.render(template, config.translate.load),
+            afterOpen: function(vexContent) {
+                $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragover dragenter', function() {
+                    $('#load-drag-target').addClass('is-dragover');
+                })
+                .on('dragleave dragend drop', function() {
+                    $('#load-drag-target').removeClass('is-dragover');
+                })
+                .on('drop', function(e) {
+                    doDrop(e);
+                    vex.close();
+                    EDITOR.focus();
+                });
+                $(vexContent).find('#load-form-form').on('submit', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if(e.target[0].files.length === 1) {
+                        var f = e.target[0].files[0];
+                        var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
+                        var reader = new FileReader();
+                        if (ext == 'py') {
+                            setName(f.name.replace('.py', ''));
+                            setDescription(config.translate.drop.python);
+                            reader.onload = function(e) {
+                                EDITOR.setCode(e.target.result);
+                            }
+                            reader.readAsText(f);
+                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+                        } else if (ext == 'hex') {
+                            setName(f.name.replace('.hex', ''));
+                            setDescription(config.translate.drop.hex);
+                            reader.onload = function(e) {
+                                var code = EDITOR.extractScript(e.target.result);
+                                if(code.length < 8192) {
+                                    EDITOR.setCode(code);
+                                }
+                            }
+                            reader.readAsText(f);
+                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+                        }
+                    }
+                    vex.close();
+                    EDITOR.focus();
+                    return false;
+                });
+            }
+        })
+        $('.load-toggle').on('click', function(e) {
+            $('.load-drag-target').toggle();
+            $('.load-form').toggle();
+        });
+    }
+
+    // Triggered when a user clicks the blockly button. Toggles blocks on/off.
     function doBlockly() {
-        // Triggered when a user clicks the blockly button. Toggles blocks on/off.
         var blockly = $('#blockly');
         if(blockly.is(':visible')) {
             dirty = false;
@@ -576,13 +638,17 @@ function web_editor(config) {
         $('#editor').focus();
     }
 
-    // Join up the buttons in the user interface with some functions for handling what to do when they're clicked.
+    // Join up the buttons in the user interface with some functions for
+    // handling what to do when they're clicked.
     function setupButtons() {
         $("#command-download").click(function () {
             doDownload();
         });
         $("#command-save").click(function () {
             doSave();
+        });
+        $("#command-load").click(function () {
+            doLoad();
         });
         $("#command-blockly").click(function () {
             doBlockly();
