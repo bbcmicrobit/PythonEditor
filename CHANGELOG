@@ -1,3 +1,11 @@
+0.1.0
+-----
+
+* Add "Experimental" background image.
+* Update help pages to reflect the latest changes.
+* Add awareness of versioning and related manifest when available.
+* Add file load button with drag and drop capabilities.
+
 0.0.10
 ------
 
