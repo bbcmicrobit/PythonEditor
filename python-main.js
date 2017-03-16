@@ -491,6 +491,7 @@ function web_editor(config) {
         if(blockly.is(':visible')) {
             dirty = false;
             blockly.hide();
+            $('#editor').attr('title', '');
             editor.ACE.setReadOnly(false);
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -503,6 +504,7 @@ function web_editor(config) {
                 }
             }
             editor.ACE.setReadOnly(true);
+            $('#editor').attr('title', 'The code editor is read-only when blocks are active.');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
               alert(config.translate.alerts.snippets);
@@ -530,6 +532,8 @@ function web_editor(config) {
                 }
                 workspace.addChangeListener(myUpdateFunction);
             }
+            // Set editor to current state of blocks.
+            EDITOR.setCode(Blockly.Python.workspaceToCode(workspace));
         };
     }
 
