@@ -11,11 +11,14 @@ Developer Setup
 
 This editor works with any modern web browser.
 
-To grab the GIT submodules you should issue the following command::
+In addition to cloning the repository it is required to retrieve the GIT
+submodules::
 
+    git clone https://github.com/bbcmicrobit/PythonEditor
+    cd PythonEditor
     git submodule update --init --recursive
 
-**THIS NEEDS TO BE DONE BEFORE ANYTHING ELSE WILL WORK.**
+**THIS NEEDS TO BE DONE BEFORE ANYTHING ELSE, OR IT WILL NOT WORK.**
 
 Assuming you have Python 3 installed you can serve the editor like this::
 
