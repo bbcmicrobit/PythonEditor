@@ -11,6 +11,8 @@
 #blockly {
     display: none;
     min-width: 570px;
+    overflow: auto;
+    resize: horizontal;
 }
 
 /* Re-usable, generic rules */

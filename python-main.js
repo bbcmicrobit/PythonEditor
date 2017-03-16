@@ -532,6 +532,11 @@ function web_editor(config) {
                     var code = Blockly.Python.workspaceToCode(workspace);
                     EDITOR.setCode(code);
                 }
+                // Resize blockly
+                var element = document.getElementById('blockly');
+                new ResizeSensor(element, function() {
+                    Blockly.svgResize(workspace);
+                });
                 workspace.addChangeListener(myUpdateFunction);
             }
             // Set editor to current state of blocks.
