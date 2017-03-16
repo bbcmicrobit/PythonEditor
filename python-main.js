@@ -493,6 +493,7 @@ function web_editor(config) {
             blockly.hide();
             $('#editor').attr('title', '');
             editor.ACE.setReadOnly(false);
+            $("#command-snippet").removeClass('disabled');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
               doSnippets();
@@ -509,6 +510,7 @@ function web_editor(config) {
             $("#command-snippet").click(function () {
               alert(config.translate.alerts.snippets);
             });
+            $("#command-snippet").addClass('disabled');
             blockly.show();
             blockly.css('width', '33%');
             blockly.css('height', '100%');

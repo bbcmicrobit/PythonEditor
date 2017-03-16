@@ -248,6 +248,18 @@ body, input {
   min-width: 90px;
 }
 
+.disabled div.roundsymbol {
+  border-color: #AAA;
+}
+
+.disabled i {
+  color: #AAA;
+}
+
+.disabled div.roundlabel {
+  color: #AAA;
+}
+
 .roundsymbol {
   width: 4rem;
   height: 4rem;
