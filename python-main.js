@@ -330,7 +330,7 @@ function web_editor(config) {
             });
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit")
+            setName("micro:bit")
             // If there's no description, default to something sensible.
             setDescription("A MicroPython script");
             // A sane default starting point for a new script.
@@ -416,9 +416,29 @@ function web_editor(config) {
             alert(config.translate.alerts.save);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
-            var filename = getName().replace(" ", "_");
-            var blob = new Blob([output], {type: "text/plain"});
-            saveAs(blob, filename + ".py");
+            // var filename = getName().replace(" ", "_");
+            var template = $('#save-name-template').html();
+            Mustache.parse(template);
+            var context = {
+                instructions: "Enter a filename...",
+                button: "Save",
+                passphrase: "Filename:",
+                passphrase2: "Description:",
+                currentfilename: getName(),
+                currentdesc: getDescription()
+            }
+            vex.open({content: Mustache.render(template, context)});
+            $('#button-save-file').click(function () {
+                var filename = $('#filename-input').val();
+                if (filename == null) {
+                    filename = getName();
+                }
+                vex.close();
+                var blob = new Blob([output], {type: "text/plain"});
+                saveAs(blob, filename + ".py");
+                setName(filename);
+                setDescription($('#desc-input').val());
+            });
         }
         dirty = false;
     }
