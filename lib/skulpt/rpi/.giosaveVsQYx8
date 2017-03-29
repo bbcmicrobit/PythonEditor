@@ -1,0 +1,43 @@
+var GPIO = function(name) {
+	var mod = {};
+	console.log("Loaded GPIO module");
+
+	/*mod.BOARD = Sk.builtin.nmber(10);
+	mod.MODE_UNKNOWN = Sk.builtin.nmber(-1);
+	mod.BCM = Sk.builtin.nmber(11);
+	mod.SERIAL = Sk.builtin.nmber(40);
+	mod.SPI = Sk.builtin.nmber(41);
+	mod.I2C = Sk.builtin.nmber(42);
+	mod.BOARD = Sk.builtin.nmber(10);
+	mod.PWM = Sk.builtin.nmber(43);
+
+	mod.setmode = Sk.builtin.func(function(self, mode) {
+		console.log("Not implemented yet");
+	});
+
+	mod.getmode = Sk.builtin.func(function(self, mode) {
+		console.log("Not implemented yet");
+	});*/
+	return mod;
+}
+
+var RPi = function(name) {
+	var mod = {};
+	mod.GPIO = new Sk.builtin.module();
+	mod.GPIO.$d = new GPIO("RPi.GPIO");
+	return mod;
+}
+
+var $builtinmodule = function(name) {
+	var mod;
+	switch(Sk.ffi.remapToJs(name) {
+		case 'RPi':
+			mod = new RPi(name);
+		break;
+		case 'RPi.GPIO':
+			mod = new GPIO(name);
+		break;
+	}
+	console.log(name, mod);
+	return mod;
+};
