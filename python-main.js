@@ -330,7 +330,7 @@ function web_editor(config) {
             });
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit")
+            setName("micro:bit")
             // If there's no description, default to something sensible.
             setDescription("A MicroPython script");
             // A sane default starting point for a new script.
@@ -352,14 +352,6 @@ function web_editor(config) {
                 dirty = true;
             });
         }, 1);
-        // Handles what to do if the name is changed.
-        $("#script-name").on("input keyup blur", function () {
-            dirty = true;
-        });
-        // Handles what to do if the description is changed.
-        $("#script-description").on("input keyup blur", function () {
-            dirty = true;
-        });
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
@@ -416,9 +408,29 @@ function web_editor(config) {
             alert(config.translate.alerts.save);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
-            var filename = getName().replace(" ", "_");
-            var blob = new Blob([output], {type: "text/plain"});
-            saveAs(blob, filename + ".py");
+            // var filename = getName().replace(" ", "_");
+            var template = $('#save-name-template').html();
+            Mustache.parse(template);
+            var context = {
+                instructions: "Enter a filename...",
+                button: "Save",
+                passphrase: "Filename:",
+                passphrase2: "Description:",
+                currentfilename: getName(),
+                currentdesc: getDescription()
+            }
+            vex.open({content: Mustache.render(template, context)});
+            $('#button-save-file').click(function () {
+                var filename = $('#filename-input').val();
+                if (filename == null) {
+                    filename = getName();
+                }
+                vex.close();
+                var blob = new Blob([output], {type: "text/plain"});
+                saveAs(blob, filename + ".py");
+                setName(filename);
+                setDescription($('#desc-input').val());
+            });
         }
         dirty = false;
     }
@@ -542,6 +554,19 @@ function web_editor(config) {
             // Set editor to current state of blocks.
             EDITOR.setCode(Blockly.Python.workspaceToCode(workspace));
         };
+    }
+
+    function stripComments(s) {
+        var re1 = /^\s+|\s+$/g;  // Strip leading and trailing spaces
+        var re2 = /\s*[#;].+$/g; // Strip everything after # or ; to the end of the line, including preceding spaces
+        return s.replace(re1,'').replace(re2,'');
+    }
+
+    function doSim() {
+        var sim = $("#sim-iframe");
+        //sim.src = "simulator.html?code=" + stripComments(encodeURIComponent(EDITOR.getCode()));
+        sim.attr("src", "simulator.html?code=" + encodeURIComponent(EDITOR.getCode()));
+        console.log(sim.attr("src") + "kfdslkjfsakj");
     }
 
     // This function describes what to do when the snippets button is clicked.
@@ -671,6 +696,9 @@ function web_editor(config) {
         });
         $("#command-share").click(function () {
             doShare();
+        });
+        $("#command-sim").click(function () {
+            doSim();
         });
     }
 

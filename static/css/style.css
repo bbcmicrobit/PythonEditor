@@ -28,6 +28,26 @@
     cursor: ew-resize;
 }
 
+#sim {
+    display: none;
+    min-width: 570px;
+    overflow: auto;
+    resize: horizontal;
+    padding-right: 10px;
+}
+
+#sim:after {
+    border-top: 0.5em solid transparent;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid #888;
+    border-bottom: 0.5em solid #888;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    content: '';
+    cursor: ew-resize;
+}
+
 /* Re-usable, generic rules */
 .hidden {
   display: none !important;

@@ -1,0 +1,165 @@
+#mb_tabs {
+	font-size:10pt;
+}
+#mb_pin_num {
+	font-size: 0.8em;
+}
+
+#microbit {
+	width: 300px;
+	height: 236px;
+	background-image: url('mb.png');
+	position: relative;
+	transition: all 0.5s;
+}
+
+.mb_btn {
+	width: 22px;
+	height: 22px;
+	border-radius: 11px;
+	background-color: #333;
+	transition: all 0.25s;
+	position: absolute;
+	opacity: 0.9;
+}
+
+.mb_led {
+	width: 6px;
+	height: 6px;
+	transition: all 0.1s;
+	position: absolute;
+}
+
+
+.mb_info {
+	font-size: 8pt;
+}
+
+.mb_help_link {
+	font-size: small;
+	background-color: #FFF;
+	border-radius: 10px;
+	padding: 10px;
+	color: #000;
+	transition: all 0.5s;
+	margin: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000;
+	display:inline-block;
+}
+
+.mb_help_link:hover {
+	background-color: #F00;
+}
+.mb_led_brightness_0 {	background-color: #000; }
+.mb_led_brightness_1 {	background-color: #300; }
+.mb_led_brightness_2 {	background-color: #500; }
+.mb_led_brightness_3 {	background-color: #700; }
+.mb_led_brightness_4 {	background-color: #900; }
+.mb_led_brightness_5 {	background-color: #a00; }
+.mb_led_brightness_6 {	background-color: #b00; }
+.mb_led_brightness_7 {	background-color: #c00; }
+.mb_led_brightness_8 {	background-color: #d00; }
+.mb_led_brightness_9 {	background-color: #f00; }
+.mb_led_row_0 { top: 73px; }
+.mb_led_row_1 { top: 96px; }
+.mb_led_row_2 { top: 119px; }
+.mb_led_row_3 { top: 141px; }
+.mb_led_row_4 { top: 164px; }
+
+.mb_led_col_0 { left: 104px; }
+.mb_led_col_1 { left: 126px; }
+.mb_led_col_2 { left: 149px; }
+.mb_led_col_3 { left: 171px; }
+.mb_led_col_4 { left: 195px; }
+
+#mb_btn_A {
+	left: 24px;
+	top: 101px;
+}
+
+#mb_btn_B {
+	left: 256px;
+	top: 101px;
+}
+
+.mb_btn:hover {
+	background-color: #F00;
+}
+
+.mb_slider {
+	width: 100px;
+	display: inline-block;
+	margin: 0px 10px 0px 10px;
+}
+#mb_com_heading {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	text-align: center;
+	vertical-align: center;
+	background-image: url('compassbk.jpg');
+	position: relative;
+}
+#mb_com_value_heading {
+	font-size: 2em;
+}
+#mb_compass_pointer {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100px;
+	height: 100px;
+	/*transition: all 0.5s;*/
+	background-image: url('compassarrow.png');
+}
+.mb_slider_com {
+	width: 100px;
+	display: inline-block;
+	margin: 0px 10px 0px 10px;
+}
+#mb_gesture_list {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000;
+	min-height: 1em;
+}
+.mb_current_gesture {
+	color: #F00;
+	margin; 1em;
+}
+.mb_active_gesture_down {
+	transform: rotate(180deg);
+}
+.mb_active_gesture_left, .mb_active_gesture_right {
+	-webkit-transform: rotateY(80deg);transform: rotateY(80deg);
+}
+.mb_active_gesture_facedown {
+	-webkit-transform: rotateY(180deg);transform: rotateY(180deg);
+}
+.mb_active_gesture_freefall {
+	transform: scale(0.2,0.2);
+}
+@keyframes shake {
+	0% {transform: scale(1,1);}
+	50% {transform: scale(0.8,0.8);}
+	100% {transform: scale(1,1);}
+}
+.mb_active_gesture_shake {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-iteration-count: infinite;
+}
+.mb_active_gesture_3g {
+	animation-name: shake;
+	animation-duration: 0.5s;
+}
+.mb_active_gesture_6g {
+	animation-name: shake;
+	animation-duration: 0.3s;
+}
+.mb_active_gesture_8g {
+	animation-name: shake;
+	animation-duration: 0.1s;
+}
