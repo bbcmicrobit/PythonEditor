@@ -352,14 +352,6 @@ function web_editor(config) {
                 dirty = true;
             });
         }, 1);
-        // Handles what to do if the name is changed.
-        $("#script-name").on("input keyup blur", function () {
-            dirty = true;
-        });
-        // Handles what to do if the description is changed.
-        $("#script-description").on("input keyup blur", function () {
-            dirty = true;
-        });
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
@@ -564,6 +556,19 @@ function web_editor(config) {
         };
     }
 
+    function stripComments(s) {
+        var re1 = /^\s+|\s+$/g;  // Strip leading and trailing spaces
+        var re2 = /\s*[#;].+$/g; // Strip everything after # or ; to the end of the line, including preceding spaces
+        return s.replace(re1,'').replace(re2,'');
+    }
+
+    function doSim() {
+        var sim = $("#sim-iframe");
+        //sim.src = "simulator.html?code=" + stripComments(encodeURIComponent(EDITOR.getCode()));
+        sim.attr("src", "simulator.html?code=" + encodeURIComponent(EDITOR.getCode()));
+        console.log(sim.attr("src") + "kfdslkjfsakj");
+    }
+
     // This function describes what to do when the snippets button is clicked.
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
@@ -691,6 +696,9 @@ function web_editor(config) {
         });
         $("#command-share").click(function () {
             doShare();
+        });
+        $("#command-sim").click(function () {
+            doSim();
         });
     }
 

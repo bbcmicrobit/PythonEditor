@@ -66,19 +66,9 @@ Nicholas and Damien.
         <link rel="stylesheet" type="text/css" href="static/css/vex-theme-wireframe.css" />
         <link rel="stylesheet" type="text/css" href="static/css/font-awesome.min.css">
         <link rel="icon" href="static/img/favicon.ico">
-        <script src="lib/cm/codemirror.js"></script>
-        <script src="lib/cm/active-line.js"></script>
-        <script src="lib/cm/python.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-        <script src="lib/lib.js"></script>
-        <script src="lib/skulpt/skulpt.min.js"></script>
-        <script src="lib/skulpt/skulpt-stdlib.js"></script>
-        <script src="lib/jq/jquery.ui.touch-punch.min.js"></script>
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     </head>
     <body>
-        <script type="text/javascript" src="microbit-sim.js"></script>
+        <iframe id="sim-iframe" src="about:blank" width="320px" height="257px" frameborder="0" style="position: absolute; bottom: 20px; right: 20px; z-index: 10;"></iframe>
         <script type="application/javascript">
         <!-- VERSION INFORMATION -->
         VERSION = "0.1.0";
@@ -172,7 +162,7 @@ Nicholas and Damien.
                                                       <path d="m 185.96612,110.36806 41.029,41.029 0,-72.834699 27.352,0 0.001,72.834699 41.029,-41.029 0,31.911 -54.706,54.706 -54.705,-54.706 0,-31.911 z m 98.203,181.9 c 0,-9.128 7.406,-16.539 16.541,-16.539 9.146,0 16.535,7.411 16.535,16.539 0,9.131 -7.389,16.548 -16.535,16.548 -9.135,0 -16.541,-7.417 -16.541,-16.548 z m -121.494,0.003 c 0,-9.129 7.413,-16.542 16.548,-16.542 9.129,0 16.537,7.413 16.537,16.542 0,9.131 -7.408,16.547 -16.537,16.547 -9.135,0 -16.548,-7.416 -16.548,-16.547 z m 16.544,-81.93 122.554,0.202 c 45.667,0 82.285,36.553 82.285,81.732 0,45.179 -36.757,81.934 -81.937,81.934 l -122.902,0 c -45.177,0 -81.934395,-36.755 -81.934395,-81.934 0,-45.179 36.757395,-81.934 81.934395,-81.934 z m -49.164,81.934 c 0,27.105 22.059,49.164 49.164,49.164 l 122.902,0 c 27.107,0 49.159,-22.059 49.159,-49.164 0,-27.112 -22.052,-49.164 -49.159,-49.164 l -122.902,0 c -27.105,0 -49.164,22.052 -49.164,49.164 z" id="path3341" inkscape:connector-curvature="0" style="fill:currentColor"></path>
                                                                                     </svg>
                     </div>
-                    <div class="roundlabel">Download<a href="test.html">Run me!!!!!!!!</a></div>
+                    <div class="roundlabel">Download</div>
                 </a>
                 <a href="#" class="roundbutton" id="command-save"
                     tabindex="2"
@@ -199,6 +189,13 @@ Nicholas and Damien.
                       </svg>
                     </div>
                     <div class="roundlabel">Blockly</div>
+                </a>
+                <a href="#" class="roundbutton" id="command-sim"
+                    tabindex="12">
+                    <div class="roundsymbol">
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                    <div class="roundlabel">Sim</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-snippet"
                     tabindex="5"
@@ -700,6 +697,7 @@ web_editor({
 	    <sep></sep>
 	    <category name="Variables" colour="330" custom="VARIABLE"></category>
 	  </xml>
+:1040A0000123037210BDC046ACCF020008B5043036
         <div id="firmware" style="display: none;">:020000040000FA
 :1000000000400020ED530100295401002B54010051
 :1000100000000000000000000000000000000000E0
@@ -1735,7 +1733,6 @@ web_editor({
 :1040700074E0020010B5041C0C201FF0E9FA034B99
 :10408000446003600023037210BDC046ACCF020041
 :1040900010B5041C0C201FF0DBFA034B44600360D6
-:1040A0000123037210BDC046ACCF020008B5043036
 :1040B000002200F0F5FC002805D10449044823F053
 :1040C0001EFFFCF7A8F8406808BDC046A2490300DF
 :1040D000F0FD020008B5024B08C01FF0E9FC08BD66
