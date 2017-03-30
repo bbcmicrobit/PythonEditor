@@ -697,7 +697,8 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
-        $("#command-sim").click(function () {
+        $("#command-sim").click(function (e) {
+            e.preventDefault();
             doSim();
         });
     }
