@@ -1,5 +1,7 @@
 # micro:edit
 
+[![Join the chat at https://gitter.im/CodeGuild-co/PythonEdit](https://badges.gitter.im/CodeGuild-co/PythonEdit.svg)](https://gitter.im/CodeGuild-co/PythonEdit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 An online Python editor for the micro:bit.
 
 This file is for students on the [Villiers Park](http://www.villierspark.org.uk/) Computer Science Course. Although the rest of you are allowed to read it too :)
