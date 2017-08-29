@@ -91,21 +91,27 @@ body, input {
 
 /* Script info box */
 #script-box {
+  margin-left: auto;
   margin-right: 1rem;
-  margin-left: 1rem;
-  text-align: right;
-  width: 100%;
+  justify-content: center;
 }
 
 #script-name {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  border: #808080 1px solid;
   color: #1a354c;
   overflow: hidden;
-  max-height: 90px;
+  width: 15rem;
+  background-color: white;
+  line-height: 2.5rem;
+  max-height: 2.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
 }
 
 #script-description {
-  color: #336699;
+  display: none; /* TODO: FIXME: remove this field */
+  color: #3758ce;
   padding-bottom: 0.2rem;
   overflow: hidden;
   max-height: 22px;
@@ -381,8 +387,7 @@ a.command:hover {
   }
 
   #script-box {
-    margin-right: 1rem;
-    margin-left: 1rem;
+    margin: 1rem;
     text-align: left;
     width: 100%;
   }
