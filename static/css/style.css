@@ -360,7 +360,6 @@ a.command:hover {
   #script-name {
     font-size: 1.2rem;
     font-weight: bold;
-    max-height: 50px;
   }
 
   .blocklyTreeRow {
