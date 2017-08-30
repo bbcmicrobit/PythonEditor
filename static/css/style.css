@@ -91,6 +91,7 @@ body, input {
 
 /* Script info box */
 #script-box {
+  padding-right: 1rem;
   margin-left: auto;
   margin-right: 1rem;
   justify-content: center;
