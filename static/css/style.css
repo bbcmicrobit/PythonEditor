@@ -93,7 +93,6 @@ body, input {
 #script-box {
   margin-left: auto;
   margin-right: 1rem;
-  padding-right: 1rem;
   justify-content: center;
 }
 
@@ -264,6 +263,7 @@ body, input {
   color: #336699;
   text-decoration: none;
   background-image: url("../img/triangle.svg");
+  background-position-x: -1px;
   background-size: 100%;
   background-repeat: no-repeat;
   min-width: 90px;
