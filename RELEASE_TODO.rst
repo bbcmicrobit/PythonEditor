@@ -7,4 +7,3 @@ Checklist for Releases
 * If required, update the MicroPython version number in the editor.html file.
 * Create a tagged release using GitHub.
 * Inform those who maintain the versioning manifest. Currently this is @jaustin at the micro:bit foundation.
-

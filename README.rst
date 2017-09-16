@@ -56,7 +56,6 @@ Code
 * CHANGELOG - a record of how things have changed between versions.
 * CONTRIBUTING.rst - a guide for people who want to contribute (you should!).
 * editor.html - the page to be loaded by your browser.
-* firmware.hex - copy of the "vanilla" MicroPython firmware used by the editor.
 * help.html - a single page user facing help page.
 * LICENSE - a copy of the MIT software license that covers this code.
 * microbit_blocks - a GIT sub-module containing custom MicroPython blocks.
