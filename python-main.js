@@ -307,7 +307,7 @@ function web_editor(config) {
     // sane defaults.
     function setupEditor(message) {
         // Set version in document title
-        document.title = document.title + ' ' + VERSION;
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
@@ -696,7 +696,7 @@ function web_editor(config) {
     // appropriate message.
     function checkVersion(qs) {
         $.getJSON('../manifest.json').done(function(data) {
-            if(data.latest === VERSION) {
+            if(data.latest === EDITOR_VERSION) {
                 // Already at the latest version, so ignore.
                 return;
             } else {
@@ -713,7 +713,7 @@ function web_editor(config) {
                 messagebar.html(Mustache.render(template, context))
                 messagebar.show();
                 $('#messagebar-link').attr('href',
-                                           window.location.href.replace(VERSION, data.latest));
+                                           window.location.href.replace(EDITOR_VERSION, data.latest));
                 $('#messagebar-close').on('click', function(e) {
                     $('#messagebar').hide();
                 });
