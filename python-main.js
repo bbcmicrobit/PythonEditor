@@ -337,6 +337,10 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        // If configured as experimental update editor background to indicate it
+        if(config.flags.experimental) {
+            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')"
+        }
         // Configure the zoom related buttons.
         $("#zoom-in").click(function (e) {
             e.stopPropagation();
