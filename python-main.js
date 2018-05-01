@@ -300,6 +300,9 @@ function web_editor(config) {
         if(config.flags.share) {
             $("#command-share").removeClass('hidden');
         }
+        if(config.flags.sim) {
+            $("#command-sim").removeClass('hidden');
+        }
     };
 
     // This function is called to initialise the editor. It sets things up so
@@ -337,6 +340,10 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        // If configured as experimental update editor background to indicate it
+        if(config.flags.experimental) {
+            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')"
+        }
         // Configure the zoom related buttons.
         $("#zoom-in").click(function (e) {
             e.stopPropagation();
