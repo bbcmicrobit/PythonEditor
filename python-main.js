@@ -300,6 +300,9 @@ function web_editor(config) {
         if(config.flags.share) {
             $("#command-share").removeClass('hidden');
         }
+        if(config.flags.sim) {
+            $("#command-sim").removeClass('hidden');
+        }
     };
 
     // This function is called to initialise the editor. It sets things up so
