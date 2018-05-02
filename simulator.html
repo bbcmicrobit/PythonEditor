@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="lib/cm/cobalt.css">
     <link rel="stylesheet" href="lib/cm/blackboard.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/css/simulator-ui.css" type="text/css" />
     <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -26,13 +27,20 @@
     <script src="lib/skulpt/skulpt.min.js"></script>
     <script src="lib/skulpt/skulpt-stdlib.js"></script>
     <script src="lib/jq/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- Script for Simulator-->
+    <script src="static/js/simulator-ui.js"></script>
 </head>
 
-<body>
+<body id="sim-wrap">
+        <div id="sim-parameters">
+            <div id="thermometer">
+                <div id="mb_therm_slider" class="mb_slider"></div>
+                <p class="value"> Temperature: <span id="mb_therm_value">Thermometre Value</span>°C</p>
+            </div>
+        </div>
 
-
-
-    <div id="output"></div>
+        <div id="output"></div>
 
     <script>
         var toolsVisible = false;

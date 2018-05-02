@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
     <!--
                                                                              .:://++++++//:-.
@@ -68,7 +68,7 @@ Nicholas and Damien.
         <link rel="icon" href="static/img/favicon.ico">
     </head>
     <body>
-        <iframe id="sim-iframe" src="about:blank" width="320px" height="257px" frameborder="0" style="position: absolute; bottom: 20px; right: 20px; z-index: 10;"></iframe>
+        <iframe id="sim-iframe" src="about:blank" frameborder="0"></iframe>
         <script type="application/javascript">
         <!-- VERSION INFORMATION -->
         VERSION = "0.1.0";
@@ -361,9 +361,9 @@ web_editor({
       }
     },
     'flags': {
-      'blocks': true,
+      'blocks': false,
       'snippets': true,
-      'share': true
+      'share': false
     },
 });
         </script>
