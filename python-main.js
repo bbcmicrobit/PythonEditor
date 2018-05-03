@@ -763,4 +763,3 @@ function web_editor(config) {
     checkVersion(qs);
     setupButtons();
 };
-

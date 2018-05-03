@@ -12,9 +12,8 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="static/css/simulator-ui.css" type="text/css" />
     <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <!-- See http://blog.withcode.uk/about/license-and-acknowledgements/ for libraries used-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -33,32 +32,78 @@
     <script src="static/js/simulator-ui.js"></script>
 </head>
 
-<body id="sim-wrap">
-        <div id="sim-parameters">
-            <div id="thermometer" class="hidden">
-                <div id="mb_therm_slider" class="mb_slider"></div>
-                <p class="value"> Temperature: <span id="mb_therm_value">Thermometre Value</span>°C</p>
-            </div>
 
-            <div id="pins">
+<body id="sim-wrap">
+    <div id="sim-parameters">
+        <div id="accelerometer">
+            <span class="mb_help_link mb_gesture">down</span>
+            <span class="mb_help_link mb_gesture">left</span>
+            <span class="mb_help_link mb_gesture">right</span>
+            <span class="mb_help_link mb_gesture">face up</span>
+            <span class="mb_help_link mb_gesture">face down</span>
+            <span class="mb_help_link mb_gesture">freefall</span>
+            <span class="mb_help_link mb_gesture">3g</span>
+            <span class="mb_help_link mb_gesture">6g</span>
+            <span class="mb_help_link mb_gesture">8g</span>
+            <span class="mb_help_link mb_gesture">shake</span>
+        </div>
+
+        <div id="thermometer">
+            <div id="mb_therm_slider" class="mb_slider"></div>
+            <p class="value"> Temperature: <span id="mb_therm_value">Thermometre Value</span>°C</p>
+        </div>
+
+        <div id="pins">
                 <label for="mb_pin_num">Pin No. </label> <br/>
                 <input id="mb_pin_num">
 
                 <div id="mb_pin_type"></div>
                 <div id="mb_pin_detail"></div>
             </div>
-        </div>
+    </div> <!-- END #sim-parameters -->
 
-        <div id="output"></div>
+    
+    <div id="sim-btns">
+        <a href="#" id="accel-toggle">
+            <div class="status-icon">
+                <i class="fa fa-tachometer" title="accelerometer"></i>
+            </div>
+            <span class="sim-tip">
+                Allows you to trigger gestures picked up by the accelerometer
+            </span>
+        </a>
+    
+        <a href="#" id="thermo-toggle">
+            <div class="status-icon">
+                <i class="fa fa-thermometer" title="thermometer"></i>
+            </div>
+            <span class="sim-tip">
+                Allows you to adjust the thermometer reading
+            </span>
+        </a>
+
+        <a href="#" id="pin-toggle">
+            <div class="status-icon">
+                <i class="fas fa-map-pin"></i>
+            </div>
+            <span class="sim-tip">
+                Allows you to test functionality using the pins
+            </span>
+        </a>
+    </div>
+
+    <div id="sim-btns-toggle">
+        <i class="fas fa-chevron-up"></i>
+    </div>
+
+    <div id="output"></div>
 
     <script>
         var toolsVisible = false;
-		// load python IDE
         $(function() {
             PythonIDE.init();
             PythonIDE.runCode("normal");
         });
     </script>
-
 </body>
 </html>

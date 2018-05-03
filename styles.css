@@ -22,7 +22,7 @@ html {
 	height: 10px;
 }
 
-#editor { 
+#editor {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -45,7 +45,7 @@ html {
 }
 
 #footer:hover {
-	background-color: rgba(0,255,0,0.5); 
+	background-color: rgba(0,255,0,0.5);
 }
 
 .toolButton {
@@ -83,13 +83,14 @@ html {
 	background-color: rgba(200,200,200,0.5);
 	text-align: center;
 	z-index: 500;
-	
 	font-size: 2em;
 	padding: 3px;
 }
+
 #recover{
-width: 80%;	
+width: 80%;
 }
+
 .recover_date {
 	background-color: #000;
 	margin: 10px;
@@ -169,7 +170,6 @@ button {
 	padding: 10px;
 	border-radius: 10px;
 	background-color: rgba(0,0,200,0.5);
-	
 }
 
 .hiddenButtonPanel {
@@ -224,14 +224,16 @@ button {
 #watch tr:hover {
 	font-size: 2em;
 }
+
 #watch td:hover {
 	background-color: #FF0;
 }
+
 a.nounderline{
   color:inherit;
   text-decoration: none;
  }
- 
+
  a{
 	 color: #000;
 	 background-color: #FFF;
@@ -240,13 +242,12 @@ a.nounderline{
  pre{
 	 white-space: pre-wrap;
  }
- 
+
  #file_tabs {
 	 position:absolute;
 	 top: -20px;
-	 
  }
- 
+
  .file_tab {
 	 background-color: #E8E8E8;
 	 border-radius: 10px 10px 0px 0px;
@@ -254,19 +255,20 @@ a.nounderline{
 	 height: 20px;
 	 margin: 2px;
  }
- 
+
  .file_tab:hover {
 	 background-color: #FF0;
  }
- 
+
  .file_tab_selected {
 	 font-weight: bold;
 	 background-color: #FF9;
  }
+
  .slider {
 	 margin: 20px 50px 20px 50px;
  }
- 
+
  .btn_file_settings{
 	 width:20px;
 	 height:20px;
@@ -274,10 +276,56 @@ a.nounderline{
 	 margin: -25px 10px -5px 0px;
 	 transition: all 1s;
  }
+
  .btn_file_settings:hover {
-	transform: rotate(180deg); 
+	 transform: rotate(180deg);
  }
- 
- .debug_expand {
-	 height:1em;
- }
+
+
+
+.status-icon {
+	 width: 2rem;
+	 height: 2rem;
+	 border: 6px solid #FFCC33;
+	 border-radius: 50%;
+	 margin: .4rem;
+	 text-align: center;
+	 font-size: 1.3rem;
+	 line-height: 2.1rem;
+	 padding: .1em;
+	 font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
+	 color: #336699;
+	 background: #FFFFFF;
+}
+
+#hidden {
+	width:300px;
+	height:100px;
+	border:solid 2px #ddd;
+}
+
+.accelerometer-buttons {
+	display: none;
+}
+
+div.accelerometer-buttons{
+	text-transform: capitalize;
+	width: 400px;
+	height:100px;
+	color: #336699;
+	text-decoration: none;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	text-align: center;
+	border-color: #000000;
+	border-style: solid;
+	border-width: thin;
+	position:absolute;
+	right: 400px;
+	bottom: 100px;
+}
+
+#output {
+	float: left;
+	margin-left: 60px;
+}

@@ -1,6 +1,6 @@
 ﻿#sim-wrap {
     height: 655px;
-    width: 300px;
+    width: 400px;
     background: linear-gradient(90deg, rgba(180, 180, 180, 0) 0%, rgba(180, 180, 180, 0.6) 5%, rgba(180, 180, 180, 0.6) 95%, rgba(180, 180, 180, 0) 100%);
     font-family: Courier New, Courier, monospace;
 }
@@ -13,21 +13,91 @@
     position: relative;
 }
 
+#sim-parameters > * { display: none; }
+
+#sim-btns {
+    position: fixed;
+    bottom: 145px; left: 10px;
+    width: 60px;
+    height: 0;
+    opacity: 0;
+}
+
+#sim-btns a {
+    height: 54px; width: 54px;
+    opacity: 0;
+    
+    display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+    flex-direction: column;
+    
+    color: #336699;
+	text-decoration: none;
+	background-image: url('/static/img/triangle.svg');
+	background-size: 100%;
+    background-repeat: no-repeat;
+    text-align: center;
+    padding: 0px;
+    position: relative;
+    z-index: 20;
+
+    border-radius: 5px;
+    margin: 3px 0;
+}
+
+#sim-btns a .sim-tip {
+    visibility: hidden;
+    max-width: 200px;
+    color: #FFFFFF;
+    background-color: rgb(34, 11, 165);
+    text-align: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+
+    position: absolute;
+    top: 0%; left: 110%;
+    z-index: 99;
+}
+
+#sim-btns a:hover .sim-tip {
+    visibility: visible;
+    z-index: 99;
+}
+
+#sim-btns a .sim-tip::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent rgb(34, 11, 165) transparent transparent;
+}
+
+#sim-btns-toggle {
+    height: 40px; width: 40px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 100px; left: 20px;
+    cursor: pointer;
+    background-color: rgb(68, 202, 226);
+    box-sizing: border-box;
+}
+
 .hidden { display: none; }
 
 /* Thermometer */
 #thermometer
 {
     min-height: 100%; min-width: 100%;
-}
-
-#mb_therm_slider
-{
-    height: 320px; width: 12px;
-    right: 0;
-    bottom: 0;
-    float: right;
-    background: linear-gradient(180deg, rgba(255, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 66%, rgba(0, 255, 255, 1) 100%);
 }
 
 #thermometer .value
@@ -45,6 +115,7 @@
 }
 /* END Thermometer */
 
+/* Pins */
 #pins {
     min-height: 100%; min-width: 100%;
 }
@@ -61,4 +132,11 @@ label[for="mb_pin_num"] {
     border-top: none;
     border-left: none;
     border-right: none;
+}
+
+/* END Pins */
+
+/* Accelerometer */
+#accelerometer {
+    min-height: 100%; min-width: 100%;
 }

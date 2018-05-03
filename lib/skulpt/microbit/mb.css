@@ -33,21 +33,21 @@
 }
 
 .mb_help_link {
-	font-size: small;
-	background-color: #FFF;
-	border-radius: 10px;
-	padding: 10px;
-	color: #000;
+	width: 100%;
+	display: block;
+	font-size: 10px;
+	color: #000000;
+	background-color: #FFFFFF;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 5%, rgba(255, 255, 255, 0.6) 95%, rgba(255, 255, 255, 0) 100%);
+	text-align: center;
 	transition: all 0.5s;
-	margin: 5px;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #000;
-	display:inline-block;
+
+	margin: 2px 0;
+	padding: 10px 0;
 }
 
 .mb_help_link:hover {
-	background-color: #F00;
+	background: linear-gradient(90deg, rgba(255, 46, 46, 0) 0%, rgba(255, 46, 46, 0.6) 5%, rgba(255, 46, 46, 0.6) 95%, rgba(255, 46, 46, 0) 100%);
 }
 .mb_led_brightness_0 {	background-color: #000; }
 .mb_led_brightness_1 {	background-color: #300; }
@@ -161,6 +161,17 @@
 	animation-duration: 0.1s;
 }
 
+/* Thermometer */
+#mb_therm_slider
+{
+	height: 320px; width: 12px;
+	position: absolute;
+    left: 320px;
+    bottom: 0;
+    float: right;
+    background: linear-gradient(180deg, rgba(255, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 66%, rgba(0, 255, 255, 1) 100%);
+}
+
 .mb_pin {
 	position: absolute;
 	bottom: -8px;
@@ -189,8 +200,8 @@
 
 #mb_pin_analog {
 	height: 240px; width: 12px;
-	right: 0; bottom: 0;
-	float: right;
+	left: 320px; bottom: 0;
+	float: left;
 	border: none;
 	background: rgb(3, 3, 121);
 }
