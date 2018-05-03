@@ -11,9 +11,8 @@
     <link rel="stylesheet" href="lib/cm/blackboard.css">
     <link rel="stylesheet" href="styles.css">
     <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <!-- See http://blog.withcode.uk/about/license-and-acknowledgements/ for libraries used-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -26,22 +25,56 @@
     <script src="lib/skulpt/skulpt.min.js"></script>
     <script src="lib/skulpt/skulpt-stdlib.js"></script>
     <script src="lib/jq/jquery.ui.touch-punch.min.js"></script>
+
+    <script type="text/javascript">
+    $(function() {
+      $("a.accelerometer-toggle").click(function(e) {
+        $('.accelerometer-buttons').toggle();
+        e.stopPropagation();
+      });
+    });
+    $(function(){
+      $('accelerometer-buttons').hide();
+    })
+    </script>
 </head>
 
 <body>
+    <div class="accelerometer-buttons">
+        <span class="mb_help_link mb_gesture">down</span>
+        <span class="mb_help_link mb_gesture">left</span>
+        <span class="mb_help_link mb_gesture">right</span>
+        <span class="mb_help_link mb_gesture">face up</span>
+        <span class="mb_help_link mb_gesture">face down</span>
+        <span class="mb_help_link mb_gesture">freefall</span>
+        <span class="mb_help_link mb_gesture">3g</span>
+        <span class="mb_help_link mb_gesture">6g</span>
+        <span class="mb_help_link mb_gesture">8g</span>
+        <span class="mb_help_link mb_gesture">shake</span>
+    </div>
 
+    <div class="buttons">
+      <a href="#" class="accelerometer-toggle">
+        <div class="status-icon">
+          <i class="fa fa-tachometer" title="accelerometer"></i>
+        </div>
+      </a>
 
+      <a href="#" class="thermometer-toggle">
+        <div class="status-icon">
+          <i class="fa fa-thermometer" title="thermometer"></i>
+        </div>
+      </a>
+    </div>
 
     <div id="output"></div>
 
     <script>
         var toolsVisible = false;
-		// load python IDE
         $(function() {
             PythonIDE.init();
             PythonIDE.runCode("normal");
         });
     </script>
-
 </body>
 </html>
