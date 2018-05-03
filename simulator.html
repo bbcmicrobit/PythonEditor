@@ -25,6 +25,7 @@
     <script src="lib/cm/python.js"></script>
     <script src="lib/lib.js"></script>
     <script src="lib/skulpt/skulpt.min.js"></script>
+    <!--<script src="lib/skulpt/microbit/__init__.js"></script>-->
     <script src="lib/skulpt/skulpt-stdlib.js"></script>
     <script src="lib/jq/jquery.ui.touch-punch.min.js"></script>
 
@@ -34,9 +35,17 @@
 
 <body id="sim-wrap">
         <div id="sim-parameters">
-            <div id="thermometer">
+            <div id="thermometer" class="hidden">
                 <div id="mb_therm_slider" class="mb_slider"></div>
                 <p class="value"> Temperature: <span id="mb_therm_value">Thermometre Value</span>°C</p>
+            </div>
+
+            <div id="pins">
+                <label for="mb_pin_num">Pin No. </label> <br/>
+                <input id="mb_pin_num">
+
+                <div id="mb_pin_type"></div>
+                <div id="mb_pin_detail"></div>
             </div>
         </div>
 

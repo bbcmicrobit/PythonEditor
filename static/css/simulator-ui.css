@@ -13,6 +13,9 @@
     position: relative;
 }
 
+.hidden { display: none; }
+
+/* Thermometer */
 #thermometer
 {
     min-height: 100%; min-width: 100%;
@@ -27,15 +30,10 @@
     background: linear-gradient(180deg, rgba(255, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 66%, rgba(0, 255, 255, 1) 100%);
 }
 
-.value
-{
-    position: absolute;
-    bottom: 0; left: 0;
-}
-
 #thermometer .value
 {
     font-size: 20px;
+    position: absolute;
     left: 10px;
     bottom: 50px;
 }
@@ -45,5 +43,22 @@
     font-weight: 600;
     color: rgba(180, 0, 0, 1);
 }
+/* END Thermometer */
 
-.hidden { display: none; }
+#pins {
+    min-height: 100%; min-width: 100%;
+}
+
+label[for="mb_pin_num"] {
+    margin: 0 4px;
+    padding: 4px 0;
+}
+
+#pins span
+{
+    border-radius: 2px;
+    border-color: blue;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
