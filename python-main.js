@@ -207,7 +207,7 @@ function pythonEditor(id) {
     }
 
     return editor;
-};
+}; // END func pythonEditor
 
 /*
 The following code contains the various functions that connect the behaviour of

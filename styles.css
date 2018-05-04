@@ -281,27 +281,7 @@ a.nounderline{
 	 transform: rotate(180deg);
  }
 
-.buttons a {
-  width: 54px;
-	height:54px;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  color: #336699;
-  text-decoration: none;
-  background-image: url('/static/img/triangle.svg');
-  background-size: 100%;
-  background-repeat: no-repeat;
-  text-align: center;
-  padding: 0px;
-	margin-left: 0px;
-	border-color: #000000;
-	border-style: solid;
-	border-width: thin;
-}
+
 
 .status-icon {
 	 width: 2rem;
@@ -328,15 +308,9 @@ a.nounderline{
 	display: none;
 }
 
-.buttons {
-	position: absolute;
-	bottom: 10px;
-	right: 320px;
-}
-
 div.accelerometer-buttons{
 	text-transform: capitalize;
-	width: 275px;
+	width: 400px;
 	height:100px;
 	color: #336699;
 	text-decoration: none;
@@ -351,12 +325,7 @@ div.accelerometer-buttons{
 	bottom: 100px;
 }
 
-#microbit#microbit {
-		position:absolute;
-		right: 10px;
-		bottom: 10px;
-}
-
-#sim-iframe {
-	overflow: hidden;
+#output {
+	float: left;
+	margin-left: 60px;
 }
