@@ -3,4 +3,4 @@
 	url = https://github.com/google/blockly.git
 [submodule "microbit_blocks"]
 	path = microbit_blocks
-	url = https://github.com/PyBlocks/microbit_blocks.git
+    url = https://github.com/PyBlocks/microbit_blocks.git
