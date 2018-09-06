@@ -676,6 +676,10 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
+        $("#command-help").click(function () {
+            $(".helpsupport_container").toggle();
+        }
+        $(".help_support_container").hide();
     }
 
     // Extracts the query string and turns it into an object of key/value
