@@ -470,3 +470,12 @@ div.load-form {
 .is-dragover {
     background: #ccc !important;
 }
+
+.helpsupport_container {
+        margin: auto auto auto auto;
+}
+
+.helpsupport {
+        margin-top: .5em;
+        margin-bottom: .5em;
+}
