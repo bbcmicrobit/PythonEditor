@@ -473,9 +473,15 @@ div.load-form {
 
 .helpsupport_container {
         margin: auto auto auto auto;
+        display: none;
+        padding-right: 1em;
 }
 
 .helpsupport {
         margin-top: .5em;
         margin-bottom: .5em;
+}
+
+.helpsupport_rhs {
+    margin: auto;
 }
