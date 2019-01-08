@@ -136,43 +136,40 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
     describe("It's possible to generate a hex file.", function() {
 
         var editor;
+        var template_hex = ":1000000000400020ED530100295401002B54010051\n" +
+                ":::::::::::::::::::::::::::::::::::::::::::\n" +
+                ":00000001FF\n";
 
         beforeEach(function() {
             affix("#editor");
             editor = pythonEditor('editor');
         });
 
-        it("The editor converts text into Intel's hex format.", function() {
-            var hexified = upyhex.pyStrToIntelHex('display.scroll("Hello")');
-            var expected = ':10E000004D501700646973706C61792E7363726F81\n' +
-                ':10E010006C6C282248656C6C6F222900000000009F';
-            expect(hexified).toEqual(expected);
-        });
-
         it("The editor complains if the Python script is greater than 8k in length.", function() {
             var hex_fail = function() {
-                var result = upyhex.pyStrToIntelHex(new Array(8189).join('a'));
-            }
+                // Keep in mind the 4 Bytes header
+                var codeLen = (8 * 1024) - 4 + 1;
+                var result = upyhex.injectPyStrIntoIntelHex(template_hex, new Array(codeLen + 1).join('a'));
+            };
             expect(hex_fail).toThrowError(RangeError, 'Too long');
         });
 
         it("The editor is fine if the Python script is 8k in length.", function() {
-            var hexified = upyhex.pyStrToIntelHex(new Array(8188).join('a'));
+            var codeLen = (8 * 1024) - 4;
+            var hexified = upyhex.injectPyStrIntoIntelHex(template_hex, new Array(codeLen + 1).join('a'));
             expect(hexified).not.toBe(null);
         });
 
-
         it("A hex file is generated from the script and template firmware.",
            function() {
-            var template_hex = ":10E000004D500B004D6963726F507974686F6E00EC\n" +
-                ":::::::::::::::::::::::::::::::::::::::::::\n" +
-                ":10E000004D500B004D6963726F507974686F6E00EC";
             editor.setCode('display.scroll("Hello")');
             var result = editor.getHexFile(template_hex);
-            var expected = ":10E000004D500B004D6963726F507974686F6E00EC\n" +
+            var expected = ":020000040000FA\n" +
+                ":1000000000400020ED530100295401002B54010051\n" +
+                ":020000040003F7\n" +
                 ":10E000004D501700646973706C61792E7363726F81\n" +
-                ":10E010006C6C282248656C6C6F222900000000009F\n" +
-                ":10E000004D500B004D6963726F507974686F6E00EC";
+                ":0BE010006C6C282248656C6C6F2229A4\n" +
+                ":00000001FF\n";
             expect(result).toEqual(expected);
         });
     });
@@ -187,9 +184,11 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         });
 
         it("The editor converts from Intel's hex format to text", function() {
-            var raw_hex = ":10E000004D501700646973706C61792E7363726F81\n" +
-                ":10E010006C6C282248656C6C6F222900000000009F\n";
-            var result = upyhex.intelHexToPyStr(raw_hex);
+            var raw_hex = ":020000040003F7\n" +
+                ":10E000004D501700646973706C61792E7363726F81\n" +
+                ":10E010006C6C282248656C6C6F222900000000009F\n" +
+                ":00000001FF\n";
+            var result = upyhex.extractPyStrFromIntelHex(raw_hex);
             var expected = 'display.scroll("Hello")';
             expect(result).toEqual(expected);
         });
@@ -213,8 +212,6 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             var raw_hex = ":10E000004D500B004D6963726F507974686F6E00EC\n" +
                 ":10B2C00021620100E1780100198001000190010074\n" +
                 ":04B2D0000D0100006C\n" +
-                ":10E000004D501700646973706C61792E7363726F81\n" +
-                ":10E010006C6C282248656C6C6F222900000000009F\n" +
                 ":04000005000153EDB6\n" +
                 ":00000001FF";
             var result = upyhex.extractPyStrFromIntelHex(raw_hex);
