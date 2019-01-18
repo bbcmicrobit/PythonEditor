@@ -73,7 +73,32 @@ Nicholas and Damien.
             EDITOR_VERSION = "1.1.2";
             UPY_VERSION = "1.0.1";
         </script>
-
+        <script id="filesystem-template" type="x-tmpl-mustache">
+            <h2><i class="fa fa-folder"></i> <strong>{{ title }}</strong></h2>
+            <div class="filesystem-drag-target" id="filesystem-drag-target">
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Filename</td>
+                            <td>Type</td>
+                            <td>Size</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div>
+                    <p>{{ instructions }}</p>
+                </div>
+            </div>
+            <div class="filesystem-form">
+                <form id="filesystem-form-form">
+                    <input type="file" name="filesystem-form-file-upload" multiple><br/>
+                    <input type="submit" value="{{ submit }}"/>
+                </form>
+            </div>
+        </script>
         <script id="load-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-upload"></i> <strong>{{ title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
@@ -164,6 +189,14 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Load</div>
                 </a>
+                <a href="#" class="roundbutton" id="command-filesystem"
+                    tabindex="4"
+                    title="Manage the filesystem">
+                    <div class="roundsymbol">
+                        <i class="fa fa-folder"></i>
+                    </div>
+                    <div class="roundlabel">File System</div>
+                </a>
                 <a href="#" class="roundbutton hidden" id="command-blockly"
                     tabindex="4"
                     title="Click to create code with blockly">
@@ -253,6 +286,7 @@ Nicholas and Damien.
         <script src="static/js/encoding.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
+        <script src="static/js/MicropythonFs.js" type="application/javascript"></script>
         <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
         <script src="blockly/blockly_compressed.js"></script>
         <script src="blockly/blocks_compressed.js"></script>
@@ -349,6 +383,13 @@ web_editor({
       'load': {
         'title': 'Load Script or HEX file',
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
+        'submit': 'Load',
+        'toggle-drop': 'Or drag and drop a file',
+        'toggle-file': 'Or pick a file'
+      },
+      'filesystem': {
+        'title': 'Manage files on a micro:bit',
+        'instructions': 'Drag and drop files in here to store on your micro:bit',
         'submit': 'Load',
         'toggle-drop': 'Or drag and drop a file',
         'toggle-file': 'Or pick a file'
