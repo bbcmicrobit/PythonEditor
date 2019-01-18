@@ -512,3 +512,23 @@ div.load-form {
     color: #fff;
     font-size: 22px;
 }
+
+.filesystem-drag-target table {
+    width: -webkit-fill-available;
+    background: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 15px;
+}
+
+.filesystem-drag-target table thead {
+    font-weight: bold;
+}
+
+.filesystem-drag-target table tbody {
+    min-height: 2em;
+}
+
+.filesystem-remove-button {
+    height: 3em;
+    width: -webkit-fill-available;
+}

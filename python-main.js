@@ -227,6 +227,9 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
+    // MicroPython filesystem
+    var microbitFs;
+
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
         $("#script-name").val(x);
@@ -407,12 +410,33 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
+    // Sets up the file system and adds the initial main.py
+    function setupFilesystem() {
+        // Create fs if doesn't exist
+        if (typeof microbitFs === "undefined")
+            microbitFs = new MicropythonFs.FileSystem($("#firmware").text());
+
+        // Get initial main.py
+        microbitFs.write("main.py", EDITOR.getCode()); // Add main.py
+    }
+
     // Generates the text for a hex file with MicroPython and the user code
     function generateFullHexStr() {
+        // Create fs if doesn't exist
+        if (typeof microbitFs === "undefined")
+            microbitFs = new MicropythonFs.FileSystem($("#firmware").text());
+
+         // Add main.py to filesystem
+        microbitFs.remove("main.py"); // Remove existing
+        microbitFs.write("main.py", EDITOR.getCode()); // Add main.py
+
+        // Create hex
         var firmware = $("#firmware").text();
         var fullHexStr = '';
         try {
-            fullHexStr = EDITOR.getHexFile(firmware);
+            // Use hex from filesystem instead
+            // fullHexStr = EDITOR.getHexFile(firmware);
+            fullHexStr = EDITOR.getHexFile(microbitFs.getIntelHex());
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
             throw new Error(config.translate.alerts.length);
@@ -511,6 +535,9 @@ function web_editor(config) {
                             };
                             reader.readAsText(f);
                             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+            
+                            // We currently can't load the filesystem from a HEX file
+                            alert("The filesystem manager is still under development and currently unable to load files from a HEX file.");
                         }
                     }
                     vex.close();
@@ -678,6 +705,9 @@ function web_editor(config) {
             };
             reader.readAsText(file);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+
+            // We currently can't load the filesystem from a HEX file
+            alert("The filesystem manager is still under development and currently unable to load files from a HEX file.");
         }
         $('#editor').focus();
     }
@@ -926,6 +956,134 @@ function web_editor(config) {
        */
     }
 
+    // Describes what to do when the filesystem button is clicked.
+    function doFilesystem() {
+        // Update main.py in filesystem
+        microbitFs.remove("main.py"); // Remove existing
+        microbitFs.write("main.py", EDITOR.getCode()); // Add main.py
+
+        // Create UI
+        var template = $('#filesystem-template').html();
+        Mustache.parse(template);
+        vex.open({
+            content: Mustache.render(template, config.translate.filesystem),
+            afterOpen: function(vexContent) {
+                $(vexContent).find('#filesystem-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragover dragenter', function() {
+                    $('#filesystem-drag-target').addClass('is-dragover');
+                })
+                .on('dragleave dragend drop', function() {
+                    $('#filesystem-drag-target').removeClass('is-dragover');
+                })
+                .on('drop', function(e) {
+                    var files = e.originalEvent.dataTransfer.files;
+                    doFilesystemAdd(files);
+                });
+                $(vexContent).find('#filesystem-form-form').on('submit', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var files = e.target[0].files;
+                    doFilesystemAdd(files);
+
+                    // Clear form input
+                    $('#filesystem-form-form input[type=file]').replaceWith( $('#filesystem-form-form input[type=file]').val('').clone(true));
+
+                });
+            }
+        })
+        $('.filesystem-toggle').on('click', function(e) {
+            $('.filesystem-form').toggle();
+        });
+        
+        Object.keys(microbitFs._files).forEach(function(key) {
+
+            var file = microbitFs._files[key];
+
+            var fileType = (/[.]/.exec(file.filename)) ? /[^.]+$/.exec(file.filename) : "";
+
+            $('.filesystem-drag-target table tbody').append(
+                '<tr><td>' + file.filename + '</td><td>' + fileType + '</td><td>' + (file._dataBytes.length/1024).toFixed(2) + ' kb</td><td>' + ((file.filename == 'main.py') ? '' : '<button id="' + file.filename + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
+            ).on('click', function(e){
+                if($(e.target).hasClass("filesystem-remove-button"))
+                {
+                    doFilesystemRemove(e.target.id);
+                    $(e.target).closest("tr").remove();
+                }
+            });
+        });
+
+    }
+
+    // Function to remove a file
+    function doFilesystemRemove(name) {
+        return microbitFs.remove(name);
+    }
+
+    // Function for adding file to filesystem
+    function doFilesystemAdd(files) {
+
+        Array.from(files).forEach(function(file) {
+            // Check if file already exists
+            if(microbitFs.exists(file.name) && file.name != "main.py")
+            {
+                alert(file.name + " already exists in the file system!");
+                return;
+            }
+
+            // Attempt to add file to FS
+            var fileReader = new FileReader();
+            fileReader.onloadend = function (e) {
+            
+              var arrayBuffer = new Uint8Array(e.target.result);
+
+                // Check if file is main.py
+                if(file.name == "main.py")
+                {
+                    if(!confirm("This will replace the code in the editor!"))
+                        return;
+
+                    var utf8 = new TextDecoder("utf-8").decode(arrayBuffer);
+                    console.log(utf8);
+                    EDITOR.setCode(utf8);
+                }
+            
+              var fileType = $('#file-type').val();
+              microbitFs.write(file.name, arrayBuffer);
+
+              // Check if the filesystem has run out of space
+              try
+              {
+                microbitFs.getIntelHex();
+            
+                // Update UI
+                var fileType = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : "";
+
+                $('.filesystem-drag-target table tbody').append(
+                    '<tr><td>' + file.name + '</td><td>' + file.type + '</td><td>' + (file.size/1024).toFixed(2) + ' kb</td><td>' + ((file.name == 'main.py') ? '' : '<button id="' + file.name + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
+                ).on('click', function(e){
+                    if($(e.target).hasClass("filesystem-remove-button"))
+                    {
+                        doFilesystemRemove(e.target.id);
+                        $(e.target).closest("tr").remove();
+                    }
+                });
+              } catch(e) {
+                microbitFs.remove(file.name);
+                alert("The file system does not have enough free space to add " + file.name);
+                return; // Skip UI
+              }
+
+            };
+            fileReader.readAsArrayBuffer(file);
+
+
+        });
+    }
+
     function formatMenuContainer(parentButtonId, containerId) {
         var container = $('#' + containerId);
         if (container.is(':visible')) {
@@ -975,8 +1133,11 @@ function web_editor(config) {
             if ($("#command-connect").length) {
               doConnect();
             } else {
-              doDisconnect();
-            }
+                doDisconnect();
+              }
+        });
+        $("#command-filesystem").click(function () {
+            doFilesystem();
         });
         $("#command-serial").click(function () {
             doSerial();
@@ -1054,6 +1215,10 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
+    window.addEventListener('load', function() {
+        // Firmware at the end of the HTML file has to be loaded first
+        setupFilesystem();
+    });
 }
 
 /*
