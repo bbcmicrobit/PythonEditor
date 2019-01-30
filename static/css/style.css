@@ -115,7 +115,7 @@ body, input {
 
 #script-description {
   display: none; /* TODO: FIXME: remove this field */
-  color: #3758ce;
+  color: #336699;
   padding-bottom: 0.2rem;
   overflow: hidden;
   max-height: 22px;
@@ -221,10 +221,6 @@ body, input {
   text-align: center;
   padding-left: 0.75em;
   padding-right: 0.75em;
-}
-
-
-#toolbox {
 }
 
 #log {
