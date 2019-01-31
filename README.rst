@@ -22,7 +22,7 @@ submodules::
 
 Assuming you have Python 3 installed you can serve the editor like this::
 
-    $ ./show.sh
+    $ ./bin/show.sh
     http://localhost:8000/editor.html
     Serving HTTP on 0.0.0.0 port 8000 ...
 
