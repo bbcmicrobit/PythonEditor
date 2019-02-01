@@ -307,7 +307,7 @@ function web_editor(config) {
     // sane defaults.
     function setupEditor(message) {
         // Set version in document title
-        document.title = document.title + ' ' + VERSION;
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
