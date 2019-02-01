@@ -155,7 +155,7 @@ function pythonEditor(id) {
         var hex_lines = hexfile.trimRight().split(/\r?\n/);
         var start_line = hex_lines.lastIndexOf(':020000040003F7');
         if (start_line > 0) {
-            var lines = hex_lines.slice(start_line + 1, -2);
+            var lines = hex_lines.slice(start_line + 1, -5);
             var blob = lines.join('\n');
             if (blob=='') {
                 return '';
