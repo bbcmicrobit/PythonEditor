@@ -306,6 +306,8 @@ function web_editor(config) {
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
     function setupEditor(message, migration) {
+        // Set version in document title
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
