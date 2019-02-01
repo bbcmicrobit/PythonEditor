@@ -307,7 +307,7 @@ function web_editor(config) {
     // sane defaults.
     function setupEditor(message) {
         // Set version in document title
-        document.title = document.title + ' ' + VERSION;
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
@@ -676,6 +676,14 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
+        $("#command-help").click(function () {
+            if($(".helpsupport_container").css("display") == "none"){
+                $(".helpsupport_container").css("display", "flex");
+            } else {
+                $(".helpsupport_container").css("display", "none");
+            }
+        });
+        $(".helpsupport_container").hide();
     }
 
     // Extracts the query string and turns it into an object of key/value
