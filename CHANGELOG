@@ -1,3 +1,10 @@
+1.0.0
+-----
+
+* Updated styling
+* Moved show script to bin/show
+* Flags disabled by default: blocks, experimental, and share
+
 0.1.0
 -----
 

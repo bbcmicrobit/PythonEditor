@@ -91,20 +91,30 @@ body, input {
 
 /* Script info box */
 #script-box {
+  padding-right: 1rem;
+  margin-left: auto;
   margin-right: 1rem;
-  margin-left: 1rem;
-  text-align: right;
-  width: 100%;
+  justify-content: center;
 }
 
 #script-name {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  border: #808080 1px solid;
   color: #1a354c;
   overflow: hidden;
-  max-height: 90px;
+  width: 100%;
+  margin-right: 1rem;
+  min-width: 10rem;
+  max-width: 15rem;
+  background-color: white;
+  line-height: 2.5rem;
+  max-height: 2.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
 }
 
 #script-description {
+  display: none; /* TODO: FIXME: remove this field */
   color: #336699;
   padding-bottom: 0.2rem;
   overflow: hidden;
@@ -207,18 +217,10 @@ body, input {
   font-weight: bold;
 }
 
-#commands {
-  min-width: 900px;
-}
-
 #commands a {
   text-align: center;
   padding-left: 0.75em;
   padding-right: 0.75em;
-}
-
-
-#toolbox {
 }
 
 #log {
@@ -258,6 +260,7 @@ body, input {
   color: #336699;
   text-decoration: none;
   background-image: url("../img/triangle.svg");
+  background-position-x: -1px;
   background-size: 100%;
   background-repeat: no-repeat;
   min-width: 90px;
@@ -354,7 +357,6 @@ a.command:hover {
   #script-name {
     font-size: 1.2rem;
     font-weight: bold;
-    max-height: 50px;
   }
 
   .blocklyTreeRow {
@@ -368,10 +370,6 @@ a.command:hover {
   .blocklyTreeLabel {
     font-size: 12px !important;
   }
-
-  #commands {
-    min-width: 425px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -381,8 +379,7 @@ a.command:hover {
   }
 
   #script-box {
-    margin-right: 1rem;
-    margin-left: 1rem;
+    margin: 1rem;
     text-align: left;
     width: 100%;
   }
