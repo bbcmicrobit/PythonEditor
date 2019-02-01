@@ -328,6 +328,11 @@ function web_editor(config) {
                 vex.close();
                 EDITOR.focus();
             });
+        } else if(migration != null){
+            setName(migration.meta.name);
+            setDescription(migration.meta.comment);
+            EDITOR.setCode(migration.source);
+            EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
             setName("microbit")
@@ -704,6 +709,14 @@ function web_editor(config) {
         return result;
     }
 
+    function get_migration() {
+        var compressed_project = window.location.toString().split("#project:")[1];
+        if(typeof compressed_project === "undefined") return null;
+        var bytes = base64js.toByteArray(compressed_project);
+        var project = JSON.parse(LZMA.decompress(bytes));
+        return project;
+    }
+
     // Checks if this is the latest version of the editor. If not display an
     // appropriate message.
     function checkVersion(qs) {
@@ -734,8 +747,9 @@ function web_editor(config) {
     }
 
     var qs = get_qs_context()
+    var migration = get_migration();
     setupFeatureFlags();
-    setupEditor(qs);
+    setupEditor(qs, migration);
     checkVersion(qs);
     setupButtons();
 };
