@@ -305,7 +305,9 @@ function web_editor(config) {
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
-    function setupEditor(message, migration) {
+    function setupEditor(message) {
+        // Set version in document title
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
         EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
