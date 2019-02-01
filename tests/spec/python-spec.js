@@ -168,7 +168,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
                 ":1000000000400020ED530100295401002B54010051\n" +
                 ":020000040003F7\n" +
                 ":10E000004D501700646973706C61792E7363726F81\n" +
-                ":0BE010006C6C282248656C6C6F2229A4\n" +
+                ":10E010006C6C282248656C6C6F222900000000009F\n" +
                 ":00000001FF\n";
             expect(result).toEqual(expected);
         });
