@@ -422,16 +422,20 @@ a.command:hover {
 }
 
 div.load-drag-target {
-    height: 200px;
+    height: 160px;
     background: #ddd;
     border: 1px solid #aaa;
-    border-radius: 15px;
+    border-radius: 9px;
+    position: relative;
 }
-
+div.load-drag-target > p {
+  margin: 0px;
+  padding: 0px;
+}
 
 div.load-form {
     padding-top: 20px;
-    height: 200px;
+    height: 160px;
 }
 
 .load-form input {
@@ -474,22 +478,79 @@ div.load-form {
     margin: auto;
 }
 
-.filesystem-drag-target table {
+.fs-file-list table {
     width: -webkit-fill-available;
     background: #ddd;
     border: 1px solid #aaa;
-    border-radius: 15px;
+    border-radius: 9px;
+    margin: 16px 0px 0px 0px;
 }
 
-.filesystem-drag-target table thead {
+.fs-file-list table thead {
     font-weight: bold;
 }
 
-.filesystem-drag-target table tbody {
+.fs-file-list table tbody {
     min-height: 2em;
 }
 
-.filesystem-remove-button {
-    height: 3em;
+.fs-remove-button {
+    height: 2.5em;
+    border-radius: 6px;
     width: -webkit-fill-available;
+}
+.fs-remove-button:hover {
+    color: #ffffff;
+    background-color:#f20000;
+}
+
+#fs-form-file-upload-button {
+    border-radius: 9px;
+    height: 2.0em;
+    margin: 16px 0px 0px 0px;
+}
+#fs-form-file-upload-button:hover {
+    background-color: #1f669d;
+    color: #ffffff;
+}
+
+.fs-space-table {
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    border-collapse:separate;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+}
+.fs-space-table > tbody > tr> td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0px 6px;
+    height: 20px;
+    font-size: 13px;
+}
+.fs-space-table-first {
+    border-radius: 6px 0px 0px 6px;
+}
+#fs-space-modules {
+    width: auto;
+    color: white;
+    min-width: 2%;
+    background-color: #569092;
+}
+#fs-space-main {
+    width: auto;
+    min-width: 2%;
+    color: white;
+    background-color: #8365c1;
+}
+#fs-space-other {
+    width: auto;
+    min-width: 2%;
+    color: white;
+    background-color: #9a9797;
+}
+#fs-space-free {
+    width: auto;
+    min-width: 2%;
 }

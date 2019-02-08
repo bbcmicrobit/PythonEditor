@@ -80,34 +80,8 @@ Nicholas and Damien.
             EDITOR_VERSION = "1.1.5";
             UPY_VERSION = "1.0.1";
         </script>
-        <script id="filesystem-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-folder"></i> <strong>{{ title }}</strong></h2>
-            <div class="filesystem-drag-target" id="filesystem-drag-target">
-                <table>
-                    <thead>
-                        <tr>
-                            <td>Filename</td>
-                            <td>Type</td>
-                            <td>Size</td>
-                            <td></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <div>
-                    <p>{{ instructions }}</p>
-                </div>
-            </div>
-            <div class="filesystem-form">
-                <form id="filesystem-form-form">
-                    <input type="file" name="filesystem-form-file-upload" multiple><br/>
-                    <input type="submit" value="{{ submit }}"/>
-                </form>
-            </div>
-        </script>
         <script id="load-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-upload"></i> <strong>{{ title }}</strong></h2>
+            <h2><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <p>{{ instructions }}</p>
             </div>
@@ -120,6 +94,39 @@ Nicholas and Damien.
             <div id="load-alt">
                 <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
                 <p><a href="#" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+            </div>
+
+            <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
+            <table class='fs-space-table'>
+                <tbody>
+                  <tr>
+                    <td id="fs-space-modules" class="fs-space-table-first">modules</td>
+                    <td id="fs-space-main">main.py</td>
+                    <td id="fs-space-other">other</td>
+                    <td id="fs-space-free">free</td>
+                  </tr>
+                </tbody>
+            </table>
+            <div class="fs-file-list" id="fs-file-list">
+                <table>
+                  <thead>
+                      <tr>
+                          <td>Filename</td>
+                          <td>Type</td>
+                          <td>Size</td>
+                          <td></td>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+              </table>
+            </div>
+            <div class="fs-form-wrapper">
+              <form id="fs-form">
+                  <input type="button" id="fs-form-file-upload-button" value="{{ fs-add-file }}">
+                  <input type="file" style="display: none" name="fs-form-file-upload" id="fs-form-file-upload" multiple>
+                  <input type="submit" style="display: none" id="fs-form-submit-button" value="{{ submit }}"/>
+              </form>
             </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
@@ -189,14 +196,6 @@ Nicholas and Damien.
                         <i class="fa fa-upload"></i>
                     </div>
                     <div class="roundlabel">Load</div>
-                </a>
-                <a href="#" class="roundbutton" id="command-filesystem"
-                    tabindex="4"
-                    title="Manage the filesystem">
-                    <div class="roundsymbol">
-                        <i class="fa fa-folder"></i>
-                    </div>
-                    <div class="roundlabel">File System</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-blockly"
                     tabindex="4"
@@ -284,21 +283,13 @@ Nicholas and Damien.
         <script src="static/js/encoding.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
-<<<<<<< HEAD
-        <script src="static/js/polyfill.min.js" type="application/javascript"></script>
-=======
-        <script src="static/js/MicropythonFs.js" type="application/javascript"></script>
->>>>>>> fs: First version with its own button and modal.
-        <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
         <script src="static/js/custom-event-polyfill.js"></script>
-	    <script src="lzma/lzma_worker.js"></script>
-	    <script src="base64-js/base64.js"></script>
-        <script src="hexlify.js"
-            type="application/javascript"></script>
-        <script src="python-main.js"
-            type="application/javascript"></script>
+        <script src="lzma/lzma_worker.js"></script>
+        <script src="base64-js/base64.js"></script>
+        <script src="static/js/microbit-fs.umd.js"></script>
+        <script src="python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
 // Call the web_editor function to start the editor running.
@@ -339,13 +330,20 @@ web_editor({
       'alerts': {
         'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
         'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
-        'length': 'Oops! Your script is too long given the limited memory on the device.',
+        'load_code': 'Oops! Could not load the code into the hex file.',
         'unrecognised_hex': "Sorry, we couldn't recognise this file",
-        'snippets': 'Snippets are disabled when blockly is enabled.'
+        'snippets': 'Snippets are disabled when blockly is enabled.',
+        'error': 'Error:\n',
+        'empty': 'The Python file does not have any content.',
+        'no_python': 'Could not find valid Python code in the hex file.',
+        'no_script': 'Hex file does not contain a Python script.',
+        'no_main': 'The hex file does not contain a main.py file.',
+        'cant_add_file': 'Could not add file to the system:',
       },
       'confirms': {
         'quit': "Some of your changes have not been saved. Quit anyway?",
-        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?"
+        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
+        'main_replace': 'Adding a main.py file will replace the code in the editor!',
       },
       'code': {
         'start': "# Add your Python code here. E.g.\n" +
@@ -355,23 +353,14 @@ web_editor({
                  "    display.show(Image.HEART)\n" +
                  "    sleep(2000)\n"
       },
-      'drop': {
-        'python': 'Extracted from a Python file',
-        'hex': 'Extracted from a hex file'
-      },
       'load': {
-        'title': 'Load Script or HEX file',
+        'load-title': 'Load Script or HEX file',
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
         'toggle-drop': 'Or drag and drop a file',
-        'toggle-file': 'Or pick a file'
-      },
-      'filesystem': {
-        'title': 'Manage files on a micro:bit',
-        'instructions': 'Drag and drop files in here to store on your micro:bit',
-        'submit': 'Load',
-        'toggle-drop': 'Or drag and drop a file',
-        'toggle-file': 'Or pick a file'
+        'toggle-file': 'Or pick a file',
+        'fs-title': 'Manage files on a micro:bit',
+        'fs-add-file': 'Add a file to the filesystem'
       }
     },
     'flags': {
