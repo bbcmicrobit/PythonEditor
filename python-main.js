@@ -200,7 +200,19 @@ function web_editor(config) {
         if(config.flags.share) {
             $("#command-share").removeClass('hidden');
         }
-    }
+        // Update the help link to pass feature flag information.
+        var helpAnchor = $("#help-link");
+        var featureQueryString = Object.keys(config.flags).filter(function(f) {
+            return config.flags[f];
+        }).map(function(f) {
+            return encodeURIComponent(f) + "=true";
+        }).join("&");
+        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
+    };
+
+    // Update the docs link to append MicroPython version
+    var docsAnchor = $("#docs-link"); 
+    docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
