@@ -43,7 +43,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         it("A tab is the same as 4 spaces.", function() {
             var editor = pythonEditor('editor');
             expect(editor.ACE.getOption('tabSize')).toBe(4);
-        })
+        });
 
         it("A tab is 'soft'.", function() {
             var editor = pythonEditor('editor');
