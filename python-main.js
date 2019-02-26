@@ -10,8 +10,10 @@ Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
 function pythonEditor(id) {
+    'use strict';
+
     // An object that encapsulates the behaviour of the editor.
-    editor = {};
+    var editor = {};
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
@@ -56,8 +58,8 @@ function pythonEditor(id) {
     // Triggers a snippet by name in the editor.
     editor.triggerSnippet = function(snippet) {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        var snippet = snippetManager.snippetNameMap.python[snippet];
-        if(snippet) {
+        snippet = snippetManager.snippetNameMap.python[snippet];
+        if (snippet) {
             snippetManager.insertSnippet(ACE, snippet.content);
         }
     };
@@ -116,6 +118,10 @@ the editor to the DOM (web-page).
 See the comments in-line for more information.
 */
 function web_editor(config) {
+    'use strict';
+
+    // Instance of the pythonEditor object (the ACE text editor wrapper)
+    var EDITOR = pythonEditor('editor');
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
@@ -208,7 +214,7 @@ function web_editor(config) {
             return encodeURIComponent(f) + "=true";
         }).join("&");
         helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
-    };
+    }
 
     // Update the docs link to append MicroPython version
     var docsAnchor = $("#docs-link"); 
@@ -221,7 +227,6 @@ function web_editor(config) {
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
-        EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
             var template = $('#decrypt-template').html();
             Mustache.parse(template);
@@ -309,13 +314,25 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
+    // Generates the text for a hex file with MicroPython and the user code
+    function generateFullHexStr() {
+        var firmware = $("#firmware").text();
+        var fullHexStr = '';
+        try {
+            fullHexStr = EDITOR.getHexFile(firmware);
+        } catch(e) {
+            // We generate a user readable error here to be caught and displayed
+            throw new Error(config.translate.alerts.length);
+        }
+        return fullHexStr;
+    }
+
     // This function describes what to do when the download button is clicked.
     function doDownload() {
-        var firmware = $("#firmware").text();
         try {
-            var output = EDITOR.getHexFile(firmware);
+            var output = generateFullHexStr();
         } catch(e) {
-            alert(config.translate.alerts.length);
+            alert('Error:\n' + e.message);
             return;
         }
         var ua = navigator.userAgent.toLowerCase();
