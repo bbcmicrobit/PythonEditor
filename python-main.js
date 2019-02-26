@@ -632,7 +632,7 @@ function web_editor(config) {
                 // Create firmware
                 var firmware = $("#firmware").text();
                 try {
-                 var output = EDITOR.getHexFile(firmware);
+                 var output = generateFullHexStr();
                 } catch(e) {
                  alert(config.translate.alerts.length);
                  return;
