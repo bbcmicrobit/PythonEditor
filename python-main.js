@@ -739,7 +739,7 @@ function web_editor(config) {
 
                 // If micro:bit does not support dapjs
                 if(e.message === "No valid interfaces found."){
-                    $("#flashing-overlay-error").html('<div>' + e + '</div><div><a target="_blank" href="0247_kl26z_microbit_0x8000-DAPLINK-RELEASE.hex">Update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    $("#flashing-overlay-error").html('<div>' + e + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
                     return;
                 } else if(e.message === "Unable to claim interface.") {
                     $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
