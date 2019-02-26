@@ -150,7 +150,7 @@ function web_editor(config) {
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
-        $("#script-name").text(x);
+        $("#script-name").val(x);
     }
 
     // Gets the description associated with the code displayed in the UI.
@@ -160,7 +160,7 @@ function web_editor(config) {
 
     // Gets the name associated with the code displayed in the UI.
     function getName() {
-        return $("#script-name").text();
+        return $("#script-name").val();
     }
 
     // Get the font size of the text currently displayed in the editor.
