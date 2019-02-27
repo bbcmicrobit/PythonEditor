@@ -1,7 +1,3 @@
-BETA
------
-* Add WebUSB support for direct flashing and a serial connection to the REPL.
-
 1.1.2
 -----
 

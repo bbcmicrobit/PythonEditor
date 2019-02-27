@@ -70,7 +70,7 @@ Nicholas and Damien.
     <body>
         <script type="application/javascript">
             // VERSION INFORMATION
-            EDITOR_VERSION = "1.1.2-webusb";
+            EDITOR_VERSION = "1.1.2";
             UPY_VERSION = "1.0.1";
         </script>
 
@@ -149,7 +149,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Download</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-flash"
-                    tabindex="1"
+                    tabindex="2"
                     title="Flash your project directly to your micro:bit">
                     <div class="roundsymbol">
                                       <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -159,7 +159,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Flash</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-serial"
-                    tabindex="1"
+                    tabindex="3"
                     title="Connect to your micro:bit via serial">
                     <div class="roundsymbol">
                         <i class="fa fa-keyboard-o"></i>
@@ -167,7 +167,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Open Serial</div>
                 </a>
                 <a href="#" class="roundbutton" id="command-save"
-                    tabindex="2"
+                    tabindex="4"
                     title="Save your Python code to your computer">
                     <div class="roundsymbol">
                         <i class="fa fa-download"></i>
@@ -175,7 +175,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Save</div>
                 </a>
                 <a href="#" class="roundbutton" id="command-load"
-                    tabindex="3"
+                    tabindex="5"
                     title="Load Python code or hex file into the editor">
                     <div class="roundsymbol">
                         <i class="fa fa-upload"></i>
@@ -183,7 +183,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Load</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-blockly"
-                    tabindex="4"
+                    tabindex="6"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -193,7 +193,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-snippet"
-                    tabindex="5"
+                    tabindex="7"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -201,7 +201,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="#" class="roundbutton"
-                    id="command-help" tabindex="6"
+                    id="command-help" tabindex="8"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -220,7 +220,7 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <a href="#" class="roundbutton hidden"
-                    id="command-share" tabindex="7"
+                    id="command-share" tabindex="9"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -228,14 +228,14 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer" tabindex="8" id="zoom-in"
+                    <a class="holder zoomer" tabindex="10" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer" tabindex="9" id="zoom-out"
+                    <a class="holder zoomer" tabindex="11" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -246,10 +246,10 @@ Nicholas and Damien.
             </div>
             <div class="vbox" id="script-box">
                 <div id="script-name" class="flex1" contenteditable
-                    tabindex="10">
+                    tabindex="12">
                 </div>
                 <div id="script-description" contenteditable
-                    tabindex="11">
+                    tabindex="13">
                 </div>
             </div>
           </div>
@@ -309,7 +309,7 @@ Nicholas and Damien.
         <script src="microbit_blocks/generators/speech.js"></script>
         <script src="microbit_blocks/generators/python.js"></script>
         <script src="blockly/msg/js/en.js"></script>
-	    <script src="microbit_blocks/messages/en/messages.js"></script>
+        <script src="microbit_blocks/messages/en/messages.js"></script>
         <script>
         // Load DAPjs and hterm if WebUSB exists
         if(typeof navigator.usb != undefined)
