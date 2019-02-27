@@ -113,14 +113,6 @@ body, input {
   border-radius: 0.5rem;
 }
 
-#script-description {
-  display: none; /* TODO: FIXME: remove this field */
-  color: #336699;
-  padding-bottom: 0.2rem;
-  overflow: hidden;
-  max-height: 22px;
-}
-
 #script-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
