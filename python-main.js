@@ -693,7 +693,7 @@ function web_editor(config) {
 
         console.log("Select your micro:bit");
         navigator.usb.requestDevice({
-            filters: [{vendorId: 0x0d28}]
+            filters: [{vendorId: 0x0d28, productId: 0x0204}]
         }).then(function(device) {
             // Connect to device
             window.transport = new DAPjs.WebUSB(device);
@@ -710,12 +710,10 @@ function web_editor(config) {
             // Push binary to board
             return window.daplink.connect()
             .then(function() {
-                // Create firmware
-                var firmware = $("#firmware").text();
                 try {
                  var output = generateFullHexStr();
                 } catch(e) {
-                 alert(config.translate.alerts.length);
+                 alert(e.message);
                  return;
                 }
 
