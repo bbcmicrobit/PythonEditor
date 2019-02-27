@@ -450,7 +450,7 @@ function web_editor(config) {
             dirty = false;
             blockly.hide();
             $('#editor').attr('title', '');
-            editor.ACE.setReadOnly(false);
+            EDITOR.ACE.setReadOnly(false);
             $("#command-snippet").removeClass('disabled');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -462,7 +462,7 @@ function web_editor(config) {
                     return;
                 }
             }
-            editor.ACE.setReadOnly(true);
+            EDITOR.ACE.setReadOnly(true);
             $('#editor').attr('title', 'The code editor is read-only when blocks are active.');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
