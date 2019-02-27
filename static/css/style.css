@@ -359,6 +359,10 @@ a.command:hover {
     font-weight: bold;
   }
 
+  #script-box > label {
+    font-size: 0.8rem;
+  }
+
   .blocklyTreeRow {
     padding-right: .3em !important;
   }
