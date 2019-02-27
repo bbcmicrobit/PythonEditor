@@ -715,7 +715,7 @@ function web_editor(config) {
             })
             .then(function(baud) {
                 window.daplink.startSerialRead(50);
-                console.log(`Listening at ${baud} baud...`);
+                console.log('Listening at ${baud} baud...');
                 
                lib.init(setupHterm);
                
