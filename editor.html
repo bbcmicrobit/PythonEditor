@@ -240,6 +240,17 @@ Nicholas and Damien.
             <div id="editor" class="flex3" tabindex="-1"></div>
           </div>
         </div>
+        <script type="text/javascript">
+        function script(url) {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = false;
+            s.defer = true;
+            s.src = url;
+            var x = document.getElementsByTagName('head')[0];
+            x.appendChild(s);
+        }
+        </script>
         <script src="ace/ace.js" type="application/javascript"
             charset="utf-8"></script>
         <script src="ace/ext-language_tools.js" type="application/javascript"
@@ -254,24 +265,6 @@ Nicholas and Damien.
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
         <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
-        <script src="blockly/blockly_compressed.js"></script>
-        <script src="blockly/blocks_compressed.js"></script>
-        <script src="blockly/python_compressed.js"></script>
-        <script src="microbit_blocks/blocks/microbit.js"></script>
-        <script src="microbit_blocks/generators/accelerometer.js"></script>
-        <script src="microbit_blocks/generators/buttons.js"></script>
-        <script src="microbit_blocks/generators/compass.js"></script>
-        <script src="microbit_blocks/generators/display.js"></script>
-        <script src="microbit_blocks/generators/image.js"></script>
-        <script src="microbit_blocks/generators/microbit.js"></script>
-        <script src="microbit_blocks/generators/music.js"></script>
-        <script src="microbit_blocks/generators/neopixel.js"></script>
-        <script src="microbit_blocks/generators/pins.js"></script>
-        <script src="microbit_blocks/generators/radio.js"></script>
-        <script src="microbit_blocks/generators/speech.js"></script>
-        <script src="microbit_blocks/generators/python.js"></script>
-        <script src="blockly/msg/js/en.js"></script>
-        <script src="microbit_blocks/messages/en/messages.js"></script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
 	    <script src="lzma/lzma_worker.js"></script>
