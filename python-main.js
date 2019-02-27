@@ -467,7 +467,7 @@ function web_editor(config) {
                         scaleSpeed: zoomScaleSteps + 1.0
                     }
                 });
-                function myUpdateFunction(event) {
+                var x = function myUpdateFunction(event) {
                     var code = Blockly.Python.workspaceToCode(workspace);
                     EDITOR.setCode(code);
                 }
