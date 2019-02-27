@@ -402,9 +402,16 @@ function web_editor(config) {
                             setName(f.name.replace('.hex', ''));
                             setDescription(config.translate.drop.hex);
                             reader.onload = function(e) {
-                                var code = upyhex.extractPyStrFromIntelHex(
-                                        e.target.result);
-                                if(code.length < 8192) {
+                                var code = '';
+                                var showAlert = false;
+                                try {
+                                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
+                                } catch(e) {
+                                    showAlert = true;
+                                }
+                                if (showAlert || code.length === 0) {
+                                    return alert(config.translate.alerts.unrecognised_hex);
+                                } else {
                                     EDITOR.setCode(code);
                                 }
                             };
@@ -579,8 +586,16 @@ function web_editor(config) {
             setName(file.name.replace('.hex', ''));
             setDescription(config.translate.drop.hex);
             reader.onload = function(e) {
-                var code = upyhex.extractPyStrFromIntelHex(e.target.result);
-                if (code.length < 8192) {
+                var code = '';
+                var showAlert = false;
+                try {
+                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
+                } catch(e) {
+                    showAlert = true;
+                }
+                if (showAlert || code.length === 0) {
+                    return alert(config.translate.alerts.unrecognised_hex);
+                } else {
                     EDITOR.setCode(code);
                 }
             };
