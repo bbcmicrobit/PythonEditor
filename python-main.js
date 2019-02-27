@@ -412,20 +412,41 @@ function web_editor(config) {
         micropythonFs.write('main.py', EDITOR.getCode()); // Add main.py
     }
 
+    // Based on the Python code magic comment it detects a module
+    function isPyModule(codeStr) {
+        var isModule = false;
+        if (codeStr.length) {
+            var codeLines = codeStr.split(/\r?\n/);
+            // Only look at the first three lines
+            for (var i = 0; i < 3; i++) {
+                if (codeLines[i].indexOf('# microbit-module:') == 0) {
+                    isModule = true;
+                }
+            }
+        }
+        return isModule;
+    }
+
     // Loads Python code into the editor and filesystem main.py, keeps the rest of files
     function loadPy(filename, codeStr) {
+        var isModule = isPyModule(codeStr);
+        filename = isModule ? filename : 'main.py';
         if (codeStr) {
             try {
-                micropythonFs.write('main.py', codeStr);
+                micropythonFs.write(filename, codeStr);
             } catch(e) {
                 alert(config.translate.alerts.load_code + '\n' + e.message);
             }
         } else {
             return alert(config.translate.alerts.empty);
         }
-        setName(filename.replace('.py', ''));
-        EDITOR.setCode(codeStr);
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        if (isModule) {
+            alert(config.translate.alerts.module_added);
+        } else {
+            setName(filename.replace('.py', ''));
+            EDITOR.setCode(codeStr);
+            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        }
     }
 
     // Reset the filesystem and load the files from this hex file to the fs and editor
