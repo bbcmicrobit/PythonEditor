@@ -268,6 +268,16 @@ Nicholas and Damien.
             <div id="flashing-overlay-error"></div>
           </div>
         </div>
+        <script type="text/javascript">
+        function script(url) {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = url;
+            var x = document.getElementsByTagName('head')[0];
+            x.appendChild(s);
+        }
+        </script>
         <script src="ace/ace.js" type="application/javascript"
             charset="utf-8"></script>
         <script src="ace/ext-language_tools.js" type="application/javascript"
@@ -300,8 +310,14 @@ Nicholas and Damien.
         <script src="microbit_blocks/generators/python.js"></script>
         <script src="blockly/msg/js/en.js"></script>
 	    <script src="microbit_blocks/messages/en/messages.js"></script>
-        <script src="dapjs/dap.bundle.js" type="application/javascript"></script>
-        <script src="hterm/hterm_all.js" type="application/javascript"></script>
+        <script>
+        // Load DAPjs and hterm if WebUSB exists
+        if(typeof navigator.usb != undefined)
+        {
+            script('static/js/dap.bundle.js');
+            script('static/js/hterm_all.js');
+        }
+        </script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
 	    <script src="lzma/lzma_worker.js"></script>

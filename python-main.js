@@ -611,7 +611,7 @@ function web_editor(config) {
         console.log("Select your micro:bit");
         navigator.usb.requestDevice({
             filters: [{vendorId: 0x0d28}]
-        }).then(device => {
+        }).then(function(device) {
 
             // Connect to device
             window.transport = new DAPjs.WebUSB(device);
@@ -621,13 +621,13 @@ function web_editor(config) {
             window.daplink.disconnect();
 
             // Event to monitor flashing progress
-            window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, progress => {
+            window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
                 $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
             });
             
             // Push binary to board
             return window.daplink.connect()
-            .then(() => {
+            .then( function() {
             
                 // Create firmware
                 var firmware = $("#firmware").text();
@@ -648,12 +648,12 @@ function web_editor(config) {
                 $("#flashing-overlay-container").css("display", "flex");
                 return window.daplink.flash(image);
             })
-            .then(() => {
+            .then( function() {
                 console.log("Finished flashing!");
                 $("#flashing-overlay-container").hide();
                 return window.daplink.disconnect();
             })
-            .catch(e => {
+            .catch(function(e){
                 console.log("Error flashing: " + e);
                 $("#flashing-overlay-container").css("display", "flex");
                 $("#webusb-flashing-progress").css("display", "none");
@@ -670,7 +670,7 @@ function web_editor(config) {
                 $("#flashing-overlay-error").html('<div>' + e + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
             }); 
 
-    }).catch(e => {
+    }).catch(function(e) {
         console.log("There was an error during flashing: " + e);
     });
     
@@ -692,7 +692,7 @@ function web_editor(config) {
         navigator.usb.requestDevice({
             filters: [{vendorId: 0xD28}]
         })
-        .then(device => {
+        .then(function(device) {
 
             // Change Serial button to close
             $("#command-serial").attr("title", "Close the serial connection and go back to the editor");
@@ -707,20 +707,20 @@ function web_editor(config) {
            
 
             window.daplink.connect()
-            .then(() => {
+            .then( function() {
                 return window.daplink.setSerialBaudrate(115200);
             })
-            .then(() => {
+            .then( function() {
                 return window.daplink.getSerialBaudrate();
             })
-            .then(baud => {
+            .then(function(baud) {
                 window.daplink.startSerialRead(50);
                 console.log(`Listening at ${baud} baud...`);
                 
                lib.init(setupHterm);
                
             })
-            .catch(e => {
+            .catch(function(e) {
                  // If micro:bit does not support dapjs
                 $("#flashing-overlay-error").show();
                 if(e.message === "No valid interfaces found."){
@@ -746,15 +746,15 @@ function setupHterm(){
                t.onTerminalReady = function() {
                    const io = t.io.push();
 
-                   io.onVTKeystroke = (str) => {
+                   io.onVTKeystroke = function(str) {
                         window.daplink.serialWrite(str);
                    };
 
-                   io.sendString = (str) => {
+                   io.sendString = function(str) {
                         window.daplink.serialWrite(str);
                    };
 
-                   io.onTerminalResize = (columns, rows) => {
+                   io.onTerminalResize = function(columns, rows) {
                    };
                
 
@@ -771,7 +771,7 @@ function setupHterm(){
                $("#repl > iframe").css("position", "relative");
                $("#repl").attr("class", "hbox flex1");
 
-               window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, data => {
+               window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
                        t.io.print(data); // first byte of data is length
                        daplinkReceived = true;
                });
