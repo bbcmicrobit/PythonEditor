@@ -29,6 +29,7 @@ video {
 .hide-snippets {
   display: none !important;
 }
+
 .hide-share {
   display:none !important;
 }
@@ -44,7 +45,7 @@ video {
   text-align: center;
   font-size: 4rem;
   padding-top: .3em;
-  color: #3758ce;
+  color: #336699;
   background: #FFFFFF;
 }
 .roundsymbol-sm {
@@ -57,7 +58,7 @@ video {
   text-align: center;
   font-size: 2rem;
   padding-top: .3em;
-  color: #3758ce;
+  color: #336699;
   background: #FFFFFF;
 }
 
