@@ -807,14 +807,6 @@ function setupHterm(){
         $("#command-share").click(function () {
             doShare();
         });
-        $("#command-help").click(function () {
-            if($(".helpsupport_container").css("display") == "none"){
-                $(".helpsupport_container").css("display", "flex");
-            } else {
-                $(".helpsupport_container").css("display", "none");
-            }
-        });
-
         $("#command-flash").click(function () {
             doFlash();
         });
