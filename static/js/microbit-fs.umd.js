@@ -2086,29 +2086,53 @@
 
       return fileFsBytes;
     };
+    /**
+     * @returns Size, in bytes, of how much space the file takes in the filesystem
+     *     flash memory.
+     */
+
+
+    FsFile.prototype.getFsFileSize = function () {
+      var chunksUsed = Math.ceil(this._fsDataBytes.length / CHUNK_DATA_LEN); // When MicroPython uses up to the last byte of the last chunk it will
+      // still consume the next chunk, even if it doesn't add any data to it
+
+      if (!(this._fsDataBytes.length % CHUNK_DATA_LEN)) {
+        chunksUsed += 1;
+      }
+
+      return chunksUsed * CHUNK_LEN;
+    };
 
     return FsFile;
   }();
   /**
-   * Adds a byte array as a file in the MicroPython filesystem.
+   * @returns Size, in bytes, of how much space the file would take in the
+   *     MicroPython filesystem.
+   */
+
+
+  function calculateFileSize(filename, data) {
+    var file = new FsFile(filename, data);
+    return file.getFsFileSize();
+  }
+  /**
+   * Adds a byte array as a file to a MicroPython Memory Map.
    *
    * @throws {Error} When the invalid file name is given.
    * @throws {Error} When the the file doesn't have any data.
    * @throws {Error} When there are issues calculating the file system boundaries.
    * @throws {Error} When there is no space left for the file.
    *
-   * @param intelHex - MicroPython Intel Hex string.
+   * @param intelHexMap - Memory map for the MicroPython Intel Hex.
    * @param filename - Name for the file.
    * @param data - Byte array for the file data.
-   * @returns MicroPython Intel Hex string with the file in the filesystem.
+   * @returns MicroPython Memory map with the file in the filesystem.
    */
 
 
-  function addIntelHexFile(intelHex, filename, data) {
+  function addMemMapFile(intelHexMap, filename, data) {
     if (!filename) throw new Error('File has to have a file name.');
     if (!data.length) throw new Error("File " + filename + " has to contain data.");
-    var intelHexClean = cleanseOldHexFormat(intelHex);
-    var intelHexMap = MemoryMap.fromHex(intelHexClean);
     var freeChunks = getFreeChunks(intelHexMap);
 
     if (freeChunks.length === 0) {
@@ -2121,6 +2145,30 @@
     var fileFsBytes = fsFile.getFsBytes(freeChunks);
     intelHexMap.set(chunksStartAddress, fileFsBytes);
     setPersistentPage(intelHexMap);
+    return intelHexMap;
+  }
+  /**
+   * Adds a hash table of filenames and byte arrays as files to the MicroPython
+   * filesystem.
+   *
+   * @throws {Error} When the an invalid file name is given.
+   * @throws {Error} When the a file doesn't have any data.
+   * @throws {Error} When there are issues calculating the file system boundaries.
+   * @throws {Error} When there is no space left for a file.
+   *
+   * @param intelHex - MicroPython Intel Hex string.
+   * @param files - Hash table with filenames as the key and byte arrays as the
+   *     value.
+   * @returns MicroPython Intel Hex string with the file in the filesystem.
+   */
+
+
+  function addIntelHexFiles(intelHex, files) {
+    var intelHexClean = cleanseOldHexFormat(intelHex);
+    var intelHexMap = MemoryMap.fromHex(intelHexClean);
+    Object.keys(files).forEach(function (filename) {
+      intelHexMap = addMemMapFile(intelHexMap, filename, files[filename]);
+    });
     return intelHexMap.asHexString() + '\n';
   }
   /**
@@ -2141,7 +2189,14 @@
     var intelHexClean = cleanseOldHexFormat(intelHex);
     var hexMap = MemoryMap.fromHex(intelHexClean);
     var startAddress = getStartAddress(hexMap);
-    var endAddress = getLastPageAddress(hexMap); // Iterate through the filesystem to collect used chunks and file starts
+    var endAddress = getLastPageAddress(hexMap); // TODO: endAddress as the getLastPageAddress works now because this
+    // library uses the last page as the "persistent" page, so the filesystem does
+    // end there. In reality, the persistent page could be the first or the last
+    // page, so we should get the end address as the magnetometer page and then
+    // check if the persistent marker is present in the first of last page and take that
+    // into account in the memory range calculation.
+    // Note that the persistent marker is only present at the top of the page
+    // Iterate through the filesystem to collect used chunks and file starts
 
     var usedChunks = {};
     var startChunkIndexes = [];
@@ -2244,6 +2299,22 @@
 
     return files;
   }
+  /**
+   * Calculate the MicroPython filesystem size.
+   *
+   * @param intelHex - The MicroPython Intel Hex string.
+   * @returns Size of the filesystem in bytes.
+   */
+
+
+  function getIntelHexFsSize(intelHex) {
+    var intelHexClean = cleanseOldHexFormat(intelHex);
+    var intelHexMap = MemoryMap.fromHex(intelHexClean);
+    var startAddress = getStartAddress(intelHexMap);
+    var endAddress = getEndAddress(intelHexMap); // Remember that one page is used as persistent page
+
+    return endAddress - startAddress - FLASH_PAGE_SIZE;
+  }
 
   var SimpleFile =
   /** @class */
@@ -2283,10 +2354,6 @@
 
     SimpleFile.prototype.getBytes = function () {
       return this._dataBytes;
-    };
-
-    SimpleFile.prototype.getSize = function () {
-      return this._dataBytes.length;
     };
 
     return SimpleFile;
@@ -2455,7 +2522,7 @@
         throw new Error("File \"" + filename + "\" does not exist.");
       }
 
-      return this._files[filename].getSize();
+      return calculateFileSize(this._files[filename].filename, this._files[filename].getBytes());
     };
     /**
      * @returns A list all the files in the file system.
@@ -2514,22 +2581,33 @@
      * Generate a new copy of the MicroPython Intel Hex with the filesystem
      * included.
      *
-     * @throws {Error} When the file doesn't have any data.
+     * @throws {Error} When a file doesn't have any data.
      * @throws {Error} When there are issues calculating file system boundaries.
-     * @throws {Error} When there is no space left for the file.
+     * @throws {Error} When there is no space left for a file.
      *
      * @param intelHex - Optionally provide a different Intel Hex to include the
      *    filesystem into.
-     * @returns A new Intel Hex string with the filesystem included.
+     * @returns A new string with MicroPython and the filesystem included.
      */
 
 
     MicropythonFsHex.prototype.getIntelHex = function (intelHex) {
       var finalHex = intelHex || this._intelHex;
+      var files = {};
       Object.values(this._files).forEach(function (file) {
-        finalHex = addIntelHexFile(finalHex, file.filename, file.getBytes());
+        files[file.filename] = file.getBytes();
       });
-      return finalHex;
+      return addIntelHexFiles(finalHex, files);
+    };
+    /**
+     * Calculate the MicroPython filesystem total size.
+     *
+     * @returns Size of the filesystem in bytes.
+     */
+
+
+    MicropythonFsHex.prototype.getFsSize = function () {
+      return getIntelHexFsSize(this._intelHex);
     };
 
     return MicropythonFsHex;

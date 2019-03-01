@@ -404,8 +404,7 @@ function web_editor(config) {
         var modulesSize = 0;
         var otherSize = 0;
         var mainSize = 0;
-        // TODO: Magic number, we need to implement this feature in microbitFs
-        var totalSpace = 27 * 1024;
+        var totalSpace = micropythonFs.getFsSize();
         try {
             micropythonFs.write('main.py', EDITOR.getCode());
             mainSize = micropythonFs.size('main.py');
