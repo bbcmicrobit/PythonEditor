@@ -738,6 +738,7 @@ function web_editor(config) {
 function setupHterm(){
                hterm.defaultStorage = new lib.Storage.Local();
                const t = new hterm.Terminal("opt_profileName");
+               t.options_.cursorVisible = true;
 
                var daplinkReceived = false;
 
