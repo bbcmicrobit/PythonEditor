@@ -559,7 +559,6 @@ function web_editor(config) {
             var qs_array = [];
             // Name
             qs_array.push('n=' + EDITOR.encrypt(password, getName()));
-            // Comment
             // Source
             qs_array.push('s=' + EDITOR.encrypt(password, EDITOR.getCode()));
             // Hint
