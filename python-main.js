@@ -334,10 +334,19 @@ function web_editor(config) {
         return isModule;
     }
 
-    // Loads Python code into the editor and filesystem main.py, keeps the rest of files
+    // Loads Python code into the editor and/or filesystem
     function loadPy(filename, codeStr) {
         var isModule = isPyModule(codeStr);
         filename = isModule ? filename : 'main.py';
+        var moduleName = filename.replace('.py', '');
+        var showModuleLoadedAlert = true;
+        if (isModule && micropythonFs.exists(filename)) {
+            if (!confirm(config.translate.confirms.module_replace.replace('{{module_name}}', moduleName))) {
+                return;
+            }
+            // A confirmation box to replace the module has already been accepted
+            showModuleLoadedAlert = false;
+        }
         if (codeStr) {
             try {
                 micropythonFs.write(filename, codeStr);
@@ -348,7 +357,9 @@ function web_editor(config) {
             return alert(config.translate.alerts.empty);
         }
         if (isModule) {
-            alert(config.translate.alerts.module_added);
+            if (showModuleLoadedAlert) {
+                alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
+            }
         } else {
             setName(filename.replace('.py', ''));
             setDescription(config.translate.drop.python);
@@ -387,9 +398,8 @@ function web_editor(config) {
                 if (!importedFiles.length) {
                     errorMsg += config.translate.alerts.no_script + '\n';
                     errorMsg += e.message;
-                    alert(config.translate.alerts.no_python + '\n\n' +
+                    return alert(config.translate.alerts.no_python + '\n\n' +
                             config.translate.alerts.error + errorMsg);
-                    return;
                 }
             }
         }
