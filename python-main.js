@@ -474,10 +474,10 @@ function web_editor(config) {
                         scaleSpeed: zoomScaleSteps + 1.0
                     }
                 });
-                function myUpdateFunction(event) {
+                var myUpdateFunction = function(event) {
                     var code = Blockly.Python.workspaceToCode(workspace);
                     EDITOR.setCode(code);
-                }
+                };
                 // Resize blockly
                 var element = document.getElementById('blockly');
                 new ResizeSensor(element, function() {
