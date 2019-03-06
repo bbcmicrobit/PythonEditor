@@ -486,6 +486,10 @@ function web_editor(config) {
 
     // Generates the text for a hex file with MicroPython and the user code
     function generateFullHexStr() {
+        // If there is no code return #firmware
+        if(!EDITOR.getCode())
+            return $("#firmware").text();
+
         var fullHexStr = '';
         try {
             micropythonFs.write('main.py', EDITOR.getCode());
