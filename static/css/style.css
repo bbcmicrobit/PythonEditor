@@ -516,12 +516,12 @@ div.load-form {
     background-color:#f20000;
 }
 
-#fs-form-file-upload-button {
+#fs-file-upload-button {
     border-radius: 9px;
     height: 2.0em;
     margin: 16px 0px 0px 0px;
 }
-#fs-form-file-upload-button:hover {
+#fs-file-upload-button:hover {
     background-color: #1f669d;
     color: #ffffff;
 }
