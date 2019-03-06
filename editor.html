@@ -109,24 +109,21 @@ Nicholas and Damien.
             </table>
             <div class="fs-file-list" id="fs-file-list">
                 <table>
-                  <thead>
-                      <tr>
-                          <td>Filename</td>
-                          <td>Type</td>
-                          <td>Size</td>
-                          <td></td>
-                      </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-              </table>
+                    <thead>
+                        <tr>
+                            <td>Filename</td>
+                            <td>Type</td>
+                            <td>Size</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-            <div class="fs-form-wrapper">
-              <form id="fs-form">
-                  <input type="button" id="fs-form-file-upload-button" value="{{ fs-add-file }}">
-                  <input type="file" style="display: none" name="fs-form-file-upload" id="fs-form-file-upload" multiple>
-                  <input type="submit" style="display: none" id="fs-form-submit-button" value="{{ submit }}"/>
-              </form>
+            <div>
+                <input type="button" id="fs-file-upload-button" value="{{ fs-add-file }}">
+                <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
             </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
@@ -387,8 +384,9 @@ web_editor({
       'confirms': {
         'quit': "Some of your changes have not been saved. Quit anyway?",
         'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
-        'main_replace': 'Adding a main.py file will replace the code in the editor!',
-        'module_replace': 'Do you want to replace the "{{module_name}}" module?'
+        'replace_main': 'Adding a main.py file will replace the code in the editor!',
+        'replace_file': 'Do you want to replace the "{{file_name}}" file?',
+        'replace_module': 'Do you want to replace the "{{module_name}}" module?'
       },
       'code': {
         'start': "# Add your Python code here. E.g.\n" +
