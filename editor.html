@@ -317,7 +317,7 @@ Nicholas and Damien.
         <script src="microbit_blocks/messages/en/messages.js"></script>
         <script>
         // Load DAPjs and hterm if WebUSB exists
-        if(typeof navigator.usb != undefined)
+        if(typeof navigator.usb != undefined && navigator.usb != null)
         {
             script('static/js/dap.bundle.js');
             script('static/js/hterm_all.js');
