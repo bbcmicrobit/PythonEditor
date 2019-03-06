@@ -262,6 +262,7 @@ function web_editor(config) {
         // If configured as experimental update editor background to indicate it
         if(config.flags.experimental) {
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            $("#known-issues").removeClass('hidden');
         }
         // Configure the zoom related buttons.
         $("#zoom-in").click(function (e) {
@@ -626,14 +627,27 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
-        $("#command-help").click(function () {
+        $("#command-help").click(function (e) {
+            // Show help
+            $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
+            $(".helpsupport_container").css("left", $("#command-help").offset().left);
+
+            // Toggle visibility
             if($(".helpsupport_container").css("display") == "none"){
                 $(".helpsupport_container").css("display", "flex");
             } else {
                 $(".helpsupport_container").css("display", "none");
             }
+
+            // Stop immediate closure
+            e.stopImmediatePropagation();
         });
-        $(".helpsupport_container").hide();
+        // Add document click listener
+        document.body.addEventListener('click',function(event) {
+            // Close helpsupport if the click isn't on a descendent of #command-help
+            if(!event.target.closest('.helpsupport_container') || event.target.tagName.toLowerCase() === 'a')
+                $(".helpsupport_container").css("display", "none");
+        });
     }
 
     // Extracts the query string and turns it into an object of key/value
