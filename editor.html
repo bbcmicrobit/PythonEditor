@@ -69,11 +69,11 @@ Nicholas and Damien.
     </head>
     <body>
         <script type="application/javascript">
-        if (navigator.appVersion.indexOf("MSIE 10") !== -1 || navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
-        {
-            document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 11 or greater.</a>');
-            document.execCommand('Stop');
-        }
+            if (navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
+            {
+                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 10 or greater.</a>');
+                document.execCommand('Stop');
+            }
         </script>
         <script type="application/javascript">
             // VERSION INFORMATION
