@@ -353,6 +353,7 @@ function web_editor(config) {
     // Loads Python code into the editor and filesystem main.py, keeps the rest of files
     function loadPy(filename, codeStr) {
         var isModule = isPyModule(codeStr);
+        var filesystemName = filename;
         filename = isModule ? filename : 'main.py';
         if (codeStr) {
             try {
@@ -366,7 +367,7 @@ function web_editor(config) {
         if (isModule) {
             alert(config.translate.alerts.module_added);
         } else {
-            setName(filename.replace('.py', ''));
+            setName(filesystemName.replace('.py', ''));
             setDescription(config.translate.drop.python);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
@@ -606,13 +607,11 @@ function web_editor(config) {
                         var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
                         var reader = new FileReader();
                         if (ext == 'py') {
-                            setName(f.name.replace('.py', ''));
                             reader.onload = function(e) {
                                 loadPy(f.name, e.target.result);
                             };
                             reader.readAsText(f);
                         } else if (ext == 'hex') {
-                            setName(f.name.replace('.hex', ''));
                             reader.onload = function(e) {
                                 loadHex(f.name, e.target.result);
                             };
@@ -798,13 +797,11 @@ function web_editor(config) {
         var ext = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : null;
         var reader = new FileReader();
         if (ext == 'py') {
-            setName(file.name.replace('.py', ''));
             reader.onload = function(e) {
                 loadPy(file.name, e.target.result);
             };
             reader.readAsText(file);
         } else if (ext == 'hex') {
-            setName(file.name.replace('.hex', ''));
             reader.onload = function(e) {
                 loadHex(file.name, e.target.result);
             };
