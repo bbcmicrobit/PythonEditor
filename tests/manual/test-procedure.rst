@@ -51,13 +51,8 @@ Preparation
 
 Ensure you have everything listed in the "Prerequisites" section.
 
-Read the "Test Cases" opening paragraphs carefully.
-
-Each Test Case will focus on a single feature under tests.
-
-When a Test Case bullet point starts with a checkbox (denoted by a ``[ ]``) it
-indicates a boolean condition that needs to be checked and the result
-annotated.
+Each Test Case will focus on a single feature under tests. Make sure to read
+the "Test Cases" opening paragraphs carefully.
 
 
 You will need
@@ -71,10 +66,12 @@ You will need
 
 - A modern version of Firefox
 
+- A text editor (the one included in most operating systems is fine).
+
 - Access to the Python Editor under test
 
 - The test files from
-  https://github.com/bbcmicrobit/PythonEditor/tree/master/tests/manual
+  https://github.com/bbcmicrobit/PythonEditor/tree/master/tests/manual/test-files
 
 - A micro:bit
 
@@ -83,6 +80,11 @@ You will need
   - A serial terminal program you are comfortable to connect to a micro:bit
   - The working microREPL installation (https://github.com/ntoll/microrepl)
   - Mu editor (https://codewith.mu/)
+  - A micro:bit with WebUSB-enabled DAPLink and access to a version of the
+    Python Editor with WebUSB REPL
+
+- If running the tests on Windows 7 you might need the Mbed serial driver
+  installed
 
 
 Tests Execution
@@ -90,7 +92,7 @@ Tests Execution
 
 All Test Cases have to be run in one of the browsers listed in the
 "Preparation" section, and AT LEAST the following Test Cases have to be run
-in all of the other browsers:
+in all of the other browsers as well:
 
 - Hex file can be generated
 - Generated hex file can be loaded to the editor
@@ -102,10 +104,18 @@ in all of the other browsers:
 
 Start each test case in a new instance of the Python Editor.
 
+When a Test Case bullet point starts with a checkbox (denoted by a ``[ ]``) it
+indicates a boolean condition (Pass/Fail) that needs to be checked and the
+result annotated.
+
+Please note that there are different ways to load files to the Python Editor
+and that different Test Cases will use different methods.
+
 
 Test Case: Hex file can be generated
 ''''''''''''''''''''''''''''''''''''
 - Click the "Download" button.
+- [ ] Confirm the file downloaded is named "microbit.hex".
 - Flash the downloaded hex file into a micro:bit.
 - [ ] Confirm the micro:bit displays "Hello, World!" followed by a heart.
 - Save this hex file for the following test case.
@@ -115,12 +125,12 @@ Test Case: Generated hex file can be loaded to the editor
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Delete the content of the Script Name box.
 - Delete the content from the Text Editor.
-- Load by any method the hex file saved in the test case "Test: Hex file can
-  be generated".
+- Load by editor drag&drop the hex file saved in the test case "Test: Hex file
+  can be generated".
 - [ ] Confirm the Script Name is the same as the hex filename without the
   extension.
-- [ ] Confirm the Text Editor contains the "Code block 1" defined at the bottom
-  of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
 
 Code block 1::
 
@@ -136,40 +146,102 @@ Code block 1::
 
 Test Case: Editor v0 hex file can be loaded to the drop area
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Delete the content of the Script Name box.
-- Load by any method the file example-editor-v0.1.hex.
-- [ ] Confirm the Script Name is ``example-editor-v0.1``.
-- [ ] Confirm the Text Editor contains the "Code block 1" defined at the bottom
-  of this Test Case.
+- Load by drop area drag&drop the file ``example-editor-v0.hex``.
+- [ ] Confirm the Script Name is ``example-editor-v0``.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
 
 Code block 1::
 
-    Code 1 goes here
+    # This is a Python Editor v0 file
+    from microbit import *
+    display.show(Image.CLOCK1)
 
 
 Test Case: Editor v1.1 (MicroPython v1.0) hex file can be loaded by file picker
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Load by file picker the file ``example-editor-v1.hex``.
+- [ ] Confirm the Script Name is ``example-editor-v1``.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
+
+Code block 1::
+
+    # This is a Python Editor v1.1.0 file (MicroPython v1.0.0)
+    from microbit import *
+    display.show(Image.TRIANGLE)
 
 
 Test Case: Python file can be saved
 '''''''''''''''''''''''''''''''''''
-- ?
+- Click the "Save" button.
+- [ ] Confirm the file downloaded is named "microbit.py".
+- Open the contents in a text editor from your operating system.
+- [ ] Confirm the file contains the exact contents defined in the "Code block
+  1" at the bottom of this Test Case.
+- Save this Python file for the following test case.
+
+Code block 1::
+
+    # Add your Python code here. E.g.
+    from microbit import *
+
+
+    while True:
+        display.scroll('Hello, World!')
+        display.show(Image.HEART)
+        sleep(2000)
 
 
 Test Case: Saved Python file can be loaded to the editor
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Delete the content of the Script Name box.
+- Delete the content from the Text Editor.
+- Load by editor drag&drop the Python file saved in the test case "Test:
+  Python file can be saved".
+- [ ] Confirm the Script Name is the same as the Python filename without the
+  extension.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
+
+Code block 1::
+
+    # Add your Python code here. E.g.
+    from microbit import *
+
+
+    while True:
+        display.scroll('Hello, World!')
+        display.show(Image.HEART)
+        sleep(2000)
 
 
 Test Case: Python file can be loaded to the drop area
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Load by drop area drag&drop the file ``python-example.py``.
+- [ ] Confirm the Script Name is ``python-example``.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
+
+Code block 1::
+
+    # This is a simple Python file
+    from microbit import *
+    display.show(Image.PACMAN)
 
 
 Test Case: Python file can be loaded by file picker
 '''''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Load by file picker the file ``python-example.py``.
+- [ ] Confirm the Script Name is ``python-example``.
+- [ ] Confirm the Text Editor contains the exact contents defined in the
+  "Code block 1" at the bottom of this Test Case.
+
+Code block 1::
+
+    # This is a simple Python file
+    from microbit import *
+    display.show(Image.PACMAN)
 
 
 Test Case: Empty script downloads MicroPython interpreter only
@@ -178,7 +250,7 @@ Test Case: Empty script downloads MicroPython interpreter only
 - Click the "Download" button.
 - Flash the downloaded hex file into a micro:bit.
 - Connect to the REPL.
-- With the serial connection open, press the reset button.
+- With the serial connection opened, press the micro:bit reset button.
 - [ ] Confirm the micro:bit restarted and that it went straight to the REPL.
 
 
@@ -195,8 +267,6 @@ Test Case: Zoom changes the Text Editor font size
 '''''''''''''''''''''''''''''''''''''''''''''''''
 - ?
 
-Help menu works
-Zoom changes the Text Editor font size
 
 Test results
 ------------
