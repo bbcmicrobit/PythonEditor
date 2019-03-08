@@ -1,0 +1,212 @@
+Manual Test Procedure
+=====================
+
+Intro
+-----
+
+Until we have a comprehensive set end-to-end tests, we will have to carry
+some tests manually to ensure all the user-facing features of the Python Editor
+are working as expected.
+
+We need to be pragmatic about the amount of tests we carry manually, so this
+Test Procedure tries to balance coverage vs test duration.
+
+
+Nomenclature and Definitions
+----------------------------
+
+- **Python Editor**: This constitutes the whole web app.
+
+- **Text Editor**: The text or code editor (using the Ace framework) inside the
+  Python Editor.
+
+- **Load by editor drag&drop**: Load a file into the Python Editor by dragging
+  a file from the user OS, to the Text Editor area.
+
+- **Load by drop area drag&drop**: Load a file into the Python Editor by
+  clicking on the "Load button" and then dragging a file from the user OS to
+  the large grey box that says "Drag and drop a .hex or .py file in here to
+  open it".
+
+- **Load by file picker**: Load a file into the Python Editor by clicking on
+  the "Load button", then clicking on the "Or pick a file" link, then clicking
+  on the "Browse" button, selecting a file in the browser file picker, and
+  finally clicking on the "Load" button.
+
+- **Load by any method**: Load a file into the Python Editor using either
+  of the three options: "Load by editor drag&drop", "Load by drop area
+  drag&drop", or "Load by file picker".
+
+- **Connect to the REPL**: Use any type of serial terminal to connect with the
+  micro:bit, and send a Ctrl+C command to enter the REPL.
+
+- **Script Name**: The name of the script stored on the top right side of the
+  Python Editor. This can be often confused with a search box.
+
+- **Test Case**: A set of test steps to verify a related set of conditions.
+
+
+Preparation
+-----------
+
+Ensure you have everything listed in the "Prerequisites" section.
+
+Read the "Test Cases" opening paragraphs carefully.
+
+Each Test Case will focus on a single feature under tests.
+
+When a Test Case bullet point starts with a checkbox (denoted by a ``[ ]``) it
+indicates a boolean condition that needs to be checked and the result
+annotated.
+
+
+You will need
+'''''''''''''
+
+- Internet Explorer 10
+
+- A modern version of Edge
+
+- A modern version of Chrome
+
+- A modern version of Firefox
+
+- Access to the Python Editor under test
+
+- The test files from
+  https://github.com/bbcmicrobit/PythonEditor/tree/master/tests/manual
+
+- A micro:bit
+
+- One from the following:
+
+  - A serial terminal program you are comfortable to connect to a micro:bit
+  - The working microREPL installation (https://github.com/ntoll/microrepl)
+  - Mu editor (https://codewith.mu/)
+
+
+Tests Execution
+---------------
+
+All Test Cases have to be run in one of the browsers listed in the
+"Preparation" section, and AT LEAST the following Test Cases have to be run
+in all of the other browsers:
+
+- Hex file can be generated
+- Generated hex file can be loaded to the editor
+- Python file can be saved
+- Saved Python file can be loaded to the editor
+- Snippets inject code into the Text Editor
+- Help menu works
+- Zoom changes the Text Editor font size
+
+Start each test case in a new instance of the Python Editor.
+
+
+Test Case: Hex file can be generated
+''''''''''''''''''''''''''''''''''''
+- Click the "Download" button.
+- Flash the downloaded hex file into a micro:bit.
+- [ ] Confirm the micro:bit displays "Hello, World!" followed by a heart.
+- Save this hex file for the following test case.
+
+
+Test Case: Generated hex file can be loaded to the editor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Delete the content of the Script Name box.
+- Delete the content from the Text Editor.
+- Load by any method the hex file saved in the test case "Test: Hex file can
+  be generated".
+- [ ] Confirm the Script Name is the same as the hex filename without the
+  extension.
+- [ ] Confirm the Text Editor contains the "Code block 1" defined at the bottom
+  of this Test Case.
+
+Code block 1::
+
+    # Add your Python code here. E.g.
+    from microbit import *
+
+
+    while True:
+        display.scroll('Hello, World!')
+        display.show(Image.HEART)
+        sleep(2000)
+
+
+Test Case: Editor v0 hex file can be loaded to the drop area
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Delete the content of the Script Name box.
+- Load by any method the file example-editor-v0.1.hex.
+- [ ] Confirm the Script Name is ``example-editor-v0.1``.
+- [ ] Confirm the Text Editor contains the "Code block 1" defined at the bottom
+  of this Test Case.
+
+Code block 1::
+
+    Code 1 goes here
+
+
+Test Case: Editor v1.1 (MicroPython v1.0) hex file can be loaded by file picker
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Python file can be saved
+'''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Saved Python file can be loaded to the editor
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Python file can be loaded to the drop area
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Python file can be loaded by file picker
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Empty script downloads MicroPython interpreter only
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Remove all the content from the Text Editor.
+- Click the "Download" button.
+- Flash the downloaded hex file into a micro:bit.
+- Connect to the REPL.
+- With the serial connection open, press the reset button.
+- [ ] Confirm the micro:bit restarted and that it went straight to the REPL.
+
+
+Test Case: Snippets inject code into the Text Editor
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+
+Test Case: Help menu works
+''''''''''''''''''''''''''
+- ?
+
+Test Case: Zoom changes the Text Editor font size
+'''''''''''''''''''''''''''''''''''''''''''''''''
+- ?
+
+Help menu works
+Zoom changes the Text Editor font size
+
+Test results
+------------
+
+Record any failures as issues in the
+https://github.com/bbcmicrobit/PythonEditor/ GitHub repository.
+
+
+Acceptance Criteria
+-------------------
+
+If any of the tests cases has a single failure this is considered an overall
+**test failure** and the editor should be fixed before it can be released.
