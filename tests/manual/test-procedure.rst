@@ -49,7 +49,7 @@ Nomenclature and Definitions
 Preparation
 -----------
 
-Ensure you have everything listed in the "Prerequisites" section.
+Ensure you have everything listed in the "You will need" sub-section.
 
 Each Test Case will focus on a single feature under tests. Make sure to read
 the "Test Cases" opening paragraphs carefully.
@@ -99,7 +99,7 @@ in all of the other browsers as well:
 - Python file can be saved
 - Saved Python file can be loaded to the editor
 - Snippets inject code into the Text Editor
-- Help menu works
+- Help menu expands and links work
 - Zoom changes the Text Editor font size
 
 Start each test case in a new instance of the Python Editor.
@@ -259,8 +259,8 @@ Test Case: Snippets inject code into the Text Editor
 - ?
 
 
-Test Case: Help menu works
-''''''''''''''''''''''''''
+Test Case: Help menu expands and links work
+'''''''''''''''''''''''''''''''''''''''''''
 - ?
 
 Test Case: Zoom changes the Text Editor font size
