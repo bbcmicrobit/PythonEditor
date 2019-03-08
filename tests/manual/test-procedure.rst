@@ -70,6 +70,11 @@ You will need
 
 - Access to the Python Editor under test
 
+- The version number for the Python Editor under test
+
+- The version number for the MicroPython interpreter included in the Python
+  Editor under tests
+
 - The test files from
   https://github.com/bbcmicrobit/PythonEditor/tree/master/tests/manual/test-files
 
@@ -256,16 +261,42 @@ Test Case: Empty script downloads MicroPython interpreter only
 
 Test Case: Snippets inject code into the Text Editor
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Click the "Snippets" button.
+- Click on the "if" trigger.
+- [ ] Confirm the contents defined in the "Code block 1", at the bottom of this
+  Test Case, were injected to the end of the Text Editor (where the cursor
+  should be by default).
+
+Code block 1::
+
+    if condition:
+        # TODO: write code...
 
 
 Test Case: Help menu expands and links work
 '''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Click the "Help" button.
+- [ ] Confirm additional info and links are shown on the Python Editor.
+- [ ] Confirm the correct "Editor Version" is displayed.
+- [ ] Confirm the correct "MicroPython Version" is displayed.
+- Click on the "Documentation" link.
+- [ ] Confirm the micro:bit MicroPython documentation has been opened and the
+  version displayed is the MicroPython version listed in the Python Editor
+  help info (not "latest" or an older version).
+- Click the "Help" link.
+- [ ] Confirm the ``help.html`` from the Python Editor under test has been
+  opened.
+- Click the "Support" link.
+- [ ] Confirm the entry point for https://support.microbit.org has been opened.
+
+
 
 Test Case: Zoom changes the Text Editor font size
 '''''''''''''''''''''''''''''''''''''''''''''''''
-- ?
+- Click the button with a magnifying lens and a ``+`` sign.
+- [ ] Confirm the font in the Text Editor has been increased.
+- Click the button with a magnifying lens and a ``-`` sign.
+- [ ] Confirm the font in the Text Editor has been decreased.
 
 
 Test results
