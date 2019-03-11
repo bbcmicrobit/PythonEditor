@@ -361,7 +361,7 @@ function web_editor(config) {
                 alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
             }
         } else {
-            setName(moduleName.replace('.py', ''));
+            setName(moduleName);
             setDescription(config.translate.drop.python);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
