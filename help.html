@@ -64,6 +64,7 @@
           <ul class="nav navbar-nav">
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
+            <li ><a href="#fs">Files and Modules</a></li>
             <li class="hide-blocks"><a href="#blockly">Blockly</a></li>
             <li class="hide-snippets"><a href="#snippets">Snippets</a></li>
             <li><a href="#bugs">Bugs</a></li>
@@ -138,7 +139,7 @@
         </tr>
         <tr>
             <td>
-                <div id="command-save" class="roundsymbol" title="Load Python code or .hex file into the editor">
+                <div id="command-upload" class="roundsymbol" title="Load files into the editor">
                     <i class="fa fa-upload"></i>
                  </div>
             </td>
@@ -149,7 +150,9 @@
             picker (just click on the link at the bottom to toggle between the
             two options). The editor knows how to read Python files (whose name
             ends with ".py") and extract Python code from hex files (whose name
-            ends with ".hex").
+            ends with ".hex").<br><br>
+            The <a href="#fs">file system</a> adds functionality to add or remove python modules, 
+            data logs and other file types from the micro:bit.
             </td>
         </tr>
         <tr class="hide-blocks">
@@ -275,35 +278,65 @@ display.scroll("Hello, World!")</code></pre>
         asking the micro:bit to scroll the words across the LED screen and then display an image of a heart.</p>
     <p>Why not try making the micro:bit scroll your name?</p>
    
-    <div class="hide-blocks">
-    <h2 id="blockly">Blockly</h2>
+    <div >
+    <h2 id="fs">Files and Modules</h2>
 
-    <p>Use blockly to make new Python code from easy to assemble blocks of
-    code.</p>
+    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store files on device. Selecting the load button in the menu will bring up the files modal window.</p>
 
-    <p><img src="static/img/blocks.png"
-        class="image img-responsive center-block img-rounded"
-        alt="An animation demonstrating how to use snippets."/></p>
+    <p><img src="static/img/file-system.png"
+        class="image img-responsive center-block img-rounded" style="max-width: 75%;"
+        alt="modal dialogue for the file system interface"/></p>
 
-    <p>Blockly updates Python in the code editor as you move blocks around.
-    There are lots of different blocks to cover all the features of the
-    micro:bit. You can make more advanced code by combining blocks together
-    (such as in the example above).</p>
-
-    <p>You should use Blockly to create <em>new code</em> since moving blocks
-    around will overwrite any existing code you have in the editor (and you may
-    lose work as a result). The arrangement of blocks isn't (currently)
-    saved, so Blockly makes a great way to make simple Python code without
-    lots of typing. In the end, you'll learn that simply typing Python is by
-    far the quickest and easiest way to write code.</p>
-
-    <p>Not all the features of the micro:bit or MicroPython are available via
-    Blockly. We've done this on purpose. Some of the more advanced and
-    interesting stuff is only available in pure Python.</p>
-
-    <p>However, by using Blockly you'll very quickly get the hang of how Python
-    code works and fits together.</p>
+    <p>In addition to using MicroPython's <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">built-in-modules</a>, you can use the file system to include the external python modules in your program.</p>
+    
+    <p>You can drag and drop files or use the <strong>Add a file to the filesystem</strong> button to open the file dialogue.</p>
+    
+    <p>A status bar shows you the file types you have uploaded and how much free space you still have available. 
+        The file size shown is the space it consumes inside of the micro:bit file system, 
+        not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.
+        The status bar is handily colour coded to indicate file types.</p>
+    
+    <p>The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status
+        bar and cannot be removed. If you try to upload another <strong>main.py</strong> file this will replace your code in the text window.</p>
+    
+    <p><img src="static/img/file-system2.png"
+        class="image img-responsive center-block img-rounded" style="max-width: 75%;"
+        alt="modal dialogue for the file system interface with files uploaded"/></p>
     </div>
+
+    <p>As you add files, they will appear in a list underneath the status bar. The list indicates
+        the filename, the file type (eg. <strong>py</strong> is a python script), the size of the file
+        and also a button with the option to <strong>Remove</strong> the file if you have added it in error.</p>
+
+    <div class="hide-blocks">
+        <h2 id="blockly">Blockly</h2>
+    
+        <p>Use blockly to make new Python code from easy to assemble blocks of
+        code.</p>
+    
+        <p><img src="static/img/blocks.png"
+            class="image img-responsive center-block img-rounded"
+            alt="An animation demonstrating how to use snippets."/></p>
+    
+        <p>Blockly updates Python in the code editor as you move blocks around.
+        There are lots of different blocks to cover all the features of the
+        micro:bit. You can make more advanced code by combining blocks together
+        (such as in the example above).</p>
+    
+        <p>You should use Blockly to create <em>new code</em> since moving blocks
+        around will overwrite any existing code you have in the editor (and you may
+        lose work as a result). The arrangement of blocks isn't (currently)
+        saved, so Blockly makes a great way to make simple Python code without
+        lots of typing. In the end, you'll learn that simply typing Python is by
+        far the quickest and easiest way to write code.</p>
+    
+        <p>Not all the features of the micro:bit or MicroPython are available via
+        Blockly. We've done this on purpose. Some of the more advanced and
+        interesting stuff is only available in pure Python.</p>
+    
+        <p>However, by using Blockly you'll very quickly get the hang of how Python
+        code works and fits together.</p>
+        </div>
     <div class="hide-snippets">
     <h2 id="snippets">Snippets</h2>
 
