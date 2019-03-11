@@ -353,7 +353,6 @@ function web_editor(config) {
     // Loads Python code into the editor and filesystem main.py, keeps the rest of files
     function loadPy(filename, codeStr) {
         var isModule = isPyModule(codeStr);
-        var filesystemName = filename;
         filename = isModule ? filename : 'main.py';
         if (codeStr) {
             try {
@@ -367,7 +366,7 @@ function web_editor(config) {
         if (isModule) {
             alert(config.translate.alerts.module_added);
         } else {
-            setName(filesystemName.replace('.py', ''));
+            setName(filename);
             setDescription(config.translate.drop.python);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
