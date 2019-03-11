@@ -366,7 +366,7 @@ function web_editor(config) {
         if (isModule) {
             alert(config.translate.alerts.module_added);
         } else {
-            setName(filename);
+            setName(filename.replace('.py', ''));
             setDescription(config.translate.drop.python);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
