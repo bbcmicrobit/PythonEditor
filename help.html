@@ -64,7 +64,7 @@
           <ul class="nav navbar-nav">
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
-            <li ><a href="#fs">File system</a></li>
+            <li ><a href="#fs">Files and Modules</a></li>
             <li class="hide-blocks"><a href="#blockly">Blockly</a></li>
             <li class="hide-snippets"><a href="#snippets">Snippets</a></li>
             <li><a href="#bugs">Bugs</a></li>
@@ -279,19 +279,21 @@ display.scroll("Hello, World!")</code></pre>
     <p>Why not try making the micro:bit scroll your name?</p>
    
     <div >
-    <h2 id="fs">File system</h2>
+    <h2 id="fs">Files and Modules</h2>
 
-    <p>Use the file system to add or remove python modules, data logs and other file types
-        from the micro:bit. Selecting the load button in the menu will bring up the files modal window.
+    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store files on device. Selecting the load button in the menu will bring up the files modal window.</p>
 
     <p><img src="static/img/file-system.png"
         class="image img-responsive center-block img-rounded" style="max-width: 75%;"
         alt="modal dialogue for the file system interface"/></p>
 
-    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store and retrieve files from the device</p>
+    <p>In addition to using MicroPython's <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">built-in-modules</a>, you can use the file system to include the external python modules in your program.</p>
+    
     <p>You can drag and drop files or use the <strong>Add a file to the filesystem</strong> button to open the file dialogue.</p>
+    
     <p>A status bar shows you the file types you have uploaded and how much free space you still have available. 
-        The file size shown is the space it consumes inside of the micro:bit filesystem, not the micro:bit drive.
+        The file size shown is the space it consumes inside of the micro:bit file system, 
+        not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.
         The status bar is handily colour coded to indicate file types.</p>
     
     <p>The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status
@@ -305,7 +307,6 @@ display.scroll("Hello, World!")</code></pre>
     <p>As you add files, they will appear in a list underneath the status bar. The list indicates
         the filename, the file type (eg. <strong>py</strong> is a python script), the size of the file
         and also a button with the option to <strong>Remove</strong> the file if you have added it in error.</p>
-    </p>
 
     <div class="hide-blocks">
         <h2 id="blockly">Blockly</h2>
