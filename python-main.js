@@ -337,6 +337,7 @@ function web_editor(config) {
     // Loads Python code into the editor and/or filesystem
     function loadPy(filename, codeStr) {
         var isModule = isPyModule(codeStr);
+        var filesystemName = filename;
         filename = isModule ? filename : 'main.py';
         var moduleName = filename.replace('.py', '');
         var showModuleLoadedAlert = true;
@@ -361,7 +362,7 @@ function web_editor(config) {
                 alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
             }
         } else {
-            setName(filename.replace('.py', ''));
+            setName(filesystemName.replace('.py', ''));
             setDescription(config.translate.drop.python);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
