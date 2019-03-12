@@ -486,13 +486,17 @@ function web_editor(config) {
 
     // Generates the text for a hex file with MicroPython and the user code
     function generateFullHexStr() {
-        // If there is no code return #firmware
-        if(!EDITOR.getCode())
-            return $("#firmware").text();
-
         var fullHexStr = '';
         try {
-            micropythonFs.write('main.py', EDITOR.getCode());
+
+            // Update or remove main.py depending on editor content
+            if(!EDITOR.getCode()) {
+                micropythonFs.remove('main.py');
+            } else {
+                micropythonFs.write('main.py', EDITOR.getCode());
+            }
+            
+            // Generate hex file
             fullHexStr = micropythonFs.getIntelHex();
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
