@@ -421,8 +421,8 @@ function web_editor(config) {
     // Loads Python code into the editor and/or filesystem
     function loadPy(filename, codeStr) {
         var isModule = isPyModule(codeStr);
-        filename = isModule ? filename : 'main.py';
         var moduleName = filename.replace('.py', '');
+        filename = isModule ? filename : 'main.py';
         var showModuleLoadedAlert = true;
         if (isModule && micropythonFs.exists(filename)) {
             if (!confirm(config.translate.confirms.replace_module.replace('{{module_name}}', moduleName))) {
