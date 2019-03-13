@@ -490,8 +490,11 @@ function web_editor(config) {
         try {
 
             // Update or remove main.py depending on editor content
+            // Remove if editor content is empty, to generate a REPL hex
+            // that includes the filesystem
             if(!EDITOR.getCode()) {
-                micropythonFs.remove('main.py');
+                if(micropythonFs.exists('main.py'))
+                    micropythonFs.remove('main.py');
             } else {
                 micropythonFs.write('main.py', EDITOR.getCode());
             }
