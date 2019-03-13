@@ -645,7 +645,7 @@ function web_editor(config) {
         // Add document click listener
         document.body.addEventListener('click',function(event) {
             // Close helpsupport if the click isn't on a descendent of #command-help
-            if(!event.target.closest('.helpsupport_container') || event.target.tagName.toLowerCase() === 'a')
+            if($(event.target).closest('.helpsupport_container').length == 0 || $(event.target).prop("tagName").toLowerCase() === 'a')
                 $(".helpsupport_container").css("display", "none");
         });
     }
