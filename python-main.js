@@ -635,6 +635,7 @@ function web_editor(config) {
             // Toggle visibility
             if($(".helpsupport_container").css("display") == "none"){
                 $(".helpsupport_container").css("display", "flex");
+                $(".helpsupport_container").css("display", "-ms-flexbox"); // IE10 support
             } else {
                 $(".helpsupport_container").css("display", "none");
             }
