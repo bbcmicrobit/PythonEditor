@@ -611,7 +611,16 @@ function web_editor(config) {
     function generateFullHexStr() {
         var fullHexStr = '';
         try {
-            micropythonFs.write('main.py', EDITOR.getCode());
+            // Remove main.py if editor content is empty to download a hex file
+            // that includes the filesystem but doesn't try to run any code
+            if (!EDITOR.getCode()) {
+                if (micropythonFs.exists('main.py')) {
+                    micropythonFs.remove('main.py');
+                }
+            } else {
+                micropythonFs.write('main.py', EDITOR.getCode());
+            }
+            // Generate hex file
             fullHexStr = micropythonFs.getIntelHex();
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
