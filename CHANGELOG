@@ -1,3 +1,10 @@
+1.1.3
+-----
+* Fixes issue loading hex files into the Editor (https://github.com/bbcmicrobit/PythonEditor/pull/89)
+* Delegates Intel Hex manipulation to a library (https://github.com/NordicSemiconductor/nrf-intel-hex)
+* Help file can read URL parameters to indicate what features to show
+* When an invalid hex file is loaded it will now display an error message (before it didn't do anything)
+
 1.1.2
 -----
 
