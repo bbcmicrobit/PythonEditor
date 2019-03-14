@@ -120,8 +120,8 @@ See the comments in-line for more information.
 function web_editor(config) {
     'use strict';
 
-    // Instance of the pythonEditor object (the ACE text editor wrapper)
-    var EDITOR = pythonEditor('editor');
+    // Global (useful for testing) instance of the ACE wrapper object
+    window.EDITOR = pythonEditor('editor');
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
