@@ -359,7 +359,7 @@ function web_editor(config) {
         if (isModule) {
             if (micropythonFs.getStorageRemaining() < 0){
                 micropythonFs.remove(filename);
-                return alert(config.translate.alerts.out_of_space);
+                return alert(config.translate.alerts.module_out_of_space);
             }
             if (showModuleLoadedAlert) {
                 alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
