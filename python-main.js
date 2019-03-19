@@ -43,6 +43,7 @@ function pythonEditor(id) {
     var horizontalWordList = populateWordList();
 
     var staticWordCompleter = {
+        identifierRegexps: [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
         getCompletions: function(editor, session, pos, prefix, callback) {
             var wordList = horizontalWordList;
             
@@ -55,10 +56,10 @@ function pythonEditor(id) {
             }));
         }
     }
-    langTools.addCompleter(staticWordCompleter);
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter])
     
-    ACE.setTheme("ace/theme/kr_theme");  // Make it look nice.
-    ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
+    ACE.setTheme("ace/theme/kr_theme_legacy");  // Make it look nice.
+    ACE.getSession().setMode("ace/mode/python_microbit");  // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
     ACE.setFontSize(editor.initialFontSize);
@@ -87,13 +88,13 @@ function pythonEditor(id) {
     // Return details of all the snippets this editor knows about.
     editor.getSnippets = function() {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        return snippetManager.snippetMap.python;
+        return snippetManager.snippetMap.python_microbit;
     };
 
     // Triggers a snippet by name in the editor.
     editor.triggerSnippet = function(snippet) {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        snippet = snippetManager.snippetNameMap.python[snippet];
+        snippet = snippetManager.snippetNameMap.python_microbit[snippet];
         if (snippet) {
             snippetManager.insertSnippet(ACE, snippet.content);
         }
@@ -922,7 +923,6 @@ function web_editor(config) {
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
         // For example, type "wh" followed by TAB.
-        var snippetManager = ace.require("ace/snippets").snippetManager;
         var template = $('#snippet-template').html();
         Mustache.parse(template);
         var context = {
@@ -931,7 +931,7 @@ function web_editor(config) {
             'instructions': config.translate.code_snippets.instructions,
             'trigger_heading': config.translate.code_snippets.trigger_heading,
             'description_heading': config.translate.code_snippets.description_heading,
-            'snippets': snippetManager.snippetMap.python,
+            'snippets': EDITOR.getSnippets(),
             'describe': function() {
                 return function(text, render) {
                     var name = render(text);

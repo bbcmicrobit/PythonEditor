@@ -1,0 +1,52 @@
+define("ace/snippets/python_microbit",["require","exports","module"],function(e,t,n){"use strict";t.snippetText=[
+    '# Module Docstring',
+    'snippet docs - create a comment to describe your code',
+    '\t\'\'\'',
+    '\t${1:# TODO: write some helpful comments here...}',
+    '\t\'\'\'',
+    'snippet wh - while some condition is True, keep looping over some code',
+    '\twhile ${1:condition}:',
+    '\t\t${2:# TODO: write code...}',
+    'snippet with - do stuff with something assigned to a name',
+    '\twith ${1:something} as ${2:name}:',
+    '\t${3:# TODO: write code...}',
+    '# New Class',
+    'snippet cl - create a new class that defines the behaviour of a new type of object',
+    '\tclass ${1:ClassName}(${2:object}):',
+    '\t\t\"\"\"${3:docstring for $1}\"\"\"',
+    '\t\tdef __init__(self, ${4:arg}):',
+    '\t\t\t${5:super($1, self).__init__()}',
+    '\t\t\tself.$4 = $4',
+    '\t\t\t${6}',
+    '# New Function',
+    'snippet def - define a named function that takes some arguments and optionally add a description',
+    '\tdef ${1:name}(${2:arguments}):',
+    '\t\t\"\"\"${3:description for $1}\"\"\"',
+    '\t\t${4:# TODO: write code...}',
+    '# Ifs',
+    'snippet if - if some condition is True, do something',
+    '\tif ${1:condition}:',
+    '\t\t${2:# TODO: write code...}',
+    'snippet ei - else if some other condition is True, do something',
+    '\telif ${1:condition}:',
+    '\t\t${2:# TODO: write code...}',
+    'snippet el - else do some other thing',
+    '\telse:',
+    '\t\t${1:# TODO: write code...}',
+    '# For',
+    'snippet for - for each item in a collection of items do something with each item',
+    '\tfor ${1:item} in ${2:items}:',
+    '\t\t${3:# TODO: write code...}',
+    'snippet try - try doing something and handle exceptions (errors)',
+    '\ttry:',
+    '\t\t${1:# TODO: write code...}',
+    '\texcept ${2:Exception}, ${3:e}:',
+    '\t\t${4:raise $3}',
+    ''].join('\n'),t.scope="python_microbit"});                (function() {
+                    window.require(["ace/snippets/python_microbit"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            
