@@ -459,7 +459,10 @@ function web_editor(config) {
         var tryOldMethod = false;
         try {
             // If hexStr is parsed correctly it formats the file system before adding the new files
-            importedFiles = micropythonFs.importFilesFromIntelHex(hexStr, true, true);
+            importedFiles = micropythonFs.importFilesFromIntelHex(hexStr, {
+                overwrite: true,
+                formatFirst:true
+            });
             // Check if imported files includes a main.py file
             if (importedFiles.indexOf('main.py') > -1) {
                 code = micropythonFs.read('main.py');
@@ -525,7 +528,7 @@ function web_editor(config) {
         var modulesSize = 0;
         var otherSize = 0;
         var mainSize = 0;
-        var totalSpace = micropythonFs.getFsSize();
+        var totalSpace = micropythonFs.getStorageSize();
         try {
             micropythonFs.write('main.py', EDITOR.getCode());
             mainSize = micropythonFs.size('main.py');
