@@ -733,17 +733,17 @@ function web_editor(config) {
                 $("#flashing-overlay-error").html('<div>' + e + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
             });
         });
-  }
+    }
 
-function setupHterm(){
+    function setupHterm(){
                hterm.defaultStorage = new lib.Storage.Local();
-               const t = new hterm.Terminal("opt_profileName");
+               var t = new hterm.Terminal("opt_profileName");
                t.options_.cursorVisible = true;
 
                var daplinkReceived = false;
 
                t.onTerminalReady = function() {
-                   const io = t.io.push();
+                   var io = t.io.push();
 
                    io.onVTKeystroke = function(str) {
                         window.daplink.serialWrite(str);
@@ -786,7 +786,7 @@ function setupHterm(){
                             if(attempt == 5 || daplinkReceived) clearInterval(getPrompt);
                         }, 200);
                */
-}
+    }
 
     // handling what to do when they're clicked.
     function setupButtons() {
