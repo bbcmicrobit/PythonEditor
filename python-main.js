@@ -43,6 +43,7 @@ function pythonEditor(id) {
     var horizontalWordList = populateWordList();
 
     var staticWordCompleter = {
+        identifierRegexps: [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
         getCompletions: function(editor, session, pos, prefix, callback) {
             var wordList = horizontalWordList;
             
@@ -57,7 +58,7 @@ function pythonEditor(id) {
     }
     langTools.addCompleter(staticWordCompleter);
     
-    ACE.setTheme("ace/theme/kr_theme");  // Make it look nice.
+    ACE.setTheme("ace/theme/kr_theme_legacy");  // Make it look nice.
     ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
