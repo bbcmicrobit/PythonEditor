@@ -450,6 +450,10 @@ function web_editor(config) {
             return alert(config.translate.alerts.empty);
         }
         if (isModule) {
+            if (micropythonFs.getStorageRemaining() < 0){
+                micropythonFs.remove(filename);
+                return alert(config.translate.alerts.module_out_of_space);
+            }
             if (showModuleLoadedAlert) {
                 alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
             }
