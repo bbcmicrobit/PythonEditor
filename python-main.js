@@ -695,25 +695,31 @@ function web_editor(config) {
                     vex.close();
                     EDITOR.focus();
                 });
-                $(vexContent).find('#load-form-form').on('submit', function(e){
+                $('#file-upload-link').click(function() {
+                    $('#file-upload-input').trigger('click');
+                });
+                $('#file-upload-input').on('change', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if(e.target[0].files.length === 1) {
-                        var f = e.target[0].files[0];
-                        var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
-                        var reader = new FileReader();
-                        if (ext == 'py') {
-                            reader.onload = function(e) {
-                                loadPy(f.name, e.target.result);
-                            };
-                            reader.readAsText(f);
-                        } else if (ext == 'hex') {
-                            reader.onload = function(e) {
-                                loadHex(f.name, e.target.result);
-                            };
-                            reader.readAsText(f);
-                        }
+
+                    var inputFile = this;
+                    if (inputFile.files.length === 1) {
+                        var f = inputFile.files[0];
+                            var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
+                            var reader = new FileReader();
+                            if (ext == 'py') {
+                                reader.onload = function(e) {
+                                    loadPy(f.name, e.target.result);
+                                };
+                                reader.readAsText(f);
+                            } else if (ext == 'hex') {
+                                reader.onload = function(e) {
+                                    loadHex(f.name, e.target.result);
+                                };
+                                reader.readAsText(f);
+                            }
                     }
+                    inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
                     return false;
