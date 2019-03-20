@@ -80,13 +80,12 @@ Nicholas and Damien.
             </div>
             <div class="load-form">
                 <form id="load-form-form">
-                    <input type="file" name="load-form-file-upload"/><br/>
-                    <input type="submit" value="{{ submit }}"/>
+                  <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
                 </form>
             </div>
             <div id="load-alt">
                 <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
-                <p><a href="#" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+                <p><a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
             </div>
 
             <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
