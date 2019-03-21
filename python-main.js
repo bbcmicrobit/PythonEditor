@@ -325,7 +325,8 @@ function web_editor(config) {
         if (codeStr.length) {
             var codeLines = codeStr.split(/\r?\n/);
             // Only look at the first three lines
-            for (var i = 0; i < 3; i++) {
+            var loopEnd = Math.min(3, codeLines.length);
+            for (var i = 0; i < loopEnd; i++) {
                 if (codeLines[i].indexOf('# microbit-module:') == 0) {
                     isModule = true;
                 }
