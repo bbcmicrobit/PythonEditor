@@ -339,7 +339,7 @@
 	  return store[key] || (store[key] = value !== undefined ? value : {});
 	})('versions', []).push({
 	  version: _core.version,
-	  mode: _library ? 'pure' : 'global',
+	  mode: 'global',
 	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	});
 	});
@@ -4767,12 +4767,7 @@
 	var FLASH_END = 0x40000;
 	/** Size of pages with specific functions. */
 
-	var CALIBRATION_PAGE_SIZE = FLASH_PAGE_SIZE; // ----------------------------------------------------------------------------
-	// Massive hack! Use temporarily for predictable start point for tests.
-	// Will need to regenerate test data for other initial chunks
-
-	var TEST_START_CHUNK = 0;
-
+	var CALIBRATION_PAGE_SIZE = FLASH_PAGE_SIZE;
 	/**
 	 * Scans the file system area inside the Intel Hex data a returns a list of
 	 * available chunks.
@@ -4798,10 +4793,7 @@
 	    || marker === 0
 	    /* Freed */
 	    ) {
-	        // TODO: REMOVE MASSIVE HACK TEMPORARILY INCLUDED HERE FOR TESTING
-	        if (chunkIndex >= TEST_START_CHUNK) {
-	          freeChunks.push(chunkIndex);
-	        }
+	        freeChunks.push(chunkIndex);
 	      }
 
 	    chunkIndex++;
@@ -4917,41 +4909,20 @@
 	    }
 
 	    this._dataBytes = data; // Generate a single byte array with the filesystem data bytes.
+	    // When MicroPython uses up to the last byte of the last chunk it will
+	    // still consume the next chunk, and leave it blank
+	    // To replicate the same behaviour we add an extra 0xFF to the data block
 
-	    var fileHeader = this.generateFileHeaderBytes();
-	    this._fsDataBytes = new Uint8Array(fileHeader.length + this._dataBytes.length);
+	    var fileHeader = this._generateFileHeaderBytes();
+
+	    this._fsDataBytes = new Uint8Array(fileHeader.length + this._dataBytes.length + 1);
 
 	    this._fsDataBytes.set(fileHeader, 0);
 
 	    this._fsDataBytes.set(this._dataBytes, fileHeader.length);
+
+	    this._fsDataBytes[this._fsDataBytes.length - 1] = 0xff;
 	  }
-	  /**
-	   * Generates a byte array for the file header as expected by the MicroPython
-	   * file system.
-	   *
-	   * @return Byte array with the header data.
-	   */
-
-
-	  FsFile.prototype.generateFileHeaderBytes = function () {
-	    var headerSize = CHUNK_HEADER_END_OFFSET_LEN + CHUNK_HEADER_NAME_LEN + this._filenameBytes.length;
-	    var endOffset = (headerSize + this._dataBytes.length) % CHUNK_DATA_LEN;
-	    var fileNameOffset = headerSize - this._filenameBytes.length; // Format header byte array
-
-	    var headerBytes = new Uint8Array(headerSize);
-	    headerBytes[1
-	    /* EndOffset */
-	    - 1] = endOffset;
-	    headerBytes[2
-	    /* NameLength */
-	    - 1] = this._filenameBytes.length;
-
-	    for (var i = fileNameOffset; i < headerSize; ++i) {
-	      headerBytes[i] = this._filenameBytes[i - fileNameOffset];
-	    }
-
-	    return headerBytes;
-	  };
 	  /**
 	   * Generate an array of file system chunks for all this file content.
 	   *
@@ -5037,14 +5008,35 @@
 
 
 	  FsFile.prototype.getFsFileSize = function () {
-	    var chunksUsed = Math.ceil(this._fsDataBytes.length / CHUNK_DATA_LEN); // When MicroPython uses up to the last byte of the last chunk it will
-	    // still consume the next chunk, even if it doesn't add any data to it
+	    var chunksUsed = Math.ceil(this._fsDataBytes.length / CHUNK_DATA_LEN);
+	    return chunksUsed * CHUNK_LEN;
+	  };
+	  /**
+	   * Generates a byte array for the file header as expected by the MicroPython
+	   * file system.
+	   *
+	   * @return Byte array with the header data.
+	   */
 
-	    if (!(this._fsDataBytes.length % CHUNK_DATA_LEN)) {
-	      chunksUsed += 1;
+
+	  FsFile.prototype._generateFileHeaderBytes = function () {
+	    var headerSize = CHUNK_HEADER_END_OFFSET_LEN + CHUNK_HEADER_NAME_LEN + this._filenameBytes.length;
+	    var endOffset = (headerSize + this._dataBytes.length) % CHUNK_DATA_LEN;
+	    var fileNameOffset = headerSize - this._filenameBytes.length; // Format header byte array
+
+	    var headerBytes = new Uint8Array(headerSize);
+	    headerBytes[1
+	    /* EndOffset */
+	    - 1] = endOffset;
+	    headerBytes[2
+	    /* NameLength */
+	    - 1] = this._filenameBytes.length;
+
+	    for (var i = fileNameOffset; i < headerSize; ++i) {
+	      headerBytes[i] = this._filenameBytes[i - fileNameOffset];
 	    }
 
-	    return chunksUsed * CHUNK_LEN;
+	    return headerBytes;
 	  };
 
 	  return FsFile;
