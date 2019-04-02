@@ -127,3 +127,8 @@ var upyhex = (function() {
         injectPyStrIntoIntelHex: injectPyStrIntoIntelHex,
     };
 }());
+
+/* Attach to the global object if running in node */
+if (typeof module !== 'undefined' && module.exports) {
+    global.upyhex = upyhex;
+}
