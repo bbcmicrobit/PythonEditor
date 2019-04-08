@@ -13,7 +13,7 @@
     "test": "jest",
     "test:watch": "npm t -- --watch",
     "test:coverage": "npm t -- --coverage",
-    "test:ci": "npm t -- --ci"
+    "test:ci": "npm t -- --ci --colors"
   },
   "dependencies": {},
   "devDependencies": {
