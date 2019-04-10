@@ -19,13 +19,11 @@
     position: fixed;
     bottom: 145px; left: 10px;
     width: 60px;
-    height: 0;
-    opacity: 0;
+    display: none;
 }
 
 #sim-btns a {
     height: 54px; width: 54px;
-    opacity: 0;
     
     display: -webkit-flex;
 	display: -ms-flexbox;
