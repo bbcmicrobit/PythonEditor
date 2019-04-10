@@ -10,8 +10,10 @@ Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
 function pythonEditor(id) {
+    'use strict';
+
     // An object that encapsulates the behaviour of the editor.
-    editor = {};
+    var editor = {};
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
@@ -19,7 +21,7 @@ function pythonEditor(id) {
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
         enableSnippets: true  // Enable code snippets.
-    })
+    });
     ACE.setTheme("ace/theme/kr_theme");  // Make it look nice.
     ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
@@ -40,7 +42,7 @@ function pythonEditor(id) {
     // Give the editor user input focus.
     editor.focus = function() {
         ACE.focus();
-    }
+    };
 
     // Set a handler function to be run if code in the editor changes.
     editor.on_change = function(handler) {
@@ -56,116 +58,16 @@ function pythonEditor(id) {
     // Triggers a snippet by name in the editor.
     editor.triggerSnippet = function(snippet) {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        var snippet = snippetManager.snippetNameMap.python[snippet];
-        if(snippet) {
+        snippet = snippetManager.snippetNameMap.python[snippet];
+        if (snippet) {
             snippetManager.insertSnippet(ACE, snippet.content);
         }
     };
 
-    /*
-    Turn a Python script into Intel HEX format to be concatenated at the
-    end of the MicroPython firmware.hex.  A simple header is added to the
-    script.
-
-    - takes a Python script as a string
-    - returns hexlified string, with newlines between lines
-    */
-    editor.hexlify = function(script) {
-        function hexlify(ar) {
-            var result = '';
-            for (var i = 0; i < ar.length; ++i) {
-                if (ar[i] < 16) {
-                    result += '0';
-                }
-                result += ar[i].toString(16);
-            }
-            return result;
-        }
-        // add header, pad to multiple of 16 bytes
-        data = new Uint8Array(4 + script.length + (16 - (4 + script.length) % 16));
-        data[0] = 77; // 'M'
-        data[1] = 80; // 'P'
-        data[2] = script.length & 0xff;
-        data[3] = (script.length >> 8) & 0xff;
-        for (var i = 0; i < script.length; ++i) {
-            data[4 + i] = script.charCodeAt(i);
-        }
-        // check data.length < 0x2000
-        if(data.length > 8192) {
-            throw new RangeError('Too long');
-        }
-        // convert to .hex format
-        var addr = 0x3e000; // magic start address in flash
-        var chunk = new Uint8Array(5 + 16);
-        var output = [];
-        for (var i = 0; i < data.length; i += 16, addr += 16) {
-            chunk[0] = 16; // length of data section
-            chunk[1] = (addr >> 8) & 0xff; // high byte of 16-bit addr
-            chunk[2] = addr & 0xff; // low byte of 16-bit addr
-            chunk[3] = 0; // type (data)
-            for (var j = 0; j < 16; ++j) {
-                chunk[4 + j] = data[i + j];
-            }
-            var checksum = 0;
-            for (var j = 0; j < 4 + 16; ++j) {
-                checksum += chunk[j];
-            }
-            chunk[4 + 16] = (-checksum) & 0xff;
-            output.push(':' + hexlify(chunk).toUpperCase())
-        }
-        return output.join('\n');
-    };
-
     // Generates a hex file containing the user's Python from the firmware.
     editor.getHexFile = function(firmware) {
-        var hexlified_python = this.hexlify(this.getCode());
-        var insertion_point = ":::::::::::::::::::::::::::::::::::::::::::";
-        return firmware.replace(insertion_point, hexlified_python);
-    }
-
-    // Takes a hex blob and turns it into a decoded string.
-    editor.unhexlify = function(data) {
-
-        var hex2str = function(str) {
-            var result = '';
-            for (var i=0, l=str.length; i<l; i+=2) {
-                result += String.fromCharCode(parseInt(str.substr(i, 2), 16));
-            }
-            return result;
-        };
-
-        var lines = data.trimRight().split(/\r?\n/);
-        if (lines.length > 0) {
-            var output = [];
-            for (var i=0; i<lines.length; i++) {
-                var line = lines[i];
-                output.push(hex2str(line.slice(9, -2)));
-            }
-            output[0] = output[0].slice(4);
-            var last = output.length - 1;
-            output[last] = output[last].replace(/\0/g, '');
-            return output.join('');
-        } else {
-            return '';
-        }
-    }
-
-    // Given an existing hex file, return the Python script contained therein.
-    editor.extractScript = function(hexfile) {
-        var hex_lines = hexfile.trimRight().split(/\r?\n/);
-        var start_line = hex_lines.lastIndexOf(':020000040003F7');
-        if (start_line > 0) {
-            var lines = hex_lines.slice(start_line + 1, -2);
-            var blob = lines.join('\n');
-            if (blob=='') {
-                return '';
-            } else {
-                return this.unhexlify(blob);
-            }
-        } else {
-            return '';
-        }
-    }
+        return upyhex.injectPyStrIntoIntelHex(firmware, this.getCode());
+    };
 
     // Given a password and some plaintext, will return an encrypted version.
     editor.encrypt = function(password, plaintext) {
@@ -185,7 +87,7 @@ function pythonEditor(id) {
         output.putBytes(salt);
         output.putBuffer(cipher.output);
         return encodeURIComponent(btoa(output.getBytes()));
-    }
+    };
 
     // Given a password and cyphertext will return the decrypted plaintext.
     editor.decrypt = function(password, cyphertext) {
@@ -204,10 +106,10 @@ function pythonEditor(id) {
         decipher.update(input);
         var result = decipher.finish();
         return decipher.output.getBytes();
-    }
+    };
 
     return editor;
-}; // END func pythonEditor
+}
 
 /*
 The following code contains the various functions that connect the behaviour of
@@ -216,6 +118,10 @@ the editor to the DOM (web-page).
 See the comments in-line for more information.
 */
 function web_editor(config) {
+    'use strict';
+
+    // Global (useful for testing) instance of the ACE wrapper object
+    window.EDITOR = pythonEditor('editor');
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
@@ -267,7 +173,7 @@ function web_editor(config) {
         if (workspace && continueZooming) {
             Blockly.getMainWorkspace().zoomCenter(1);
         }
-    };
+    }
 
     // Sets up the zoom-out functionality.
     function zoomOut() {
@@ -286,7 +192,7 @@ function web_editor(config) {
         if (workspace && continueZooming) {
             Blockly.getMainWorkspace().zoomCenter(-1);
         }
-    };
+    }
 
     // Checks for feature flags in the config object and shows/hides UI
     // elements as required.
@@ -303,16 +209,27 @@ function web_editor(config) {
         if(config.flags.sim) {
             $("#command-sim").removeClass('hidden');
         }
-    };
+        // Update the help link to pass feature flag information.
+        var helpAnchor = $("#help-link");
+        var featureQueryString = Object.keys(config.flags).filter(function(f) {
+            return config.flags[f];
+        }).map(function(f) {
+            return encodeURIComponent(f) + "=true";
+        }).join("&");
+        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
+    }
+
+    // Update the docs link to append MicroPython version
+    var docsAnchor = $("#docs-link"); 
+    docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
-    function setupEditor(message) {
+    function setupEditor(message, migration) {
         // Set version in document title
-        document.title = document.title + ' ' + VERSION;
+        document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
-        EDITOR = pythonEditor('editor');
         if(message.n && message.c && message.s) {
             var template = $('#decrypt-template').html();
             Mustache.parse(template);
@@ -322,7 +239,7 @@ function web_editor(config) {
             }
             vex.open({
                 content: Mustache.render(template, context)
-            })
+            });
             $('#button-decrypt-link').click(function() {
                 var password = $('#passphrase').val();
                 setName(EDITOR.decrypt(password, message.n));
@@ -331,9 +248,14 @@ function web_editor(config) {
                 vex.close();
                 EDITOR.focus();
             });
+        } else if(migration != null){
+            setName(migration.meta.name);
+            setDescription(migration.meta.comment);
+            EDITOR.setCode(migration.source);
+            EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("micro:bit")
+            setName("microbit");
             // If there's no description, default to something sensible.
             setDescription("A MicroPython script");
             // A sane default starting point for a new script.
@@ -342,7 +264,7 @@ function web_editor(config) {
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         // If configured as experimental update editor background to indicate it
         if(config.flags.experimental) {
-            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')"
+            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
         }
         // Configure the zoom related buttons.
         $("#zoom-in").click(function (e) {
@@ -387,13 +309,25 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
+    // Generates the text for a hex file with MicroPython and the user code
+    function generateFullHexStr() {
+        var firmware = $("#firmware").text();
+        var fullHexStr = '';
+        try {
+            fullHexStr = EDITOR.getHexFile(firmware);
+        } catch(e) {
+            // We generate a user readable error here to be caught and displayed
+            throw new Error(config.translate.alerts.length);
+        }
+        return fullHexStr;
+    }
+
     // This function describes what to do when the download button is clicked.
     function doDownload() {
-        var firmware = $("#firmware").text();
         try {
-            var output = EDITOR.getHexFile(firmware);
+            var output = generateFullHexStr();
         } catch(e) {
-            alert(config.translate.alerts.length);
+            alert('Error:\n' + e.message);
             return;
         }
         var ua = navigator.userAgent.toLowerCase();
@@ -476,18 +410,26 @@ function web_editor(config) {
                             setDescription(config.translate.drop.python);
                             reader.onload = function(e) {
                                 EDITOR.setCode(e.target.result);
-                            }
+                            };
                             reader.readAsText(f);
                             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
                         } else if (ext == 'hex') {
                             setName(f.name.replace('.hex', ''));
                             setDescription(config.translate.drop.hex);
                             reader.onload = function(e) {
-                                var code = EDITOR.extractScript(e.target.result);
-                                if(code.length < 8192) {
+                                var code = '';
+                                var showAlert = false;
+                                try {
+                                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
+                                } catch(e) {
+                                    showAlert = true;
+                                }
+                                if (showAlert || code.length === 0) {
+                                    return alert(config.translate.alerts.unrecognised_hex);
+                                } else {
                                     EDITOR.setCode(code);
                                 }
-                            }
+                            };
                             reader.readAsText(f);
                             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
                         }
@@ -497,7 +439,7 @@ function web_editor(config) {
                     return false;
                 });
             }
-        })
+        });
         $('.load-toggle').on('click', function(e) {
             $('.load-drag-target').toggle();
             $('.load-form').toggle();
@@ -547,10 +489,10 @@ function web_editor(config) {
                         scaleSpeed: zoomScaleSteps + 1.0
                     }
                 });
-                function myUpdateFunction(event) {
+                var myUpdateFunction = function(event) {
                     var code = Blockly.Python.workspaceToCode(workspace);
                     EDITOR.setCode(code);
-                }
+                };
                 // Resize blockly
                 var element = document.getElementById('blockly');
                 new ResizeSensor(element, function() {
@@ -560,7 +502,7 @@ function web_editor(config) {
             }
             // Set editor to current state of blocks.
             EDITOR.setCode(Blockly.Python.workspaceToCode(workspace));
-        };
+        }
     }
 
     function stripComments(s) {
@@ -595,9 +537,9 @@ function web_editor(config) {
                     var name = render(text);
                     var trigger = name.split(' - ')[0];
                     return config.translate.code_snippets[trigger];
-                }
+                };
             }
-        }
+        };
         vex.open({
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
@@ -617,7 +559,7 @@ function web_editor(config) {
         Mustache.parse(template);
         vex.open({
             content: Mustache.render(template, config.translate.share)
-        })
+        });
         $('#passphrase').focus();
         $('#button-create-link').click(function() {
             var password = $('#passphrase').val();
@@ -665,18 +607,26 @@ function web_editor(config) {
             setDescription(config.translate.drop.python);
             reader.onload = function(e) {
                 EDITOR.setCode(e.target.result);
-            }
+            };
             reader.readAsText(file);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
             setName(file.name.replace('.hex', ''));
             setDescription(config.translate.drop.hex);
             reader.onload = function(e) {
-                var code = EDITOR.extractScript(e.target.result);
-                if (code.length < 8192) {
+                var code = '';
+                var showAlert = false;
+                try {
+                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
+                } catch(e) {
+                    showAlert = true;
+                }
+                if (showAlert || code.length === 0) {
+                    return alert(config.translate.alerts.unrecognised_hex);
+                } else {
                     EDITOR.setCode(code);
                 }
-            }
+            };
             reader.readAsText(file);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         }
@@ -708,6 +658,14 @@ function web_editor(config) {
             e.preventDefault();
             doSim();
         });
+        $("#command-help").click(function () {
+            if($(".helpsupport_container").css("display") == "none"){
+                $(".helpsupport_container").css("display", "flex");
+            } else {
+                $(".helpsupport_container").css("display", "none");
+            }
+        });
+        $(".helpsupport_container").hide();
     }
 
     // Extracts the query string and turns it into an object of key/value
@@ -728,6 +686,14 @@ function web_editor(config) {
         return result;
     }
 
+    function get_migration() {
+        var compressed_project = window.location.toString().split("#project:")[1];
+        if(typeof compressed_project === "undefined") return null;
+        var bytes = base64js.toByteArray(compressed_project);
+        var project = JSON.parse(LZMA.decompress(bytes));
+        return project;
+    }
+
     // Checks if this is the latest version of the editor. If not display an
     // appropriate message.
     function checkVersion(qs) {
@@ -746,7 +712,7 @@ function web_editor(config) {
                 Mustache.parse(template);
                 var context = config.translate.messagebar;
                 var messagebar = $('#messagebar');
-                messagebar.html(Mustache.render(template, context))
+                messagebar.html(Mustache.render(template, context));
                 messagebar.show();
                 $('#messagebar-link').attr('href',
                                            window.location.href.replace(VERSION, data.latest));
@@ -757,9 +723,10 @@ function web_editor(config) {
         });
     }
 
-    var qs = get_qs_context()
+    var qs = get_qs_context();
+    var migration = get_migration();
     setupFeatureFlags();
-    setupEditor(qs);
+    setupEditor(qs, migration);
     checkVersion(qs);
     setupButtons();
-};
+}
