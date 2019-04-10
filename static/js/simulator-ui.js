@@ -46,23 +46,16 @@ $(document).ready(function () {
         e.preventDefault();
 
         var simGroup = $('#sim-btns'),
-            simBtns = $('#sim-btns a'),
             tglBtn = $('#sim-btns-toggle');
         
         if (simBtnsOpened) {
-            simGroup.animate({height: '0', opacity: '0'}, 1000);
-            simBtns.animate({height: '0', opacity: '0'}, 800);
-            tglBtn.html('<i class="fas fa-chevron-down"></i>');
-
+            simGroup.hide();
+            tglBtn.html('<i class="fa fa-chevron-up"></i>');
             simBtnsOpened = false;
             console.log('closed');
         } else {
-            simGroup.animate({height: sGMHeight + 'px', opacity: '1'}, 1000);
-            
-            simBtns.animate({}, 200);
-            simBtns.animate({height: '54px', opacity: '1'}, 800);
-            tglBtn.html('<i class="fas fa-chevron-up"></i>');
-
+            simGroup.show();
+            tglBtn.html('<i class="fa fa-chevron-down"></i>');
             simBtnsOpened = true;
             console.log('opened');
         }

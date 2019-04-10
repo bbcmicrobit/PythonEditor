@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="static/img/favicon.ico">
 
-    <title>Python on the BBC micro:bit</title>
+    <title>micro:bit Python Editor Help</title>
 
     <!-- Bootstrap core CSS -->
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,11 @@
     <!-- Custom styles for this template -->
     <link href="static/css/starter-template.css" rel="stylesheet">
     <link href="static/css/highlight.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/font-awesome.css">
+
+    <!-- JS for contextual help -->
+    <script src="static/js/jquery-2.1.4.min.js"></script>
+    <script src="python-main.js"></script>
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -27,6 +32,19 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 :q      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script>
+        $(document).ready(function() {
+            window.location.search.substring(1).split("&").map(function(param) {
+                return param.split("=");
+            }).filter(function(pair) {
+                return pair[1] == "true";
+            }).forEach(function(pair) {
+                var enabledFlag = decodeURIComponent(pair[0]);
+                var hiddenFeatureClass = 'hide-' + enabledFlag;
+                $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
+            });
+        });
+    </script>
   </head>
 
   <body>
@@ -40,16 +58,16 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#top">Python on the micro:bit</a>
+          <a class="navbar-brand" href="https://python.microbit.org">Python on the micro:bit</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#top">Start Here</a></li>
+            <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
-            <li><a href="#blockly">Blockly</a></li>
-            <li><a href="#snippets">Snippets</a></li>
-            <li><a href="#bugs">Bug Fixes</a></li>
-            <li><a href="#fun">Fun Stuff</a></li>
+            <li class="hide-blocks"><a href="#blockly">Blockly</a></li>
+            <li class="hide-snippets"><a href="#snippets">Snippets</a></li>
+            <li><a href="#bugs">Bugs</a></li>
+            <li><a href="#more">Further Information</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -60,64 +78,73 @@
       <div class="starter-template">
         <div class="row" id="home">
             <div class="col-md-8 col-md-offset-2">
-                <a href="http://microbit.co.uk/"><img src="static/img/microbit.png"/></a>
+                <a href="http://microbit.org/"><img src="static/img/microbit.png"/></a>
                 <a href="http://micropython.org/"><img src="static/img/micropython.jpeg"/></a>
-                <a href="http://python.org/community/microbit/"><img src="static/img/python.png"/></a><a href="http://microbit.co.uk/"></a>
+                <a href="http://python.org/community/microbit/"><img src="static/img/python.png"/></a>
                 <br/></br/>
             </div>
         </div>
       </div>
+    </div> 
+    <div class="container">
     <img src="static/img/comic1.png" class="img-responsive center-block"
             alt="http://goo.gl/SrIrIE"/>
-    <h2 id="start">Start Here</h2>
-    <p>So you're looking at the Python editor and wondering what to do. That's
-    easy! Let's learn about the different parts of the editor. First of all,
-    there are some buttons across the top:</p>
+    <h2 id="Editor"> The Editor</h2>
+      <p>The Python editor is perfect for those who want to push their coding skills further. A selection of snippets and a range of pre-made images and music give you a helping hand with your code. The editor is powered by the global <a href="http://python.org/community/microbit/">Python Community</a>.</p>
+    
+    <h3 id="Menu">Menu</h3>
+    <p>The main menu of the editor contains various buttons that allow you to interact with the editor and the micro:bit device.
+        If you have additional features enabled in the editor, for example WebUSB you may see extra buttons availble in this menu.
+    </p>
 
-    <p><img src="static/img/header.png" class="img-responsive center-block"
+    <p><img src="static/img/header.png" class="image img-responsive center-block"
         alt="A picture of the buttons along the top of the editor."/></p>
 
-    <p>Pressing the TAB key will move the focus between the buttons. Pressing
-    ENTER will activate the highlighted button. If you're in the text window
-    (see below) you'll need to press the ESCAPE key to re-focus on the buttons.
-    You can, of course, use your mouse.</p>
-
-    <p>What do they do?</p>
+    <p>As well as using a mouse, you can use the <kbd>TAB</kbd> key to navigate through the options and <kbd>Enter</kbd> to activate them. If you're in the text window, The <kbd>ESC</kbd> key will re-focus on the menu.
+    </p>
 
     <table class="table">
         <tr>
             <td>
-                <img src="static/img/download.png" alt="Download button"/>
+                <div id="command-download" class="roundsymbol" title="Download a hex file to flash onto  micro:bit" style="font-size: 0rem;">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
+                        <path d="m 185.96612,110.36806 41.029,41.029 0,-72.834699 27.352,0 0.001,72.834699 41.029,-41.029 0,31.911 -54.706,54.706 -54.705,-54.706 0,-31.911 z m 98.203,181.9 c 0,-9.128 7.406,-16.539 16.541,-16.539 9.146,0 16.535,7.411 16.535,16.539 0,9.131 -7.389,16.548 -16.535,16.548 -9.135,0 -16.541,-7.417 -16.541,-16.548 z m -121.494,0.003 c 0,-9.129 7.413,-16.542 16.548,-16.542 9.129,0 16.537,7.413 16.537,16.542 0,9.131 -7.408,16.547 -16.537,16.547 -9.135,0 -16.548,-7.416 -16.548,-16.547 z m 16.544,-81.93 122.554,0.202 c 45.667,0 82.285,36.553 82.285,81.732 0,45.179 -36.757,81.934 -81.937,81.934 l -122.902,0 c -45.177,0 -81.934395,-36.755 -81.934395,-81.934 0,-45.179 36.757395,-81.934 81.934395,-81.934 z m -49.164,81.934 c 0,27.105 22.059,49.164 49.164,49.164 l 122.902,0 c 27.107,0 49.159,-22.059 49.159,-49.164 0,-27.112 -22.052,-49.164 -49.159,-49.164 l -122.902,0 c -27.105,0 -49.164,22.052 -49.164,49.164 z" id="path3341" inkscape:connector-curvature="0" style="fill:currentColor"></path>
+                    </svg>
+                </div>                
             </td>
             <td>
             Click on the "Download" button to save a special "hex" file on
-            your computer. Plug in your BBC micro:bit (it'll show up as USB
-            storage) and drag the newly saved file onto the device. Your code
+             computer. Plug in  BBC micro:bit (it'll show up as USB
+            storage) and drag the newly saved file onto the device. Code
             will run (or you'll see an error message scroll past on the
-            device's display). See below for how to extract your code from a
+            device's display). See below for how to extract  code from a
             hex file back into the editor.
             </td>
         </tr>
         <tr>
             <td>
-                <img src="static/img/save.png" alt="Save button"/>
+                <div id="command-save" class="roundsymbol" title="Save  Python code to  computer">
+                        <i class="fa fa-download"></i>
+                </div>
             </td>
             <td>
-            Click on the "Save" button to save your code onto your computer.
-            Because you're downloading Python code your computer might check
+            Click on the "Save" button to save the code onto your computer.
+            Because you're downloading Python code  computer might check
             you want to save the file. It's trying to protect you from
             downloading random software from the internet. But since this is
-            your own code you're safe to proceed. See below for how to load
+             own code you're safe to proceed. See below for how to load
             code back into the editor.
             </td>
         </tr>
         <tr>
             <td>
-                <img src="static/img/load.png" alt="Load button"/>
+                <div id="command-save" class="roundsymbol" title="Load Python code or .hex file into the editor">
+                    <i class="fa fa-upload"></i>
+                 </div>
             </td>
             <td>
-            It's very easy to load files from your computer into the editor:
-            click the load button then drag the file from your computer onto
+            It's very easy to load files from  computer into the editor:
+            click the load button then drag the file from  computer onto
             the grey "drop" area. Alternatively, you could use the file
             picker (just click on the link at the bottom to toggle between the
             two options). The editor knows how to read Python files (whose name
@@ -125,24 +152,28 @@
             ends with ".hex").
             </td>
         </tr>
-        <tr>
+        <tr class="hide-blocks">
             <td>
-                <img src="static/img/block_button.png" alt="Blockly button"/>
+                <div id="command-blockly" class="roundsymbol" title="Go to the blockly editor">
+                    <i class="fa fa-puzzle-piece"></i>
+                </div>
             </td>
             <td>
-            <strong>This is an experimental feature. It may change in future
+            <strong>This is an experimental feature. It may change in the future
             and could contain bugs.</strong> Clicking the "Blockly" button
             displays a set of drag-and-drop
             blocks that can be used to quickly create Python code. Move the
             blocks, watch Python code appear and change. <strong>Moving such
-            blocks will re-write your Python code and you may lose work.
+            blocks will re-write  Python code and you may lose work.
             Furthermore, the arrangement of blocks is currently not saved,
             just the resulting Python code.</strong>
             </td>
         </tr>
-        <tr>
+        <tr class="hide-snippets">
             <td>
-                <img src="static/img/snippets.png" alt="Snippets button"/>
+                <div id="command-snippet" class="roundsymbol" title="Load Python code or .hex file into the editor">
+                    <i class="fa fa-cogs"></i>
+                </div>
             </td>
             <td>
             Clicking on the "Snippets" button brings up a menu of Python
@@ -150,40 +181,49 @@
             re-use in your own programs. There are snippets for most common
             things you'll want to do with Python. Select the one you want and
             fill in the gaps in the code editor to make it do what you want.
-            <strong>Snippets are disabled when blockly is enabled.</strong>
+            <strong class="hide-blocks">Snippets are disabled when blockly is enabled.</strong>
             </td>
         </tr>
         <tr>
             <td>
-                <img src="static/img/help.png" alt="Help button"/>
+                <div id="command-help" class="roundsymbol" title="Find help and support">
+                    <i class="fa fa-question"></i>
+                 </div>
             </td>
             <td>
             Clicking on the "Help" button gets you here. But you knew that
-            already, right..? :-) Notice that your editor is still available
-            but in a separate tab in your browser.
+            already, right..? :-) Notice that  editor is still available
+            but in a separate tab in  browser.
             </td>
         </tr>
-        <tr>
+        <tr class="hide-share">
             <td>
-                <img src="static/img/share.png" alt="Share button"/>
+                <div id="command-help" class="roundsymbol" title="Share  project">
+                    <i class="fa fa-share-alt"></i>
+                </div>
             </td>
             <td>
             Clicking on the "Share" button creates a unique link that points to
-            your script. Add this link to your bookmarks to retrieve your code.
-            If you share this link others will be able to see your code. So
-            your code remains private you must set a password and an optional
+             script. Add this link to  bookmarks to retrieve  code.
+            If you share this link others will be able to see  code. So
+             code remains private you must set a password and an optional
             password hint for it. <strong>This button is not available if
             you're running the editor from a local file system.</strong>
             </td>
         </tr>
         <tr>
-            <td>
-                <img src="static/img/zoom.png" alt="Zoom buttons"/>
+            <td align="center">
+             <div id="zoom-in" class="roundsymbol-sm" title="Zoom in">
+                <i class="fa fa-search-plus"></i>
+             </div>
+             <div id="zoom-out" class="roundsymbol-sm" title="Zoom out">
+                <i class="fa fa-search-minus"></i>
+             </div>
             </td>
             <td>
             Everyone likes to show off their awesome Python skills. These
             buttons are especially useful to zoom-in and zoom-out when you're
-            trying to show your code to a large group of people via a
+            trying to show  code to a large group of people via a
             projector.
             </td>
         </tr>
@@ -192,70 +232,57 @@
     <p>The name and description for your script is shown on the top
     right hand side. Click them to edit them.</p>
 
-    <p>The other part of the editor is the text window:</p>
+    <h3 id="text-window">Text window</h3>
+    <p>The other part of the editor is the text window, where we edit our scripts.</p>
 
     <p><img src="static/img/editor_text.png"
-        class="img-responsive center-block img-rounded"
+        class="image img-responsive center-block img-rounded"
         alt="A picture of the text area in the code editor."/></p>
 
-    <p>It's very simple to use. Just click and type.</p>
-
-    <p>The editor tries to help you out by colouring the text to show what
-    all the different parts of your program are. For example, Python keywords
+    <p>The editor tries to help out by colouring the text to show what
+    all the different parts of  program are. For example, Python keywords
     (words built into the Python language) are grey. The brighter coloured
     words are bits of the program <em>you</em> have created. Brown words
     are constant values that never change and purple words represent
     strings of characters to display. All the lines are numbered with the
     current line highlighted.</p>
 
-    <p>Do you want to see how the editor actually works? It's easy, to view
-    the "source code" press CTRL-U (or CMD-U on a Mac). There's a secret
-    message for you in the code. Can you find it?</p>
-
-    <img src="static/img/comic2.png" class="img-responsive center-block"
-        alt="http://goo.gl/ArpNbM"/>
-
     <h2 id="hello">Hello, World!</h2>
-
-    <p><img src="static/img/comic3.png" class="img-responsive center-block"
+    <p>A 'Hello, World!' program is traditionally used as a quick test to see if we've got 
+    our software or hardware configured correctly.</p>
+    <p><img src="static/img/comic3.png" class="image img-responsive center-block"
         alt="http://goo.gl/zpfrsY"/></p>
 
-    <p>The version of Python that runs on the BBC micro:bit is called
-    MicroPython. It's exactly like <em>real</em> Python except it's designed
-    to run on small devices like the BBC micro:bit. Here's the MicroPython code
-    you need to make your BBC micro:bit say "Hello, World!". Copy and paste it
-    into the Python editor, download it and copy it onto your device (just like
-    Yellow and Blue suggest):</p>
+    <p>Here's how we do this in the Python editor:</p>
 
     <pre><code class="python">from microbit import *
 
 
 display.scroll("Hello, World!")</code></pre>
 
-    <p>The first line (<code>from microbit import *</code>) tells MicroPython
+    <p>The first line (<code>from microbit import *</code>) tells <a href="#micropython">MicroPython</a>
     to get all the bits of Python needed to program the micro:bit.</p>
 
-    <p>The second line(<code>display.scroll("Hello, World!")</code>) tells
+    <p>The second line (<code>display.scroll("Hello, World!")</code>) tells
     MicroPython to use one of those bits of Python (the <code>display</code>
     module) to scroll the text, <kbd>"Hello, World!"</kbd> across the physical
-    display on the front of the device. It's all remarkably obvious. If you
-    followed Yellow and Blue's instructions you should see something like
-    this:</p>
+    display on the front of the device.</p>
 
-    <p><img src="static/img/scroll-hello.gif" class="img-responsive center-block img-rounded"
+    <p><img src="static/img/scroll-hello.gif" class="image img-responsive center-block img-rounded"
         alt="An animation of 'hello world' scrolling over the display."/></p>
 
-    <p>Can you make it scroll any other messages? Why not try making your
-    BBC micro:bit scroll your name? Remember, MicroPython will scroll
-    everything between the <code>"</code>quotation marks<code>"</code>.</p>
-
+    <p>When you load the Python editor in your browser, this is the default script you will see,
+        asking the micro:bit to scroll the words across the LED screen and then display an image of a heart.</p>
+    <p>Why not try making the micro:bit scroll your name?</p>
+   
+    <div class="hide-blocks">
     <h2 id="blockly">Blockly</h2>
 
     <p>Use blockly to make new Python code from easy to assemble blocks of
     code.</p>
 
     <p><img src="static/img/blocks.png"
-        class="img-responsive center-block img-rounded"
+        class="image img-responsive center-block img-rounded"
         alt="An animation demonstrating how to use snippets."/></p>
 
     <p>Blockly updates Python in the code editor as you move blocks around.
@@ -276,7 +303,8 @@ display.scroll("Hello, World!")</code></pre>
 
     <p>However, by using Blockly you'll very quickly get the hang of how Python
     code works and fits together.</p>
-
+    </div>
+    <div class="hide-snippets">
     <h2 id="snippets">Snippets</h2>
 
     <p>Snippets are a cool way to avoid typing. The animation below shows you
@@ -292,26 +320,26 @@ display.scroll("Hello, World!")</code></pre>
     snippet and then fill in the remaining blocks of code so it does what you
     want.</p>
 
-    <p>When blockly is enabled the "Snippets" button is disabled. This avoids
+    <p class="hide-blocks">When blockly is enabled the "Snippets" button is disabled. This avoids
     snippets from interfering with code that blockly may be generating.</p>
+    
 
     <p><img src="static/img/comic4.png" class="img-responsive center-block"
         alt="http://goo.gl/bT8a8M"/></p>
+    </div>
 
     <h2 id="bugs">Bug Fixes</h2>
 
     <p>Things will go wrong!</p>
 
-    <p>You have to imagine Python is the most strict English teacher in the
+    <p>You have to imagine Python is the most strict language teacher in the
     universe... yes, even more strict than that really strict one you have at
-    your school. Put simply, <strong>you have to type Python without any
+     school. Put simply, <strong>you have to type Python without any
     mistakes</strong> for it to work.</p>
 
     <p>All programmers make mistakes and create bugs. It's a fact of life.
     When you have a bug MicroPython tries to help you out: it will scroll a
-    message on its display. It may even include a line number. This message is
-    like the first clue in a treasure hunt, you have to figure out the rest
-    yourself.</p>
+    message on its display. It may even include a line number.</p>
 
     <p>Common bugs include <em>Syntax Errors</em> (which means you've typed it in
     wrong) and <em>Name Errors</em> (that mean you've typed in correct Python, but
@@ -319,19 +347,28 @@ display.scroll("Hello, World!")</code></pre>
 
     <p>If you're unsure what to do
     <a href="https://microbit-micropython.readthedocs.io/en/latest/">go read the
-    MicroPython docs</a>. Alternatively, just ask someone who knows what they're
-    doing. If no such person is available you could just follow this handy flow
-    chart:</p>
+    MicroPython docs</a> or <a href="https://support.microbit.org/en/support/tickets/new">open a support request with the micro:bit team</a>.
 
-    <p><img src="static/img/tech_support_cheat_sheet.png"
-        class="img-responsive center-block"
-        alt="The XKCD tech support cheat sheet."/></p>
-
-    <h2 id="fun">Fun Stuff</h2>
-
+    <h2 id="more">Further Information</h2>
     <p><img src="static/img/comic5.png" class="img-responsive center-block"
         alt="http://goo.gl/q5DAAW"/></p>
 
+    <h3 id="micropython">MicroPython</h3>
+    <p><img src="static/img/comic6.png" class="img-responsive center-block"
+        alt="http://goo.gl/9lcLAf"/></p>
+    <p>The version of Python that runs on the BBC micro:bit is called
+    MicroPython. It's exactly like <em>real</em> Python except it's designed
+    to run on small devices like the BBC micro:bit. You can find out more about it
+    on the <a href="http://micropython.org/">MicroPython site</a> and by reading the <a href="https://microbit-micropython.readthedocs.io/en/latest/">MicroPython for micro:bit reference</a>.</p>
+
+    <h3>How the editor works</h3>
+    <p>To see how the editor actually works? It's easy, to view
+        the "source code" press CTRL-U (or CMD-U on a Mac). There's a secret
+        message for you in the code. Can you find it?</p>
+    <p>The code for the editor lives in a <a href"https://github.com/bbcmicrobit/PythonEditor">repository on Github</a>. Github
+    makes it easy to raise a bug report and contribute to the project. For example, <a href="https://github.com/bbcmicrobit/PythonEditor/blob/master/help.html">here's the HTML code for this help page</a>.</p>
+    
+    <h3>What next?</h3>
     <p>Python makes it simple to write powerful programs. Can you work out what
     this program does?</p>
 
@@ -357,20 +394,12 @@ while True:
 
     <p>How could you improve it? What changes could you make?</p>
 
-    <p><img src="static/img/comic6.png" class="img-responsive center-block"
-        alt="http://goo.gl/9lcLAf"/></p>
 
-    <p>If you're looking for inspiration (robots, cool light displays and goofy
-    games) you should check out the
-    <a href="http://microworldtour.github.io/">World Tour</a>. These projects
-    were created by volunteers from the global Python community (of which you're
-    now a member!).</p>
 
     <footer style="text-align: center; margin-top: 64px;">
         <p>
         <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a> This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://python.org/community/microbit/" property="cc:attributionName" rel="cc:attributionURL">The Python Software Foundation</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
         </p>
-        <p>The flowchart comic from XKCD is covered by <a href="https://xkcd.com/license.html">this license</a> and used with thanks to Randall Munroe.</p>
     </footer>
     </div><!-- /.container -->
     <!-- Bootstrap core JavaScript
