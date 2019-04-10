@@ -513,9 +513,14 @@ function web_editor(config) {
 
     function doSim() {
         var sim = $("#sim-iframe");
-        //sim.src = "simulator.html?code=" + stripComments(encodeURIComponent(EDITOR.getCode()));
-        sim.attr("src", "simulator.html?code=" + encodeURIComponent(EDITOR.getCode()));
-        console.log(sim.attr("src") + "kfdslkjfsakj");
+        var src = sim.attr("src");
+        var shouldShowSim = src === "about:blank";
+        if (shouldShowSim) {
+            sim.attr("src", "simulator.html?code=" + encodeURIComponent(EDITOR.getCode()));
+        } else {           
+            sim.attr("src", "about:blank");
+        }
+
     }
 
     // This function describes what to do when the snippets button is clicked.
