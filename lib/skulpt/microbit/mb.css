@@ -36,9 +36,8 @@
 	width: 100%;
 	display: block;
 	font-size: 10px;
-	color: #000000;
-	background-color: #FFFFFF;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 5%, rgba(255, 255, 255, 0.6) 95%, rgba(255, 255, 255, 0) 100%);
+	color: #FFFFFF;
+	background-color: #3785ce;
 	text-align: center;
 	transition: all 0.5s;
 
@@ -246,19 +245,19 @@
 
 #mb_pin_type {
 	margin: 10px 0;
-	padding: 0 0 0 10px;
-	background-color: rgba(20, 20, 20, 0.4);
+	padding: 0 0 0 0;
+	color: #FFFFFF;
 }
 
 #mb_pin_type strong { font-weight: 700; }
 #mb_pin_type strong.Analog { color: rgb(7, 7, 207); }
 #mb_pin_type strong.Digital { color: rgb(3, 231, 3); }
-#mb_pin_type strong.Touch { color: #d40d0d; }
+#mb_pin_type strong.Touch { color: #FFFFFF; }
 #mb_pin_type strong.threeVolts { color: #eed814; }
 
 #mb_btn_pin_touch {
 	color: #FFFFFF;
-	background: #d40d0d;
+	background: #3785ce;
 	border-radius: 5px;
 	border: none;
 }
