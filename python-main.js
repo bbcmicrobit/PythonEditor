@@ -211,11 +211,11 @@ function web_editor(config) {
         }).map(function(f) {
             return encodeURIComponent(f) + "=true";
         }).join("&");
-        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
+        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
     }
 
     // Update the docs link to append MicroPython version
-    var docsAnchor = $("#docs-link"); 
+    var docsAnchor = $("#docs-link");
     docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
@@ -651,10 +651,6 @@ function web_editor(config) {
                 });
             }
         });
-        $('.load-toggle').on('click', function(e) {
-            $('.load-drag-target').toggle();
-            $('.load-form').toggle();
-        });
         updateFileTables();
     }
 
@@ -815,7 +811,7 @@ function web_editor(config) {
         }
         $('#editor').focus();
     }
-    
+
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
     function setupButtons() {
