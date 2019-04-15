@@ -84,15 +84,10 @@ Nicholas and Damien.
             <h2><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <p>{{ instructions }}</p>
-            </div>
-            <div class="load-form">
-                <form id="load-form-form">
-                  <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
-                </form>
-            </div>
-            <div id="load-alt">
-                <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
-                <p><a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+                <div id="load-alt">
+                    <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
+                    <p><a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+                </div>
             </div>
 
             <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
@@ -357,8 +352,7 @@ web_editor({
         'load-title': 'Load Script or HEX file',
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
-        'toggle-drop': 'Or drag and drop a file',
-        'toggle-file': 'Or pick a file',
+        'toggle-file': 'Or browse for a file',
         'fs-title': 'Manage files on a micro:bit',
         'fs-add-file': 'Add a file to the filesystem'
       }

@@ -736,10 +736,6 @@ function web_editor(config) {
                 });
             }
         });
-        $('.load-toggle').on('click', function(e) {
-            $('.load-drag-target').toggle();
-            $('.load-form').toggle();
-        });
         updateFileTables();
     }
 
@@ -884,7 +880,7 @@ function web_editor(config) {
         }
         $('#editor').focus();
     }
-    
+
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
     function setupButtons() {
