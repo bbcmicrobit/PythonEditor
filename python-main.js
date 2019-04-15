@@ -745,10 +745,6 @@ function web_editor(config) {
                 });
             }
         });
-        $('.load-toggle').on('click', function(e) {
-            $('.load-drag-target').toggle();
-            $('.load-form').toggle();
-        });
         updateFileTables();
     }
 
