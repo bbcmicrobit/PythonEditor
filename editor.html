@@ -136,13 +136,7 @@ Nicholas and Damien.
             <p>{{ hint }}</p>
             <p><button id="button-decrypt-link">{{ button }}</button></p>
         </script>
-        <script id="messagebar-template" type="x-tmpl-mustache">
-            <i class="fa fa-warning"></i> <strong>{{ title }}</strong>
-            <a href="#" id="messagebar-link">{{ link }}</a> {{ instructions }}
-            <a href="#" id="messagebar-close">{{ close }}</a>
-        </script>
         <div id="main" class="vbox">
-          <div id="messagebar" class="hbox"></div>
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
                 <a href="#" class="roundbutton" id="command-download"
@@ -347,12 +341,6 @@ web_editor({
       'drop': {
         'python': 'Extracted from a Python file',
         'hex': 'Extracted from a hex file'
-      },
-      'messagebar': {
-        'title': 'This editor is out of date!',
-        'link': 'Click here',
-        'instructions': 'to open the latest version.',
-        'close': 'Hide'
       },
       'load': {
         'title': 'Load Script or HEX file',
