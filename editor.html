@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
     <!--
                                                                              .:://++++++//:-.
@@ -68,6 +68,7 @@ Nicholas and Damien.
         <link rel="icon" href="static/img/favicon.ico">
     </head>
     <body>
+        <iframe id="sim-iframe" src="about:blank" frameborder="0" scrolling="no"></iframe>
         <script type="application/javascript">
             if (navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
             {
@@ -90,7 +91,7 @@ Nicholas and Damien.
                 <form id="load-form-form">
                     <input type="file" name="load-form-file-upload"/><br/>
                     <input type="submit" value="{{ submit }}"/>
-                </form>
+                    </form>
             </div>
             <div id="load-alt">
                 <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
@@ -122,6 +123,22 @@ Nicholas and Damien.
                 <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="passphrase" type="password"/></p>
                 <p><label for="hint" class="share-label">{{ hint }}</label> <input id="hint"/></p>
                 <p><button id="button-create-link">{{ button }}</button></p>
+            </div>
+            <div id="share-link">
+                <p>{{ description }}</p>
+                <textarea id="direct-link" readonly style="width:100%; height:200px;border:0;"></textarea>
+                <p id="shortener" style="display: none;">{{ shortener }} <a href="#" id="short-link"></a></p>
+            </div>
+        </script>
+        <script id="save-name-template" type="x-tmpl-mustache">
+            <h2><i class="fa fa-download"></i> <strong>{{ title }}</strong></h2>
+            <div id="make-link">
+                <p>{{ instructions }}</p>
+                <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="filename-input" type="text" value="{{ currentfilename }}"/>
+                </p>
+                <p><label for="passphrase" class="share-label">{{ passphrase2 }}</label> <input id="desc-input" type="text" value="{{ currentdesc }}"/>
+                </p>
+                <p><button id="button-save-file">{{ button }}</button></p>
             </div>
             <div id="share-link">
                 <p>{{ description }}</p>
@@ -174,6 +191,13 @@ Nicholas and Damien.
                       </svg>
                     </div>
                     <div class="roundlabel">Blockly</div>
+                </a>
+                <a href="#" class="roundbutton hidden" id="command-sim"
+                    tabindex="12">
+                    <div class="roundsymbol">
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                    <div class="roundlabel">Sim</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-snippet"
                     tabindex="5"
@@ -228,10 +252,10 @@ Nicholas and Damien.
                 </div>
             </div>
             <div class="vbox" id="script-box">
-                <div id="script-name" class="flex1" contenteditable
+                <div id="script-name" class="flex1"
                     tabindex="10">
                 </div>
-                <div id="script-description" contenteditable
+                <div id="script-description"
                     tabindex="11">
                 </div>
             </div>
@@ -353,11 +377,13 @@ web_editor({
     'flags': {
       'blocks': false,
       'snippets': true,
+      'share': false,
       'experimental': false,
-      'share': false
+      'sim': true
     },
 });
         </script>
+
 <xml id="blockly-toolbox" style="display: none">
   <category name="Accelerometer" colour="0">
     <block type="microbit_accelerometer_get_x"></block>
@@ -688,6 +714,7 @@ web_editor({
 	    <sep></sep>
 	    <category name="Variables" colour="330" custom="VARIABLE"></category>
 	  </xml>
+:1040A0000123037210BDC046ACCF020008B5043036
         <div id="firmware" style="display: none;">:020000040000FA
 :1000000000400020218E01005D8E01005F8E010006
 :1000100000000000000000000000000000000000E0

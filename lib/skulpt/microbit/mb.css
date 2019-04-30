@@ -1,0 +1,270 @@
+#mb_tabs {
+	font-size:10pt;
+}
+
+#microbit {
+	width: 300px;
+	height: 236px;
+	background-image: url('mb.png');
+	position: relative;
+	transition: all 0.5s;
+}
+
+.mb_btn {
+	width: 22px;
+	height: 22px;
+	border-radius: 11px;
+	background-color: #333;
+	transition: all 0.25s;
+	position: absolute;
+	opacity: 0.9;
+}
+
+.mb_led {
+	width: 6px;
+	height: 6px;
+	transition: all 0.1s;
+	position: absolute;
+}
+
+
+.mb_info {
+	font-size: 8pt;
+}
+
+.mb_help_link {
+	width: 100%;
+	display: block;
+	font-size: 10px;
+	color: #FFFFFF;
+	background-color: #3785ce;
+	text-align: center;
+	transition: all 0.5s;
+
+	margin: 2px 0;
+	padding: 10px 0;
+}
+
+.mb_help_link:hover {
+	background: linear-gradient(90deg, rgba(255, 46, 46, 0) 0%, rgba(255, 46, 46, 0.6) 5%, rgba(255, 46, 46, 0.6) 95%, rgba(255, 46, 46, 0) 100%);
+}
+.mb_led_brightness_0 {	background-color: #000; }
+.mb_led_brightness_1 {	background-color: #300; }
+.mb_led_brightness_2 {	background-color: #500; }
+.mb_led_brightness_3 {	background-color: #700; }
+.mb_led_brightness_4 {	background-color: #900; }
+.mb_led_brightness_5 {	background-color: #a00; }
+.mb_led_brightness_6 {	background-color: #b00; }
+.mb_led_brightness_7 {	background-color: #c00; }
+.mb_led_brightness_8 {	background-color: #d00; }
+.mb_led_brightness_9 {	background-color: #f00; }
+.mb_led_row_0 { top: 73px; }
+.mb_led_row_1 { top: 96px; }
+.mb_led_row_2 { top: 119px; }
+.mb_led_row_3 { top: 141px; }
+.mb_led_row_4 { top: 164px; }
+
+.mb_led_col_0 { left: 104px; }
+.mb_led_col_1 { left: 126px; }
+.mb_led_col_2 { left: 149px; }
+.mb_led_col_3 { left: 171px; }
+.mb_led_col_4 { left: 195px; }
+
+#mb_btn_A {
+	left: 24px;
+	top: 101px;
+}
+
+#mb_btn_B {
+	left: 256px;
+	top: 101px;
+}
+
+.mb_btn:hover {
+	background-color: #F00;
+}
+
+.mb_slider {
+	width: 100px;
+	display: inline-block;
+	margin: 0px 10px 0px 10px;
+}
+#mb_com_heading {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	text-align: center;
+	vertical-align: center;
+	background-image: url('compassbk.jpg');
+	position: relative;
+}
+#mb_com_value_heading {
+	font-size: 2em;
+}
+#mb_compass_pointer {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100px;
+	height: 100px;
+	/*transition: all 0.5s;*/
+	background-image: url('compassarrow.png');
+}
+.mb_slider_com {
+	width: 100px;
+	display: inline-block;
+	margin: 0px 10px 0px 10px;
+}
+#mb_gesture_list {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000;
+	min-height: 1em;
+}
+.mb_current_gesture {
+	color: #F00;
+	margin: 1em;
+}
+.mb_active_gesture_down {
+	transform: rotate(180deg);
+}
+.mb_active_gesture_left, .mb_active_gesture_right {
+	-webkit-transform: rotateY(80deg);transform: rotateY(80deg);
+}
+.mb_active_gesture_facedown {
+	-webkit-transform: rotateY(180deg);transform: rotateY(180deg);
+}
+.mb_active_gesture_freefall {
+	transform: scale(0.2,0.2);
+}
+@keyframes shake {
+	0% {transform: scale(1,1);}
+	50% {transform: scale(0.8,0.8);}
+	100% {transform: scale(1,1);}
+}
+.mb_active_gesture_shake {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-iteration-count: infinite;
+}
+.mb_active_gesture_3g {
+	animation-name: shake;
+	animation-duration: 0.5s;
+}
+.mb_active_gesture_6g {
+	animation-name: shake;
+	animation-duration: 0.3s;
+}
+.mb_active_gesture_8g {
+	animation-name: shake;
+	animation-duration: 0.1s;
+}
+
+/* Thermometer */
+#mb_therm_slider
+{
+	height: 320px; width: 12px;
+	position: absolute;
+    left: 320px;
+    bottom: 0;
+    float: right;
+    background: linear-gradient(180deg, rgba(255, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 66%, rgba(0, 255, 255, 1) 100%);
+}
+
+.mb_pin {
+	position: absolute;
+	bottom: -8px;
+	background-color: green;
+	height: 34px;
+	border-radius: 0 0 3px 3px;
+	opacity: 0;
+}
+.mb_pin_dgtl { 
+	width: 5px;
+	background: linear-gradient(0deg, rgb(3, 231, 3) 0%, rgba(3, 231, 3, 1) 30%, rgba(3, 231, 3, 0) 100%);
+}
+.mb_pin_anlg { 
+	width: 5px;
+	background: linear-gradient(0deg, rgb(7, 7, 207) 0%, rgba(7, 7, 207, 1) 30%, rgba(7, 7, 207, 0) 100%)
+}
+.mb_pin_tch { 
+	width: 24px;
+	background: linear-gradient(0deg, rgb(255, 17, 17) 0%, rgba(255, 17, 17, 1) 30%, rgba(255, 17, 17, 0) 100%)
+}
+
+
+#mb_pin_num {
+	font-size: 0.8em;
+}
+
+#mb_pin_analog {
+	height: 240px; width: 12px;
+	left: 320px; bottom: 0;
+	float: left;
+	border: none;
+	background: rgb(3, 3, 121);
+}
+
+#mb_pin_analog span {
+	height: 20px; width: 30px;
+	position: absolute;
+	left: -18px;
+	border: none;
+	border-radius: 10px 0 0 10px;
+	background: rgb(7, 7, 207);
+	cursor: pointer;
+}
+
+/* Touch Pins */
+#mb_pin_0 { left: 15px; opacity: 1; }
+#mb_pin_1 { left: 74px; }
+#mb_pin_2 { left: 141px; }
+
+/* Analogue Pins */
+#mb_pin_3 { left: 5px; }
+#mb_pin_4 { left: 42.5px; }
+#mb_pin_10 { left: 117px; }
+
+/* Digital Pins */
+#mb_pin_5 { left: 50px; }
+#mb_pin_6 { left: 57.5px; }
+#mb_pin_7 { left: 65.5px; }
+#mb_pin_8 { left: 102px; }
+#mb_pin_9 { left: 109px; }
+#mb_pin_11 { left: 125px; }
+#mb_pin_12 { left: 132px; }
+#mb_pin_13 { left: 168.5px; }
+#mb_pin_14 { left: 176px; }
+#mb_pin_15 { left: 184px; }
+#mb_pin_16 { left: 191px; }
+#mb_pin_17 { left: 198px; }
+#mb_pin_18 { left: 234.5px; }
+#mb_pin_19 { left: 242.5px; }
+#mb_pin_20 { left: 249px; }
+
+
+#mb_pin_type {
+	margin: 10px 0;
+	padding: 0 0 0 0;
+	color: #FFFFFF;
+}
+
+#mb_pin_type strong { font-weight: 700; }
+#mb_pin_type strong.Analog { color: rgb(7, 7, 207); }
+#mb_pin_type strong.Digital { color: rgb(3, 231, 3); }
+#mb_pin_type strong.Touch { color: #FFFFFF; }
+#mb_pin_type strong.threeVolts { color: #eed814; }
+
+#mb_btn_pin_touch {
+	color: #FFFFFF;
+	background: #3785ce;
+	border-radius: 5px;
+	border: none;
+}
+
+#mb_btn_pin_digital {
+	color: #FFFFFF;
+	background: rgb(3, 231, 3);
+	border-radius: 5px;
+	border: none;
+}

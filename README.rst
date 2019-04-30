@@ -14,7 +14,7 @@ This editor works with any modern web browser.
 In addition to cloning the repository it is required to retrieve the GIT
 submodules::
 
-    git clone https://github.com/bbcmicrobit/PythonEditor
+    git clone https://github.com/ducklord420/PythonEditor.git
     cd PythonEditor
     git submodule update --init --recursive
 
@@ -22,9 +22,7 @@ submodules::
 
 Assuming you have Python 3 installed you can serve the editor like this::
 
-    $ ./bin/show
-    http://localhost:8000/editor.html
-    Serving HTTP on 0.0.0.0 port 8000 ...
+    py -m http.server --bind 0.0.0.0
 
 As the script tells us, point your browser to http://localhost:8000/editor.html.
 
@@ -179,3 +177,8 @@ Legacy
 This project was born from a TouchDevelop based editor created by Nicholas
 H.Tollervey for the BBC. This is no longer maintained, although you can find it
 still on the ``touch-develop-legacy`` branch in this repository.
+
+Villiers Park
+-------------
+
+Max Curtis-England

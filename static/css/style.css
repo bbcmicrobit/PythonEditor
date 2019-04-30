@@ -8,6 +8,16 @@
     font-size: 22px;
 }
 
+#sim-iframe {
+    height: 671px;
+    width: 380px;
+    position: absolute;
+    bottom: 4px;
+    right: 10px;
+    z-index: 10;
+    overflow: visible;
+}
+
 #blockly {
     display: none;
     min-width: 570px;
@@ -17,6 +27,26 @@
 }
 
 #blockly:after {
+    border-top: 0.5em solid transparent;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid #888;
+    border-bottom: 0.5em solid #888;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    content: '';
+    cursor: ew-resize;
+}
+
+#sim {
+    display: none;
+    min-width: 570px;
+    overflow: auto;
+    resize: horizontal;
+    padding-right: 10px;
+}
+
+#sim:after {
     border-top: 0.5em solid transparent;
     border-left: 0.5em solid transparent;
     border-right: 0.5em solid #888;
@@ -257,7 +287,7 @@ body, input {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  color: #336699;
+  color: #3758CE;
   text-decoration: none;
   background-image: url("../img/triangle.svg");
   background-position-x: -1px;
@@ -290,7 +320,7 @@ body, input {
   line-height: 4.4rem;
   padding: .1em;
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
-  color: #336699;
+  color: #3758CE;
   background: #FFFFFF;
 }
 
