@@ -126,7 +126,7 @@ body, input {
   cursor: pointer;
 }
 
-.zoomer, 
+.zoomer,
 .saved-state {
   cursor: pointer !important;
 }
@@ -466,7 +466,7 @@ div.load-form {
     transform: translate(-50%, -50%);
 }
 
-#load-alt a, #load-alt a.visited {
+.load-drag-target a, .load-drag-target a.visited {
     color: #336699;
     font-weight: bold;
 }
@@ -491,6 +491,8 @@ div.load-form {
 }
 
 .fs-file-list table {
+    width: 100%;
+    width: -moz-available;
     width: -webkit-fill-available;
     background: #ddd;
     border: 1px solid #aaa;
@@ -509,6 +511,8 @@ div.load-form {
 .fs-remove-button {
     height: 2.5em;
     border-radius: 6px;
+    width: 100%;
+    width: -moz-available;
     width: -webkit-fill-available;
 }
 .fs-remove-button:hover {
@@ -527,12 +531,17 @@ div.load-form {
 }
 
 .fs-space-table {
+    table-layout: fixed;
     width: 100%;
     padding: 0px;
     margin: 0px;
     border-collapse:separate;
     border: 1px solid #aaa;
     border-radius: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .fs-space-table > tbody > tr> td {
     overflow: hidden;

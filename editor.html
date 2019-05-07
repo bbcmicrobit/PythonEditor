@@ -76,11 +76,8 @@ Nicholas and Damien.
         <script id="load-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
-                <p>{{ instructions }}</p>
-                <div id="load-alt">
-                    <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
-                    <p><a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
-                </div>
+                <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
+                <p>{{ instructions }} <a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
             </div>
 
             <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
@@ -88,9 +85,9 @@ Nicholas and Damien.
                 <tbody>
                   <tr>
                     <td id="fs-space-modules" class="fs-space-table-first">modules</td>
-                    <td id="fs-space-main">main.py</td>
-                    <td id="fs-space-other">other</td>
-                    <td id="fs-space-free">free</td>
+                    <td id="fs-space-main" title="main.py">main.py</td>
+                    <td id="fs-space-other" title="other">other</td>
+                    <td id="fs-space-free" title="free">free</td>
                   </tr>
                 </tbody>
             </table>
