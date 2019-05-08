@@ -1,6 +1,8 @@
 BBC micro:bit MicroPython Editor for Browsers
 =============================================
 
+|Build status|
+
 This project is an editor that targets the MicroPython
 (http://micropython.org) version of the Python programming language
 (http://python.org/). Code written with this editor is expected to run on the
@@ -179,3 +181,6 @@ Legacy
 This project was born from a TouchDevelop based editor created by Nicholas
 H.Tollervey for the BBC. This is no longer maintained, although you can find it
 still on the ``touch-develop-legacy`` branch in this repository.
+
+
+.. |Build status| image:: https://dev.azure.com/microbitPython/PythonEditor/_apis/build/status/bbcmicrobit.PythonEditor?branchName=master

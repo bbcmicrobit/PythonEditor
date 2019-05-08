@@ -110,6 +110,10 @@ function pythonEditor(id) {
 
     return editor;
 }
+/* Attach to the global object if running in node */
+if (typeof module !== 'undefined' && module.exports) {
+    global.pythonEditor = pythonEditor;
+}
 
 /*
 The following code contains the various functions that connect the behaviour of

@@ -1,0 +1,23 @@
+{
+  "description": "Tests for the Python Editor",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bbcmicrobit/PythonEditor/"
+  },
+  "engines": {
+    "node": ">=8.5",
+    "npm": ">=6.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "npm t -- --watch",
+    "test:coverage": "npm t -- --coverage",
+    "test:ci": "npm t -- --ci --colors"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "24.5.0",
+    "node-forge": "0.8.2"
+  }
+}
