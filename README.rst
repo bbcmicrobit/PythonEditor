@@ -175,6 +175,14 @@ For documentation for this project - you're reading it. ;-)
 
 For in-editor documentation aimed at the user, this is in the help.html file.
 
+Metrics
+-------------
+
+In order to help developers measure the way features of the editor are being used,
+all buttons and actions have an 'action' class added to them. Measurement can then
+be added by anyone deploying the editor through inclusion of a script that attaches
+events to these actions and counts them.
+
 Legacy
 ------
 

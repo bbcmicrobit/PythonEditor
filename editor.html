@@ -139,7 +139,7 @@ Nicholas and Damien.
         <div id="main" class="vbox">
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
-                <a href="#" class="roundbutton" id="command-download"
+                <a href="#" class="roundbutton action" id="command-download"
                     tabindex="1"
                     title="Download a hex file to flash onto your micro:bit">
                     <div class="roundsymbol">
@@ -149,7 +149,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Download</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-save"
+                <a href="#" class="roundbutton action" id="command-save"
                     tabindex="2"
                     title="Save your Python code to your computer">
                     <div class="roundsymbol">
@@ -157,7 +157,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Save</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-load"
+                <a href="#" class="roundbutton action" id="command-load"
                     tabindex="3"
                     title="Load Python code or hex file into the editor">
                     <div class="roundsymbol">
@@ -165,7 +165,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Load</div>
                 </a>
-                <a href="#" class="roundbutton hidden" id="command-blockly"
+                <a href="#" class="roundbutton action hidden" id="command-blockly"
                     tabindex="4"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
@@ -175,7 +175,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Blockly</div>
                 </a>
-                <a href="#" class="roundbutton hidden" id="command-snippet"
+                <a href="#" class="roundbutton action hidden" id="command-snippet"
                     tabindex="5"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
@@ -183,7 +183,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Snippets</div>
                 </a>
-                <a href="#" class="roundbutton"
+                <a href="#" class="roundbutton action"
                     id="command-help" tabindex="6"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
@@ -202,7 +202,7 @@ Nicholas and Damien.
                         <div class="helpsupport">MicroPython Version: <script>document.write(UPY_VERSION);</script></div>
                     </div>
                 </div>
-                <a href="#" class="roundbutton hidden"
+                <a href="#" class="roundbutton action hidden"
                     id="command-share" tabindex="7"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
@@ -211,14 +211,14 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer" tabindex="8" id="zoom-in"
+                    <a class="holder zoomer action" tabindex="8" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer" tabindex="9" id="zoom-out"
+                    <a class="holder zoomer action" tabindex="9" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -227,7 +227,7 @@ Nicholas and Damien.
                     </a>
                 </div>
             </div>
-            <div class="vbox" id="script-box">
+            <div class="vbox action" id="script-box">
                 <div id="script-name" class="flex1" contenteditable
                     tabindex="10">
                 </div>
