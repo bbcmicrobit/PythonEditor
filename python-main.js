@@ -627,11 +627,21 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
+
+        function formatHelpPanel(){
+            if($(".helpsupport_container").offset().left !== $("#command-help").offset().left && $(window).width() > 620){
+                $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
+                $(".helpsupport_container").css("left", $("#command-help").offset().left);
+            }
+            else if($(window).width() < 620){
+                $(".helpsupport_container").css("left", $("#command-help").offset().left - 200);
+                $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
+            }
+        };
+
         $("#command-help").click(function (e) {
             // Show help
-            $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
-            $(".helpsupport_container").css("left", $("#command-help").offset().left);
-
+            formatHelpPanel();
             // Toggle visibility
             if($(".helpsupport_container").css("display") == "none"){
                 $(".helpsupport_container").css("display", "flex");
@@ -643,6 +653,13 @@ function web_editor(config) {
             // Stop immediate closure
             e.stopImmediatePropagation();
         });
+
+        window.addEventListener('resize', function(){
+            if($(".helpsupport_container").is(":visible")){
+            formatHelpPanel();
+            }
+        });
+
         // Add document click listener
         document.body.addEventListener('click',function(event) {
             // Close helpsupport if the click isn't on a descendent of #command-help
