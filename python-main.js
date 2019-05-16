@@ -213,17 +213,17 @@ function web_editor(config) {
         }).map(function(f) {
             return encodeURIComponent(f) + "=true";
         }).join("&");
-        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
+        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
 
         if(navigator.usb != null){
-            $("#command-flash").removeClass('hidden');
+            $("#command-connect").removeClass('hidden');
             $("#command-serial").removeClass('hidden');
         }
 
     }
 
     // Update the docs link to append MicroPython version
-    var docsAnchor = $("#docs-link"); 
+    var docsAnchor = $("#docs-link");
     docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
@@ -596,6 +596,84 @@ function web_editor(config) {
         $('#editor').focus();
     }
 
+    function doConnect(e, serial) {
+
+        // Check if this is a disconnect
+        if($("#command-connect").attr("title") == "Disconnect from your micro:bit"){
+            // Hide serial and disconnect if open
+            if($("#repl").css('display') != 'none'){
+                $("#repl").hide();
+                $("#request-repl").hide();
+                $("#editor-container").show();
+                window.daplink.stopSerialRead();
+                $("#command-serial").attr("title", "Connect to your micro:bit via serial");
+                $("#command-serial > .roundlabel").text("Open Serial");
+            }
+
+            window.daplink.disconnect();
+
+            $("#command-connect").attr("title", "Connect to your micro:bit");
+            $("#command-connect > .roundlabel").text("Connect");
+            $("#command-flash").addClass('hidden');
+            console.log("Disconnected!");
+            return;
+        }
+
+        console.log("Select your micro:bit");
+        navigator.usb.requestDevice({
+            filters: [{vendorId: 0x0d28, productId: 0x0204}]
+        }).then(function(device) {
+
+            // Connect to device
+            window.transport = new DAPjs.WebUSB(device);
+            window.daplink = new DAPjs.DAPLink(window.transport);
+
+            // Ensure disconnected
+            window.daplink.disconnect();
+
+            // Connect to board
+            return window.daplink.connect()
+            .then( function() {
+
+                try {
+                 var output = generateFullHexStr();
+               } catch(err) {
+                 alert(err.message);
+                 return;
+                }
+
+                $("#command-connect").attr("title", "Disconnect from your micro:bit");
+                $("#command-connect > .roundlabel").text("Disconnect");
+                $("#command-flash").removeClass('hidden');
+                console.log("Connected!");
+
+                if (serial){
+                  doSerial();
+                }
+            })
+            .catch(function(err){
+                console.log("Error connecting: " + err);
+                $("#flashing-overlay-container").css("display", "flex");
+                $("#flashing-info").addClass('hidden');
+
+                // If micro:bit does not support dapjs
+                if(err.message === "No valid interfaces found."){
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    return;
+                } else if(err.message === "Unable to claim interface.") {
+                    $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    return;
+                }
+
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+            });
+
+        }).catch(function(err) {
+            console.log("There was an error during connecting: " + err);
+        });
+
+    }
+
     function doFlash(e) {
 
         // Hide serial and disconnect if open
@@ -606,76 +684,60 @@ function web_editor(config) {
             window.daplink.stopSerialRead();
             $("#command-serial").attr("title", "Connect to your micro:bit via serial");
             $("#command-serial > .roundlabel").text("Open Serial");
-        } 
+        }
 
-        console.log("Select your micro:bit");
-        navigator.usb.requestDevice({
-            filters: [{vendorId: 0x0d28, productId: 0x0204}]
-        }).then(function(device) {
+        // Event to monitor flashing progress
+        window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
+            $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
+        });
 
-            // Connect to device
-            window.transport = new DAPjs.WebUSB(device);
-            window.daplink = new DAPjs.DAPLink(window.transport);
-            
-            // Ensure disconnected
-            window.daplink.disconnect();
+        // Push binary to board
+        return window.daplink.connect()
+        .then( function() {
 
-            // Event to monitor flashing progress
-            window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-            });
-            
-            // Push binary to board
-            return window.daplink.connect()
-            .then( function() {
-            
-                try {
-                 var output = generateFullHexStr();
-                } catch(e) {
-                 alert(e.message);
-                 return;
-                }
-                
-                // Encode firmware for flashing
-                var enc = new TextEncoder();
-                var image = enc.encode(output).buffer;
-                
-                console.log("Flashing");
-                $("#webusb-flashing-progress").val(0);
-                $('#flashing-overlay-error').html("");
-                $("#flashing-overlay-container").css("display", "flex");
-                return window.daplink.flash(image);
-            })
-            .then( function() {
-                console.log("Finished flashing!");
-                $("#flashing-overlay-container").hide();
-                return window.daplink.disconnect();
-            })
-            .catch(function(e){
-                console.log("Error flashing: " + e);
-                $("#flashing-overlay-container").css("display", "flex");
-                $("#webusb-flashing-progress").css("display", "none");
-                
-                // If micro:bit does not support dapjs
-                if(e.message === "No valid interfaces found."){
-                    $("#flashing-overlay-error").html('<div>' + e + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
-                    return;
-                } else if(e.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
-                    return;
-                }
+            try {
+             var output = generateFullHexStr();
+            } catch(error) {
+             alert(err.message);
+             return;
+            }
 
-                $("#flashing-overlay-error").html('<div>' + e + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
-            }); 
+            // Encode firmware for flashing
+            var enc = new TextEncoder();
+            var image = enc.encode(output).buffer;
 
-    }).catch(function(e) {
-        console.log("There was an error during flashing: " + e);
-    });
-    
+            console.log("Flashing");
+            $("#webusb-flashing-progress").val(0);
+            $('#flashing-overlay-error').html("");
+            $("#flashing-info").removeClass('hidden');
+            $("#flashing-overlay-container").css("display", "flex");
+            return window.daplink.flash(image);
+        })
+        .then( function() {
+            console.log("Finished flashing!");
+            $("#flashing-overlay-container").hide();
+            return;
+        })
+        .catch(function(err){
+            console.log("Error flashing: " + err);
+            $("#flashing-overlay-container").css("display", "flex");
+            $("#webusb-flashing-progress").css("display", "none");
+
+            // If micro:bit does not support dapjs
+            if(err.message === "No valid interfaces found."){
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                return;
+            } else if(err.message === "Unable to claim interface.") {
+                $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                return;
+            }
+
+            $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+        });
     }
 
     function doSerial(){
-      
+
         // Hide terminal
         if($("#repl").css('display') != 'none'){
             $("#repl").hide();
@@ -685,24 +747,18 @@ function web_editor(config) {
             $("#command-serial").attr("title", "Connect to your micro:bit via serial");
             $("#command-serial > .roundlabel").text("Open Serial");
             return;
-        } 
+        }
 
-        navigator.usb.requestDevice({
-            filters: [{vendorId: 0xD28}]
-        })
-        .then(function(device) {
-
+        // Check if we need to connect
+        if($("#command-connect").attr("title") == "Connect to your micro:bit"){
+            doConnect(undefined, true);
+        } else {
             // Change Serial button to close
             $("#command-serial").attr("title", "Close the serial connection and go back to the editor");
             $("#command-serial > .roundlabel").text("Close Serial");
 
             // Empty #repl to remove any previous terminal interfaces
             $("#repl").empty();
-
-            // Connect to device
-            window.transport = new DAPjs.WebUSB(device);
-            window.daplink = new DAPjs.DAPLink(window.transport);
-           
 
             window.daplink.connect()
             .then( function() {
@@ -714,25 +770,25 @@ function web_editor(config) {
             .then(function(baud) {
                 window.daplink.startSerialRead(50);
                 console.log('Listening at ${baud} baud...');
-                
+
                lib.init(setupHterm);
-               
+
             })
-            .catch(function(e) {
+            .catch(function(err) {
                  // If micro:bit does not support dapjs
                 $("#flashing-overlay-error").show();
-                if(e.message === "No valid interfaces found."){
-                    $("#flashing-overlay-error").html('<div>' + e + '</div><div><a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                if(err.message === "No valid interfaces found."){
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div><a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
                     return;
-                } else if(e.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>' + e + '</div><div>Another process is connected to this device.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                } else if(err.message === "Unable to claim interface.") {
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>Another process is connected to this device.</div><a href="#" onclick="flashErrorClose()">Close</a>');
                     return;
                 }
 
 
-                $("#flashing-overlay-error").html('<div>' + e + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
             });
-        });
+        }
     }
 
     function setupHterm(){
@@ -755,7 +811,7 @@ function web_editor(config) {
 
                    io.onTerminalResize = function(columns, rows) {
                    };
-               
+
 
                };
 
@@ -780,7 +836,7 @@ function web_editor(config) {
                var attempt = 0;
                var getPrompt = setInterval(
                        function(){
-                            daplink.serialWrite("\x03"); 
+                            daplink.serialWrite("\x03");
                             console.log("Requesting REPL...");
                             attempt++;
                             if(attempt == 5 || daplinkReceived) clearInterval(getPrompt);
@@ -808,6 +864,9 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
+        $("#command-connect").click(function () {
+            doConnect();
+        });
         $("#command-flash").click(function () {
             doFlash();
         });
@@ -815,7 +874,7 @@ function web_editor(config) {
             doSerial();
         });
         $("#request-repl").click(function () {
-            daplink.serialWrite("\x03"); 
+            daplink.serialWrite("\x03");
         });
         $("#command-help").click(function () {
             $(".helpsupport_container").toggle();
@@ -893,4 +952,3 @@ function flashErrorClose(){
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
-
