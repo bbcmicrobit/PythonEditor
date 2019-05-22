@@ -1,6 +1,7 @@
 // An editor needs to be instantiated *before* the tests are run so the
 // snippets are created so they can be referenced within the tests. Yay
 // JavaScript. :-(
+$('body').append('<div id="fooeditor"></div>');
 var faux_editor = pythonEditor('fooeditor');
 
 
@@ -10,7 +11,11 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
     describe("The editor initialises as expected.", function() {
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor is associated with the referenced div.", function() {
@@ -57,9 +62,13 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         var dom_editor;
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
             dom_editor = $('#editor');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("It's possible to set / get the code to be edited.", function() {
@@ -81,7 +90,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         var mock;
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
 
             mock = {
@@ -91,6 +100,10 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             spyOn(mock, 'handler');
             editor.on_change(mock.handler);
             editor.setCode('foo');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor calls the referenced function when the text changes.",
@@ -105,10 +118,14 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         var snippetManager;
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
             snippetManager = ace.require("ace/snippets").snippetManager;
             spyOn(snippetManager, 'insertSnippet');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor returns all available snippet objects.", function() {
@@ -141,8 +158,12 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
                 ":00000001FF\n";
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor complains if the Python script is greater than 8k in length.", function() {
@@ -179,8 +200,12 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         var editor;
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor converts from Intel's hex format to text", function() {
@@ -225,8 +250,12 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
         var editor;
 
         beforeEach(function() {
-            affix("#editor");
+            $('body').append('<div id="editor"></div>');
             editor = pythonEditor('editor');
+        });
+
+        afterEach(function() {
+            $('#editor').remove();
         });
 
         it("The editor encrypts plaintext to URL safe cyphertext with a passphrase.", function() {

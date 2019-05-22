@@ -1,6 +1,8 @@
 BBC micro:bit MicroPython Editor for Browsers
 =============================================
 
+|Build status|
+
 This project is an editor that targets the MicroPython
 (http://micropython.org) version of the Python programming language
 (http://python.org/). Code written with this editor is expected to run on the
@@ -173,9 +175,20 @@ For documentation for this project - you're reading it. ;-)
 
 For in-editor documentation aimed at the user, this is in the help.html file.
 
+Metrics
+-------------
+
+In order to help developers measure the way features of the editor are being used,
+all buttons and actions have an 'action' class added to them. Measurement can then
+be added by anyone deploying the editor through inclusion of a script that attaches
+events to these actions and counts them.
+
 Legacy
 ------
 
 This project was born from a TouchDevelop based editor created by Nicholas
 H.Tollervey for the BBC. This is no longer maintained, although you can find it
 still on the ``touch-develop-legacy`` branch in this repository.
+
+
+.. |Build status| image:: https://dev.azure.com/microbitPython/PythonEditor/_apis/build/status/bbcmicrobit.PythonEditor?branchName=master

@@ -110,6 +110,10 @@ function pythonEditor(id) {
 
     return editor;
 }
+/* Attach to the global object if running in node */
+if (typeof module !== 'undefined' && module.exports) {
+    global.pythonEditor = pythonEditor;
+}
 
 /*
 The following code contains the various functions that connect the behaviour of
@@ -438,7 +442,7 @@ function web_editor(config) {
             dirty = false;
             blockly.hide();
             $('#editor').attr('title', '');
-            editor.ACE.setReadOnly(false);
+            EDITOR.ACE.setReadOnly(false);
             $("#command-snippet").removeClass('disabled');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -450,7 +454,7 @@ function web_editor(config) {
                     return;
                 }
             }
-            editor.ACE.setReadOnly(true);
+            EDITOR.ACE.setReadOnly(true);
             $('#editor').attr('title', 'The code editor is read-only when blocks are active.');
             $("#command-snippet").off('click');
             $("#command-snippet").click(function () {
@@ -662,39 +666,9 @@ function web_editor(config) {
         return project;
     }
 
-    // Checks if this is the latest version of the editor. If not display an
-    // appropriate message.
-    function checkVersion(qs) {
-        $.getJSON('../manifest.json').done(function(data) {
-            if(data.latest === VERSION) {
-                // Already at the latest version, so ignore.
-                return;
-            } else {
-                // This isn't the latest version. Display the message bar with
-                // helpful information.
-                if(qs.force) {
-                    // The inbound link tells us to force use of this editor.
-                    // DO SOMETHING APPROPRIATE HERE? IF ANYTHING?
-                }
-                var template = $('#messagebar-template').html();
-                Mustache.parse(template);
-                var context = config.translate.messagebar;
-                var messagebar = $('#messagebar');
-                messagebar.html(Mustache.render(template, context));
-                messagebar.show();
-                $('#messagebar-link').attr('href',
-                                           window.location.href.replace(VERSION, data.latest));
-                $('#messagebar-close').on('click', function(e) {
-                    $('#messagebar').hide();
-                });
-            }
-        });
-    }
-
     var qs = get_qs_context();
     var migration = get_migration();
     setupFeatureFlags();
     setupEditor(qs, migration);
-    checkVersion(qs);
     setupButtons();
 }
