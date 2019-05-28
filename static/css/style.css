@@ -437,6 +437,21 @@ a.command:hover {
     display: none;
 }
 
+div.expandable {
+    background: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 9px;
+    position: relative;
+    padding: 0 10px 5px 10px;
+}
+
+div.content {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
 div.load-drag-target {
     height: 160px;
     background: #ddd;
@@ -494,10 +509,9 @@ div.load-form {
     width: 100%;
     width: -moz-available;
     width: -webkit-fill-available;
-    background: #ddd;
+    background: #c7c7c7;
     border: 1px solid #aaa;
-    border-radius: 9px;
-    margin: 16px 0px 0px 0px;
+    margin: 5px 2px 5px 1px;
 }
 
 .fs-file-list table thead {
@@ -508,26 +522,27 @@ div.load-form {
     min-height: 2em;
 }
 
-.fs-remove-button {
-    height: 2.5em;
-    border-radius: 6px;
-    width: 100%;
-    width: -moz-available;
-    width: -webkit-fill-available;
-}
-.fs-remove-button:hover {
-    color: #ffffff;
-    background-color:#f20000;
+.save-button {
+    font-size: 15px;
+    border-radius: 9px;
+    height: 3.0em;
+    outline:none;
+    cursor:pointer;
+    background-color: #f3f3f3;
 }
 
-#fs-file-upload-button {
-    border-radius: 9px;
-    height: 2.0em;
-    margin: 16px 0px 0px 0px;
-}
-#fs-file-upload-button:hover {
-    background-color: #1f669d;
+.save-button:hover {
+    background-color: #8fb3d0;
     color: #ffffff;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 .fs-space-table {

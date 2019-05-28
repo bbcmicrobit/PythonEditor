@@ -74,40 +74,50 @@ Nicholas and Damien.
             UPY_VERSION = "1.0.1";
         </script>
         <script id="load-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
+            <h2 style="margin-top: 0;"><i class="fa fa-download"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
                 <p>{{ instructions }} <a href="#" id="file-upload-link" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
             </div>
-
-            <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
-            <table class='fs-space-table'>
-                <tbody>
-                  <tr>
-                    <td id="fs-space-modules" class="fs-space-table-first">modules</td>
-                    <td id="fs-space-main" title="main.py">main.py</td>
-                    <td id="fs-space-other" title="other">other</td>
-                    <td id="fs-space-free" title="free">free</td>
-                  </tr>
-                </tbody>
-            </table>
-            <div class="fs-file-list" id="fs-file-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <td>Filename</td>
-                            <td>Type</td>
-                            <td>Size</td>
-                            <td></td>
-                        </tr>
-                    </thead>
+            <hr style="border-top: dashed 3px; color: lightgray;" />
+            <div class="expandable">
+              <div>
+                  <h2 style="display: inline-block; margin: 10px 0 10px 5px;">{{ program-title }}</h3>
+                  <div>
+                  <button style="width: 8em; float:right;" type="button" class="action save-button" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> Download</button>
+                  <button style="background: none; border: none; color: black;" type="button" class="action save-button" id="show-files" title="{{ show-files }}">{{ show-files }} <i class="fa fa-caret-down"></i></button>
+                  </div>
+              </div>
+              <div class="content">
+                <div class="fs-file-list" id="fs-file-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Filename</td>
+                                <td>Size</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button type="button" class="action save-button" id="fs-file-upload-button" tile="{{ fs-add-file }}"><i class="fa fa-plus-circle"></i> {{ fs-add-file }}</button>
+                    <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
+                </div>
+                <hr style="border-top: dashed 3px; color: gray;" />
+                <table class='fs-space-table'>
                     <tbody>
+                      <tr>
+                        <td id="fs-space-modules" class="fs-space-table-first">modules</td>
+                        <td id="fs-space-main" title="main.py">main.py</td>
+                        <td id="fs-space-other" title="other">other</td>
+                        <td id="fs-space-free" title="free">free</td>
+                      </tr>
                     </tbody>
                 </table>
-            </div>
-            <div>
-                <input type="button" id="fs-file-upload-button" value="{{ fs-add-file }}">
-                <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
+              </div>
             </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
@@ -168,24 +178,16 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Download</div>
                 </a>
-                <a href="#" class="roundbutton" id="command-save"
+                <a href="#" class="roundbutton" id="command-files"
                     tabindex="2"
-                    title="Save your Python code to your computer">
+                    title="Load/Save Python code or hex file into the editor">
                     <div class="roundsymbol">
                         <i class="fa fa-download"></i>
                     </div>
-                    <div class="roundlabel">Save</div>
-                </a>
-                <a href="#" class="roundbutton" id="command-load"
-                    tabindex="3"
-                    title="Load Python code or hex file into the editor">
-                    <div class="roundsymbol">
-                        <i class="fa fa-upload"></i>
-                    </div>
-                    <div class="roundlabel">Load</div>
+                    <div class="roundlabel">Load/Save</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-blockly"
-                    tabindex="4"
+                    tabindex="3"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -195,7 +197,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton hidden" id="command-snippet"
-                    tabindex="5"
+                    tabindex="4"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -203,7 +205,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="#" class="roundbutton"
-                    id="command-help" tabindex="6"
+                    id="command-help" tabindex="5"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -222,7 +224,7 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <a href="#" class="roundbutton hidden"
-                    id="command-share" tabindex="7"
+                    id="command-share" tabindex="6"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -230,14 +232,14 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer" tabindex="8" id="zoom-in"
+                    <a class="holder zoomer" tabindex="7" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer" tabindex="9" id="zoom-out"
+                    <a class="holder zoomer" tabindex="8" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -375,12 +377,16 @@ web_editor({
         'close': 'Hide'
       },
       'load': {
-        'load-title': 'Load Script or HEX file',
+        'save-hex' : 'Save HEX',
+        'show-files' : 'Show Files',
+        'load-title': 'Load/Save',
+        'program-title': function() {
+          return $("#script-name").text();
+        },
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
         'toggle-file': 'Or browse for a file',
-        'fs-title': 'Manage files on a micro:bit',
-        'fs-add-file': 'Add a file to the filesystem'
+        'fs-add-file': 'Add file'
       }
     },
     'flags': {
