@@ -597,29 +597,6 @@ function web_editor(config) {
     }
 
     function doConnect(e, serial) {
-
-        // Check if this is a disconnect
-        if($("#command-connect").attr("title") == "Disconnect from your micro:bit"){
-            // Hide serial and disconnect if open
-            if($("#repl").css('display') != 'none'){
-                $("#repl").hide();
-                $("#request-repl").hide();
-                $("#editor-container").show();
-                window.daplink.stopSerialRead();
-                $("#command-serial").attr("title", "Connect to your micro:bit via serial");
-                $("#command-serial > .roundlabel").text("Open Serial");
-            }
-
-            window.daplink.disconnect();
-
-            $("#command-connect").attr("title", "Connect to your micro:bit");
-            $("#command-connect > .roundlabel").text("Connect");
-            $("#command-flash").addClass('hidden');
-            console.log("Disconnected!");
-            return;
-        }
-
-        console.log("Select your micro:bit");
         navigator.usb.requestDevice({
             filters: [{vendorId: 0x0d28, productId: 0x0204}]
         }).then(function(device) {
@@ -642,10 +619,15 @@ function web_editor(config) {
                  return;
                 }
 
-                $("#command-connect").attr("title", "Disconnect from your micro:bit");
-                $("#command-connect > .roundlabel").text("Disconnect");
-                $("#command-flash").removeClass('hidden');
-                console.log("Connected!");
+                // Change button to disconnect
+                $("#command-connect").attr("id", "command-disconnect");
+                $("#command-disconnect > .roundlabel").text("Disconnect");
+                $("#command-disconnect").attr("title", "Disconnect from your micro:bit");
+
+                // Change download to flash
+                $("#command-download").attr("id", "command-flash");
+                $("#command-flash > .roundlabel").text("Flash");
+                $("#command-flash").attr("title", "Flash your project directly to your micro:bit");
 
                 if (serial){
                   doSerial();
@@ -672,6 +654,30 @@ function web_editor(config) {
             console.log("There was an error during connecting: " + err);
         });
 
+    }
+
+    function doDisconnect(e) {
+        // Hide serial and disconnect if open
+        if($("#repl").css('display') != 'none'){
+            $("#repl").hide();
+            $("#request-repl").hide();
+            $("#editor-container").show();
+            window.daplink.stopSerialRead();
+            $("#command-serial").attr("title", "Connect to your micro:bit via serial");
+            $("#command-serial > .roundlabel").text("Open Serial");
+        }
+
+        window.daplink.disconnect();
+
+        // Change button to connect
+        $("#command-disconnect").attr("id", "command-connect");
+        $("#command-connect > .roundlabel").text("Connect");
+        $("#command-connect").attr("title", "Connect to your micro:bit");
+
+        // Change flash to download
+        $("#command-flash").attr("id", "command-download");
+        $("#command-download > .roundlabel").text("Download");
+        $("#command-download").attr("title", "Download a hex file to flash onto your micro:bit");
     }
 
     function doFlash(e) {
@@ -706,7 +712,6 @@ function web_editor(config) {
             var enc = new TextEncoder();
             var image = enc.encode(output).buffer;
 
-            console.log("Flashing");
             $("#webusb-flashing-progress").val(0);
             $('#flashing-overlay-error').html("");
             $("#flashing-info").removeClass('hidden');
@@ -714,7 +719,6 @@ function web_editor(config) {
             return window.daplink.flash(image);
         })
         .then( function() {
-            console.log("Finished flashing!");
             $("#flashing-overlay-container").hide();
             return;
         })
@@ -750,7 +754,7 @@ function web_editor(config) {
         }
 
         // Check if we need to connect
-        if($("#command-connect").attr("title") == "Connect to your micro:bit"){
+        if($("#command-connect").length){
             doConnect(undefined, true);
         } else {
             // Change Serial button to close
@@ -769,10 +773,7 @@ function web_editor(config) {
             })
             .then(function(baud) {
                 window.daplink.startSerialRead(50);
-                console.log('Listening at ${baud} baud...');
-
-               lib.init(setupHterm);
-
+                lib.init(setupHterm);
             })
             .catch(function(err) {
                  // If micro:bit does not support dapjs
@@ -847,7 +848,11 @@ function web_editor(config) {
     // handling what to do when they're clicked.
     function setupButtons() {
         $("#command-download").click(function () {
-            doDownload();
+            if ($("#command-download").length) {
+              doDownload();
+            } else {
+              doFlash();
+            }
         });
         $("#command-save").click(function () {
             doSave();
@@ -865,10 +870,11 @@ function web_editor(config) {
             doShare();
         });
         $("#command-connect").click(function () {
-            doConnect();
-        });
-        $("#command-flash").click(function () {
-            doFlash();
+            if ($("#command-connect").length) {
+              doConnect();
+            } else {
+              doDisconnect();
+            }
         });
         $("#command-serial").click(function () {
             doSerial();
