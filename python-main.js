@@ -250,7 +250,7 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("my program");
+            setName("microbit program");
             // If there's no description, default to something sensible.
             setDescription("A MicroPython script");
             // A sane default starting point for a new script.
@@ -509,11 +509,10 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '2" class="save-button ' + disabled + '" title="Remove" style="width: 4em; height: 2em; float:right;"><i class="fa fa-trash"></i></button>' +
-                '<button id="' + pseudoUniqueId + '" class="save-button" title="Save" style="width: 4em; height: 2em; float:right;"><i class="fa fa-download"></i></button></td></tr>'
+                '<td><button id="' + pseudoUniqueId + '_remove" class="save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
             );
-            $('#' + pseudoUniqueId).click(function(e) {
-                console.log(filename);
+            $('#' + pseudoUniqueId + '_save').click(function(e) {
                 var output = micropythonFs.readBytes(filename);
                 var ua = navigator.userAgent.toLowerCase();
                 if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
@@ -524,19 +523,13 @@ function web_editor(config) {
                     saveAs(blob, filename);
                 }
             });
-            $('#' + pseudoUniqueId + '2').click(function(e) {
-                console.log(filename);
+            $('#' + pseudoUniqueId + '_remove').click(function(e) {
                 micropythonFs.remove(filename);
                 updateFileTables();
+                var content = $('.expandable-content')[0];
+                content.style.maxHeight = content.scrollHeight + "px";
             });
         });
-        // Hide the table if it is empty
-        var fileRowsInTable = $('#fs-file-list>table>tbody').has('tr').length;
-        if (!fileRowsInTable) {
-            //$('#fs-file-list>table').css('display', 'none');
-        } else {
-            $('#fs-file-list>table').css('display', '');
-        }
         updateStorageBar();
     };
 
@@ -588,18 +581,20 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
+                $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
                     doDownload();
                 });
                 $('#show-files').click(function() {
-                  var content = $('.content')[0];
+                  var content = $('.expandable-content')[0];
                   if (content.style.maxHeight){
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
-                    $("#show-files").attr("title", "Show Files");
-                    document.getElementById("show-files").innerHTML = "Show Files <i class='fa fa-caret-down'>";
+                    $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                   } else {
-                    content.style.maxHeight = (content.scrollHeight + 200) + "px";
+                    content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
                     $("#hide-files").attr("title", "Hide Files");
                     document.getElementById("hide-files").innerHTML = "Hide Files <i class='fa fa-caret-up'>";
@@ -662,13 +657,12 @@ function web_editor(config) {
                         fileReader.onload = function(e) {
                             loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
                             updateFileTables();
+                            var content = $('.expandable-content')[0];
+                            content.style.maxHeight = content.scrollHeight + "px";
                         };
                         fileReader.readAsArrayBuffer(file);
                     });
                     inputFile.value = '';
-
-                    var content = $('.content')[0];
-                    content.style.maxHeight = (content.scrollHeight + 200) + "px";
                 });
             }
         });
