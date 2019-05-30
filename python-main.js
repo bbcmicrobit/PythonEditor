@@ -56,7 +56,7 @@ function pythonEditor(id) {
             }));
         }
     }
-    langTools.addCompleter(staticWordCompleter);
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter])
     
     ACE.setTheme("ace/theme/kr_theme_legacy");  // Make it look nice.
     ACE.getSession().setMode("ace/mode/python_microbit");  // We're editing Python.
