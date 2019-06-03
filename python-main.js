@@ -6,6 +6,19 @@ everything does.)
 */
 
 /*
+Lazy load JS script files.
+*/
+function script(url) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = false;
+    s.defer = true;
+    s.src = url;
+    var x = document.getElementsByTagName('head')[0];
+    x.appendChild(s);
+}
+
+/*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
