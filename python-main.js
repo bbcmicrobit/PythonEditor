@@ -6,6 +6,19 @@ everything does.)
 */
 
 /*
+Lazy load JS script files.
+*/
+function script(url) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = false;
+    s.defer = true;
+    s.src = url;
+    var x = document.getElementsByTagName('head')[0];
+    x.appendChild(s);
+}
+
+/*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
@@ -203,6 +216,25 @@ function web_editor(config) {
     function setupFeatureFlags() {
         if(config.flags.blocks) {
             $("#command-blockly").removeClass('hidden');
+            // Add includes 
+            script('blockly/blockly_compressed.js');
+            script('blockly/blocks_compressed.js');
+            script('blockly/python_compressed.js');
+            script('microbit_blocks/blocks/microbit.js');
+            script('microbit_blocks/generators/accelerometer.js');
+            script('microbit_blocks/generators/buttons.js');
+            script('microbit_blocks/generators/compass.js');
+            script('microbit_blocks/generators/display.js');
+            script('microbit_blocks/generators/image.js');
+            script('microbit_blocks/generators/microbit.js');
+            script('microbit_blocks/generators/music.js');
+            script('microbit_blocks/generators/neopixel.js');
+            script('microbit_blocks/generators/pins.js');
+            script('microbit_blocks/generators/radio.js');
+            script('microbit_blocks/generators/speech.js');
+            script('microbit_blocks/generators/python.js');
+            script('blockly/msg/js/en.js');
+            script('microbit_blocks/messages/en/messages.js');
         }
         if(config.flags.snippets) {
             $("#command-snippet").removeClass('hidden');
