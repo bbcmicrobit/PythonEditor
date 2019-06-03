@@ -1,3 +1,14 @@
+1.1.4
+-----
+* Run jasmine tests in Azure Pipelines with node and jest (#134)
+* Fix #139 to able to load the blocks in the current version of the Editor (#140)
+* Remove unused "check version" functionality (#144)
+* Fix link in help.html (#138)
+* Add classnames and docs for new editor metrics (#150)
+* Lazy load blocks and only when enabled (#101)
+* Use input instead of div for script name (#95)
+* Remove unused description field, CSS, and JS (#98)
+
 1.1.3
 -----
 * Fixes issue loading hex files into the Editor (https://github.com/bbcmicrobit/PythonEditor/pull/89)
