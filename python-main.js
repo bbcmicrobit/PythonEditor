@@ -143,19 +143,9 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
-    // Sets the description associated with the code displayed in the UI.
-    function setDescription(x) {
-        $("#script-description").text(x);
-    }
-
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
         $("#script-name").val(x);
-    }
-
-    // Gets the description associated with the code displayed in the UI.
-    function getDescription() {
-        return $("#script-description").text();
     }
 
     // Gets the name associated with the code displayed in the UI.
@@ -276,21 +266,17 @@ function web_editor(config) {
             $('#button-decrypt-link').click(function() {
                 var password = $('#passphrase').val();
                 setName(EDITOR.decrypt(password, message.n));
-                setDescription(EDITOR.decrypt(password, message.c));
                 EDITOR.setCode(EDITOR.decrypt(password, message.s));
                 vex.close();
                 EDITOR.focus();
             });
         } else if(migration != null){
             setName(migration.meta.name);
-            setDescription(migration.meta.comment);
             EDITOR.setCode(migration.source);
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
             setName("microbit");
-            // If there's no description, default to something sensible.
-            setDescription("A MicroPython script");
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
@@ -428,7 +414,6 @@ function web_editor(config) {
                         var reader = new FileReader();
                         if (ext == 'py') {
                             setName(f.name.replace('.py', ''));
-                            setDescription(config.translate.drop.python);
                             reader.onload = function(e) {
                                 EDITOR.setCode(e.target.result);
                             };
@@ -436,7 +421,6 @@ function web_editor(config) {
                             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
                         } else if (ext == 'hex') {
                             setName(f.name.replace('.hex', ''));
-                            setDescription(config.translate.drop.hex);
                             reader.onload = function(e) {
                                 var code = '';
                                 var showAlert = false;
@@ -575,8 +559,6 @@ function web_editor(config) {
             var qs_array = [];
             // Name
             qs_array.push('n=' + EDITOR.encrypt(password, getName()));
-            // Comment
-            qs_array.push('c=' + EDITOR.encrypt(password, getDescription()));
             // Source
             qs_array.push('s=' + EDITOR.encrypt(password, EDITOR.getCode()));
             // Hint
@@ -612,7 +594,6 @@ function web_editor(config) {
         var reader = new FileReader();
         if (ext == 'py') {
             setName(file.name.replace('.py', ''));
-            setDescription(config.translate.drop.python);
             reader.onload = function(e) {
                 EDITOR.setCode(e.target.result);
             };
@@ -620,7 +601,6 @@ function web_editor(config) {
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
             setName(file.name.replace('.hex', ''));
-            setDescription(config.translate.drop.hex);
             reader.onload = function(e) {
                 var code = '';
                 var showAlert = false;
