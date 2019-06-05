@@ -15,7 +15,12 @@
     "test:coverage": "npm t -- --coverage",
     "test:ci": "npm t -- --ci --colors"
   },
-  "dependencies": {},
+  "dependencies": {
+    "dapjs": "^1.1.0",
+    "node-static": "^0.7.11",
+    "puppeteer": "^1.17.0",
+    "usb": "^1.6.0"
+  },
   "devDependencies": {
     "jest": "24.5.0",
     "node-forge": "0.8.2"
