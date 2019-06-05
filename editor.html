@@ -81,40 +81,48 @@ Nicholas and Damien.
             UPY_VERSION = "1.0.1";
         </script>
         <script id="load-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
+            <h2><i class="fa fa-file"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
                 <p>{{ instructions }} <a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
             </div>
-
-            <h2><i class="fa fa-folder"></i> <strong>{{ fs-title }}</strong></h2>
-            <table class='fs-space-table'>
-                <tbody>
-                  <tr>
-                    <td id="fs-space-modules" class="fs-space-table-first">modules</td>
-                    <td id="fs-space-main" title="main.py">main.py</td>
-                    <td id="fs-space-other" title="other">other</td>
-                    <td id="fs-space-free" title="free">free</td>
-                  </tr>
-                </tbody>
-            </table>
-            <div class="fs-file-list" id="fs-file-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <td>Filename</td>
-                            <td>Type</td>
-                            <td>Size</td>
-                            <td></td>
-                        </tr>
-                    </thead>
+            <div class="expandable">
+              <div>
+                  <h2>{{ program-title }}</h2>
+                  <div>
+                  <button type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
+                  <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} <i class="fa fa-caret-down"></i></button>
+                  </div>
+              </div>
+              <div class="expandable-content">
+                <div class="fs-file-list" id="fs-file-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Filename</td>
+                                <td>Size</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <table class='fs-space-table'>
                     <tbody>
+                      <tr>
+                        <td id="fs-space-modules" title="modules" class="fs-space-table-first">modules</td>
+                        <td id="fs-space-main" title="main.py">main.py</td>
+                        <td id="fs-space-other" title="other">other</td>
+                        <td id="fs-space-free" title="free">free</td>
+                      </tr>
                     </tbody>
                 </table>
-            </div>
-            <div>
-                <input type="button" class="action" id="fs-file-upload-button" value="{{ fs-add-file }}">
-                <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
+                <div>
+                    <button type="button" class="action save-button add" id="fs-file-upload-button" tile="{{ fs-add-file }}"><i class="fa fa-plus-circle"></i> {{ fs-add-file }}</button>
+                    <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
+                </div>
+              </div>
             </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
@@ -179,24 +187,16 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Connect</div>
                 </a>
-                <a href="#" class="roundbutton action" id="command-save"
+                <a href="#" class="roundbutton action" id="command-files"
                     tabindex="3"
-                    title="Save your Python code to your computer">
+                    title="Load/Save files">
                     <div class="roundsymbol">
-                        <i class="fa fa-download"></i>
+                        <i class="fa fa-file"></i>
                     </div>
-                    <div class="roundlabel">Save</div>
-                </a>
-                <a href="#" class="roundbutton action" id="command-load"
-                    tabindex="4"
-                    title="Load Python code or hex file into the editor">
-                    <div class="roundsymbol">
-                        <i class="fa fa-upload"></i>
-                    </div>
-                    <div class="roundlabel">Load</div>
+                    <div class="roundlabel">Load/Save</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-serial"
-                    tabindex="5"
+                    tabindex="4"
                     title="Connect to your micro:bit via serial">
                     <div class="roundsymbol">
                         <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
@@ -206,7 +206,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Open Serial</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-blockly"
-                    tabindex="6"
+                    tabindex="5"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -216,7 +216,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-snippet"
-                    tabindex="7"
+                    tabindex="6"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -224,7 +224,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-share"
-                    tabindex="8"
+                    tabindex="7"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -232,7 +232,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-options"
-                    tabindex="9"
+                    tabindex="8"
                     title="Change the editor settings">
                     <div class="roundsymbol">
                         <i class="fa fa-wrench"></i>
@@ -243,7 +243,7 @@ Nicholas and Damien.
                     <div class="buttons_menu_item">No options available</div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
-                    tabindex="10"
+                    tabindex="9"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -263,14 +263,14 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer action" tabindex="11" id="zoom-in"
+                    <a class="holder zoomer action" tabindex="10" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer action" tabindex="12" id="zoom-out"
+                    <a class="holder zoomer action" tabindex="11" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -389,12 +389,16 @@ web_editor({
                  "    sleep(2000)\n"
       },
       'load': {
-        'load-title': 'Load Script or HEX file',
+        'save-hex' : 'Download Hex',
+        'show-files' : 'Show Files',
+        'load-title': 'Load/Save',
+        'program-title': function() {
+          return $("#script-name").text();
+        },
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
         'toggle-file': 'Or browse for a file',
-        'fs-title': 'Manage files on a micro:bit',
-        'fs-add-file': 'Add a file to the filesystem'
+        'fs-add-file': 'Add file'
       }
     },
     'flags': {

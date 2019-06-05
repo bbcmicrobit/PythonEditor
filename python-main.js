@@ -358,7 +358,7 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit");
+            setName("microbit program");
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
@@ -591,27 +591,36 @@ function web_editor(config) {
         $('.fs-file-list table tbody').empty();
         micropythonFs.ls().forEach(function(filename) {
             var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
-            // Check for main.py to exclude it from the table list
-            if (filename === 'main.py') return;
-            var fileType = (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename) : "";
+            var name = filename;
+            var disabled = "";
+            if (filename === 'main.py') {
+              name = getName() + " (" + filename + ")";
+              disabled = "disabled";
+            };
             $('.fs-file-list table tbody').append(
-                '<tr><td>' + filename + '</td>' +
-                '<td>' + fileType + '</td>' +
+                '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '" class="fs-remove-button">Remove</button></td></tr>'
+                '<td><button id="' + pseudoUniqueId + '_remove" class="save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
             );
-            $('#' + pseudoUniqueId).click(function(e) {
+            $('#' + pseudoUniqueId + '_save').click(function(e) {
+                var output = micropythonFs.readBytes(filename);
+                var ua = navigator.userAgent.toLowerCase();
+                if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+                    alert(config.translate.alerts.save);
+                    window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+                } else {
+                    var blob = new Blob([output], {type: "text/plain"});
+                    saveAs(blob, filename);
+                }
+            });
+            $('#' + pseudoUniqueId + '_remove').click(function(e) {
                 micropythonFs.remove(filename);
                 updateFileTables();
+                var content = $('.expandable-content')[0];
+                content.style.maxHeight = content.scrollHeight + "px";
             });
         });
-        // Hide the table if it is empty
-        var fileRowsInTable = $('#fs-file-list>table>tbody').has('tr').length;
-        if (!fileRowsInTable) {
-            $('#fs-file-list>table').css('display', 'none');
-        } else {
-            $('#fs-file-list>table').css('display', '');
-        }
         updateStorageBar();
     };
 
@@ -656,28 +665,32 @@ function web_editor(config) {
         }
     }
 
-    // This function describes what to do when the save button is clicked.
-    function doSave() {
-        var output = EDITOR.getCode();
-        var ua = navigator.userAgent.toLowerCase();
-        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-            alert(config.translate.alerts.save);
-            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var filename = getName().replace(" ", "_");
-            var blob = new Blob([output], {type: "text/plain"});
-            saveAs(blob, filename + ".py");
-        }
-        dirty = false;
-    }
-
-    // Describes what to do when the load button is clicked.
-    function doLoad() {
+    // Describes what to do when the save/load button is clicked.
+    function doFiles() {
         var template = $('#load-template').html();
         Mustache.parse(template);
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
+                $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $('#save-hex').click(function() {
+                    doDownload();
+                });
+                $('#show-files').click(function() {
+                  var content = $('.expandable-content')[0];
+                  if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                    $("#hide-files").attr("id", "show-files");
+                    $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                  } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    $("#show-files").attr("id", "hide-files");
+                    $("#hide-files").attr("title", "Hide Files");
+                    document.getElementById("hide-files").innerHTML = "Hide Files <i class='fa fa-caret-up'>";
+                  }
+                });
                 $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -738,6 +751,8 @@ function web_editor(config) {
                         fileReader.onload = function(e) {
                             loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
                             updateFileTables();
+                            var content = $('.expandable-content')[0];
+                            content.style.maxHeight = content.scrollHeight + "px";
                         };
                         fileReader.readAsArrayBuffer(file);
                     });
@@ -1292,11 +1307,8 @@ function web_editor(config) {
               doFlash();
             }
         });
-        $("#command-save").click(function () {
-            doSave();
-        });
-        $("#command-load").click(function () {
-            doLoad();
+        $("#command-files").click(function () {
+            doFiles();
         });
         $("#command-blockly").click(function () {
             doBlockly();
