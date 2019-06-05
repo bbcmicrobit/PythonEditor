@@ -34,7 +34,7 @@ async function Run(targetUrl, downloadsDir, device) {
 
       page.on('dialog', async dialog => {
         // If there is an error dialog, fail
-        //await dialog.accept();
+        await dialog.accept();
         testStates["load-test"] = false;
       });
 
@@ -46,7 +46,7 @@ async function Run(targetUrl, downloadsDir, device) {
       await fileInput.uploadFile('./puppeteer/UploadFiles/OldTest/1.0.1.hex');
       await page.click('[value="Load"]');
       const codeContent = await page.evaluate("window.EDITOR.getCode();");
-      if (codeContent.includes("PASS1")) testStates["load-test"] = true; // Pass of first test, code is loaded successfully
+      if (codeContent.includes("PASS1") && codeContent.length === 32) testStates["load-test"] = true; // Pass of first test, code is loaded successfully
 
       await page.waitFor(1000); // Wait for error dialog, if there is one
 

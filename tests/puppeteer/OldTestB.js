@@ -46,7 +46,7 @@ async function Run(targetUrl, downloadsDir, device) {
       await fileInput.uploadFile('./puppeteer/UploadFiles/OldTest/0.9.hex');
       await page.click('[value="Load"]');
       const codeContent = await page.evaluate("window.EDITOR.getCode();");
-      if (codeContent.includes("PASS2")) testStates["load-test"] = true;
+      if (codeContent.includes("PASS2") && codeContent.length === 31) testStates["load-test"] = true;
 
       await page.waitFor(1000); // Wait for error dialog, if there is one
 

@@ -31,7 +31,7 @@ async function Run(targetUrl, downloadsDir, device) {
       await page.goto(projectURL);
       
       const codeContent = await page.evaluate("window.EDITOR.getCode();");
-      if (codeContent.includes("Test passed!")) testStates["load-test"] = true;
+      if (codeContent.includes("Test passed!") && codeContent.length === 111) testStates["load-test"] = true;
 
       browser.close();
       resolve(testStates);
