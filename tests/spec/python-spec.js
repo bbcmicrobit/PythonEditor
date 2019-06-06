@@ -4,44 +4,8 @@
 $('body').append('<div id="fooeditor"></div>');
 var faux_editor = pythonEditor('fooeditor');
 
-
-const targetUrl = "http://localhost:5000/editor.html";
-const downloadsDir = "/";
-const device = usbutils.fetchDevice(0xD28).Result;
-const includesFilesystem = false;
-
-jest.setTimeout(20000);
-
 // Test suite for the pythonEditor object.
 describe("An editor for MicroPython on the BBC micro:bit:", function() {
-
-    describe("Puppeteer tests work correctly:", function() {
-
-        it("Editor shows an error when loading invalid files", async function() {
-            expect.assertions(1);
-            expect(await InvalidTest.Run(targetUrl, downloadsDir, device)).toEqual({"invalid-test": true});
-        });
-
-        it("Editor can load old hex files (v1.0.1)", async function() {
-            expect.assertions(1);
-            expect(await OldTestA.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true, "flash-test": null});
-        });
-
-        it("Editor can load old hex files (v0.9)", async function() {
-            expect.assertions(1);
-            expect(await OldTestB.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true, "flash-test": null});
-        });
-
-        it("Editor can load project from URL", async function() {
-            expect.assertions(1);
-            expect(await URLTest.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true});
-        });
-
-        afterAll(() => {
-            global.localServer.close();
-        });
-    
-    });
 
     describe("The editor initialises as expected.", function() {
 

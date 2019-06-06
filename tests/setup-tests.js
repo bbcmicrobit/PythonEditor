@@ -20,20 +20,4 @@ global.forge = require('node-forge');
 require('../hexlify.js');
 require('../python-main.js');
 
-// Import Puppeteer tests
-global.InvalidTest = require('./puppeteer/InvalidTest');
-global.OldTestA = require('./puppeteer/OldTestA');
-global.OldTestB = require('./puppeteer/OldTestB');
-global.URLTest = require('./puppeteer/URLTest');
-
-global.usbutils = require('./src/WebUSB');
-
-var http = require('http');
-
-var nStatic = require('node-static');
-
-fileServer = new nStatic.Server('../');
-
-global.localServer = http.createServer(function (req, res) {
-    fileServer.serve(req, res);
-}).listen(5000);
+global.puppeteer = require('puppeteer');
