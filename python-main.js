@@ -221,6 +221,9 @@ function web_editor(config) {
 
     var BLOCKS = blocks();
 
+    // Represents the REPL terminal
+    var REPL = null;
+
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
@@ -242,6 +245,12 @@ function web_editor(config) {
     // Set the font size of the text currently displayed in the editor.
     function setFontSize(size) {
         EDITOR.ACE.setFontSize(size);
+        $("#request-repl")[0].style.fontSize = "" + size + "px";
+
+        // Only update font size if REPL is open
+        if ($("#repl").css('display') != 'none') {
+             REPL.prefs_.set('font-size', size);
+        }
     }
 
     // Sets up the zoom-in functionality.
@@ -735,10 +744,13 @@ function web_editor(config) {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
-            window.daplink.stopSerialRead();
             $("#command-serial").attr("title", "Connect to your micro:bit via serial");
             $("#command-serial > .roundlabel").text("Open Serial");
         }
+
+        window.daplink.stopSerialRead();
+        $("#repl").empty();
+        REPL = null;
 
         window.daplink.disconnect();
 
@@ -831,9 +843,6 @@ function web_editor(config) {
             $("#command-serial").attr("title", "Close the serial connection and go back to the editor");
             $("#command-serial > .roundlabel").text("Close Serial");
 
-            // Empty #repl to remove any previous terminal interfaces
-            $("#repl").empty();
-
             window.daplink.connect()
             .then( function() {
                 return window.daplink.setSerialBaudrate(115200);
@@ -862,56 +871,59 @@ function web_editor(config) {
     }
 
     function setupHterm(){
-               hterm.defaultStorage = new lib.Storage.Local();
-               var t = new hterm.Terminal("opt_profileName");
-               t.options_.cursorVisible = true;
+       if (REPL == null) {
+         hterm.defaultStorage = new lib.Storage.Local();
 
-               var daplinkReceived = false;
+         REPL = new hterm.Terminal("opt_profileName");
+         REPL.options_.cursorVisible = true;
+         REPL.prefs_.set('font-size', 22);
 
-               t.onTerminalReady = function() {
-                   var io = t.io.push();
+         var daplinkReceived = false;
 
-                   io.onVTKeystroke = function(str) {
-                        window.daplink.serialWrite(str);
-                   };
+         REPL.onTerminalReady = function() {
+             var io = REPL.io.push();
 
-                   io.sendString = function(str) {
-                        window.daplink.serialWrite(str);
-                   };
+             io.onVTKeystroke = function(str) {
+                  window.daplink.serialWrite(str);
+             };
 
-                   io.onTerminalResize = function(columns, rows) {
-                   };
+             io.sendString = function(str) {
+                  window.daplink.serialWrite(str);
+             };
 
+             io.onTerminalResize = function(columns, rows) {
+             };
+         };
 
-               };
+         REPL.decorate(document.querySelector('#repl'));
+         REPL.installKeyboard();
 
-               $("#editor-container").hide();
-               $("#repl").show();
-               $("#request-repl").show();
+         window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+                 REPL.io.print(data); // first byte of data is length
+                 daplinkReceived = true;
+         });
+       }
 
-               t.decorate(document.querySelector('#repl'));
-               t.installKeyboard();
+       $("#editor-container").hide();
+       $("#repl").show();
+       $("#request-repl").show();
 
-               // Recalculate terminal height
-               $("#repl > iframe").css("position", "relative");
-               $("#repl").attr("class", "hbox flex1");
+       // Recalculate terminal height
+       $("#repl > iframe").css("position", "relative");
+       $("#repl").attr("class", "hbox flex1");
+       REPL.prefs_.set('font-size', getFontSize());
 
-               window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
-                       t.io.print(data); // first byte of data is length
-                       daplinkReceived = true;
-               });
-
-               /* Don't do this automatically
-               // Send ctrl-C to get the terminal up
-               var attempt = 0;
-               var getPrompt = setInterval(
-                       function(){
-                            daplink.serialWrite("\x03");
-                            console.log("Requesting REPL...");
-                            attempt++;
-                            if(attempt == 5 || daplinkReceived) clearInterval(getPrompt);
-                        }, 200);
-               */
+       /* Don't do this automatically
+       // Send ctrl-C to get the terminal up
+       var attempt = 0;
+       var getPrompt = setInterval(
+               function(){
+                    daplink.serialWrite("\x03");
+                    console.log("Requesting REPL...");
+                    attempt++;
+                    if(attempt == 5 || daplinkReceived) clearInterval(getPrompt);
+                }, 200);
+       */
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
