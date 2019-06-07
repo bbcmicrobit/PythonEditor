@@ -802,7 +802,7 @@ function web_editor(config) {
 
     function setupHterm(){
        if (REPL == null) {
-         hterm.defaultStorage = new lib.Storage.Local();
+         hterm.defaultStorage = new lib.Storage.Memory();
 
          REPL = new hterm.Terminal("opt_profileName");
          REPL.options_.cursorVisible = true;
