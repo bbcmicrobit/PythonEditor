@@ -507,5 +507,10 @@ div.load-form {
 }
 
 #request-repl {
-    display: none; cursor: pointer; background-color: #3758ce; padding: .2em; color: #fff;
+    display: none;
+    cursor: pointer;
+    background-color: #3758ce;
+    padding: .2em;
+    color: #fff;
+    font-size: 22px;
 }
