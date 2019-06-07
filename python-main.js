@@ -792,7 +792,7 @@ function web_editor(config) {
     }
 
     function setupHterm(){
-               hterm.defaultStorage = new lib.Storage.Local();
+               hterm.defaultStorage = new lib.Storage.Memory();
                var t = new hterm.Terminal("opt_profileName");
                t.options_.cursorVisible = true;
 
