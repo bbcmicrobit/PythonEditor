@@ -26,18 +26,18 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             var dom_editor = $('#editor');
             expect(dom_editor.children().length).toBeGreaterThan(0);
             // It references the expected classes.
-            var expected_classes = ' ace_editor ace-kr-theme ace_dark';
+            var expected_classes = ' ace_editor ace_hidpi ace-kr-theme ace_dark';
             expect(dom_editor.attr('class')).toEqual(expected_classes);
         });
 
         it("The expected theme is kr_theme.", function() {
             var editor = pythonEditor('editor');
-            expect(editor.ACE.getTheme()).toEqual('ace/theme/kr_theme');
+            expect(editor.ACE.getTheme()).toEqual('ace/theme/kr_theme_legacy');
         });
 
         it("The editor mode is set to 'Python'.", function() {
             var editor = pythonEditor('editor');
-            expect(editor.ACE.getOption('mode')).toEqual('ace/mode/python');
+            expect(editor.ACE.getOption('mode')).toEqual('ace/mode/python_microbit');
         });
 
         it("Snippets are enabled.", function() {
