@@ -24,7 +24,6 @@ is attached to the div with the referenced id.
 */
 function pythonEditor(id) {
     'use strict';
-    ace.config.set('basePath', '/ace');
 
     // An object that encapsulates the behaviour of the editor.
     var editor = {};

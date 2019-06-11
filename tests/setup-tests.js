@@ -3,6 +3,7 @@
 
 // Import ACE
 require('../ace/ace.js');
+global.ace.config.set('basePath', '/ace');
 global.ace.edit = window.ace.edit;
 global.ace.require = window.ace.require;
 require("../ace/theme-kr_theme_legacy.js");
