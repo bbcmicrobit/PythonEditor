@@ -35,7 +35,9 @@ describe("The editor can load scripts", function() {
     it("Correctly loads a script from an import URL", async function() {
 
         expect.assertions(1);
-        expect(await TestScriptImport()).toEqual(true);
+        const passValue = await TestScriptImport();
+
+        expect(passValue).toEqual(true);
 
     });
 

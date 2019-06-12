@@ -4,6 +4,7 @@ async function TestInvalidFiles() {
     return new Promise(async function(resolve, reject) {
         try {
             let hasPassed = false;
+            
             const browser = await global.puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']});
             const page = await browser.newPage();
             await page.goto("http://localhost:5000/editor.html");
@@ -16,10 +17,9 @@ async function TestInvalidFiles() {
             await page.click('#command-load');
             await page.click('.load-drag-target.load-toggle');
             let fileInput = await page.$('[name="load-form-file-upload"]');
-            await fileInput.uploadFile('./puppeteer/UploadFiles/InvalidTest/makecode.hex');
+            await fileInput.uploadFile('./src/makecode.hex');
             await page.click('[value="Load"]');
-
-            await page.waitFor(2000); // Wait for the dialog
+            await page.waitFor(2000);
 
             browser.close();
             resolve(hasPassed);
@@ -42,26 +42,10 @@ describe("The editor shows an error dialog when loading invalid files", function
     it("Shows an error dialog when loading a MakeCode hex file", async function() {
 
         expect.assertions(1);
-        expect(await TestInvalidFiles()).toEqual(true);
+        const passValue = await TestInvalidFiles();
+
+        expect(passValue).toEqual(true);
 
     });
 
 });
-
-
-/*
-it("Editor can load old hex files (v1.0.1)", async function() {
-            expect.assertions(1);
-            expect(await OldTestA.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true, "flash-test": null});
-        });
-
-        it("Editor can load old hex files (v0.9)", async function() {
-            expect.assertions(1);
-            expect(await OldTestB.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true, "flash-test": null});
-        });
-
-        it("Editor can load project from URL", async function() {
-            expect.assertions(1);
-            expect(await URLTest.Run(targetUrl, downloadsDir, device)).toEqual({"load-test": true});
-        });
-        */

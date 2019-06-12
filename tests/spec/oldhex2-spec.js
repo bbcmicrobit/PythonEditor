@@ -18,12 +18,12 @@ async function TestOldHexFiles() {
             await page.click('#command-load');
             await page.click('.load-drag-target.load-toggle');
             let fileInput = await page.$('[name="load-form-file-upload"]');
-            await fileInput.uploadFile('./puppeteer/UploadFiles/OldTest/0.9.hex');
+            await fileInput.uploadFile('./src/0.9.hex');
             await page.click('[value="Load"]');
             const codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent.includes("PASS2") && codeContent.length === 31) hasPassed = true;
 
-            await page.waitFor(2000); // Wait for error dialog, if there is one
+            await page.waitFor(3000); // Wait for error dialog, if there is one
 
             browser.close();
             resolve(hasPassed);
@@ -46,7 +46,9 @@ describe("The editor can load old hex files", function() {
     it("Correctly loads a v0.9 hex file", async function() {
 
         expect.assertions(1);
-        expect(await TestOldHexFiles()).toEqual(true);
+        const passValue = await TestOldHexFiles();
+
+        expect(passValue).toEqual(true);
 
     });
 
