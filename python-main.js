@@ -129,6 +129,85 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 /*
+ * Returns an object to wrap around Blockly.
+ */
+function blocks() {
+    'use strict';
+
+    var blocklyWrapper = {};
+    var resizeSensorInstance = null;
+    // Stores the Blockly workspace created during injection 
+    var workspace = null;
+
+    blocklyWrapper.init = function() {
+        // Lazy loading all the JS files
+        script('blockly/blockly_compressed.js');
+        script('blockly/blocks_compressed.js');
+        script('blockly/python_compressed.js');
+        script('microbit_blocks/blocks/microbit.js');
+        script('microbit_blocks/generators/accelerometer.js');
+        script('microbit_blocks/generators/buttons.js');
+        script('microbit_blocks/generators/compass.js');
+        script('microbit_blocks/generators/display.js');
+        script('microbit_blocks/generators/image.js');
+        script('microbit_blocks/generators/microbit.js');
+        script('microbit_blocks/generators/music.js');
+        script('microbit_blocks/generators/neopixel.js');
+        script('microbit_blocks/generators/pins.js');
+        script('microbit_blocks/generators/radio.js');
+        script('microbit_blocks/generators/speech.js');
+        script('microbit_blocks/generators/python.js');
+        script('blockly/msg/js/en.js');
+        script('microbit_blocks/messages/en/messages.js');
+    };
+
+    blocklyWrapper.inject = function(blocklyElement, toolboxElement, zoomLevel, zoomScaleSteps) {
+        workspace = Blockly.inject(blocklyElement, {
+            toolbox: toolboxElement,
+            zoom: {
+                controls: false,
+                wheel: false,
+                startScale: zoomLevel,
+                scaleSpeed: zoomScaleSteps + 1.0
+            }
+        });
+        // Resize blockly
+        resizeSensorInstance = new ResizeSensor(blocklyElement, function() {
+            Blockly.svgResize(workspace);
+        });
+    };
+
+    blocklyWrapper.getCode = function() {
+        return workspace ? Blockly.Python.workspaceToCode(workspace) : 'Blockly not injected';
+    };
+
+    blocklyWrapper.addCodeChangeListener = function(callback) {
+        if (workspace) {
+            workspace.addChangeListener(function(event) {
+                var code = blocklyWrapper.getCode();
+                callback(code);
+            });
+        } else {
+            throw new Error('Trying to add a Blockly change listener before injection.');
+        }
+    };
+
+    blocklyWrapper.zoomIn = function() {
+        if (workspace) {
+            Blockly.getMainWorkspace().zoomCenter(1);
+        }
+    };
+
+    blocklyWrapper.zoomOut = function() {
+        if (workspace) {
+            Blockly.getMainWorkspace().zoomCenter(-1);
+        }
+    };
+
+    return blocklyWrapper;
+}
+
+/*
 The following code contains the various functions that connect the behaviour of
 the editor to the DOM (web-page).
 
@@ -139,6 +218,8 @@ function web_editor(config) {
 
     // Global (useful for testing) instance of the ACE wrapper object
     window.EDITOR = pythonEditor('editor');
+
+    var BLOCKS = blocks();
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
@@ -176,9 +257,8 @@ function web_editor(config) {
         }
         setFontSize(fontSize);
         // Change Blockly zoom
-        var workspace = Blockly.getMainWorkspace();
-        if (workspace && continueZooming) {
-            Blockly.getMainWorkspace().zoomCenter(1);
+        if (continueZooming) {
+            BLOCKS.zoomIn();
         }
     }
 
@@ -195,9 +275,8 @@ function web_editor(config) {
         }
         setFontSize(fontSize);
         // Change Blockly zoom
-        var workspace = Blockly.getMainWorkspace();
-        if (workspace && continueZooming) {
-            Blockly.getMainWorkspace().zoomCenter(-1);
+        if (continueZooming) {
+            BLOCKS.zoomOut();
         }
     }
 
@@ -206,25 +285,7 @@ function web_editor(config) {
     function setupFeatureFlags() {
         if(config.flags.blocks) {
             $("#command-blockly").removeClass('hidden');
-            // Add includes 
-            script('blockly/blockly_compressed.js');
-            script('blockly/blocks_compressed.js');
-            script('blockly/python_compressed.js');
-            script('microbit_blocks/blocks/microbit.js');
-            script('microbit_blocks/generators/accelerometer.js');
-            script('microbit_blocks/generators/buttons.js');
-            script('microbit_blocks/generators/compass.js');
-            script('microbit_blocks/generators/display.js');
-            script('microbit_blocks/generators/image.js');
-            script('microbit_blocks/generators/microbit.js');
-            script('microbit_blocks/generators/music.js');
-            script('microbit_blocks/generators/neopixel.js');
-            script('microbit_blocks/generators/pins.js');
-            script('microbit_blocks/generators/radio.js');
-            script('microbit_blocks/generators/speech.js');
-            script('microbit_blocks/generators/python.js');
-            script('blockly/msg/js/en.js');
-            script('microbit_blocks/messages/en/messages.js');
+            BLOCKS.init();
         }
         if(config.flags.snippets) {
             $("#command-snippet").removeClass('hidden');
@@ -485,28 +546,15 @@ function web_editor(config) {
                 var zoomScaleSteps = 0.2;
                 var fontSteps = (getFontSize() - EDITOR.initialFontSize) / EDITOR.fontSizeStep;
                 var zoomLevel = (fontSteps * zoomScaleSteps) + 1.0;
-                var workspace = Blockly.inject('blockly', {
-                    toolbox: document.getElementById('blockly-toolbox'),
-                    zoom: {
-                        controls: false,
-                        wheel: false,
-                        startScale: zoomLevel,
-                        scaleSpeed: zoomScaleSteps + 1.0
-                    }
-                });
-                var myUpdateFunction = function(event) {
-                    var code = Blockly.Python.workspaceToCode(workspace);
+                var blocklyElement = document.getElementById('blockly');
+                var toolboxElement = document.getElementById('blockly-toolbox');
+                BLOCKS.inject(blocklyElement, toolboxElement, zoomLevel, zoomScaleSteps);
+                BLOCKS.addCodeChangeListener(function(code) {
                     EDITOR.setCode(code);
-                };
-                // Resize blockly
-                var element = document.getElementById('blockly');
-                new ResizeSensor(element, function() {
-                    Blockly.svgResize(workspace);
                 });
-                workspace.addChangeListener(myUpdateFunction);
             }
             // Set editor to current state of blocks.
-            EDITOR.setCode(Blockly.Python.workspaceToCode(workspace));
+            EDITOR.setCode(BLOCKS.getCode());
         }
     }
 
