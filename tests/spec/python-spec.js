@@ -4,6 +4,7 @@
 $('body').append('<div id="fooeditor"></div>');
 var faux_editor = pythonEditor('fooeditor');
 
+
 // Test suite for the pythonEditor object.
 describe("An editor for MicroPython on the BBC micro:bit:", function() {
 
