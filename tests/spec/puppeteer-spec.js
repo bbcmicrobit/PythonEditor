@@ -5,7 +5,7 @@ describe("An editor for MicroPython running at localhost.", function() {
     beforeAll(async() => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        global.browser = await global.puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']});
+        global.browser = await global.puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
     });
 
     afterAll(async() => {
@@ -34,15 +34,15 @@ describe("An editor for MicroPython running at localhost.", function() {
         await page.goto("http://localhost:5000/editor.html");
 
         let hasShownError = false;
-        page.on('dialog', async dialog => {
+        page.on("dialog", async dialog => {
             if (dialog.message().includes("couldn't recognise this file")) hasShownError = true;
             await dialog.accept();
         });
-        await page.click('#command-load');
-        await page.click('.load-drag-target.load-toggle');
-        let fileInput = await page.$('[name="load-form-file-upload"]');
-        await fileInput.uploadFile('./src/makecode.hex');
-        await page.click('[value="Load"]');
+        await page.click("#command-load");
+        await page.click(".load-drag-target.load-toggle");
+        let fileInput = await page.$("[name='load-form-file-upload']");
+        await fileInput.uploadFile("./src/makecode.hex");
+        await page.click("[value='Load']");
         for (let ms=0; ms<1000; ms++) {
             if (hasShownError) break;
             await page.waitFor(1);
@@ -60,11 +60,11 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click('#command-load');
-        await page.click('.load-drag-target.load-toggle');
-        let fileInput = await page.$('[name="load-form-file-upload"]');
-        await fileInput.uploadFile('./src/1.0.1.hex');
-        await page.click('[value="Load"]');
+        await page.click("#command-load");
+        await page.click(".load-drag-target.load-toggle");
+        let fileInput = await page.$("[name='load-form-file-upload']");
+        await fileInput.uploadFile("./src/1.0.1.hex");
+        await page.click("[value='Load']");
         for (let ms=0; ms<1000; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
@@ -86,11 +86,11 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click('#command-load');
-        await page.click('.load-drag-target.load-toggle');
-        let fileInput = await page.$('[name="load-form-file-upload"]');
-        await fileInput.uploadFile('./src/0.9.hex');
-        await page.click('[value="Load"]');
+        await page.click("#command-load");
+        await page.click(".load-drag-target.load-toggle");
+        let fileInput = await page.$("[name='load-form-file-upload']");
+        await fileInput.uploadFile("./src/0.9.hex");
+        await page.click("[value='Load']");
         for (let ms=0; ms<1000; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
