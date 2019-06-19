@@ -43,7 +43,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         let fileInput = await page.$('[name="load-form-file-upload"]');
         await fileInput.uploadFile('./src/makecode.hex');
         await page.click('[value="Load"]');
-        await page.waitFor(1000);
+        for (let ms=0; ms<1000; ms++) {
+            if (hasShownError) break;
+            await page.waitFor(1);
+        }
         await page.close();
 
         expect(hasShownError).toEqual(true);
@@ -54,14 +57,19 @@ describe("An editor for MicroPython running at localhost.", function() {
 
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
+        const initialCode = await page.evaluate("window.EDITOR.getCode();");
+        let codeContent = "";
 
         await page.click('#command-load');
         await page.click('.load-drag-target.load-toggle');
         let fileInput = await page.$('[name="load-form-file-upload"]');
         await fileInput.uploadFile('./src/1.0.1.hex');
         await page.click('[value="Load"]');
-        await page.waitFor(1000);
-        const codeContent = await page.evaluate("window.EDITOR.getCode();");
+        for (let ms=0; ms<1000; ms++) {
+            codeContent = await page.evaluate("window.EDITOR.getCode();");
+            if (codeContent != initialCode) break;
+            await page.waitFor(1);
+        }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
 
@@ -75,14 +83,19 @@ describe("An editor for MicroPython running at localhost.", function() {
 
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
+        const initialCode = await page.evaluate("window.EDITOR.getCode();");
+        let codeContent = "";
 
         await page.click('#command-load');
         await page.click('.load-drag-target.load-toggle');
         let fileInput = await page.$('[name="load-form-file-upload"]');
         await fileInput.uploadFile('./src/0.9.hex');
         await page.click('[value="Load"]');
-        await page.waitFor(1000);
-        const codeContent = await page.evaluate("window.EDITOR.getCode();");
+        for (let ms=0; ms<1000; ms++) {
+            codeContent = await page.evaluate("window.EDITOR.getCode();");
+            if (codeContent != initialCode) break;
+            await page.waitFor(1);
+        }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
 
