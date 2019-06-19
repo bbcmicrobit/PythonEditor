@@ -77,7 +77,7 @@ Nicholas and Damien.
         </script>
         <script type="application/javascript">
             // VERSION INFORMATION
-            EDITOR_VERSION = "1.1.3";
+            EDITOR_VERSION = "1.1.4";
             UPY_VERSION = "1.0.1";
         </script>
 
@@ -108,7 +108,7 @@ Nicholas and Damien.
                     <th>description</th>
                 </tr>
                 {{#snippets}}
-                <tr class="snippet-selection">
+                <tr id="snippet-{{trigger}}" class="action snippet-selection">
                     <td>{{trigger}}<span class="snippet-name">{{name}}</span></td>
                     <td>{{#describe}}{{name}}{{/describe}}</td>
                 </tr>
@@ -228,12 +228,8 @@ Nicholas and Damien.
                 </div>
             </div>
             <div class="vbox action" id="script-box">
-                <div id="script-name" class="flex1" contenteditable
-                    tabindex="10">
-                </div>
-                <div id="script-description" contenteditable
-                    tabindex="11">
-                </div>
+                <label for="script-name">Script Name</label>
+                <input id="script-name" class="flex1">
             </div>
           </div>
           <div class="hbox flex1">
@@ -256,24 +252,6 @@ Nicholas and Damien.
             type="application/javascript"></script>
         <script src="static/js/polyfill.min.js" type="application/javascript"></script>
         <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
-        <script src="blockly/blockly_compressed.js"></script>
-        <script src="blockly/blocks_compressed.js"></script>
-        <script src="blockly/python_compressed.js"></script>
-        <script src="microbit_blocks/blocks/microbit.js"></script>
-        <script src="microbit_blocks/generators/accelerometer.js"></script>
-        <script src="microbit_blocks/generators/buttons.js"></script>
-        <script src="microbit_blocks/generators/compass.js"></script>
-        <script src="microbit_blocks/generators/display.js"></script>
-        <script src="microbit_blocks/generators/image.js"></script>
-        <script src="microbit_blocks/generators/microbit.js"></script>
-        <script src="microbit_blocks/generators/music.js"></script>
-        <script src="microbit_blocks/generators/neopixel.js"></script>
-        <script src="microbit_blocks/generators/pins.js"></script>
-        <script src="microbit_blocks/generators/radio.js"></script>
-        <script src="microbit_blocks/generators/speech.js"></script>
-        <script src="microbit_blocks/generators/python.js"></script>
-        <script src="blockly/msg/js/en.js"></script>
-        <script src="microbit_blocks/messages/en/messages.js"></script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
 	    <script src="lzma/lzma_worker.js"></script>
