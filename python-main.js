@@ -122,7 +122,7 @@ function web_editor(config) {
     var dirty = false;
 
     // MicroPython filesystem to be initialised on page load.
-    var micropythonFs;
+    window.micropythonFs = undefined;
 
     // Sets the description associated with the code displayed in the UI.
     function setDescription(x) {
