@@ -19,7 +19,8 @@ describe("An editor for MicroPython running at localhost.", function() {
         await page.goto(projectURL);
 
         const codeContent = await page.evaluate("window.EDITOR.getCode();");
-        const codeName = await page.evaluate("$('#script-name').html()");
+        let codeName = await page.evaluate("$('#script-name').html()");
+        if (!codeName) codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
 
         expect(codeContent).toHaveLength(111);
@@ -60,8 +61,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         let fileInput = await page.$('[name="load-form-file-upload"]');
         await fileInput.uploadFile('./src/1.0.1.hex');
         await page.click('[value="Load"]');
+        await page.waitFor(1000);
         const codeContent = await page.evaluate("window.EDITOR.getCode();");
-        const codeName = await page.evaluate("$('#script-name').html()");
+        let codeName = await page.evaluate("$('#script-name').html()");
+        if (!codeName) codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
 
         expect(codeContent).toHaveLength(32);
@@ -80,8 +83,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         let fileInput = await page.$('[name="load-form-file-upload"]');
         await fileInput.uploadFile('./src/0.9.hex');
         await page.click('[value="Load"]');
+        await page.waitFor(1000);
         const codeContent = await page.evaluate("window.EDITOR.getCode();");
-        const codeName = await page.evaluate("$('#script-name').html()");
+        let codeName = await page.evaluate("$('#script-name').html()");
+        if (!codeName) codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
 
         expect(codeContent).toHaveLength(31);
