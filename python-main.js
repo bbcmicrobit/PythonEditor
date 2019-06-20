@@ -239,11 +239,11 @@ function web_editor(config) {
         }).map(function(f) {
             return encodeURIComponent(f) + "=true";
         }).join("&");
-        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString); 
+        helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
     }
 
     // Update the docs link to append MicroPython version
-    var docsAnchor = $("#docs-link"); 
+    var docsAnchor = $("#docs-link");
     docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
@@ -401,6 +401,9 @@ function web_editor(config) {
                     $('#load-drag-target').removeClass('is-dragover');
                 })
                 .on('drop', function(e) {
+                    // Dispatch an event to allow others to listen to it
+                    var event = new CustomEvent("load-drop", { detail: e.originalEvent.dataTransfer.files[0] });
+                    document.dispatchEvent(event);
                     doDrop(e);
                     vex.close();
                     EDITOR.focus();
