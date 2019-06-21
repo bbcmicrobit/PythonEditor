@@ -509,8 +509,8 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '_remove" class="save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
-                '<button id="' + pseudoUniqueId + '_save" class="save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
                 var output = micropythonFs.readBytes(filename);
