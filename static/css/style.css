@@ -456,9 +456,13 @@ div.load-form {
 }
 
 .helpsupport_container {
+        position: absolute;
         margin: auto auto auto auto;
         display: none;
         padding-right: 1em;
+        z-index: 999;
+        background-color: #f2f2f2;
+        border-radius: 0.5rem;
 }
 
 .helpsupport {
