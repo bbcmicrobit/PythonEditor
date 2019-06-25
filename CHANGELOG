@@ -1,3 +1,10 @@
+1.1.5
+-----
+* Add floating help panel (#115)
+* Add puppeteer tests (#166) 
+* Add custom event for dropping a file to the load modal (#168)
+* Refactor some of the blocks code (#165)
+
 1.1.4
 -----
 * Run jasmine tests in Azure Pipelines with node and jest (#134)
