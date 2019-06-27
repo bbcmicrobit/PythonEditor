@@ -13,6 +13,3 @@ $RECYCLE.BIN/
 
 # Node
 node_modules/
-
-# Puppeteer files
-tests/spec/test-files/chunks/

@@ -26,12 +26,6 @@ describe("An editor for MicroPython running at localhost.", function() {
         // Create small1.py -> small215.py (215 small files)
         for (let i = 1; i<=expectedFileLimit; i++) {
             const fileName = `small${i}.py`;
-            if (!fs.existsSync(`${fileRoot}${fileName}`)) {
-                console.log(`>> Generated new file for test: ${fileName}`)
-                await fs.writeFile(`${fileRoot}${fileName}`, `# Empty Python file < 128 bytes ${fileName}`, function(err, result) {
-                    if(err) console.warn('error', err);
-                });
-            }
             fileList.push(`${fileRoot}${fileName}`);
         }
         console.log("> Uploading files (this may take some time)");

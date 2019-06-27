@@ -20,4 +20,3 @@ global.microbitFs = require('../static/js/microbit-fs.umd.js');
 require('../python-main.js');
 
 global.puppeteer = require('puppeteer');
-global.fs = require('fs');
