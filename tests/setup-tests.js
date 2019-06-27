@@ -12,12 +12,12 @@ require('../ace/ext-language_tools.js');
 
 // Import the rest of the static libraries
 global.$ = global.jQuery = require('../static/js/jquery-2.1.4.min.js');
-global.MemoryMap = require('../static/js/intel-hex.browser.js');
 // Had issues running the forge version included in the editor repo
 global.forge = require('node-forge');
 
 // Import our source code under test
-require('../hexlify.js');
+global.microbitFs = require('../static/js/microbit-fs.umd.js');
 require('../python-main.js');
 
 global.puppeteer = require('puppeteer');
+global.fs = require('fs');

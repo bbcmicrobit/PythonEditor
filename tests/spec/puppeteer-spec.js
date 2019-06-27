@@ -32,14 +32,13 @@ describe("An editor for MicroPython running at localhost.", function() {
 
         let hasShownError = false;
         page.on("dialog", async dialog => {
-            if (dialog.message().includes("couldn't recognise this file")) hasShownError = true;
+            if (dialog.message().includes("Could not find valid Python code")) hasShownError = true;
             await dialog.accept();
         });
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/makecode.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             if (hasShownError) break;
             await page.waitFor(10);
@@ -55,11 +54,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/1.0.1.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
@@ -80,11 +78,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/0.9.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
