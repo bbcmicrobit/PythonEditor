@@ -635,8 +635,8 @@ function web_editor(config) {
 
                 // Change download to flash
                 $("#command-download").attr("id", "command-flash");
-                $("#command-flash > .roundlabel").text("Flash");
-                $("#command-flash").attr("title", "Flash your project directly to your micro:bit");
+                $("#command-flash > .roundlabel").text("Sync");
+                $("#command-flash").attr("title", "Sync your project directly to your micro:bit");
 
                 if (serial){
                   doSerial();
