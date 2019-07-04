@@ -1,6 +1,6 @@
 jest.setTimeout(20000);
 
-describe("An editor for MicroPython running at localhost.", function() {
+describe("Puppeteer basic tests for the Python Editor.", function() {
 
     beforeAll(async() => {
         // Setup a headless Chromium browser.
@@ -32,14 +32,13 @@ describe("An editor for MicroPython running at localhost.", function() {
 
         let hasShownError = false;
         page.on("dialog", async dialog => {
-            if (dialog.message().includes("couldn't recognise this file")) hasShownError = true;
+            if (dialog.message().includes("Could not find valid Python code")) hasShownError = true;
             await dialog.accept();
         });
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/makecode.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             if (hasShownError) break;
             await page.waitFor(10);
@@ -55,11 +54,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/1.0.1.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
@@ -80,11 +78,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
 
-        await page.click("#command-load");
+        await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/0.9.hex");
-        await page.click("[value='Load']");
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
@@ -96,6 +93,58 @@ describe("An editor for MicroPython running at localhost.", function() {
         expect(codeContent).toHaveLength(31);
         expect(codeContent).toContain("PASS2");
         expect(codeName).toEqual("0.9");
+    });
+
+    it("Shows an error when trying to download a Hex file if the Python code us too large", async function() {
+        const page = await global.browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        const initialCode = await page.evaluate("window.EDITOR.getCode();");
+        const initialName = await page.evaluate("document.getElementById('script-name').value");
+        let codeContent = "";
+        let rejectedLargeFileLoad = false;
+        let rejectedLargeHexDownload = false;
+        const fileRejected = async (dialog) => {
+            if (dialog.message().includes("Not enough space")) {
+                rejectedLargeFileLoad = true;
+            }
+            await dialog.accept();
+        };
+
+        page.on("dialog", fileRejected);
+        await page.click("#command-files");
+        const fileInput = await page.$("#file-upload-input");
+        // A Python file will be loaded into the editor even if it's too large
+        await fileInput.uploadFile("./spec/test-files/too-large.py");
+        for (let ms=0; ms<100; ms++) {
+            codeContent = await page.evaluate("window.EDITOR.getCode();");
+            if (codeContent != initialCode) break;
+            await page.waitFor(10);
+        }
+        const codeName = await page.evaluate("document.getElementById('script-name').value");
+        // TODO: WHY is this wait necessary??
+        await page.waitFor(1000);
+        // But when we try to downlod the hex, we get an expected error
+        page.removeListener("dialog", fileRejected);
+        page.on("dialog", async (dialog) => {
+            if (dialog.message().includes("Not enough space")) {
+                rejectedLargeHexDownload = true;
+            }
+            await dialog.accept();
+        });
+        await page.click("#command-download");
+        for (let ms=0; ms<100; ms++) {
+            if (rejectedLargeHexDownload) break;
+            await page.waitFor(10);
+        }
+        await page.close();
+
+        expect(rejectedLargeFileLoad).toEqual(false);
+        expect(codeContent).not.toEqual(initialCode);
+        expect(codeContent).toHaveLength(27216);    // Max size = ([27 * 1024] * [126 / 128])
+        expect(codeContent).toContain("# Filler");
+        expect(rejectedLargeHexDownload).toEqual(true);
+        expect(codeName).not.toEqual(initialName);
+        expect(codeName).toEqual("main");
     });
 
 });

@@ -84,7 +84,7 @@ Nicholas and Damien.
             <h2><i class="fa fa-file"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
-                <p>{{ instructions }} <a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
+                <p>{{ instructions }}<br><a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
             </div>
             <div class="expandable">
               <div>
@@ -393,7 +393,7 @@ web_editor({
         'show-files' : 'Show Files',
         'load-title': 'Load/Save',
         'program-title': function() {
-          return $("#script-name").text();
+          return $("#script-name").val();
         },
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
