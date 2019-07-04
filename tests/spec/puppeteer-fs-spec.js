@@ -1,55 +1,63 @@
+const fs = require("fs");
+const tmp = require('tmp');
+
 jest.setTimeout(60000 * 5);
 
-describe("An editor for MicroPython running at localhost.", function() {
+describe("Puppeteer filesystem tests for the Python Editor.", function() {
 
-    beforeAll(async() => {
+    const msStep = 100;
+
+    beforeAll(async () => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
         global.browser = await global.puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
     });
 
-    afterAll(async() => {
+    afterAll(async () => {
         global.browser.close();
     });
 
     it("Can store the correct number of small files in the filesystem", async function() {
-
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         // We expect to be able to add 214 small files to the fs.
         const expectedFileLimit = 215;
-        const fileRoot = "./spec/test-files/chunks/";
+        let fileNameList = [];
+        let fileCleanUps = [];
 
         await page.click("#command-files");
         const fileInput = await page.$("#fs-file-upload-input");
-        let fileList = [];
         // Create small1.py -> small215.py (215 small files)
-        for (let i = 1; i<=expectedFileLimit; i++) {
-            const fileName = `small${i}.py`;
-            fileList.push(`${fileRoot}${fileName}`);
+        for (let i = 1; i <= expectedFileLimit; i++) {
+            var tmpFile = tmp.fileSync({ prefix: 'small' + i + '-', postfix: '.py' });
+            fs.writeFileSync(tmpFile.fd, `# Empty Python file < 128 bytes small${i}.py`);
+            fs.closeSync(tmpFile.fd);
+            fileNameList.push(tmpFile.name);
+            fileCleanUps.push(tmpFile.removeCallback);
         }
-        console.log("> Uploading files (this may take some time)");
-        await fileInput.uploadFile(...fileList);
+        console.log("> Uploading files (this may take some time)...");
+        await fileInput.uploadFile(...fileNameList);
         let fileLimit = 0;
         page.on("dialog", async dialog => {
             await dialog.accept();
             if (dialog.message().includes("There is no storage space left.")) {
                 // Get the number of files (the error warns that we can't add the 215th file, but we expect 215 files as there are 214 small.py files + main.py)
-                fileLimit = parseInt(dialog.message().split("small")[1].split(".py")[0]);
+                fileLimit = parseInt(dialog.message().split("small")[1].split("-")[0]);
             }
         });
-        for (let ms=0; ms<(60000 * 3); ms++) {
+        for (let ms = 0; ms < (60000 * 3); ms += msStep) {
             if (fileLimit !== 0) break;
-            await page.waitFor(1);
+            await page.waitFor(msStep);
         }
         await page.close();
+        fileCleanUps.forEach(function(removeCallback) {
+            removeCallback();
+        });
 
         expect(fileLimit).toEqual(expectedFileLimit);
-
     });
-   
-    it("Can store one large file in the filesystem", async function() {
 
+    it("Can store one large file in the filesystem", async function() {
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
@@ -59,10 +67,10 @@ describe("An editor for MicroPython running at localhost.", function() {
         await page.click("#command-files");
         const fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/large.py");
-        for (let ms=0; ms<1000; ms++) {
+        for (let ms = 0; ms < 1000; ms += msStep) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
-            await page.waitFor(1);
+            await page.waitFor(msStep);
         }
         page.on("dialog", async dialog => {
             if (dialog.message().includes("enough space")) {
@@ -70,7 +78,6 @@ describe("An editor for MicroPython running at localhost.", function() {
             }
             await dialog.accept();
         });
-        await page.waitFor(1000);
         await page.click("#command-download");
         const codeName = await page.evaluate("document.getElementById('script-name').value");
         await page.close();
@@ -81,51 +88,41 @@ describe("An editor for MicroPython running at localhost.", function() {
         expect(codeContent).toContain("import love");
         expect(codeName).toEqual("main");
         expect(noErrorOnDownload).toEqual(true);
-
     });
 
-    it("Shows an error when loading a file that is too large in the filesystem", async function() {
-
+    it("Shows an error when loading a file to the filesystem that is too large", async function() {
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
+        const initialName = await page.evaluate("document.getElementById('script-name').value");
         let codeContent = "";
-        let rejectsLargeFileDownload = false;
+        let rejectedLargeFileLoad = false;
 
-        await page.click("#command-files");
-        const fileInput = await page.$("#file-upload-input");
-        await fileInput.uploadFile("./spec/test-files/too-large.py");
-        page.on("dialog", async dialog => {
-            if (dialog.message().includes("enough space")) {
-                rejectsLargeFileDownload = true;
+        page.on("dialog", async (dialog) => {
+            if (dialog.message().includes("Not enough space")) {
+                rejectedLargeFileLoad = true;
             }
             await dialog.accept();
         });
-        for (let ms=0; ms<1000; ms++) {
-            codeContent = await page.evaluate("window.EDITOR.getCode();");
-            if (codeContent != initialCode) break;
-            await page.waitFor(1);
+        await page.click("#command-files");
+        const fileInput = await page.$("#fs-file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/too-large.py");
+        for (let ms=0; ms<100; ms++) {
+            if (rejectedLargeFileLoad) break;
+            await page.waitFor(10);
         }
-        await page.waitFor(1000);
-        // Check that we get an error when attempting to download
-        await page.click("#command-download");
-        for (let ms=0; ms<1000; ms++) {
-            if (rejectsLargeFileDownload) break;
-            await page.waitFor(1);
-        }
+        codeContent = await page.evaluate("window.EDITOR.getCode();");
         const codeName = await page.evaluate("document.getElementById('script-name').value");
         await page.close();
 
-        expect(rejectsLargeFileDownload).toEqual(true);
-        // Max filesize = ([27 * 1024] * [126 / 128])
-        expect(codeContent).toHaveLength(27216);
-        expect(codeContent).toContain("# Filler");
-        expect(codeName).toEqual("main");
-
+        expect(rejectedLargeFileLoad).toEqual(true);
+        expect(codeContent).toEqual(initialCode);
+        expect(codeContent).not.toContain("# Filler");
+        expect(codeName).toEqual(initialName);
+        expect(codeName).not.toEqual("main");
     });
 
     it("Correctly loads files via the load modal", async function() {
-
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
@@ -138,7 +135,7 @@ describe("An editor for MicroPython running at localhost.", function() {
         await page.click("#command-files");
         const fileInput = await page.$("#fs-file-upload-input");
         page.on("dialog", async dialog => {
-            if (dialog.message().includes("Adding a main.py file will replace the code in the editor!")){
+            if (dialog.message().includes("Adding a main.py file will replace the code in the editor!")) {
                 mainPyWarningDialogShows = true;
                 if (!hasAttemptedCancel){
                     // Ensure that pressing 'Cancel' doesn't replace code contents
@@ -155,9 +152,9 @@ describe("An editor for MicroPython running at localhost.", function() {
             }
         });
         await fileInput.uploadFile("./spec/test-files/main.py");
-        for (let ms=0; ms<1000; ms++) {
+        for (let ms = 0; ms < 1000; ms += msStep) {
             if (fileListContents !== "") break;
-            await page.waitFor(1);
+            await page.waitFor(msStep);
         }
         await page.close();
 
@@ -166,11 +163,9 @@ describe("An editor for MicroPython running at localhost.", function() {
         expect(codeOnAccept).not.toEqual(initialCode);
         expect(codeOnAccept).toContain("PASS");
         expect(fileListContents).toContain("main.py");
-
     });
 
     it("Correctly imports modules with the 'magic comment' in the filesystem.", async function() {
-
         const page = await global.browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialContent = await page.evaluate("window.EDITOR.getCode();");
@@ -224,7 +219,5 @@ describe("An editor for MicroPython running at localhost.", function() {
         expect(magicFourthlineName).toEqual("main");
         expect(magicFourthlineContent).toContain("PASS");
         expect(magicFourthlineContent).toHaveLength(136);
-
     });
-
 });

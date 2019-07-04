@@ -1,1 +1,0 @@
-# Empty Python file < 128 bytes small60.py
