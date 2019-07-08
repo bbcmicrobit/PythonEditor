@@ -58,8 +58,6 @@ function pythonEditor(id, autocompleteApi) {
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
         enableSnippets: true,  // Enable code snippets.
-        enableBasicAutocompletion: true, // Enable (automatic) autocompletion
-        enableLiveAutocompletion: true
     });
     ACE.$blockScrolling = Infinity; // Silences the 'blockScrolling' warning
     ACE.setTheme("ace/theme/kr_theme_legacy"); // Make it look nice.
@@ -86,6 +84,11 @@ function pythonEditor(id, autocompleteApi) {
         }
     };
     langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter]);
+
+    editor.enableAutocomplete = function(enable) {
+        EDITOR.ACE.setOption('enableBasicAutocompletion', enable);
+        EDITOR.ACE.setOption('enableLiveAutocompletion', enable);
+    };
 
     // Gets the textual content of the editor (i.e. what the user has written).
     editor.getCode = function() {
@@ -394,6 +397,8 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        EDITOR.enableAutocomplete(true);
+        $('#menu-switch-autocomplete').prop("checked", true);
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -774,6 +779,11 @@ function web_editor(config) {
         $("#zoom-out").click(function (e) {
             zoomOut();
             e.stopPropagation();
+        });
+
+        $('#menu-switch-autocomplete').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            EDITOR.enableAutocomplete(setEnable);
         });
 
         window.addEventListener('resize', function() {
