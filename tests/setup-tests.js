@@ -19,6 +19,7 @@ global.forge = require('node-forge');
 
 // Import our source code under test
 require('../hexlify.js');
+require('../micropythonapi.js');
 require('../python-main.js');
 
 global.puppeteer = require('puppeteer');

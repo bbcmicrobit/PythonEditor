@@ -22,7 +22,7 @@ function script(url) {
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
-function pythonEditor(id) {
+function pythonEditor(id, autocompleteApi) {
     'use strict';
 
     // An object that encapsulates the behaviour of the editor.
@@ -30,8 +30,31 @@ function pythonEditor(id) {
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
+    // Generates an expanded list of words for the ACE autocomplete to digest.
+    var populateWordList = function(apiObj) {
+        var wordsHorizontal = [];
+        Object.keys(apiObj).forEach(function(module) {
+            wordsHorizontal.push(module);
+            if (Array.isArray(apiObj[module])){
+                apiObj[module].forEach(function(func) {
+                    wordsHorizontal.push(module + "." + func);
+                });
+            } else {
+                Object.keys(apiObj[module]).forEach(function(sub) {
+                    wordsHorizontal.push(module + "." + sub);
+                    if (Array.isArray(apiObj[module][sub])) {
+                        apiObj[module][sub].forEach(function(func) {
+                            wordsHorizontal.push(module + "." + sub + "." + func);
+                            wordsHorizontal.push(sub + "." + func);
+                        });
+                    }
+                });
+            }
+        });
+        return (wordsHorizontal);
+    };
+
     // Represents the ACE based editor.
-    var langTools = ace.require("ace/ext/language_tools");
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
         enableSnippets: true,  // Enable code snippets.
@@ -39,31 +62,30 @@ function pythonEditor(id) {
         enableLiveAutocompletion: true
     });
     ACE.$blockScrolling = Infinity; // Silences the 'blockScrolling' warning
-
-    var horizontalWordList = populateWordList();
-
-    var staticWordCompleter = {
-        identifierRegexps: [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
-        getCompletions: function(editor, session, pos, prefix, callback) {
-            var wordList = horizontalWordList;
-            
-            callback(null, wordList.map(function(word) {
-                return {
-                    caption: word,
-                    value: word,
-                    meta: "static"
-                };
-            }));
-        }
-    }
-    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter])
-    
-    ACE.setTheme("ace/theme/kr_theme_legacy");  // Make it look nice.
-    ACE.getSession().setMode("ace/mode/python_microbit");  // We're editing Python.
+    ACE.setTheme("ace/theme/kr_theme_legacy"); // Make it look nice.
+    ACE.getSession().setMode("ace/mode/python_microbit"); // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
     ACE.setFontSize(editor.initialFontSize);
     editor.ACE = ACE;
+
+    // Configure Autocomplete
+    var langTools = ace.require("ace/ext/language_tools");
+    var horizontalWordList = populateWordList(autocompleteApi || {});
+    var staticWordCompleter = {
+        "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
+        "getCompletions": function(editor, session, pos, prefix, callback) {
+            var wordList = horizontalWordList;
+            callback(null, wordList.map(function(word) {
+                return {
+                    "caption": word,
+                    "value": word,
+                    "meta": "static"
+                };
+            }));
+        }
+    };
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter]);
 
     // Gets the textual content of the editor (i.e. what the user has written).
     editor.getCode = function() {
@@ -150,93 +172,6 @@ function pythonEditor(id) {
 if (typeof module !== 'undefined' && module.exports) {
     global.pythonEditor = pythonEditor;
 }
-
-
-/*
-This code generates a list of words for the autocomplete.
-*/
-function populateWordList(){
-    var words = {
-        "microbit" : {
-            "Image" : ['ALL_CLOCKS', 'ANGRY', 'ARROW_E', 'ARROW_N', 'ARROW_NE', 'ARROW_NW', 'ARROW_S', 'ARROW_SE', 'ARROW_SW', 'ARROW_W', 'ASLEEP', 'BUTTERFLY', 'CHESSBOARD', 'CLOCK1', 'CLOCK10', 'CLOCK11', 'CLOCK12', 'CLOCK2', 'CLOCK3', 'CLOCK4', 'CLOCK5', 'CLOCK6', 'CLOCK7', 'CLOCK8', 'CLOCK9', 'CONFUSED', 'COW', 'DIAMOND', 'DIAMOND_SMALL', 'DUCK', 'FABULOUS', 'GHOST', 'GIRAFFE', 'HAPPY', 'HEART', 'HEART_SMALL', 'HOUSE', 'MEH', 'MUSIC_CROTCHET', 'MUSIC_QUAVER', 'MUSIC_QUAVERS', 'NO', 'PACMAN', 'PITCHFORK', 'RABBIT', 'ROLLERSKATE', 'SAD', 'SILLY', 'SKULL', 'SMILE', 'SNAKE', 'SQUARE', 'SQUARE_SMALL', 'STICKFIGURE', 'SURPRISED', 'SWORD', 'TARGET', 'TORTOISE', 'TRIANGLE', 'TRIANGLE_LEFT', 'TSHIRT', 'UMBRELLA', 'XMAS', 'YES'],
-            "pin0" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin1" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin2" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin3" : ["read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin4" : ["read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin5" : ["read_digital", "write_digital"],
-            "pin6" : ["read_digital", "write_digital"],
-            "pin7" : ["read_digital", "write_digital"],
-            "pin8" : ["read_digital", "write_digital"],
-            "pin9" : ["read_digital", "write_digital"],
-            "pin10" : ["read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "pin11" : ["read_digital", "write_digital"],
-            "pin12" : ["read_digital", "write_digital"],
-            "pin13" : ["read_digital", "write_digital"],
-            "pin14" : ["read_digital", "write_digital"],
-            "pin15" : ["read_digital", "write_digital"],
-            "pin16" : ["read_digital", "write_digital"],
-            "pin19" : ["read_digital", "write_digital"],
-            "pin20" : ["read_digital", "write_digital"],
-            "accelerometer" : ["current_gesture", "get_gestures", "get_values", "get_x", "get_y", "get_z", "was_gesture"],
-            "button_a" : ["get_presses", "is_pressed", "was_pressed"],
-            "button_b" : ["get_presses", "is_pressed", "was_pressed"],
-            "compass" : ["calibrate", "clear_calibration", "get_field_strength", "get_x", "get_y", "get_z", "heading", "is_calibrated"],
-            "display" : ["clear", "get_pixel", "is_on", "off", "on", "read_light_level", "scroll", "set_pixel", "show"],
-            "i2c" : ["init", "read", "scan", "write"],
-            "panic" : "",
-            "reset" : "",
-            "running_time" : "",
-            "sleep" : "",
-            "spi" : ["init", "read", "write", "write_readinto"],
-            "temperature" : "",
-            "uart" : ["any", "init", "read", "readall", "readline", "write"]
-        },
-        "audio" : ["play", "AudioFrame"],
-        "machine" : ["disable_irq", "enable_irq", "freq", "reset", "time_pulse_us", "unique_id"],
-        "micropython" : ["const", "heap_lock", "heap_unlock", "kbd_intr", "mem_info", "opt_level", "qstr_info", "stack_use"],
-        "music" : ["BADDY", "BA_DING", "BIRTHDAY", "BLUES", "CHASE", "DADADADUM", "ENTERTAINER", "FUNERAL", "FUNK", "JUMP_DOWN", "JUMP_UP", "NYAN", "ODE", "POWER_DOWN", "POWER_UP", "PRELUDE", "PUNCHLINE", "PYTHON", "RINGTONE", "WAWAWAWAA", "WEDDING", "get_tempo", "pitch", "play", "reset", "set_temp", "stop"],
-        "speech" : ["pronounce", "say", "sing", "translate"],
-        "radio" : ["RATE_1MBIT", "RATE_250KBIT", "RATE_2MBIT", "config", "off", "on", "receive", "receive_bytes", "receive_bytes_into", "receive_full", "reset", "send", "send_bytes"],
-        "os" : ["remove", "listdir", "size", "uname"],
-        "time" : ["sleep", "sleep_ms", "sleep_us", "ticks_ms", "ticks_us", "ticks_add", "ticks_diff"],
-        "utime" : ["sleep", "sleep_ms", "sleep_us", "ticks_ms", "ticks_us", "ticks_add", "ticks_diff"],
-        "ucollections" : ["namedtuple", "OrderedDict"],
-        "collections" : ["namedtuple", "OrderedDict"],
-        "array" : ["array"],
-        "math" : ["e", "pi", "sqrt", "pow", "exp", "log", "cos", "sin", "tan", "acos", "asin", "atan", "atan2", "ceil", "copysign", "fabs", "floor", "fmod", "frexp", "ldexp", "modf", "isfinite", "isinf", "isnan", "trunc", "radians", "degrees"],
-        "random" : ["getrandbits", "seed", "randrange", "randint", "choice", "random", "uniform"],
-        "ustruct" : ["calcsize", "pack", "pack_into", "unpack", "unpack_from"],
-        "struct" : ["calcsize", "pack", "pack_into", "unpack", "unpack_from"],
-        "sys" : ["version", "version_info", "implementation", "platform", "byteorder", "exit", "print_exception"],
-        "gc" : ["collect", "disable", "enable", "isenabled", "mem_free", "mem_alloc", "threshold"],
-        "neopixel" : {
-            "NeoPixel" : ["clear", "show"]
-        }
-    };
-
-    var wordsHorizontal = [];
-    Object.keys(words).forEach(function(module){
-        wordsHorizontal.push(module);
-        if (Array.isArray(words[module])){
-            words[module].forEach(function(func){
-                wordsHorizontal.push(module + "." + func);
-            });
-        }else{
-            Object.keys(words[module]).forEach(function(sub){
-                wordsHorizontal.push(module + "." + sub);
-                if (Array.isArray(words[module][sub])){
-                    words[module][sub].forEach(function(func){
-                        wordsHorizontal.push(module + "." + sub + "." + func);
-                        wordsHorizontal.push(sub + "." + func);
-                    });
-                }
-            });
-        }
-    });
-    return (wordsHorizontal);
-}
-
 
 /*
  * Returns an object to wrap around Blockly.
@@ -327,7 +262,7 @@ function web_editor(config) {
     'use strict';
 
     // Global (useful for testing) instance of the ACE wrapper object
-    window.EDITOR = pythonEditor('editor');
+    window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
 
