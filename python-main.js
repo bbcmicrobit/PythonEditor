@@ -349,15 +349,6 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-        // Configure the zoom related buttons.
-        $("#zoom-in").click(function (e) {
-            e.stopPropagation();
-            zoomIn();
-        });
-        $("#zoom-out").click(function (e) {
-            e.stopPropagation();
-            zoomOut();
-        });
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -731,6 +722,14 @@ function web_editor(config) {
             formatMenuContainer('command-help', 'helpsupport_container');
             // Stop immediate closure
             e.stopImmediatePropagation();
+        });
+        $("#zoom-in").click(function (e) {
+            zoomIn();
+            e.stopPropagation();
+        });
+        $("#zoom-out").click(function (e) {
+            zoomOut();
+            e.stopPropagation();
         });
 
         window.addEventListener('resize', function() {
