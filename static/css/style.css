@@ -455,21 +455,31 @@ div.load-form {
     background: #ccc !important;
 }
 
-.helpsupport_container {
-        position: absolute;
-        margin: auto auto auto auto;
-        display: none;
-        padding-right: 1em;
-        z-index: 999;
-        background-color: #f2f2f2;
-        border-radius: 0.5rem;
+.buttons_menu_container {
+    position: absolute;
+    margin: auto 10px auto auto;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding-right: 1em;
+    z-index: 999;
+    background-color: #f2f2f2;
+    border: 1px solid #ffffff;
+    border-radius: 0.5rem;
 }
 
-.helpsupport {
-        margin-top: .5em;
-        margin-bottom: .5em;
+.buttons_menu_item {
+    margin-top: .5em;
+    margin-bottom: .5em;
+    margin-left: 0.75em;
+    margin-right: 0.75em;
+}
+.buttons_menu_item a {
+    padding: 0 !important;
 }
 
-.helpsupport_rhs {
+.buttons_menu_rhs {
     margin: auto;
 }

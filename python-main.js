@@ -293,6 +293,13 @@ function web_editor(config) {
         if(config.flags.share) {
             $("#command-share").removeClass('hidden');
         }
+        if(config.flags.experimental) {
+            $("#known-issues").removeClass('hidden');
+            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+        }
+        if(config.flags.options) {
+            $("#command-options").removeClass('hidden');
+        }
         // Update the help link to pass feature flag information.
         var helpAnchor = $("#help-link");
         var featureQueryString = Object.keys(config.flags).filter(function(f) {
@@ -342,20 +349,6 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-        // If configured as experimental update editor background to indicate it
-        if(config.flags.experimental) {
-            EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
-            $("#known-issues").removeClass('hidden');
-        }
-        // Configure the zoom related buttons.
-        $("#zoom-in").click(function (e) {
-            e.stopPropagation();
-            zoomIn();
-        });
-        $("#zoom-out").click(function (e) {
-            e.stopPropagation();
-            zoomOut();
-        });
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -673,6 +666,26 @@ function web_editor(config) {
         $('#editor').focus();
     }
 
+    function formatMenuContainer(parentButtonId, containerId) {
+        var container = $('#' + containerId);
+        if (container.is(':visible')) {
+            var parentButton = $('#' + parentButtonId);
+            if ($(window).width() > 720) {
+                if (container.offset().left !== parentButton.offset().left) {
+                    container.css('left', parentButton.offset().left);
+                    container.css('top', parentButton.offset().top + parentButton.outerHeight() + 10);
+                }
+            } else {
+                var containerRight = container.offset().left + container.outerWidth();
+                var parentButtonRight = parentButton.offset().left + parentButton.outerWidth();
+                if (containerRight !== parentButtonRight) {
+                    container.css('left', parentButtonRight - container.outerWidth());
+                    container.css('top', parentButton.offset().top + parentButton.outerHeight() + 10);
+                }
+            }
+        }
+    }
+
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
     function setupButtons() {
@@ -694,44 +707,42 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
-
-        function formatHelpPanel(){
-            if($(".helpsupport_container").offset().left !== $("#command-help").offset().left && $(window).width() > 620){
-                $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
-                $(".helpsupport_container").css("left", $("#command-help").offset().left);
-            }
-            else if($(window).width() < 620){
-                $(".helpsupport_container").css("left", $("#command-help").offset().left - 200);
-                $(".helpsupport_container").css("top", $("#command-help").offset().top + $("#toolbox").height() + 10);
-            }
-        };
-
-        $("#command-help").click(function (e) {
-            // Show help
-            formatHelpPanel();
-            // Toggle visibility
-            if($(".helpsupport_container").css("display") == "none"){
-                $(".helpsupport_container").css("display", "flex");
-                $(".helpsupport_container").css("display", "-ms-flexbox"); // IE10 support
-            } else {
-                $(".helpsupport_container").css("display", "none");
-            }
-
+        $("#command-options").click(function (e) {
+            // Hide any other open menus and show/hide options menu
+            $('#helpsupport_container').addClass('hidden');
+            $('#options_container').toggleClass('hidden');
+            formatMenuContainer('command-options', 'options_container');
             // Stop immediate closure
             e.stopImmediatePropagation();
         });
-
-        window.addEventListener('resize', function(){
-            if($(".helpsupport_container").is(":visible")){
-            formatHelpPanel();
-            }
+        $("#command-help").click(function (e) {
+            // Hide any other open menus and show/hide help menu
+            $('#options_container').addClass('hidden');
+            $('#helpsupport_container').toggleClass('hidden');
+            formatMenuContainer('command-help', 'helpsupport_container');
+            // Stop immediate closure
+            e.stopImmediatePropagation();
+        });
+        $("#zoom-in").click(function (e) {
+            zoomIn();
+            e.stopPropagation();
+        });
+        $("#zoom-out").click(function (e) {
+            zoomOut();
+            e.stopPropagation();
         });
 
-        // Add document click listener
-        document.body.addEventListener('click',function(event) {
-            // Close helpsupport if the click isn't on a descendent of #command-help
-            if($(event.target).closest('.helpsupport_container').length == 0 || $(event.target).prop("tagName").toLowerCase() === 'a')
-                $(".helpsupport_container").css("display", "none");
+        window.addEventListener('resize', function() {
+            formatMenuContainer('command-options', 'options_container');
+            formatMenuContainer('command-help', 'helpsupport_container');
+        });
+
+        document.body.addEventListener('click', function(event) {
+            // Close any button menu on a click is outside menu or a link within
+            if ($(event.target).closest('.buttons_menu_container').length == 0 ||
+                    $(event.target).prop('tagName').toLowerCase() === 'a') {
+                $('.buttons_menu_container').addClass('hidden');
+            }
         });
     }
 

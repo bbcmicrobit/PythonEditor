@@ -183,34 +183,45 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Snippets</div>
                 </a>
-                <a href="#" class="roundbutton action"
-                    id="command-help" tabindex="6"
-                    title="Discover helpful resources">
-                    <div class="roundsymbol">
-                        <i class="fa fa-question"></i>
-                    </div>
-                    <div class="roundlabel">Help</div>
-                </a>
-                <div class="helpsupport_container">
-                    <div class="helpsupport_lhs">
-                        <div class="helpsupport"><a id="docs-link" class="action" title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/" target="_blank">Documentation</a></div>
-                        <div class="helpsupport"><a id="help-link" class="action" title="Open help for this editor in a new tab" href="help.html" target="_blank" >Help</a></div>
-                        <div class="helpsupport"><a id="support-link" class="action" title="Get support for your micro:bit in a new tab" href="https://support.microbit.org/support/home" target="_blank">Support</a></div>
-                        <div class="helpsupport hidden" id="known-issues"><a id="issues-link" class="action" title="View open issues for the Python Editor in GitHub" href="https://github.com/bbcmicrobit/PythonEditor/issues" target="_blank">Issue Tracker</a></div>
-                    </div>
-                    <div class="helpsupport_rhs">
-                        <div class="helpsupport">Editor Version: <script>document.write(EDITOR_VERSION);</script></div>
-                        <div class="helpsupport">MicroPython Version: <script>document.write(UPY_VERSION);</script></div>
-                    </div>
-                </div>
-                <a href="#" class="roundbutton action hidden"
-                    id="command-share" tabindex="7"
+                <a href="#" class="roundbutton action hidden" id="command-share"
+                    tabindex="6"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
                     </div>
                     <div class="roundlabel">Share</div>
                 </a>
+                <a href="#" class="roundbutton action hidden" id="command-options"
+                    tabindex="7"
+                    title="Change the editor settings">
+                    <div class="roundsymbol">
+                        <i class="fa fa-wrench"></i>
+                    </div>
+                    <div class="roundlabel">Options</div>
+                </a>
+                <div class="buttons_menu_container hidden" id="options_container">
+                    <div class="buttons_menu_item">No options available</div>
+                </div>
+                <a href="#" class="roundbutton action" id="command-help"
+                    tabindex="8"
+                    title="Discover helpful resources">
+                    <div class="roundsymbol">
+                        <i class="fa fa-question"></i>
+                    </div>
+                    <div class="roundlabel">Help</div>
+                </a>
+                <div class="buttons_menu_container hidden" id="helpsupport_container">
+                    <div class="buttons_menu_lhs">
+                        <div class="buttons_menu_item"><a id="docs-link" class="action" title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/" target="_blank">Documentation</a></div>
+                        <div class="buttons_menu_item"><a id="help-link" class="action" title="Open help for this editor in a new tab" href="help.html" target="_blank" >Help</a></div>
+                        <div class="buttons_menu_item"><a id="support-link" class="action" title="Get support for your micro:bit in a new tab" href="https://support.microbit.org/support/home" target="_blank">Support</a></div>
+                        <div class="buttons_menu_item hidden" id="known-issues"><a id="issues-link" class="action" title="View open issues for the Python Editor in GitHub" href="https://github.com/bbcmicrobit/PythonEditor/issues" target="_blank">Issue Tracker</a></div>
+                    </div>
+                    <div class="buttons_menu_rhs">
+                        <div class="buttons_menu_item">Editor Version: <script>document.write(EDITOR_VERSION);</script></div>
+                        <div class="buttons_menu_item">MicroPython Version: <script>document.write(UPY_VERSION);</script></div>
+                    </div>
+                </div>
                 <div id="script-icons" class="vbox">
                     <a class="holder zoomer action" tabindex="8" id="zoom-in"
                         href="#">
@@ -333,8 +344,9 @@ web_editor({
     'flags': {
       'blocks': false,
       'snippets': true,
+      'share': false,
+      'options': false,
       'experimental': false,
-      'share': false
     },
 });
         </script>
