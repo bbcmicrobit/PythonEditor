@@ -37,27 +37,27 @@ video {
 .roundsymbol {
   width: 10rem;
   height: 10rem;
-  border: 6px solid #febf2e;
+  border: 6px solid #FFCC33;
   border-radius: 50%;
   margin: .2rem;
   margin-bottom: 0;
   text-align: center;
   font-size: 4rem;
   padding-top: .3em;
-  color: #3758ce;
+  color: #336699;
   background: #FFFFFF;
 }
 .roundsymbol-sm {
   width: 5rem;
   height: 5rem;
-  border: 6px solid #febf2e;
+  border: 6px solid #FFCC33;
   border-radius: 50%;
   margin: .2rem;
   margin-bottom: 0;
   text-align: center;
   font-size: 2rem;
   padding-top: .3em;
-  color: #3758ce;
+  color: #336699;
   background: #FFFFFF;
 }
 
