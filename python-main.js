@@ -312,7 +312,7 @@ function web_editor(config) {
         helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
 
         if (navigator.usb) {
-            script('static/js/dap.bundle.js');
+            script('static/js/dap.umd.js');
             script('static/js/hterm_all.js');
             $("#command-connect").removeClass('hidden');
             $("#command-serial").removeClass('hidden');
