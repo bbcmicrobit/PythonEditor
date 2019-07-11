@@ -21,4 +21,7 @@ global.microbitFs = require('../static/js/microbit-fs.umd.js');
 require('../micropythonapi.js');
 require('../python-main.js');
 
+//Import url parser lib
+require('../urlparser.js');
+
 global.puppeteer = require('puppeteer');
