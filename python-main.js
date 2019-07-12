@@ -22,7 +22,7 @@ function script(url) {
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
-function pythonEditor(id) {
+function pythonEditor(id, autocompleteApi) {
     'use strict';
 
     // An object that encapsulates the behaviour of the editor.
@@ -30,17 +30,74 @@ function pythonEditor(id) {
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
+    // Generates an expanded list of words for the ACE autocomplete to digest.
+    var fullWordList = function(apiObj) {
+        var wordsHorizontal = [];
+        Object.keys(apiObj).forEach(function(module) {
+            wordsHorizontal.push(module);
+            if (Array.isArray(apiObj[module])){
+                apiObj[module].forEach(function(func) {
+                    wordsHorizontal.push(module + "." + func);
+                });
+            } else {
+                Object.keys(apiObj[module]).forEach(function(sub) {
+                    wordsHorizontal.push(module + "." + sub);
+                    if (Array.isArray(apiObj[module][sub])) {
+                        apiObj[module][sub].forEach(function(func) {
+                            wordsHorizontal.push(module + "." + sub + "." + func);
+                            wordsHorizontal.push(sub + "." + func);
+                        });
+                    }
+                });
+            }
+        });
+        return (wordsHorizontal);
+    };
+
     // Represents the ACE based editor.
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
-        enableSnippets: true  // Enable code snippets.
+        enableSnippets: true,  // Enable code snippets.
     });
-    ACE.setTheme("ace/theme/kr_theme");  // Make it look nice.
-    ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
+    ACE.$blockScrolling = Infinity; // Silences the 'blockScrolling' warning
+    ACE.setTheme("ace/theme/kr_theme_legacy"); // Make it look nice.
+    ACE.getSession().setMode("ace/mode/python_microbit"); // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
     ACE.setFontSize(editor.initialFontSize);
     editor.ACE = ACE;
+
+    // Configure Autocomplete
+    var langTools = ace.require("ace/ext/language_tools");
+    var extraCompletions = fullWordList(autocompleteApi || []).map(function(word) {
+        return { "caption": word, "value": word, "meta": "static" };
+    });
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
+        "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
+        "getCompletions": function(editor, session, pos, prefix, callback) {
+            callback(null, extraCompletions);
+        }
+    }]);
+
+    editor.enableAutocomplete = function(enable) {
+        ACE.setOption('enableBasicAutocompletion', enable);
+        ACE.setOption('enableLiveAutocompletion', enable);
+    };
+
+    editor.triggerAutocompleteWithEnter = function(enable) {
+        if (!ACE.completer) {
+            // Completer not yet initialise, force it by opening and closing it
+            EDITOR.ACE.execCommand('startAutocomplete');
+            EDITOR.ACE.completer.detach();
+        }
+        if (enable) {
+            ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
+                return editor.completer.insertMatch();
+            });
+        } else {
+            ACE.completer.keyboardHandler.removeCommand('Return');
+        }
+    };
 
     // Gets the textual content of the editor (i.e. what the user has written).
     editor.getCode = function() {
@@ -65,13 +122,13 @@ function pythonEditor(id) {
     // Return details of all the snippets this editor knows about.
     editor.getSnippets = function() {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        return snippetManager.snippetMap.python;
+        return snippetManager.snippetMap.python_microbit;
     };
 
     // Triggers a snippet by name in the editor.
     editor.triggerSnippet = function(snippet) {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        snippet = snippetManager.snippetNameMap.python[snippet];
+        snippet = snippetManager.snippetNameMap.python_microbit[snippet];
         if (snippet) {
             snippetManager.insertSnippet(ACE, snippet.content);
         }
@@ -212,7 +269,7 @@ function web_editor(config) {
     'use strict';
 
     // Global (useful for testing) instance of the ACE wrapper object
-    window.EDITOR = pythonEditor('editor');
+    window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
 
@@ -363,6 +420,8 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        EDITOR.enableAutocomplete(true);
+        $('#menu-switch-autocomplete').prop("checked", true);
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -813,7 +872,6 @@ function web_editor(config) {
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
         // For example, type "wh" followed by TAB.
-        var snippetManager = ace.require("ace/snippets").snippetManager;
         var template = $('#snippet-template').html();
         Mustache.parse(template);
         var context = {
@@ -822,7 +880,7 @@ function web_editor(config) {
             'instructions': config.translate.code_snippets.instructions,
             'trigger_heading': config.translate.code_snippets.trigger_heading,
             'description_heading': config.translate.code_snippets.description_heading,
-            'snippets': snippetManager.snippetMap.python,
+            'snippets': EDITOR.getSnippets(),
             'describe': function() {
                 return function(text, render) {
                     var name = render(text);
@@ -1358,6 +1416,20 @@ function web_editor(config) {
         $("#zoom-out").click(function (e) {
             zoomOut();
             e.stopPropagation();
+        });
+
+        $('#menu-switch-autocomplete').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            if (setEnable) {
+                $('#autocomplete-enter').removeClass('hidden');
+            } else {
+                $('#autocomplete-enter').addClass('hidden');
+            }
+            EDITOR.enableAutocomplete(setEnable);
+        });
+        $('#menu-switch-autocomplete-enter').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnable);
         });
 
         window.addEventListener('resize', function() {

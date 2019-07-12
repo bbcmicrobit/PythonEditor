@@ -240,7 +240,22 @@ Nicholas and Damien.
                     <div class="roundlabel">Options</div>
                 </a>
                 <div class="buttons_menu_container hidden" id="options_container">
-                    <div class="buttons_menu_item">No options available</div>
+                    <div class="buttons_menu_lhs">
+                        <div class="buttons_menu_item">
+                            <span class="menu-switch-label">Autocomplete:</span>
+                            <label class="menu-switch">
+                                <input type="checkbox" id="menu-switch-autocomplete">
+                                <span class="menu-switch-slider"></span>
+                            </label>
+                        </div>
+                        <div class="buttons_menu_item" id="autocomplete-enter">
+                            <span class="menu-switch-label">┗ On Enter:</span>
+                            <label class="menu-switch">
+                                <input type="checkbox" id="menu-switch-autocomplete-enter" checked>
+                                <span class="menu-switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
                     tabindex="9"
@@ -320,6 +335,7 @@ Nicholas and Damien.
         <script src="static/js/lzma-d.js"></script>
         <script src="static/js/base64.js"></script>
         <script src="static/js/microbit-fs.umd.js"></script>
+        <script src="micropythonapi.js"></script>
         <script src="python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
@@ -401,11 +417,12 @@ web_editor({
         'fs-add-file': 'Add file'
       }
     },
+    'microPythonApi': microPythonApi,
     'flags': {
       'blocks': false,
       'snippets': true,
       'share': false,
-      'options': false,
+      'options': true,
       'experimental': false,
     },
 });
