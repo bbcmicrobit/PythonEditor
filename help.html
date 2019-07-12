@@ -34,15 +34,14 @@
     <![endif]-->
     <script>
         $(document).ready(function() {
-            let paramsToCheck = ["snippets","blocks"];
+            var paramsToCheck = ["snippets","blocks","share"];
             paramsToCheck.forEach(function(key){
-                let urlFlag = urlparse(key) || "false";
+                var urlFlag = urlparse(key) || "false";
                 if( urlFlag === "true"){
                     var hiddenFeatureClass = 'hide-' + key;
                     $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
                 };
             })
-            
         });
     </script>
   </head>
