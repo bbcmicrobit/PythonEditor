@@ -73,6 +73,10 @@ body, input {
   font-size: 1rem;
 }
 
+h2 {
+  margin-top: 0;
+}
+
 #main {
   margin: 0;
   position: absolute;
@@ -118,7 +122,7 @@ body, input {
   cursor: pointer;
 }
 
-.zoomer, 
+.zoomer,
 .saved-state {
   cursor: pointer !important;
 }
@@ -421,17 +425,42 @@ a.command:hover {
     display: none;
 }
 
-div.load-drag-target {
-    height: 200px;
+div.expandable {
+    margin-top: 15px;
     background: #ddd;
     border: 1px solid #aaa;
-    border-radius: 15px;
+    border-radius: 9px;
+    position: relative;
+    padding: 0 10px 5px 10px;
 }
 
+div.expandable h2 {
+    display: inline-block;
+    margin: 10px 0 10px 5px;
+}
+
+div.expandable-content {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+div.load-drag-target {
+    height: 160px;
+    background: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 9px;
+    position: relative;
+}
+div.load-drag-target > p {
+  margin: 0px;
+  padding: 0px;
+}
 
 div.load-form {
     padding-top: 20px;
-    height: 200px;
+    height: 160px;
 }
 
 .load-form input {
@@ -446,7 +475,7 @@ div.load-form {
     transform: translate(-50%, -50%);
 }
 
-#load-alt a, #load-alt a.visited {
+.load-drag-target a, .load-drag-target a.visited {
     color: #336699;
     font-weight: bold;
 }
@@ -511,4 +540,129 @@ div.load-form {
     padding: .2em;
     color: #fff;
     font-size: 22px;
+}
+
+.fs-file-list table {
+    width: 100%;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    background: #c7c7c7;
+    border: 1px solid #aaa;
+    margin: 5px 2px 5px 1px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.fs-file-list table thead {
+    font-weight: bold;
+}
+
+.fs-file-list table tbody {
+    min-height: 2em;
+}
+
+.save-button {
+    font-size: 15px;
+    border-radius: 9px;
+    height: 3.0em;
+    outline:none;
+    cursor:pointer;
+    background-color: #f3f3f3;
+}
+
+.save-button:hover {
+    background-color: #336699;
+    color: #ffffff;
+}
+
+.save-button:hover i {
+    color: #ffffff !important;
+}
+
+.save-button.hex {
+    width: 10em;
+    float: right;
+}
+
+.save-button.show {
+    background: none;
+    border: none;
+    color: black;
+}
+
+.save-button.add {
+    width: 8em;
+}
+
+.save-button.remove {
+    width: 4em;
+    height: 2em;
+    margin-left: 5px;
+    float: right;
+}
+
+.save-button.remove:hover {
+  background-color: #D71D1D;
+}
+
+.save-button.save {
+    width: 4em;
+    height: 2em;
+    float: right;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.fs-space-table {
+    table-layout: fixed;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    margin-bottom: 10px;
+    border-collapse:separate;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.fs-space-table > tbody > tr> td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0px 6px;
+    height: 20px;
+    font-size: 13px;
+}
+.fs-space-table-first {
+    border-radius: 6px 0px 0px 6px;
+}
+#fs-space-modules {
+    width: auto;
+    color: white;
+    min-width: 2%;
+    background-color: #569092;
+}
+#fs-space-main {
+    width: auto;
+    min-width: 2%;
+    color: white;
+    background-color: #8365c1;
+}
+#fs-space-other {
+    width: auto;
+    min-width: 2%;
+    color: white;
+    background-color: #9a9797;
+}
+#fs-space-free {
+    width: auto;
+    min-width: 2%;
 }

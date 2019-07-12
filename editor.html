@@ -80,21 +80,49 @@ Nicholas and Damien.
             EDITOR_VERSION = "1.1.5";
             UPY_VERSION = "1.0.1";
         </script>
-
         <script id="load-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-upload"></i> <strong>{{ title }}</strong></h2>
+            <h2><i class="fa fa-file"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
-                <p>{{ instructions }}</p>
+                <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
+                <p>{{ instructions }}<br><a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
             </div>
-            <div class="load-form">
-                <form id="load-form-form">
-                    <input type="file" name="load-form-file-upload"/><br/>
-                    <input type="submit" value="{{ submit }}"/>
-                </form>
-            </div>
-            <div id="load-alt">
-                <p><a href="#" class="load-form load-toggle">{{ toggle-drop }}</a></p>
-                <p><a href="#" class="load-drag-target load-toggle">{{ toggle-file }}</a></p>
+            <div class="expandable">
+              <div>
+                  <h2>{{ program-title }}</h2>
+                  <div>
+                  <button type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
+                  <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} <i class="fa fa-caret-down"></i></button>
+                  </div>
+              </div>
+              <div class="expandable-content">
+                <div class="fs-file-list" id="fs-file-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Filename</td>
+                                <td>Size</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <table class='fs-space-table'>
+                    <tbody>
+                      <tr>
+                        <td id="fs-space-modules" title="modules" class="fs-space-table-first">modules</td>
+                        <td id="fs-space-main" title="main.py">main.py</td>
+                        <td id="fs-space-other" title="other">other</td>
+                        <td id="fs-space-free" title="free">free</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <button type="button" class="action save-button add" id="fs-file-upload-button" tile="{{ fs-add-file }}"><i class="fa fa-plus-circle"></i> {{ fs-add-file }}</button>
+                    <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
+                </div>
+              </div>
             </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
@@ -159,37 +187,26 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Connect</div>
                 </a>
-                <a href="#" class="roundbutton action" id="command-save"
+                <a href="#" class="roundbutton action" id="command-files"
                     tabindex="3"
-                    title="Save your Python code to your computer">
+                    title="Load/Save files">
                     <div class="roundsymbol">
-                        <i class="fa fa-download"></i>
+                        <i class="fa fa-file"></i>
                     </div>
-                    <div class="roundlabel">Save</div>
-                </a>
-                <a href="#" class="roundbutton action" id="command-load"
-                    tabindex="4"
-                    title="Load Python code or hex file into the editor">
-                    <div class="roundsymbol">
-                        <i class="fa fa-upload"></i>
-                    </div>
-                    <div class="roundlabel">Load</div>
+                    <div class="roundlabel">Load/Save</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-serial"
-                    tabindex="5"
+                    tabindex="4"
                     title="Connect to your micro:bit via serial">
                     <div class="roundsymbol">
                         <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
-                            <path
-
-     d="m 123.7051,148.34921 c -2.89667,0.7124 -3.12083,4.34726 -2.52182,6.73621 0.0802,14.71098 -0.21958,29.42698 0.27409,44.13341 3.32459,3.91031 8.88495,4.22528 13.02744,6.89911 18.98534,8.63879 37.97074,17.27741 56.95602,25.91632 -23.08661,10.54025 -46.23337,20.9492 -69.22578,31.69428 -2.4063,3.98087 -0.37642,8.72319 -1.01647,13.03636 0.0189,12.59711 -0.24199,25.20185 0.31304,37.79166 1.42704,2.21788 4.745,1.58443 6.32834,-0.10552 39.47152,-19.90837 78.95331,-39.79626 118.38368,-59.78576 2.45594,-3.86876 0.45217,-8.56637 1.06388,-12.79766 -9.2e-4,-10.44221 0.23596,-20.89313 -0.30258,-31.32695 -3.92629,-4.28756 -10.10353,-5.0331 -14.76392,-8.27141 -35.9248,-18.0005 -71.81395,-36.07349 -107.83418,-53.88207 -0.22666,-0.0159 -0.45378,-0.0542 -0.68174,-0.038 z m 233.85267,151.79873 c -41.10937,0.16168 -82.21926,0.0656 -123.32866,0.21518 -2.79907,1.273 -2.46862,4.90246 -2.05358,7.38358 0.0849,9.39989 -0.47292,18.82688 0.44779,28.20219 2.56216,2.59475 6.51332,1.10343 9.70184,1.34537 39.23126,-0.019 78.46295,0.0642 117.69372,-0.17539 2.70897,-1.44807 2.26294,-5.04936 1.90027,-7.59696 -0.0601,-9.31199 0.42409,-18.64747 -0.41926,-27.93817 -0.81939,-1.31659 -2.54446,-1.46994 -3.94212,-1.4358 z"
-     id="rect12318"inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
+                            <path d="m 123.7051,148.34921 c -2.89667,0.7124 -3.12083,4.34726 -2.52182,6.73621 0.0802,14.71098 -0.21958,29.42698 0.27409,44.13341 3.32459,3.91031 8.88495,4.22528 13.02744,6.89911 18.98534,8.63879 37.97074,17.27741 56.95602,25.91632 -23.08661,10.54025 -46.23337,20.9492 -69.22578,31.69428 -2.4063,3.98087 -0.37642,8.72319 -1.01647,13.03636 0.0189,12.59711 -0.24199,25.20185 0.31304,37.79166 1.42704,2.21788 4.745,1.58443 6.32834,-0.10552 39.47152,-19.90837 78.95331,-39.79626 118.38368,-59.78576 2.45594,-3.86876 0.45217,-8.56637 1.06388,-12.79766 -9.2e-4,-10.44221 0.23596,-20.89313 -0.30258,-31.32695 -3.92629,-4.28756 -10.10353,-5.0331 -14.76392,-8.27141 -35.9248,-18.0005 -71.81395,-36.07349 -107.83418,-53.88207 -0.22666,-0.0159 -0.45378,-0.0542 -0.68174,-0.038 z m 233.85267,151.79873 c -41.10937,0.16168 -82.21926,0.0656 -123.32866,0.21518 -2.79907,1.273 -2.46862,4.90246 -2.05358,7.38358 0.0849,9.39989 -0.47292,18.82688 0.44779,28.20219 2.56216,2.59475 6.51332,1.10343 9.70184,1.34537 39.23126,-0.019 78.46295,0.0642 117.69372,-0.17539 2.70897,-1.44807 2.26294,-5.04936 1.90027,-7.59696 -0.0601,-9.31199 0.42409,-18.64747 -0.41926,-27.93817 -0.81939,-1.31659 -2.54446,-1.46994 -3.94212,-1.4358 z" id="rect12318"inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
                         </svg>
                     </div>
                     <div class="roundlabel">Open Serial</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-blockly"
-                    tabindex="6"
+                    tabindex="5"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -199,7 +216,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-snippet"
-                    tabindex="7"
+                    tabindex="6"
                     title="Click to select a snippet (code shortcut)">
                     <div class="roundsymbol">
                         <i class="fa fa-cogs"></i>
@@ -207,7 +224,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Snippets</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-share"
-                    tabindex="8"
+                    tabindex="7"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -215,7 +232,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-options"
-                    tabindex="9"
+                    tabindex="8"
                     title="Change the editor settings">
                     <div class="roundsymbol">
                         <i class="fa fa-wrench"></i>
@@ -226,7 +243,7 @@ Nicholas and Damien.
                     <div class="buttons_menu_item">No options available</div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
-                    tabindex="10"
+                    tabindex="9"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -246,14 +263,14 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer action" tabindex="11" id="zoom-in"
+                    <a class="holder zoomer action" tabindex="10" id="zoom-in"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-plus"
                                 title="Zoom in"></i>
                         </div>
                     </a>
-                    <a class="holder zoomer action" tabindex="12" id="zoom-out"
+                    <a class="holder zoomer action" tabindex="11" id="zoom-out"
                         href="#">
                         <div class="status-icon">
                             <i class="fa fa-search-minus"
@@ -297,17 +314,13 @@ Nicholas and Damien.
         <script src="static/js/encoding.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
-        <script src="static/js/polyfill.min.js" type="application/javascript"></script>
-        <script src="static/js/intel-hex.browser.js" type="application/javascript"></script>
         <script src="static/js/ResizeSensor.js"></script>
         <script src="static/js/ElementQueries.js"></script>
         <script src="static/js/custom-event-polyfill.js"></script>
         <script src="static/js/lzma-d.js"></script>
         <script src="static/js/base64.js"></script>
-        <script src="hexlify.js"
-            type="application/javascript"></script>
-        <script src="python-main.js"
-            type="application/javascript"></script>
+        <script src="static/js/microbit-fs.umd.js"></script>
+        <script src="python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
 // Call the web_editor function to start the editor running.
@@ -348,13 +361,24 @@ web_editor({
       'alerts': {
         'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
         'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
-        'length': 'Oops! Your script is too long given the limited memory on the device.',
+        'load_code': 'Oops! Could not load the code into the hex file.',
         'unrecognised_hex': "Sorry, we couldn't recognise this file",
-        'snippets': 'Snippets are disabled when blockly is enabled.'
+        'snippets': 'Snippets are disabled when blockly is enabled.',
+        'error': 'Error:\n',
+        'empty': 'The Python file does not have any content.',
+        'no_python': 'Could not find valid Python code in the hex file.',
+        'no_script': 'Hex file does not contain a Python script.',
+        'no_main': 'The hex file does not contain a main.py file.',
+        'cant_add_file': 'Could not add file to the system:',
+        'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
+        'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
       },
       'confirms': {
         'quit': "Some of your changes have not been saved. Quit anyway?",
-        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?"
+        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
+        'replace_main': 'Adding a main.py file will replace the code in the editor!',
+        'replace_file': 'Do you want to replace the "{{file_name}}" file?',
+        'replace_module': 'Do you want to replace the "{{module_name}}" module?'
       },
       'code': {
         'start': "# Add your Python code here. E.g.\n" +
@@ -364,16 +388,17 @@ web_editor({
                  "    display.show(Image.HEART)\n" +
                  "    sleep(2000)\n"
       },
-      'drop': {
-        'python': 'Extracted from a Python file',
-        'hex': 'Extracted from a hex file'
-      },
       'load': {
-        'title': 'Load Script or HEX file',
+        'save-hex' : 'Download Hex',
+        'show-files' : 'Show Files',
+        'load-title': 'Load/Save',
+        'program-title': function() {
+          return $("#script-name").val();
+        },
         'instructions': 'Drag and drop a .hex or .py file in here to open it.',
         'submit': 'Load',
-        'toggle-drop': 'Or drag and drop a file',
-        'toggle-file': 'Or pick a file'
+        'toggle-file': 'Or browse for a file',
+        'fs-add-file': 'Add file'
       }
     },
     'flags': {

@@ -15,12 +15,12 @@
     "test:coverage": "npm t -- --coverage",
     "test:ci": "npm t -- --ci --colors"
   },
-  "dependencies": {
-    "node-static": "^0.7.11",
-    "puppeteer": "^1.17.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "jest": "24.5.0",
-    "node-forge": "0.8.2"
+    "node-forge": "0.8.2",
+    "node-static": "^0.7.11",
+    "puppeteer": "^1.17.0",
+    "tmp": "^0.1.0"
   }
 }

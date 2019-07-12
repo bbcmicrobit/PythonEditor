@@ -77,11 +77,6 @@ function pythonEditor(id) {
         }
     };
 
-    // Generates a hex file containing the user's Python from the firmware.
-    editor.getHexFile = function(firmware) {
-        return upyhex.injectPyStrIntoIntelHex(firmware, this.getCode());
-    };
-
     // Given a password and some plaintext, will return an encrypted version.
     editor.encrypt = function(password, plaintext) {
         var key_size = 24;
@@ -227,6 +222,9 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
+    // MicroPython filesystem to be initialised on page load.
+    window.micropythonFs = undefined;
+
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
         $("#script-name").val(x);
@@ -360,7 +358,7 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit");
+            setName("microbit program");
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
@@ -407,15 +405,243 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
+    // Sets up the file system and adds the initial main.py
+    function setupFilesystem() {
+        micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
+        // Get initial main.py
+        micropythonFs.write('main.py', EDITOR.getCode()); // Add main.py
+    }
+
+    // Based on the Python code magic comment it detects a module
+    function isPyModule(codeStr) {
+        var isModule = false;
+        if (codeStr.length) {
+            var codeLines = codeStr.split(/\r?\n/);
+            // Only look at the first three lines
+            var loopEnd = Math.min(3, codeLines.length);
+            for (var i = 0; i < loopEnd; i++) {
+                if (codeLines[i].indexOf('# microbit-module:') == 0) {
+                    isModule = true;
+                }
+            }
+        }
+        return isModule;
+    }
+
+    // Loads Python code into the editor and/or filesystem
+    function loadPy(filename, codeStr) {
+        var isModule = isPyModule(codeStr);
+        var moduleName = filename.replace('.py', '');
+        filename = isModule ? filename : 'main.py';
+        var showModuleLoadedAlert = true;
+        if (isModule && micropythonFs.exists(filename)) {
+            if (!confirm(config.translate.confirms.replace_module.replace('{{module_name}}', moduleName))) {
+                return;
+            }
+            // A confirmation box to replace the module has already been accepted
+            showModuleLoadedAlert = false;
+        }
+        if (codeStr) {
+            try {
+                micropythonFs.write(filename, codeStr);
+            } catch(e) {
+                alert(config.translate.alerts.load_code + '\n' + e.message);
+            }
+        } else {
+            return alert(config.translate.alerts.empty);
+        }
+        if (isModule) {
+            if (micropythonFs.getStorageRemaining() < 0){
+                micropythonFs.remove(filename);
+                return alert(config.translate.alerts.module_out_of_space);
+            }
+            if (showModuleLoadedAlert) {
+                alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
+            }
+        } else {
+            setName(filename.replace('.py', ''));
+            EDITOR.setCode(codeStr);
+            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        }
+    }
+
+    // Reset the filesystem and load the files from this hex file to the fs and editor
+    function loadHex(filename, hexStr) {
+        var errorMsg = '';
+        var code = '';
+        var importedFiles = [];
+        var tryOldMethod = false;
+        try {
+            // If hexStr is parsed correctly it formats the file system before adding the new files
+            importedFiles = micropythonFs.importFilesFromIntelHex(hexStr, {
+                overwrite: true,
+                formatFirst:true
+            });
+            // Check if imported files includes a main.py file
+            if (importedFiles.indexOf('main.py') > -1) {
+                code = micropythonFs.read('main.py');
+            } else {
+                // There is no main.py file, but there could be appended code
+                tryOldMethod = true;
+                errorMsg += config.translate.alerts.no_main + '\n';
+            }
+        } catch(e) {
+           tryOldMethod = true;
+           errorMsg += e.message + '\n';
+        }
+        if (tryOldMethod) {
+            try {
+                code = microbitFs.getIntelHexAppendedScript(hexStr);
+                micropythonFs.write('main.py', code);
+            } catch(e) {
+                // Only display an error if there were no files added to the filesystem
+                if (!importedFiles.length) {
+                    errorMsg += config.translate.alerts.no_script + '\n';
+                    errorMsg += e.message;
+                    return alert(config.translate.alerts.no_python + '\n\n' +
+                            config.translate.alerts.error + errorMsg);
+                }
+            }
+        }
+        setName(filename.replace('.hex', ''));
+        EDITOR.setCode(code);
+        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+    }
+
+    // Function for adding file to filesystem
+    function loadFileToFilesystem(filename, fileBytes) {
+        // Check if file already exists and confirm overwrite
+        if (filename !== 'main.py' && micropythonFs.exists(filename)) {
+            if (!confirm(config.translate.confirms.replace_file.replace('{{file_name}}', filename))) {
+                return;
+            }
+        }
+        // For main.py confirm if the user wants to replace the editor content
+        if (filename === 'main.py' && !confirm(config.translate.confirms.replace_main)) {
+            return;
+        }
+        try {
+            micropythonFs.write(filename, fileBytes);
+            // Check if the filesystem has run out of space
+            var _ = micropythonFs.getIntelHex();
+        } catch(e) {
+            if (micropythonFs.exists(filename)) {
+                micropythonFs.remove(filename);
+            }
+            return alert(config.translate.alerts.cant_add_file + filename + '\n' + e.message);
+        }
+        if (filename == 'main.py') {
+            // TODO: This will probably break in IE10
+            var utf8 = new TextDecoder('utf-8').decode(fileBytes);
+            EDITOR.setCode(utf8);
+        }
+    }
+
+    // Update the widget that shows how much space is used in the filesystem
+    function updateStorageBar() {
+        var modulesSize = 0;
+        var otherSize = 0;
+        var mainSize = 0;
+        var totalSpace = micropythonFs.getStorageSize();
+        try {
+            micropythonFs.write('main.py', EDITOR.getCode());
+            mainSize = micropythonFs.size('main.py');
+        } catch(e) {
+            // No need to do any action with an error, just keep the size 0
+        }
+        micropythonFs.ls().forEach(function(filename) {
+            var extension = filename.split('.').pop();
+            if (extension === 'py') {
+                if (filename !== 'main.py') {
+                    modulesSize += micropythonFs.size(filename);
+                }
+            } else {
+                otherSize += micropythonFs.size(filename);
+            }
+        });
+        var firstTrFound = false;
+        var setTrEl = function(trEl, sizePercentage) {
+            if (sizePercentage > 0) {
+                trEl.css('display','');
+                trEl.css('width', Math.ceil(sizePercentage) + '%');
+                if (!firstTrFound) {
+                    trEl.attr('class', 'fs-space-table-first');
+                    firstTrFound = true;
+                } else {
+                    trEl.attr('class', '');
+                }
+            } else {
+                trEl.css('display', 'none');
+            }
+        };
+        setTrEl($('#fs-space-modules'), modulesSize * 100 / totalSpace);
+        setTrEl($('#fs-space-main'), mainSize * 100 / totalSpace);
+        setTrEl($('#fs-space-other'), otherSize * 100 / totalSpace);
+        // If we are out of free space hide the "free" box
+        if ((modulesSize  + mainSize + otherSize) > (totalSpace * 0.98)) {
+            $('#fs-space-free').css('display', 'none');
+        } else {
+            $('#fs-space-free').css('display', '');
+        }
+    }
+
+    // Regenerate the table showing the file list and call for the storage bar to be updated
+    var updateFileTables = function() {
+        // Delete the current table body content and add rows file by file
+        $('.fs-file-list table tbody').empty();
+        micropythonFs.ls().forEach(function(filename) {
+            var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
+            var name = filename;
+            var disabled = "";
+            if (filename === 'main.py') {
+              name = getName() + " (" + filename + ")";
+              disabled = "disabled";
+            };
+            $('.fs-file-list table tbody').append(
+                '<tr><td>' + name + '</td>' +
+                '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
+            );
+            $('#' + pseudoUniqueId + '_save').click(function(e) {
+                var output = micropythonFs.readBytes(filename);
+                var ua = navigator.userAgent.toLowerCase();
+                if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+                    alert(config.translate.alerts.save);
+                    window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+                } else {
+                    var blob = new Blob([output], {type: "text/plain"});
+                    saveAs(blob, filename);
+                }
+            });
+            $('#' + pseudoUniqueId + '_remove').click(function(e) {
+                micropythonFs.remove(filename);
+                updateFileTables();
+                var content = $('.expandable-content')[0];
+                content.style.maxHeight = content.scrollHeight + "px";
+            });
+        });
+        updateStorageBar();
+    };
+
     // Generates the text for a hex file with MicroPython and the user code
     function generateFullHexStr() {
-        var firmware = $("#firmware").text();
         var fullHexStr = '';
         try {
-            fullHexStr = EDITOR.getHexFile(firmware);
+            // Remove main.py if editor content is empty to download a hex file
+            // that includes the filesystem but doesn't try to run any code
+            if (!EDITOR.getCode()) {
+                if (micropythonFs.exists('main.py')) {
+                    micropythonFs.remove('main.py');
+                }
+            } else {
+                micropythonFs.write('main.py', EDITOR.getCode());
+            }
+            // Generate hex file
+            fullHexStr = micropythonFs.getIntelHex();
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
-            throw new Error(config.translate.alerts.length);
+            throw new Error(config.translate.alerts.load_code + '\n' + e.message);
         }
         return fullHexStr;
     }
@@ -425,7 +651,7 @@ function web_editor(config) {
         try {
             var output = generateFullHexStr();
         } catch(e) {
-            alert('Error:\n' + e.message);
+            alert(config.translate.alerts.error + e.message);
             return;
         }
         var ua = navigator.userAgent.toLowerCase();
@@ -439,28 +665,32 @@ function web_editor(config) {
         }
     }
 
-    // This function describes what to do when the save button is clicked.
-    function doSave() {
-        var output = EDITOR.getCode();
-        var ua = navigator.userAgent.toLowerCase();
-        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-            alert(config.translate.alerts.save);
-            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var filename = getName().replace(" ", "_");
-            var blob = new Blob([output], {type: "text/plain"});
-            saveAs(blob, filename + ".py");
-        }
-        dirty = false;
-    }
-
-    // Describes what to do when the load button is clicked.
-    function doLoad() {
+    // Describes what to do when the save/load button is clicked.
+    function doFiles() {
         var template = $('#load-template').html();
         Mustache.parse(template);
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
+                $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $('#save-hex').click(function() {
+                    doDownload();
+                });
+                $('#show-files').click(function() {
+                  var content = $('.expandable-content')[0];
+                  if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                    $("#hide-files").attr("id", "show-files");
+                    $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                  } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    $("#show-files").attr("id", "hide-files");
+                    $("#hide-files").attr("title", "Hide Files");
+                    document.getElementById("hide-files").innerHTML = "Hide Files <i class='fa fa-caret-up'>";
+                  }
+                });
                 $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -479,50 +709,58 @@ function web_editor(config) {
                     vex.close();
                     EDITOR.focus();
                 });
-                $(vexContent).find('#load-form-form').on('submit', function(e){
+                $('#file-upload-link').click(function() {
+                    $('#file-upload-input').trigger('click');
+                });
+                $('#file-upload-input').on('change', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if(e.target[0].files.length === 1) {
-                        var f = e.target[0].files[0];
-                        var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
-                        var reader = new FileReader();
-                        if (ext == 'py') {
-                            setName(f.name.replace('.py', ''));
-                            reader.onload = function(e) {
-                                EDITOR.setCode(e.target.result);
-                            };
-                            reader.readAsText(f);
-                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-                        } else if (ext == 'hex') {
-                            setName(f.name.replace('.hex', ''));
-                            reader.onload = function(e) {
-                                var code = '';
-                                var showAlert = false;
-                                try {
-                                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
-                                } catch(e) {
-                                    showAlert = true;
-                                }
-                                if (showAlert || code.length === 0) {
-                                    return alert(config.translate.alerts.unrecognised_hex);
-                                } else {
-                                    EDITOR.setCode(code);
-                                }
-                            };
-                            reader.readAsText(f);
-                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-                        }
+
+                    var inputFile = this;
+                    if (inputFile.files.length === 1) {
+                        var f = inputFile.files[0];
+                            var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
+                            var reader = new FileReader();
+                            if (ext == 'py') {
+                                reader.onload = function(e) {
+                                    loadPy(f.name, e.target.result);
+                                };
+                                reader.readAsText(f);
+                            } else if (ext == 'hex') {
+                                reader.onload = function(e) {
+                                    loadHex(f.name, e.target.result);
+                                };
+                                reader.readAsText(f);
+                            }
                     }
+                    inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
                     return false;
                 });
+                $('#fs-file-upload-button').click(function() {
+                    $('#fs-file-upload-input').trigger('click');
+                });
+                $('#fs-file-upload-input').on('change', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var inputFile = this;
+                    Array.from(inputFile.files).forEach(function(file) {
+                        var fileReader = new FileReader();
+                        fileReader.onload = function(e) {
+                            loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
+                            updateFileTables();
+                            var content = $('.expandable-content')[0];
+                            content.style.maxHeight = content.scrollHeight + "px";
+                        };
+                        fileReader.readAsArrayBuffer(file);
+                    });
+                    inputFile.value = '';
+                });
             }
         });
-        $('.load-toggle').on('click', function(e) {
-            $('.load-drag-target').toggle();
-            $('.load-form').toggle();
-        });
+        updateFileTables();
     }
 
     // Triggered when a user clicks the blockly button. Toggles blocks on/off.
@@ -654,30 +892,15 @@ function web_editor(config) {
         var ext = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : null;
         var reader = new FileReader();
         if (ext == 'py') {
-            setName(file.name.replace('.py', ''));
             reader.onload = function(e) {
-                EDITOR.setCode(e.target.result);
+                loadPy(file.name, e.target.result);
             };
             reader.readAsText(file);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
-            setName(file.name.replace('.hex', ''));
             reader.onload = function(e) {
-                var code = '';
-                var showAlert = false;
-                try {
-                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
-                } catch(e) {
-                    showAlert = true;
-                }
-                if (showAlert || code.length === 0) {
-                    return alert(config.translate.alerts.unrecognised_hex);
-                } else {
-                    EDITOR.setCode(code);
-                }
+                loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         }
         $('#editor').focus();
     }
@@ -926,6 +1149,134 @@ function web_editor(config) {
        */
     }
 
+    // Describes what to do when the filesystem button is clicked.
+    function doFilesystem() {
+        // Update main.py in filesystem
+        microbitFs.remove("main.py"); // Remove existing
+        microbitFs.write("main.py", EDITOR.getCode()); // Add main.py
+
+        // Create UI
+        var template = $('#filesystem-template').html();
+        Mustache.parse(template);
+        vex.open({
+            content: Mustache.render(template, config.translate.filesystem),
+            afterOpen: function(vexContent) {
+                $(vexContent).find('#filesystem-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragover dragenter', function() {
+                    $('#filesystem-drag-target').addClass('is-dragover');
+                })
+                .on('dragleave dragend drop', function() {
+                    $('#filesystem-drag-target').removeClass('is-dragover');
+                })
+                .on('drop', function(e) {
+                    var files = e.originalEvent.dataTransfer.files;
+                    doFilesystemAdd(files);
+                });
+                $(vexContent).find('#filesystem-form-form').on('submit', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var files = e.target[0].files;
+                    doFilesystemAdd(files);
+
+                    // Clear form input
+                    $('#filesystem-form-form input[type=file]').replaceWith( $('#filesystem-form-form input[type=file]').val('').clone(true));
+
+                });
+            }
+        })
+        $('.filesystem-toggle').on('click', function(e) {
+            $('.filesystem-form').toggle();
+        });
+        
+        Object.keys(microbitFs._files).forEach(function(key) {
+
+            var file = microbitFs._files[key];
+
+            var fileType = (/[.]/.exec(file.filename)) ? /[^.]+$/.exec(file.filename) : "";
+
+            $('.filesystem-drag-target table tbody').append(
+                '<tr><td>' + file.filename + '</td><td>' + fileType + '</td><td>' + (file._dataBytes.length/1024).toFixed(2) + ' kb</td><td>' + ((file.filename == 'main.py') ? '' : '<button id="' + file.filename + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
+            ).on('click', function(e){
+                if($(e.target).hasClass("filesystem-remove-button"))
+                {
+                    doFilesystemRemove(e.target.id);
+                    $(e.target).closest("tr").remove();
+                }
+            });
+        });
+
+    }
+
+    // Function to remove a file
+    function doFilesystemRemove(name) {
+        return microbitFs.remove(name);
+    }
+
+    // Function for adding file to filesystem
+    function doFilesystemAdd(files) {
+
+        Array.from(files).forEach(function(file) {
+            // Check if file already exists
+            if(microbitFs.exists(file.name) && file.name != "main.py")
+            {
+                alert(file.name + " already exists in the file system!");
+                return;
+            }
+
+            // Attempt to add file to FS
+            var fileReader = new FileReader();
+            fileReader.onloadend = function (e) {
+            
+              var arrayBuffer = new Uint8Array(e.target.result);
+
+                // Check if file is main.py
+                if(file.name == "main.py")
+                {
+                    if(!confirm("This will replace the code in the editor!"))
+                        return;
+
+                    var utf8 = new TextDecoder("utf-8").decode(arrayBuffer);
+                    console.log(utf8);
+                    EDITOR.setCode(utf8);
+                }
+            
+              var fileType = $('#file-type').val();
+              microbitFs.write(file.name, arrayBuffer);
+
+              // Check if the filesystem has run out of space
+              try
+              {
+                microbitFs.getIntelHex();
+            
+                // Update UI
+                var fileType = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : "";
+
+                $('.filesystem-drag-target table tbody').append(
+                    '<tr><td>' + file.name + '</td><td>' + file.type + '</td><td>' + (file.size/1024).toFixed(2) + ' kb</td><td>' + ((file.name == 'main.py') ? '' : '<button id="' + file.name + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
+                ).on('click', function(e){
+                    if($(e.target).hasClass("filesystem-remove-button"))
+                    {
+                        doFilesystemRemove(e.target.id);
+                        $(e.target).closest("tr").remove();
+                    }
+                });
+              } catch(e) {
+                microbitFs.remove(file.name);
+                alert("The file system does not have enough free space to add " + file.name);
+                return; // Skip UI
+              }
+
+            };
+            fileReader.readAsArrayBuffer(file);
+
+
+        });
+    }
+
     function formatMenuContainer(parentButtonId, containerId) {
         var container = $('#' + containerId);
         if (container.is(':visible')) {
@@ -956,11 +1307,8 @@ function web_editor(config) {
               doFlash();
             }
         });
-        $("#command-save").click(function () {
-            doSave();
-        });
-        $("#command-load").click(function () {
-            doLoad();
+        $("#command-files").click(function () {
+            doFiles();
         });
         $("#command-blockly").click(function () {
             doBlockly();
@@ -975,8 +1323,11 @@ function web_editor(config) {
             if ($("#command-connect").length) {
               doConnect();
             } else {
-              doDisconnect();
-            }
+                doDisconnect();
+              }
+        });
+        $("#command-filesystem").click(function () {
+            doFilesystem();
         });
         $("#command-serial").click(function () {
             doSerial();
@@ -1054,6 +1405,10 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Firmware at the end of the HTML file has to be loaded first
+        setupFilesystem();
+    });
 }
 
 /*
