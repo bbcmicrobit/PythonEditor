@@ -31,7 +31,7 @@ function pythonEditor(id, autocompleteApi) {
     editor.fontSizeStep = 4;
 
     // Generates an expanded list of words for the ACE autocomplete to digest.
-    var populateWordList = function(apiObj) {
+    var fullWordList = function(apiObj) {
         var wordsHorizontal = [];
         Object.keys(apiObj).forEach(function(module) {
             wordsHorizontal.push(module);
@@ -69,25 +69,34 @@ function pythonEditor(id, autocompleteApi) {
 
     // Configure Autocomplete
     var langTools = ace.require("ace/ext/language_tools");
-    var horizontalWordList = populateWordList(autocompleteApi || {});
-    var staticWordCompleter = {
+    var extraCompletions = fullWordList(autocompleteApi || []).map(function(word) {
+        return { "caption": word, "value": word, "meta": "static" };
+    });
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
         "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
         "getCompletions": function(editor, session, pos, prefix, callback) {
-            var wordList = horizontalWordList;
-            callback(null, wordList.map(function(word) {
-                return {
-                    "caption": word,
-                    "value": word,
-                    "meta": "static"
-                };
-            }));
+            callback(null, extraCompletions);
         }
-    };
-    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, staticWordCompleter]);
+    }]);
 
     editor.enableAutocomplete = function(enable) {
-        EDITOR.ACE.setOption('enableBasicAutocompletion', enable);
-        EDITOR.ACE.setOption('enableLiveAutocompletion', enable);
+        ACE.setOption('enableBasicAutocompletion', enable);
+        ACE.setOption('enableLiveAutocompletion', enable);
+    };
+
+    editor.triggerAutocompleteWithEnter = function(enable) {
+        if (!ACE.completer) {
+            // Completer not yet initialise, force it by opening and closing it
+            EDITOR.ACE.execCommand('startAutocomplete');
+            EDITOR.ACE.completer.detach();
+        }
+        if (enable) {
+            ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
+                return editor.completer.insertMatch();
+            });
+        } else {
+            ACE.completer.keyboardHandler.removeCommand('Return');
+        }
     };
 
     // Gets the textual content of the editor (i.e. what the user has written).
@@ -1411,7 +1420,16 @@ function web_editor(config) {
 
         $('#menu-switch-autocomplete').on('change', function() {
             var setEnable = $(this).is(':checked');
+            if (setEnable) {
+                $('#autocomplete-enter').removeClass('hidden');
+            } else {
+                $('#autocomplete-enter').addClass('hidden');
+            }
             EDITOR.enableAutocomplete(setEnable);
+        });
+        $('#menu-switch-autocomplete-enter').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnable);
         });
 
         window.addEventListener('resize', function() {

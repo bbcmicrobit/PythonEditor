@@ -512,8 +512,8 @@ div.load-form {
 }
 
 /* Switches in the help menu */
-#menu-switch-label {
-  padding-left: 0.75em;
+.menu-switch-label {
+    padding-left: 0.75em;
 }
 .menu-switch {
   position: relative;
