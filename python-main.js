@@ -467,8 +467,7 @@ function web_editor(config) {
     // Sets up the file system and adds the initial main.py
     function setupFilesystem() {
         micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
-        // Get initial main.py
-        micropythonFs.write('main.py', EDITOR.getCode()); // Add main.py
+        micropythonFs.write('main.py', EDITOR.getCode());    // Add main.py
     }
 
     // Based on the Python code magic comment it detects a module
@@ -645,7 +644,7 @@ function web_editor(config) {
     }
 
     // Regenerate the table showing the file list and call for the storage bar to be updated
-    var updateFileTables = function() {
+    function updateFileTables() {
         // Delete the current table body content and add rows file by file
         $('.fs-file-list table tbody').empty();
         micropythonFs.ls().forEach(function(filename) {
@@ -681,7 +680,7 @@ function web_editor(config) {
             });
         });
         updateStorageBar();
-    };
+    }
 
     // Generates the text for a hex file with MicroPython and the user code
     function generateFullHexStr() {
@@ -726,7 +725,7 @@ function web_editor(config) {
 
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
-        var template = $('#load-template').html();
+        var template = $('#files-template').html();
         Mustache.parse(template);
         vex.open({
             content: Mustache.render(template, config.translate.load),
@@ -1104,7 +1103,7 @@ function web_editor(config) {
         });
     }
 
-    function doSerial(){
+    function doSerial() {
         // Hide terminal
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1151,188 +1150,40 @@ function web_editor(config) {
         }
     }
 
-    function setupHterm(){
-       if (REPL == null) {
-         hterm.defaultStorage = new lib.Storage.Memory();
+    function setupHterm() {
+        if (REPL == null) {
+            hterm.defaultStorage = new lib.Storage.Memory();
 
-         REPL = new hterm.Terminal("opt_profileName");
-         REPL.options_.cursorVisible = true;
-         REPL.prefs_.set('font-size', 22);
-
-         var daplinkReceived = false;
-
-         REPL.onTerminalReady = function() {
-             var io = REPL.io.push();
-
-             io.onVTKeystroke = function(str) {
-                  window.daplink.serialWrite(str);
-             };
-
-             io.sendString = function(str) {
-                  window.daplink.serialWrite(str);
-             };
-
-             io.onTerminalResize = function(columns, rows) {
-             };
-         };
-
-         REPL.decorate(document.querySelector('#repl'));
-         REPL.installKeyboard();
-
-         window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
-                 REPL.io.print(data); // first byte of data is length
-                 daplinkReceived = true;
-         });
-       }
-
-       $("#editor-container").hide();
-       $("#repl").show();
-       $("#request-repl").show();
-
-       // Recalculate terminal height
-       $("#repl > iframe").css("position", "relative");
-       $("#repl").attr("class", "hbox flex1");
-       REPL.prefs_.set('font-size', getFontSize());
-
-       /* Don't do this automatically
-       // Send ctrl-C to get the terminal up
-       var attempt = 0;
-       var getPrompt = setInterval(
-               function(){
-                    daplink.serialWrite("\x03");
-                    console.log("Requesting REPL...");
-                    attempt++;
-                    if(attempt == 5 || daplinkReceived) clearInterval(getPrompt);
-                }, 200);
-       */
-    }
-
-    // Describes what to do when the filesystem button is clicked.
-    function doFilesystem() {
-        // Update main.py in filesystem
-        microbitFs.remove("main.py"); // Remove existing
-        microbitFs.write("main.py", EDITOR.getCode()); // Add main.py
-
-        // Create UI
-        var template = $('#filesystem-template').html();
-        Mustache.parse(template);
-        vex.open({
-            content: Mustache.render(template, config.translate.filesystem),
-            afterOpen: function(vexContent) {
-                $(vexContent).find('#filesystem-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                })
-                .on('dragover dragenter', function() {
-                    $('#filesystem-drag-target').addClass('is-dragover');
-                })
-                .on('dragleave dragend drop', function() {
-                    $('#filesystem-drag-target').removeClass('is-dragover');
-                })
-                .on('drop', function(e) {
-                    var files = e.originalEvent.dataTransfer.files;
-                    doFilesystemAdd(files);
-                });
-                $(vexContent).find('#filesystem-form-form').on('submit', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var files = e.target[0].files;
-                    doFilesystemAdd(files);
-
-                    // Clear form input
-                    $('#filesystem-form-form input[type=file]').replaceWith( $('#filesystem-form-form input[type=file]').val('').clone(true));
-
-                });
-            }
-        })
-        $('.filesystem-toggle').on('click', function(e) {
-            $('.filesystem-form').toggle();
-        });
-        
-        Object.keys(microbitFs._files).forEach(function(key) {
-
-            var file = microbitFs._files[key];
-
-            var fileType = (/[.]/.exec(file.filename)) ? /[^.]+$/.exec(file.filename) : "";
-
-            $('.filesystem-drag-target table tbody').append(
-                '<tr><td>' + file.filename + '</td><td>' + fileType + '</td><td>' + (file._dataBytes.length/1024).toFixed(2) + ' kb</td><td>' + ((file.filename == 'main.py') ? '' : '<button id="' + file.filename + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
-            ).on('click', function(e){
-                if($(e.target).hasClass("filesystem-remove-button"))
-                {
-                    doFilesystemRemove(e.target.id);
-                    $(e.target).closest("tr").remove();
-                }
-            });
-        });
-
-    }
-
-    // Function to remove a file
-    function doFilesystemRemove(name) {
-        return microbitFs.remove(name);
-    }
-
-    // Function for adding file to filesystem
-    function doFilesystemAdd(files) {
-
-        Array.from(files).forEach(function(file) {
-            // Check if file already exists
-            if(microbitFs.exists(file.name) && file.name != "main.py")
-            {
-                alert(file.name + " already exists in the file system!");
-                return;
-            }
-
-            // Attempt to add file to FS
-            var fileReader = new FileReader();
-            fileReader.onloadend = function (e) {
-            
-              var arrayBuffer = new Uint8Array(e.target.result);
-
-                // Check if file is main.py
-                if(file.name == "main.py")
-                {
-                    if(!confirm("This will replace the code in the editor!"))
-                        return;
-
-                    var utf8 = new TextDecoder("utf-8").decode(arrayBuffer);
-                    console.log(utf8);
-                    EDITOR.setCode(utf8);
-                }
-            
-              var fileType = $('#file-type').val();
-              microbitFs.write(file.name, arrayBuffer);
-
-              // Check if the filesystem has run out of space
-              try
-              {
-                microbitFs.getIntelHex();
-            
-                // Update UI
-                var fileType = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : "";
-
-                $('.filesystem-drag-target table tbody').append(
-                    '<tr><td>' + file.name + '</td><td>' + file.type + '</td><td>' + (file.size/1024).toFixed(2) + ' kb</td><td>' + ((file.name == 'main.py') ? '' : '<button id="' + file.name + '" class="filesystem-remove-button">Remove</button>') + '</td></tr>'
-                ).on('click', function(e){
-                    if($(e.target).hasClass("filesystem-remove-button"))
-                    {
-                        doFilesystemRemove(e.target.id);
-                        $(e.target).closest("tr").remove();
-                    }
-                });
-              } catch(e) {
-                microbitFs.remove(file.name);
-                alert("The file system does not have enough free space to add " + file.name);
-                return; // Skip UI
-              }
-
+            REPL = new hterm.Terminal("opt_profileName");
+            REPL.options_.cursorVisible = true;
+            REPL.prefs_.set('font-size', 22);
+            REPL.onTerminalReady = function() {
+                var io = REPL.io.push();
+                io.onVTKeystroke = function(str) {
+                    window.daplink.serialWrite(str);
+                };
+                io.sendString = function(str) {
+                    window.daplink.serialWrite(str);
+                };
+                io.onTerminalResize = function(columns, rows) {
+                };
             };
-            fileReader.readAsArrayBuffer(file);
+            REPL.decorate(document.querySelector('#repl'));
+            REPL.installKeyboard();
 
+            window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+                    REPL.io.print(data); // first byte of data is length
+            });
+        }
 
-        });
+        $("#editor-container").hide();
+        $("#repl").show();
+        $("#request-repl").show();
+
+        // Recalculate terminal height
+        $("#repl > iframe").css("position", "relative");
+        $("#repl").attr("class", "hbox flex1");
+        REPL.prefs_.set('font-size', getFontSize());
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
@@ -1360,9 +1211,9 @@ function web_editor(config) {
     function setupButtons() {
         $("#command-download").click(function () {
             if ($("#command-download").length) {
-              doDownload();
+                doDownload();
             } else {
-              doFlash();
+                doFlash();
             }
         });
         $("#command-files").click(function () {
@@ -1379,13 +1230,10 @@ function web_editor(config) {
         });
         $("#command-connect").click(function () {
             if ($("#command-connect").length) {
-              doConnect();
+                doConnect();
             } else {
                 doDisconnect();
-              }
-        });
-        $("#command-filesystem").click(function () {
-            doFilesystem();
+            }
         });
         $("#command-serial").click(function () {
             doSerial();
@@ -1486,7 +1334,7 @@ function web_editor(config) {
 /*
  * Function to close flash error box
  */
-function flashErrorClose(){
+function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
