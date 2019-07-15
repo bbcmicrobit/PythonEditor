@@ -717,3 +717,34 @@ input:checked + .menu-switch-slider:before {
     width: auto;
     min-width: 2%;
 }
+
+/* Language drop down menu */
+.lang-choice{
+    margin: auto;
+    padding: 5px;
+}
+.lang-icon{
+    margin-top: 10%;
+    width: 90%;
+    height: 90%;
+    background-image: url("../img/globe-icon.png");
+}
+.lang-choice:hover{
+    background-color: #ffcc33;
+    color: darkblue;
+    font-weight: bold;
+    cursor: pointer;
+}
+.lang-choice:nth-last-of-type(1){
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+.lang-choice:nth-child(1){
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+.language-drop{
+    margin: auto;
+}
+.language_container {
+    margin: 0;
+    padding: 0;
+}

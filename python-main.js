@@ -8,8 +8,11 @@ everything does.)
 /*
 Lazy load JS script files.
 */
-function script(url) {
+function script(url, id) {
     var s = document.createElement('script');
+    if(id){
+        s.id = id;
+    }
     s.type = 'text/javascript';
     s.async = false;
     s.defer = true;
@@ -260,6 +263,43 @@ function blocks() {
 }
 
 /*
+ * Allows the Python Editor to display in multiple
+ * languages by manipulating strings with correct
+ * JS language objects.
+ */
+function translations() {
+    'use strict';
+
+    function updateLang(newLang, callback) {
+        document.getElementById('lang').remove();
+        script('lang/' + newLang + '.js', 'lang');
+        document.getElementById('lang').onload = function() {
+            translateEmbedStrings(language);
+            callback(language);
+        }
+    }
+
+    function translateEmbedStrings(language) {
+        var buttons = language["static-strings"]["buttons"];
+        $(".roundbutton").each(function(object, value){
+            var button_id = $(value).attr("id");
+            $(value).attr("title", buttons[button_id]["title"]);
+            $(value).children(":last").text(buttons[button_id]["label"]);
+        });
+        $(".zoomer").each((object, value) => {
+            var button_id = $(value).attr("id");
+            $(value).find("i").attr("title",buttons[button_id]["title"]);
+        });
+        $("#script-name-label").text(language["static-strings"]["script-name"]["label"]);
+    }
+
+    return {
+        'updateLang': updateLang,
+        'translateEmbedStrings': translateEmbedStrings,
+    };
+}
+
+/*
 The following code contains the various functions that connect the behaviour of
 the editor to the DOM (web-page).
 
@@ -272,6 +312,7 @@ function web_editor(config) {
     window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
+    var TRANSLATIONS = translations();
 
     // Represents the REPL terminal
     var REPL = null;
@@ -727,6 +768,9 @@ function web_editor(config) {
     function doFiles() {
         var template = $('#files-template').html();
         Mustache.parse(template);
+        config.translate.load["program-title"] = function() {
+                return $("#script-name").val();
+              },
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
@@ -1241,8 +1285,18 @@ function web_editor(config) {
         $("#request-repl").click(function () {
             daplink.serialWrite("\x03");
         });
+        $("#command-language").click(function (e) {
+            // Hide any other open menus and show/hide options menu
+            $('#helpsupport_container').addClass('hidden');
+            $('#options_container').addClass('hidden');
+            $('#language_container').toggleClass('hidden');
+            formatMenuContainer('command-language', 'language_container');
+            // Stop immediate closure
+            e.stopImmediatePropagation();
+        });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
+            $('#language_container').addClass('hidden');
             $('#helpsupport_container').addClass('hidden');
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
@@ -1251,6 +1305,7 @@ function web_editor(config) {
         });
         $("#command-help").click(function (e) {
             // Hide any other open menus and show/hide help menu
+            $('#language_container').addClass('hidden');
             $('#options_container').addClass('hidden');
             $('#helpsupport_container').toggleClass('hidden');
             formatMenuContainer('command-help', 'helpsupport_container');
@@ -1264,6 +1319,13 @@ function web_editor(config) {
         $("#zoom-out").click(function (e) {
             zoomOut();
             e.stopPropagation();
+        });
+
+        $(".lang-choice").on("click", function() {
+            $("#language_container").addClass('hidden');
+            TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
+                config.translate = translations;
+            });
         });
 
         $('#menu-switch-autocomplete').on('change', function() {
@@ -1325,6 +1387,7 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
+    TRANSLATIONS.translateEmbedStrings(config.translate);
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
