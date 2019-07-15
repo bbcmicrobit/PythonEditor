@@ -1,3 +1,9 @@
+2.0.0-beta.1
+------------
+* Added WebUSB functionality (#99)
+* Added MicroPython file system functionality (#88)
+* Added autocompletion to the code editor (#185)
+
 1.1.5
 -----
 * Add floating help panel (#115)
