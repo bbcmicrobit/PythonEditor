@@ -12,16 +12,16 @@ describe("Testing different URL formats", () => {
         expect(global.urlparse("anchor", defaultUrl + "#anchor")).toBeUndefined();
     });
     test("Check if parameter is recognised", () =>{
-        expect(global.urlparse("key", defaultUrl + "?key=value1") === "value1").toBeTruthy();
+        expect(global.urlparse("key", defaultUrl + "?key=value1")).toEqual("value1");
     });
     test("Check if more than one parameter affects result", () =>{
-        expect(global.urlparse("key1", defaultUrl + "?key1=value1&key2=value2") === "value1").toBeTruthy();
+        expect(global.urlparse("key1", defaultUrl + "?key1=value1&key2=value2")).toEqual("value1");
     });
     test("Check if more than one url parameter affects result and that URL fragments are ignored", ()=>{
-        expect(global.urlparse("key2", defaultUrl + "?key1=value1&key2=value2#anchor") === "value2").toBeTruthy();
+        expect(global.urlparse("key2", defaultUrl + "?key1=value1&key2=value2#anchor")).toEqual("value2");
     });
     test("Check if incomplete url fragments (just contain keys) and a URL fragments work", ()=>{
-        expect(global.urlparse("key2", defaultUrl + "?key1&key2#anchor") === null).toBeTruthy();
+        expect(global.urlparse("key2", defaultUrl + "?key1&key2#anchor")).toBeNull();
     });
     test("Check if incomplete URL parameter returns null", ()=>{
         expect(global.urlparse("key1", defaultUrl + "?key1=")).toBeNull();
