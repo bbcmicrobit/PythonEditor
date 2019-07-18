@@ -651,8 +651,9 @@ function web_editor(config) {
             var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
             var name = filename;
             var disabled = "";
+            var scriptName = getName();
             if (filename === 'main.py') {
-              name = getName() + " (" + filename + ")";
+              name = scriptName + " (" + filename + ")";
               disabled = "disabled";
             };
             $('.fs-file-list table tbody').append(
@@ -669,7 +670,7 @@ function web_editor(config) {
                     window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
                 } else {
                     var blob = new Blob([output], {type: "text/plain"});
-                    saveAs(blob, filename);
+                    saveAs(blob, scriptName + ".py");
                 }
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
