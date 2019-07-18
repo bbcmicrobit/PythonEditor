@@ -14,8 +14,10 @@ describe("Testing different URL formats", () => {
     test("Check if parameter is recognised", () =>{
         expect(global.urlparse("key", defaultUrl + "?key=value1")).toEqual("value1");
     });
-    test("Check if more than one parameter affects result", () =>{
-        expect(global.urlparse("key1", defaultUrl + "?key1=value1&key2=value2")).toEqual("value1");
+    test("Check if both parameters return correct result", () =>{
+        var url = defaultUrl + "?key1=value1&key2=value2";
+        expect(global.urlparse("key1", url)).toEqual("value1");
+        expect(global.urlparse("key2", url)).toEqual("value2");
     });
     test("Check if more than one url parameter affects result and that URL fragments are ignored", ()=>{
         expect(global.urlparse("key2", defaultUrl + "?key1=value1&key2=value2#anchor")).toEqual("value2");
