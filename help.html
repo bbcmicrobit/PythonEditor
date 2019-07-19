@@ -21,19 +21,19 @@
 
     <!-- JS for contextual help -->
     <script src="static/js/jquery-2.1.4.min.js"></script>
-    <script src="python-main.js"></script>
-
-    <script>
+    <script src="python-main.js"></script> 
+    <script src="urlparser.js"></script>
+    
+     <script>
         $(document).ready(function() {
-            window.location.search.substring(1).split("&").map(function(param) {
-                return param.split("=");
-            }).filter(function(pair) {
-                return pair[1] == "true";
-            }).forEach(function(pair) {
-                var enabledFlag = decodeURIComponent(pair[0]);
-                var hiddenFeatureClass = 'hide-' + enabledFlag;
-                $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
-            });
+            var paramsToCheck = ["snippets","blocks","share"];
+            paramsToCheck.forEach(function(key){
+                var urlFlag = urlparse(key) || "false";
+                if( urlFlag === "true"){
+                    var hiddenFeatureClass = 'hide-' + key;
+                    $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
+                };
+            })
         });
     </script>
   </head>
