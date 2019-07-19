@@ -670,7 +670,10 @@ function web_editor(config) {
                     window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
                 } else {
                     var blob = new Blob([output], {type: "text/plain"});
-                    saveAs(blob, scriptName + ".py");
+                    if(filename === 'main.py'){
+                        filename = scriptName + ".py";
+                    }
+                    saveAs(blob, filename);
                 }
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
