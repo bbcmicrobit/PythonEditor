@@ -1,24 +1,27 @@
 const fs = require("fs");
-const tmp = require('tmp');
+const tmp = require("tmp");
+const puppeteer = require("puppeteer");
 
 jest.setTimeout(60000 * 5);
 
 describe("Puppeteer filesystem tests for the Python Editor.", function() {
+    "use strict";
 
     const msStep = 100;
+    let browser = null;
 
     beforeAll(async () => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        global.browser = await global.puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
+        browser = await puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
     });
 
     afterAll(async () => {
-        global.browser.close();
+        browser.close();
     });
 
     it("Can store the correct number of small files in the filesystem", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         // We expect to be able to add 214 small files to the fs.
         const expectedFileLimit = 215;
@@ -58,7 +61,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     });
 
     it("Can store one large file in the filesystem", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
@@ -91,7 +94,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     });
 
     it("Shows an error when loading a file to the filesystem that is too large", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         const initialName = await page.evaluate("document.getElementById('script-name').value");
@@ -123,7 +126,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     });
 
     it("Correctly loads files via the load modal", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let mainPyWarningDialogShows = false;
@@ -166,7 +169,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     });
 
     it("Correctly imports modules with the 'magic comment' in the filesystem.", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialContent = await page.evaluate("window.EDITOR.getCode();");
         let fileInput = undefined;
@@ -220,10 +223,10 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     });
 
     it("Correctly loads a python script with the correct name", async function(){
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         await page.click("#command-files");
-        fileInput = await page.$("#file-upload-input");
+        let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplefile.py");
         await page.waitFor(500);
         const fileName = await page.evaluate("document.getElementById('script-name').value");
