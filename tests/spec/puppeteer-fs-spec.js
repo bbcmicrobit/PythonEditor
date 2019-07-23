@@ -86,7 +86,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         // We use a slightly smaller file (as this doesn't fully compensate for headers)
         expect(codeContent).toHaveLength(27204);
         expect(codeContent).toContain("import love");
-        expect(codeName).toEqual("main");
+        expect(codeName).toEqual("large");
         expect(noErrorOnDownload).toEqual(true);
     });
 
