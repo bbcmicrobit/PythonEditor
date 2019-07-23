@@ -292,6 +292,11 @@ function web_editor(config) {
         return $("#script-name").val();
     }
 
+    // Gets filename and replaces spaces with underscores
+    function getSafeName(){
+        return getName().replace(" ", "_");
+    }
+
     // Get the font size of the text currently displayed in the editor.
     function getFontSize() {
         return EDITOR.ACE.getFontSize();
@@ -671,6 +676,7 @@ function web_editor(config) {
                 } else {
                     var blob = new Blob([output], {type: "text/plain"});
                     if(filename === 'main.py'){
+                        scriptName = getSafeName();
                         filename = scriptName + ".py";
                     }
                     saveAs(blob, filename);
@@ -721,7 +727,7 @@ function web_editor(config) {
             alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
-            var filename = getName().replace(" ", "_");
+            var filename = getSafeName();
             var blob = new Blob([output], {type: "application/octet-stream"});
             saveAs(blob, filename + ".hex");
         }
