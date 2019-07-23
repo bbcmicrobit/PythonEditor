@@ -517,7 +517,7 @@ function web_editor(config) {
                 alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
             }
         } else {
-            setName(filename.replace('.py', ''));
+            setName(moduleName);
             EDITOR.setCode(codeStr);
             EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         }

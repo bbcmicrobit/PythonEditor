@@ -143,8 +143,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(codeContent).toHaveLength(27216);    // Max size = ([27 * 1024] * [126 / 128])
         expect(codeContent).toContain("# Filler");
         expect(rejectedLargeHexDownload).toEqual(true);
-        expect(codeName).not.toEqual(initialName);
-        expect(codeName).toEqual("main");
+        expect(codeName).toEqual("too-large");
     });
 
 });

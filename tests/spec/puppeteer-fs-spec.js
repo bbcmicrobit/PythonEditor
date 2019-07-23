@@ -86,7 +86,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         // We use a slightly smaller file (as this doesn't fully compensate for headers)
         expect(codeContent).toHaveLength(27204);
         expect(codeContent).toContain("import love");
-        expect(codeName).toEqual("main");
+        expect(codeName).toEqual("large");
         expect(noErrorOnDownload).toEqual(true);
     });
 
@@ -214,10 +214,19 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         expect(magicFirstlineContent).toEqual(initialContent);
         expect(magicSecondlineContent).toEqual(initialContent);
         expect(magicThirdlineContent).toEqual(initialContent);
-        // Expect invalid module to change the main.py
-        expect(fileListContents).not.toContain("fourthline.py");
-        expect(magicFourthlineName).toEqual("main");
+        expect(magicFourthlineName).toEqual("fourthline");
         expect(magicFourthlineContent).toContain("PASS");
         expect(magicFourthlineContent).toHaveLength(136);
     });
+
+    it("Correctly loads a python script with the correct name", async function(){
+        const page = await global.browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        await page.click("#command-files");
+        fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/samplefile.py");
+        await page.waitFor(500);
+        const fileName = await page.evaluate("document.getElementById('script-name').value");
+        expect(fileName).toContain("samplefile");
+    })
 });
