@@ -214,9 +214,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         expect(magicFirstlineContent).toEqual(initialContent);
         expect(magicSecondlineContent).toEqual(initialContent);
         expect(magicThirdlineContent).toEqual(initialContent);
-        // Expect invalid module to change the main.py
-        expect(fileListContents).not.toContain("fourthline.py");
-        expect(magicFourthlineName).toEqual("main");
+        expect(magicFourthlineName).toEqual("fourthline");
         expect(magicFourthlineContent).toContain("PASS");
         expect(magicFourthlineContent).toHaveLength(136);
     });
