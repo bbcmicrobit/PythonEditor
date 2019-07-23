@@ -218,4 +218,15 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         expect(magicFourthlineContent).toContain("PASS");
         expect(magicFourthlineContent).toHaveLength(136);
     });
+
+    it("Correctly loads a python script with the correct name", async function(){
+        const page = await global.browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        await page.click("#command-files");
+        fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/samplefile.py");
+        await page.waitFor(500);
+        const fileName = await page.evaluate("document.getElementById('script-name').value");
+        expect(fileName).toContain("samplefile");
+    })
 });
