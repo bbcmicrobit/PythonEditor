@@ -272,7 +272,7 @@ Test Case: module.py file can be loaded by file picker and used in main.py
         sleep(100)
 
 - [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
-    showing emojis for the appropriate gestures and buttons.
+  showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: module.py file can be 'magically' loaded into the editor by drag&drop and used in main.py
@@ -299,7 +299,7 @@ Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
         sleep(100)
 
 - [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
-    showing emojis for the appropriate gestures and buttons.
+  showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in main.py
@@ -326,7 +326,7 @@ Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in
         sleep(100)
 
 - [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
-    showing emojis for the appropriate gestures and buttons.
+  showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: Hex file containing module can be loaded in the editor
@@ -336,7 +336,7 @@ Test Case: Hex file containing module can be loaded in the editor
     ``emoji-example.py (main.py)`` and ``emoji.py`` files.
 - [ ] Confirm that each .py file can be downloaded individually.
 - [ ] Confirm that the emoji.py file can be deleted, then re-flash the file
-    to the micro:bit and confirm that an exception is thrown.
+  to the micro:bit and confirm that an exception is thrown.
 
 
 Test Case: Empty script downloads MicroPython interpreter only
@@ -400,8 +400,8 @@ Test Case: Connect and Flash over WebUSB and use REPL
 
 Test Case: Autocomplete
 '''''''''''''''''''''''
-- [ ] Start typing in the editor and confirm that autocomplete offers suggestions 
-    eg type 'di' and be offered 'display'.
+- [ ] Start typing in the editor and confirm that autocomplete offers suggestions
+  eg type 'di' and be offered 'display'.
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
 Test results
