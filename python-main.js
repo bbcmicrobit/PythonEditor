@@ -1285,12 +1285,18 @@ function web_editor(config) {
         $("#request-repl").click(function () {
             daplink.serialWrite("\x03");
         });
-        $("#command-language").click(function (e) {
+        $("#show-languages").click(function (e) {
             // Hide any other open menus and show/hide options menu
             $('#helpsupport_container').addClass('hidden');
-            $('#options_container').addClass('hidden');
+            //$('#options_container').addClass('hidden');
             $('#language_container').toggleClass('hidden');
-            formatMenuContainer('command-language', 'language_container');
+            formatMenuContainer('show-languages', 'language_container');
+            if($("#language_container").attr("class").match(/hidden/)){
+                document.getElementById("show-languages").innerHTML = "Show Languages <i class='fa fa-caret-down'>";
+            }
+            else{
+                document.getElementById("show-languages").innerHTML = "Hide Languages <i class='fa fa-caret-up'>";
+            }
             // Stop immediate closure
             e.stopImmediatePropagation();
         });
@@ -1298,6 +1304,7 @@ function web_editor(config) {
             // Hide any other open menus and show/hide options menu
             $('#language_container').addClass('hidden');
             $('#helpsupport_container').addClass('hidden');
+            document.getElementById("show-languages").innerHTML = "Show Languages <i class='fa fa-caret-down'>";
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
             // Stop immediate closure
