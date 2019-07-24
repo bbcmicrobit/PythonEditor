@@ -248,6 +248,92 @@ Code block 1::
     from microbit import *
     display.show(Image.PACMAN)
 
+Test Case: module.py file can be loaded by file picker and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by Load/Save > Add file the file ``emoji.py``
+- [ ] Confirm the file shows up in the files list with the same title.
+- Return to the editor and replace the current script with the following:
+
+```
+from microbit import *
+from emoji import *
+
+while True:
+    display.show(😃)
+    if accelerometer.was_gesture('shake'):
+        display.show(😡)
+        sleep(2000)
+    if button_a.was_pressed():
+        display.show(💖)
+        sleep(2000)
+    elif button_b.was_pressed():
+        display.show(🏠)
+        sleep(2000)
+    sleep(100)
+```
+- [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
+    showing emojis for the appropriate gestures and buttons.
+
+Test Case: module.py file can be 'magically' loaded into the editor by drag&drop and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by drag&drop into the editor the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- Return to the editor and replace the current script with the following:
+
+```
+from microbit import *
+from emoji import *
+
+while True:
+    display.show(😃)
+    if accelerometer.was_gesture('shake'):
+        display.show(😡)
+        sleep(2000)
+    if button_a.was_pressed():
+        display.show(💖)
+        sleep(2000)
+    elif button_b.was_pressed():
+        display.show(🏠)
+        sleep(2000)
+    sleep(100)
+```
+- [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
+    showing emojis for the appropriate gestures and buttons.
+
+Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by Load/Save drop area drag&drop the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- Return to the editor and replace the current script with the following:
+
+```
+from microbit import *
+from emoji import *
+
+while True:
+    display.show(😃)
+    if accelerometer.was_gesture('shake'):
+        display.show(😡)
+        sleep(2000)
+    if button_a.was_pressed():
+        display.show(💖)
+        sleep(2000)
+    elif button_b.was_pressed():
+        display.show(🏠)
+        sleep(2000)
+    sleep(100)
+```
+- [ ] Flash this file to the micro:bit and confirm that it behaves as expected,
+    showing emojis for the appropriate gestures and buttons.
+
+Test Case: Hex file containing module can be loaded in the editor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load the file ``emoji-example.hex`` into the editor
+- [ ] In the Load/Save modal, confirm the editor has loaded the 
+    ``emoji-example.py`` and ``emoji.py`` files.
+- [ ] Confirm that each .py file can be downloaded individually.
+- [ ] Confirm that the emoji.py file can be deleted, then re-flash the file
+    to the micro:bit and confirm that an exception is thrown.
 
 Test Case: Empty script downloads MicroPython interpreter only
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -298,6 +384,18 @@ Test Case: Zoom changes the Text Editor font size
 - Click the button with a magnifying lens and a ``-`` sign.
 - [ ] Confirm the font in the Text Editor has been decreased.
 
+Test Case: Connect over WebUSB and use REPL
+'''''''''''''''''''''''''''''''''''''''''''
+- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
+- [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
+- [ ] Type ``help()`` and confirm that you see a result. 
+- [ ] Disconnect and confirm that menu returns to "Download" and "Connect".
+
+Test Case: Autocomplete
+'''''''''''''''''''''''
+- [ ] Start typing in the editor and confirm that autocomplete offers suggestions 
+    eg type 'di' and be offered 'display'.
+- [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
 Test results
 ------------
