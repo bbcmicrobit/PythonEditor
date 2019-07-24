@@ -253,7 +253,7 @@ Test Case: module.py file can be loaded by file picker and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by Load/Save > Add file the file ``emoji.py``
 - [ ] Confirm the file shows up in the files list with the same title.
-- Return to the editor and replace the current script with the following:
+- Return to the editor and replace the current script with the following::
 
     from microbit import *
     from emoji import *
@@ -279,7 +279,7 @@ Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by drag&drop into the editor the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
-- Return to the editor and replace the current script with the following:
+- Return to the editor and replace the current script with the following::
 
 
     from microbit import *
@@ -306,11 +306,11 @@ Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by Load/Save drop area drag&drop the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
-- Return to the editor and replace the current script with the following:
+- Return to the editor and replace the current script with the following::
 
 
-from microbit import *
-from emoji import *
+    from microbit import *
+    from emoji import *
 
     while True:
         display.show(😃)
