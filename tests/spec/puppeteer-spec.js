@@ -147,4 +147,24 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(codeName).toEqual("main");
     });
 
+    it("Saves a python file with the correct filename", async function(){
+        const page = await global.browser.newPage();
+        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/'});
+        await page.goto("http://localhost:5000/editor.html");
+        await page.evaluate( () => document.getElementById("script-name").value = "program test")
+        await page.waitFor(500);
+        await page.click("#command-files");
+        await page.click("#show-files");
+        await page.waitFor(500);
+        await page.click(".save-button.save");
+        await page.waitFor(1000);
+        var fileExists = false;
+        await fs.exists("./spec/test-files/program_test.py", async function(exists) {
+            fileExists = exists;
+            return;
+        });
+        await page.waitFor(1000);
+        expect(fileExists).toBeTruthy();
+    })
+
 });
