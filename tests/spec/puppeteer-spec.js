@@ -151,6 +151,10 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Saves a python file with the correct filename", async function(){
+        var checkFile = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
+        if(checkFile){
+            fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
+        };
         const page = await global.browser.newPage();
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/temp-test-files'});
         await page.goto("http://localhost:5000/editor.html");
