@@ -68,7 +68,14 @@ var language = {
         'instructions': 'DRAG AND DROP A .HEX OR .PY FILE IN HERE TO OPEN IT.',
         'submit': 'LOAD',
         'toggle-file': 'OR BROWSE FOR A FILE',
-        'fs-add-file': 'ADD FILE'
+        'fs-add-file': 'ADD FILE',
+        'show-files': 'SHOW FILES',
+        'hide-files': 'HIDE FILES',
+        'td-filename': 'FILENAME',
+        'td-size': 'SIZE',
+        'fs-space-free':'FREE',
+        'remove-but' : 'REMOVE',
+        'save-but': 'SAVE'
       },
       'static-strings':{
         'buttons':{
@@ -121,6 +128,10 @@ var language = {
         },
       'script-name':{
         'label': 'SCRIPT NAME'
+        },
+      'options-dropdown':{
+        'autocomplete': 'AUTOCOMPLETE',
+        'on-enter': 'ON ENTER:'
         }
       }
 };

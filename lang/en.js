@@ -68,7 +68,14 @@
             'instructions': 'Drag and drop a .hex or .py file in here to open it.',
             'submit': 'Load',
             'toggle-file': 'Or browse for a file',
-            'fs-add-file': 'Add file'
+            'fs-add-file': 'Add file',
+            'show-files': 'Show Files',
+            'hide-files': 'Hide Files',
+            'td-filename': 'Filename',
+            'td-size': 'Size',
+            'fs-space-free':'free',
+            'remove-but' : 'Remove',
+            'save-but': 'Save'
           },
           'static-strings':{
             'buttons':{
@@ -121,6 +128,10 @@
             },
           'script-name':{
             'label': 'Script Name'
-            }
+            },
+          'options-dropdown':{
+            'autocomplete': 'Autocomplete',
+            'on-enter': 'On Enter:'
+          }
           }
     };

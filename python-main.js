@@ -293,6 +293,10 @@ function translations() {
             $(value).find('i').attr('title', buttons[button_id]['title']);
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
+        var optionsStrings = language['static-strings']['options-dropdown'];
+        for(var object in optionsStrings){
+            $("#" + object).text(optionsStrings[object]);
+        };
     }
 
     return {
@@ -687,7 +691,7 @@ function web_editor(config) {
     }
 
     // Regenerate the table showing the file list and call for the storage bar to be updated
-    function updateFileTables() {
+    function updateFileTables(loadStrings) {
         // Delete the current table body content and add rows file by file
         $('.fs-file-list table tbody').empty();
         micropythonFs.ls().forEach(function(filename) {
@@ -701,8 +705,8 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
-                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] +'><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
                 var output = micropythonFs.readBytes(filename);
@@ -717,7 +721,7 @@ function web_editor(config) {
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
                 micropythonFs.remove(filename);
-                updateFileTables();
+                updateFileTables(loadStrings);
                 var content = $('.expandable-content')[0];
                 content.style.maxHeight = content.scrollHeight + "px";
             });
@@ -771,11 +775,12 @@ function web_editor(config) {
         var template = $('#files-template').html();
         Mustache.parse(template);
         config.translate.load["program-title"] = $("#script-name").val();
+        var loadStrings = config.translate.load;
         vex.open({
-            content: Mustache.render(template, config.translate.load),
+            content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
-                $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
-                document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
                     doDownload();
                 });
@@ -784,13 +789,13 @@ function web_editor(config) {
                   if (content.style.maxHeight){
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
-                    $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
-                    document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                    $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                   } else {
                     content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
-                    $("#hide-files").attr("title", "Hide Files");
-                    document.getElementById("hide-files").innerHTML = "Hide Files <i class='fa fa-caret-up'>";
+                    $("#hide-files").attr("title", loadStrings["hide-files"]);
+                    document.getElementById("hide-files").innerHTML =loadStrings["hide-files"] + " <i class='fa fa-caret-up'>";
                   }
                 });
                 $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
@@ -852,7 +857,7 @@ function web_editor(config) {
                         var fileReader = new FileReader();
                         fileReader.onload = function(e) {
                             loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
-                            updateFileTables();
+                            updateFileTables(loadStrings);
                             var content = $('.expandable-content')[0];
                             content.style.maxHeight = content.scrollHeight + "px";
                         };
@@ -862,7 +867,7 @@ function web_editor(config) {
                 });
             }
         });
-        updateFileTables();
+        updateFileTables(loadStrings);
     }
 
     // Triggered when a user clicks the blockly button. Toggles blocks on/off.

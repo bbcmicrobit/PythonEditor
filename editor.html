@@ -99,8 +99,8 @@ Nicholas and Damien.
                     <table>
                         <thead>
                             <tr>
-                                <td>Filename</td>
-                                <td>Size</td>
+                                <td>{{td-filename}}</td>
+                                <td>{{td-size}}</td>
                                 <td></td>
                             </tr>
                         </thead>
@@ -114,7 +114,7 @@ Nicholas and Damien.
                         <td id="fs-space-modules" title="modules" class="fs-space-table-first">modules</td>
                         <td id="fs-space-main" title="main.py">main.py</td>
                         <td id="fs-space-other" title="other">other</td>
-                        <td id="fs-space-free" title="free">free</td>
+                        <td id="fs-space-free" title="{{fs-space-free}}">{{fs-space-free}}</td>
                       </tr>
                     </tbody>
                 </table>
@@ -242,7 +242,7 @@ Nicholas and Damien.
                 <div class="buttons_menu_container hidden" id="options_container">
                     <div class="buttons_menu_lhs">
                         <div class="buttons_menu_item">
-                            <span class="menu-switch-label">Autocomplete:</span>
+                            <span id="autocomplete" class="menu-switch-label">Autocomplete:</span>
                             <label class="menu-switch">
                                 <input type="checkbox" class="action" id="menu-switch-autocomplete">
                                 <span class="menu-switch-slider"></span>
@@ -250,7 +250,7 @@ Nicholas and Damien.
                         </div>
                         <div class="buttons_menu_item" id="autocomplete-enter">
                             <ul class="tree">
-                                <li><span class="menu-switch-label">On Enter:</span>
+                                <li><span id="on-enter" class="menu-switch-label">On Enter:</span>
                                     <label class="menu-switch">
                                         <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
                                         <span class="menu-switch-slider"></span>
