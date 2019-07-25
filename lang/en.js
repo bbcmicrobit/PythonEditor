@@ -61,6 +61,23 @@
                     "    display.show(Image.HEART)\n" +
                     "    sleep(2000)\n"
           },
+          'webusb':{
+            'err':{
+              'flash':{
+                'update-req': 'You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware',
+                'clear-connect': 'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
+                'restart-microbit': 'Please restart your micro:bit and try again'
+              },
+              'serial':{
+              'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!',
+              'clear-connect':'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
+              'restart-microbit':'Please restart your micro:bit and try again'
+              },
+            },
+            'close': 'Close',
+            'request-repl': 'Click here or press CTRL-C to enter the REPL',
+            'flashing-text': 'Flashing micro:bit'
+          },
           'load': {
             'save-hex' : 'Download Hex',
             'show-files' : 'Show Files',
@@ -83,13 +100,23 @@
                 'title': 'Download a hex file to flash onto your micro:bit',
                 'label': 'Download'
               },
+              'command-disconnect':{
+                'title':'Disconnect from your micro:bit',
+                'label':'Disconnect'
+              },
+              'command-flash':{
+                'title':'Flash your project directly to your micro:bit',
+                'label':'Flash'
+              },
               'command-files':{
                 'title':'Load/Save files',
                 'label':'Load/Save'
               },
               'command-serial':{
                 'title':'Connect your micro:bit via serial',
-                'label':'Open Serial'
+                'label':'Open Serial',
+                'title-close': 'Close the serial connection and go back to the editor',
+                'label-close': 'Close Serial'
               },
               'command-connect':{
                 'title':'Connect to your micro:bit',

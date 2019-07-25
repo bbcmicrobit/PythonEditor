@@ -61,6 +61,23 @@ var language = {
                  "    display.show(Image.HEART)\n" +
                  "    sleep(2000)\n"
       },
+      'webusb':{
+        'err':{
+          'flash':{
+            'update-req': 'YOU NEED TO <a target="_blank" href="https://microbit.org/guide/firmware/">UPDATE YOUR MICRO:BIT FIRMWARE',
+            'clear-connect': 'ANOTHER PROCESS IS CONNECTED TO THIS DEVICE.</div><div>CLOSE ANY OTHER TABS THAT MAY BE USING WEBUSB (E.G. MAKECODE, PYTHON EDITOR), OR UNPLUG AND REPLUG THE MICRO:BIT BEFORE TRYING AGAIN.',
+            'restart-microbit': 'PLEASE RESTART YOUR MICRO:BIT AND TRY AGAIN'
+          },
+          'serial':{
+          'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">UPDATE YOUR MICRO:BIT FIRMWARE</a> TO MAKE USE OF THIS FEATURE!',
+          'clear-connect':'AANOTHER PROCESS IS CONNECTED TO THIS DEVICE.</div><div>CLOSE ANY OTHER TABS THAT MAY BE USING WEBUSB (E.G. MAKECODE, PYTHON EDITOR), OR UNPLUG AND REPLUG THE MICRO:BIT BEFORE TRYING AGAIN.',
+          'restart-microbit':'PLEASE RESTART YOUR MICRO:BIT AND TRY AGAIN'
+          },
+        },
+        'close': 'CLOSE',
+        'request-repl': 'CLICK HERE OR PRESS CTRL-C TO ENTER THE REPL',
+        'flashing-text': 'FLASHING MICRO:BIT'
+      },
       'load': {
         'save-hex' : 'DOWNLOAD HEX',
         'show-files' : 'SHOW FILES',
@@ -83,13 +100,23 @@ var language = {
             'title': 'DOWNLOAD A HEX FILE TO FLASH ONTO YOUR MICRO:BIT',
             'label': 'DOWNLOAD'
           },
+          'command-flash':{
+            'title':'FLASH YOUR PROJECT DIRECTLY TO YOUR MICRO:BIT',
+            'label':'FLASH'
+          },
+          'command-disconnect':{
+            'title':'DISCONNECT FROM YOUR MICRO:BIT',
+            'label':'DISCONNECT'
+          },
           'command-files':{
             'title':'LOAD/SAVE FILES',
             'label':'LOAD/SAVE'
           },
           'command-serial':{
             'title':'CONNECT YOUR MICRO:BIT VIA SERIAL',
-            'label':'OPEN SERIAL'
+            'label':'OPEN SERIAL',
+            'title-close': 'CLOSE THE SERIAL CONNECTION AND GO BACK TO THE EDITOR',
+            'label-close': 'CLOSE SERIAL'
           },
           'command-connect':{
             'title':'CONNECT TO YOUR MICRO:BIT',
