@@ -249,12 +249,23 @@ Nicholas and Damien.
                             </label>
                         </div>
                         <div class="buttons_menu_item" id="autocomplete-enter">
-                            <span class="menu-switch-label">┗ On Enter:</span>
-                            <label class="menu-switch">
-                                <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
-                                <span class="menu-switch-slider"></span>
-                            </label>
+                            <ul class="tree">
+                                <li><span class="menu-switch-label">On Enter:</span>
+                                    <label class="menu-switch">
+                                        <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
+                                        <span class="menu-switch-slider"></span>
+                                    </label>
+                                </li>
+                            </ul>
                         </div>
+                        <div class="buttons_menu_item">
+                            Select Language:
+                            <ul class="tree">
+                                <li class="lang-choice" id="en">English</li>
+                                <li class="lang-choice" id="uppercase">Uppercase</li>
+                                <li class="lang-choice" id="pl">Polish</li>
+                            </ul>
+                      </div>
                     </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
@@ -295,7 +306,7 @@ Nicholas and Damien.
                 </div>
             </div>
             <div class="vbox action" id="script-box">
-                <label for="script-name">Script Name</label>
+                <label id="script-name-label" for="script-name">Script Name</label>
                 <input id="script-name" class="flex1">
             </div>
           </div>
@@ -335,98 +346,25 @@ Nicholas and Damien.
         <script src="static/js/lzma-d.js"></script>
         <script src="static/js/base64.js"></script>
         <script src="static/js/microbit-fs.umd.js"></script>
+        <script src="lang/en.js" id="lang"></script>
         <script src="micropythonapi.js"></script>
         <script src="python-main.js"></script>
         <script src="urlparser.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
-// Call the web_editor function to start the editor running.
-web_editor({
-    'translate': {
-      'code_snippets': {
-        'title': 'Code Snippets',
-        'description': "Code snippets are short blocks of code to re-use in your own programs. There are snippets for most common things you'll want to do using MicroPython.",
-        'instructions': "Select one of the snippets below, or type the snippet's trigger then tap the TAB key.",
-        'trigger_heading': 'trigger',
-        'description_heading': 'description',
-        'docs': 'create a comment to describe your code',
-        'wh': 'while some condition is True, keep looping over some code',
-        'with': 'do some stuff with something assigned to a name',
-        'cl': 'create a new class that defines the behaviour of a new type of object',
-        'def': 'define a named function that takes some arguments and optionally add a description',
-        'if': 'if some condition is True, do something',
-        'ei': 'else if some other condition is True, do something',
-        'el': 'else do some other thing',
-        'for': 'for each item in a collection of items do something with each item',
-        'try': 'try doing something and handle exceptions (errors)'
-      },
-      'share': {
-        'title': 'Share Code',
-        'instructions': 'Use a password and optional hint (to help you remember the password) to securely create a link to share your code with others.',
-        'passphrase': 'Password: ',
-        'hint': 'Password hint: ',
-        'button': 'Create Link',
-        'description': 'This URL points to your code:',
-        'shortener': 'This is a short version of the link:'
-      },
-      'decrypt': {
-        'title': 'Decrypt Source Code',
-        'instructions': 'Enter a password to decrypt the source code.',
-        'passphrase': 'Password: ',
-        'button': 'Decrypt'
-      },
-      'alerts': {
-        'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
-        'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
-        'load_code': 'Oops! Could not load the code into the hex file.',
-        'unrecognised_hex': "Sorry, we couldn't recognise this file",
-        'snippets': 'Snippets are disabled when blockly is enabled.',
-        'error': 'Error:\n',
-        'empty': 'The Python file does not have any content.',
-        'no_python': 'Could not find valid Python code in the hex file.',
-        'no_script': 'Hex file does not contain a Python script.',
-        'no_main': 'The hex file does not contain a main.py file.',
-        'cant_add_file': 'Could not add file to the system:',
-        'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
-        'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
-      },
-      'confirms': {
-        'quit': "Some of your changes have not been saved. Quit anyway?",
-        'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
-        'replace_main': 'Adding a main.py file will replace the code in the editor!',
-        'replace_file': 'Do you want to replace the "{{file_name}}" file?',
-        'replace_module': 'Do you want to replace the "{{module_name}}" module?'
-      },
-      'code': {
-        'start': "# Add your Python code here. E.g.\n" +
-                 "from microbit import *\n\n\n" +
-                 "while True:\n" +
-                 "    display.scroll('Hello, World!')\n" +
-                 "    display.show(Image.HEART)\n" +
-                 "    sleep(2000)\n"
-      },
-      'load': {
-        'save-hex' : 'Download Hex',
-        'show-files' : 'Show Files',
-        'load-title': 'Load/Save',
-        'program-title': function() {
-          return $("#script-name").val();
-        },
-        'instructions': 'Drag and drop a .hex or .py file in here to open it.',
-        'submit': 'Load',
-        'toggle-file': 'Or browse for a file',
-        'fs-add-file': 'Add file'
-      }
-    },
-    'microPythonApi': microPythonApi,
-    'flags': {
-      'blocks': false,
-      'snippets': true,
-      'share': false,
-      'options': true,
-      'experimental': true,
-    },
-});
+            // Call the web_editor function to start the editor running.
+            var config = {
+                microPythonApi: microPythonApi,
+                translate: language,
+                flags: {
+                    blocks: false,
+                    snippets: true,
+                    share: false,
+                    options: true,
+                    experimental: true,
+                },
+            };
+            web_editor(config);
         </script>
 <xml id="blockly-toolbox" style="display: none">
   <category name="Accelerometer" colour="0">

@@ -8,8 +8,11 @@ everything does.)
 /*
 Lazy load JS script files.
 */
-function script(url) {
+function script(url, id) {
     var s = document.createElement('script');
+    if(id){
+        s.id = id;
+    }
     s.type = 'text/javascript';
     s.async = false;
     s.defer = true;
@@ -260,6 +263,45 @@ function blocks() {
 }
 
 /*
+ * Allows the Python Editor to display in multiple languages by manipulating
+ * strings with correct JS language objects.
+ */
+function translations() {
+    'use strict';
+
+    /* Replaces DOM script element with the new language js file. */
+    function updateLang(newLang, callback) {
+        var elementId = 'lang';
+        document.getElementById(elementId).remove();
+        script('lang/' + newLang + '.js', elementId);
+        document.getElementById(elementId).onload = function() {
+            translateEmbedStrings(language);
+            callback(language);
+        };
+    }
+
+    /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
+    function translateEmbedStrings(language) {
+        var buttons = language['static-strings']['buttons'];
+        $('.roundbutton').each(function(object, value) {
+            var button_id = $(value).attr('id');
+            $(value).attr('title', buttons[button_id]['title']);
+            $(value).children(':last').text(buttons[button_id]['label']);
+        });
+        $('.zoomer').each(function(object, value) {
+            var button_id = $(value).attr('id');
+            $(value).find('i').attr('title', buttons[button_id]['title']);
+        });
+        $('#script-name-label').text(language['static-strings']['script-name']['label']);
+    }
+
+    return {
+        'updateLang': updateLang,
+        'translateEmbedStrings': translateEmbedStrings,
+    };
+}
+
+/*
 The following code contains the various functions that connect the behaviour of
 the editor to the DOM (web-page).
 
@@ -272,6 +314,7 @@ function web_editor(config) {
     window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
+    var TRANSLATIONS = translations();
 
     // Represents the REPL terminal
     var REPL = null;
@@ -727,6 +770,7 @@ function web_editor(config) {
     function doFiles() {
         var template = $('#files-template').html();
         Mustache.parse(template);
+        config.translate.load["program-title"] = $("#script-name").val();
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
@@ -1266,6 +1310,13 @@ function web_editor(config) {
             e.stopPropagation();
         });
 
+        $(".lang-choice").on("click", function() {
+            $("#options_container").addClass('hidden');
+            TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
+                config.translate = translations;
+            });
+        });
+
         $('#menu-switch-autocomplete').on('change', function() {
             var setEnable = $(this).is(':checked');
             if (setEnable) {
@@ -1325,6 +1376,7 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
+    TRANSLATIONS.translateEmbedStrings(config.translate);
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
