@@ -11,9 +11,6 @@ require("../ace/mode-python_microbit");
 require("../ace/snippets/python_microbit.js");
 require('../ace/ext-language_tools.js');
 
-//fs lib for file check tests
-global.fs = require("fs");
-
 // Import the rest of the static libraries
 global.$ = global.jQuery = require('../static/js/jquery-2.1.4.min.js');
 // Had issues running the forge version included in the editor repo

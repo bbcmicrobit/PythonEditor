@@ -1,5 +1,8 @@
 jest.setTimeout(20000);
 
+//fs lib for file check tests
+var fs = require("fs");
+
 describe("Puppeteer basic tests for the Python Editor.", function() {
 
     beforeAll(async() => {
@@ -149,21 +152,19 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
 
     it("Saves a python file with the correct filename", async function(){
         const page = await global.browser.newPage();
-        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/'});
+        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/temp-test-files'});
         await page.goto("http://localhost:5000/editor.html");
         await page.evaluate( () => document.getElementById("script-name").value = "program test")
-        await page.waitFor(500);
+        const scriptName = await page.evaluate("document.getElementById('script-name').value");
+        for (let ms=0; ms<100; ms++) {
+            if (scriptName === "program test") break;
+            await page.waitFor(10);
+        }
         await page.click("#command-files");
         await page.click("#show-files");
-        await page.waitFor(500);
         await page.click(".save-button.save");
-        await page.waitFor(1000);
-        var fileExists = false;
-        await fs.exists("./spec/test-files/program_test.py", async function(exists) {
-            fileExists = exists;
-            return;
-        });
-        await page.waitFor(1000);
+        await page.waitFor(1000); //waiting to ensure file is saved
+        var fileExists = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
         expect(fileExists).toBeTruthy();
     })
 
