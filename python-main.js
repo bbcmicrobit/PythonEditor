@@ -263,34 +263,36 @@ function blocks() {
 }
 
 /*
- * Allows the Python Editor to display in multiple
- * languages by manipulating strings with correct
- * JS language objects.
+ * Allows the Python Editor to display in multiple languages by manipulating
+ * strings with correct JS language objects.
  */
 function translations() {
     'use strict';
 
+    /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
-        document.getElementById('lang').remove();
-        script('lang/' + newLang + '.js', 'lang');
-        document.getElementById('lang').onload = function() {
+        var elementId = 'lang';
+        document.getElementById(elementId).remove();
+        script('lang/' + newLang + '.js', elementId);
+        document.getElementById(elementId).onload = function() {
             translateEmbedStrings(language);
             callback(language);
-        }
+        };
     }
 
+    /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
     function translateEmbedStrings(language) {
-        var buttons = language["static-strings"]["buttons"];
-        $(".roundbutton").each(function(object, value){
-            var button_id = $(value).attr("id");
-            $(value).attr("title", buttons[button_id]["title"]);
-            $(value).children(":last").text(buttons[button_id]["label"]);
+        var buttons = language['static-strings']['buttons'];
+        $('.roundbutton').each(function(object, value) {
+            var button_id = $(value).attr('id');
+            $(value).attr('title', buttons[button_id]['title']);
+            $(value).children(':last').text(buttons[button_id]['label']);
         });
-        $(".zoomer").each((object, value) => {
-            var button_id = $(value).attr("id");
-            $(value).find("i").attr("title",buttons[button_id]["title"]);
+        $('.zoomer').each(function(object, value) {
+            var button_id = $(value).attr('id');
+            $(value).find('i').attr('title', buttons[button_id]['title']);
         });
-        $("#script-name-label").text(language["static-strings"]["script-name"]["label"]);
+        $('#script-name-label').text(language['static-strings']['script-name']['label']);
     }
 
     return {
@@ -768,9 +770,7 @@ function web_editor(config) {
     function doFiles() {
         var template = $('#files-template').html();
         Mustache.parse(template);
-        config.translate.load["program-title"] = function() {
-                return $("#script-name").val();
-              },
+        config.translate.load["program-title"] = $("#script-name").val();
         vex.open({
             content: Mustache.render(template, config.translate.load),
             afterOpen: function(vexContent) {
