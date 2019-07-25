@@ -293,10 +293,13 @@ function translations() {
             $(value).find('i').attr('title', buttons[button_id]['title']);
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
+<<<<<<< HEAD
         var optionsStrings = language['static-strings']['options-dropdown'];
         for(var object in optionsStrings){
             $("#" + object).text(optionsStrings[object]);
         };
+=======
+>>>>>>> 58a8606d41ff79ec0fb64a2888450c1d608adb17
     }
 
     return {
@@ -337,6 +340,11 @@ function web_editor(config) {
     // Gets the name associated with the code displayed in the UI.
     function getName() {
         return $("#script-name").val();
+    }
+
+    // Gets filename and replaces spaces with underscores
+    function getSafeName(){
+        return getName().replace(" ", "_");
     }
 
     // Get the font size of the text currently displayed in the editor.
@@ -698,8 +706,9 @@ function web_editor(config) {
             var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
             var name = filename;
             var disabled = "";
+            var scriptName = getName();
             if (filename === 'main.py') {
-              name = getName() + " (" + filename + ")";
+              name = scriptName + " (" + filename + ")";
               disabled = "disabled";
             };
             $('.fs-file-list table tbody').append(
@@ -716,6 +725,10 @@ function web_editor(config) {
                     window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
                 } else {
                     var blob = new Blob([output], {type: "text/plain"});
+                    if(filename === 'main.py'){
+                        scriptName = getSafeName();
+                        filename = scriptName + ".py";
+                    }
                     saveAs(blob, filename);
                 }
             });
@@ -764,7 +777,7 @@ function web_editor(config) {
             alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
-            var filename = getName().replace(" ", "_");
+            var filename = getSafeName();
             var blob = new Blob([output], {type: "application/octet-stream"});
             saveAs(blob, filename + ".hex");
         }
@@ -775,7 +788,10 @@ function web_editor(config) {
         var template = $('#files-template').html();
         Mustache.parse(template);
         config.translate.load["program-title"] = $("#script-name").val();
+<<<<<<< HEAD
         var loadStrings = config.translate.load;
+=======
+>>>>>>> 58a8606d41ff79ec0fb64a2888450c1d608adb17
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
