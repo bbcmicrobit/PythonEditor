@@ -166,6 +166,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.waitFor(1000); //waiting to ensure file is saved
         var fileExists = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
         expect(fileExists).toBeTruthy();
+        fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
     })
 
 });
