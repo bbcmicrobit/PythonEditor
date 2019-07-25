@@ -514,7 +514,7 @@ div.load-form {
 
 /* Switches in the Options menu */
 .menu-switch-label {
-    padding-left: 0.75em;
+    padding: 0;
 }
 .menu-switch {
     position: relative;
@@ -718,33 +718,41 @@ input:checked + .menu-switch-slider:before {
     min-width: 2%;
 }
 
-/* Language drop down menu */
-.lang-choice{
-    margin: auto;
-    padding: 5px;
-}
-.lang-icon{
-    margin-top: 10%;
-    width: 90%;
-    height: 90%;
-    background-image: url("../img/globe-icon.png");
-}
+/* Language selection drop down menu */
 .lang-choice:hover{
-    background-color: #ffcc33;
-    color: darkblue;
     font-weight: bold;
     cursor: pointer;
 }
-.lang-choice:nth-last-of-type(1){
-    border-radius: 0 0 0.5rem 0.5rem;
-}
-.lang-choice:nth-child(1){
-    border-radius: 0.5rem 0.5rem 0 0;
-}
-.language-drop{
-    margin: auto;
-}
-.language_container {
+
+/* Tree style list */
+ul.tree, ul.tree ul {
+    list-style: none;
     margin: 0;
     padding: 0;
+    margin-left: 6px;
+}
+ul.tree ul {
+    margin-left: 16px;
+}
+ul.tree li {
+    margin: 0;
+    padding: 0 7px;
+    line-height: 20px;
+    border-left: 1px solid rgb(100,100,100);
+}
+ul.tree li:last-child {
+    border-left: none;
+}
+ul.tree li:before {
+    position: relative;
+    top: -0.3em;
+    height: 1em;
+    width: 12px;
+    border-bottom: 1px solid rgb(100,100,100);
+    content: "";
+    display: inline-block;
+    left: -7px;
+}
+ul.tree li:last-child:before {
+    border-left: 1px solid rgb(100, 100, 100);
 }

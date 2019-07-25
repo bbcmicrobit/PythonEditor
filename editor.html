@@ -231,13 +231,6 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Share</div>
                 </a>
-                <div class="buttons_menu_container language_container hidden" id="language_container">
-                    <div class="language-drop">
-                        <div class="lang-choice" id="en">English</div>
-                        <div class="lang-choice" id="uppercase">Uppercase</div>
-                        <div class="lang-choice" id="pl">Polish</div>
-                    </div>
-                </div>
                 <a href="#" class="roundbutton action hidden" id="command-options"
                     tabindex="8"
                     title="Change the editor settings">
@@ -256,15 +249,22 @@ Nicholas and Damien.
                             </label>
                         </div>
                         <div class="buttons_menu_item" id="autocomplete-enter">
-                            <span class="menu-switch-label">┗ On Enter:</span>
-                            <label class="menu-switch">
-                                <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
-                                <span class="menu-switch-slider"></span>
-                            </label>
+                            <ul class="tree">
+                                <li><span class="menu-switch-label">On Enter:</span>
+                                    <label class="menu-switch">
+                                        <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
+                                        <span class="menu-switch-slider"></span>
+                                    </label>
+                                </li>
+                            </ul>
                         </div>
                         <div class="buttons_menu_item">
-                          <button type="button" class="action save-button show" 
-                          id="show-languages" title="Language">Show Languages<i class="fa fa-caret-down"></i></button>
+                            Select Language:
+                            <ul class="tree">
+                                <li class="lang-choice" id="en">English</li>
+                                <li class="lang-choice" id="uppercase">Uppercase</li>
+                                <li class="lang-choice" id="pl">Polish</li>
+                            </ul>
                       </div>
                     </div>
                 </div>

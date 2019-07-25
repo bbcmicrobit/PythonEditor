@@ -1285,26 +1285,9 @@ function web_editor(config) {
         $("#request-repl").click(function () {
             daplink.serialWrite("\x03");
         });
-        $("#show-languages").click(function (e) {
-            // Hide any other open menus and show/hide options menu
-            $('#helpsupport_container').addClass('hidden');
-            //$('#options_container').addClass('hidden');
-            $('#language_container').toggleClass('hidden');
-            formatMenuContainer('show-languages', 'language_container');
-            if($("#language_container").attr("class").match(/hidden/)){
-                document.getElementById("show-languages").innerHTML = "Show Languages <i class='fa fa-caret-down'>";
-            }
-            else{
-                document.getElementById("show-languages").innerHTML = "Hide Languages <i class='fa fa-caret-up'>";
-            }
-            // Stop immediate closure
-            e.stopImmediatePropagation();
-        });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
-            $('#language_container').addClass('hidden');
             $('#helpsupport_container').addClass('hidden');
-            document.getElementById("show-languages").innerHTML = "Show Languages <i class='fa fa-caret-down'>";
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
             // Stop immediate closure
@@ -1312,7 +1295,6 @@ function web_editor(config) {
         });
         $("#command-help").click(function (e) {
             // Hide any other open menus and show/hide help menu
-            $('#language_container').addClass('hidden');
             $('#options_container').addClass('hidden');
             $('#helpsupport_container').toggleClass('hidden');
             formatMenuContainer('command-help', 'helpsupport_container');
@@ -1329,7 +1311,7 @@ function web_editor(config) {
         });
 
         $(".lang-choice").on("click", function() {
-            $("#language_container").addClass('hidden');
+            $("#options_container").addClass('hidden');
             TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
                 config.translate = translations;
             });
