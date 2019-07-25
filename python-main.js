@@ -293,13 +293,10 @@ function translations() {
             $(value).find('i').attr('title', buttons[button_id]['title']);
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
-<<<<<<< HEAD
         var optionsStrings = language['static-strings']['options-dropdown'];
         for(var object in optionsStrings){
             $("#" + object).text(optionsStrings[object]);
         };
-=======
->>>>>>> 58a8606d41ff79ec0fb64a2888450c1d608adb17
     }
 
     return {
@@ -788,10 +785,7 @@ function web_editor(config) {
         var template = $('#files-template').html();
         Mustache.parse(template);
         config.translate.load["program-title"] = $("#script-name").val();
-<<<<<<< HEAD
         var loadStrings = config.translate.load;
-=======
->>>>>>> 58a8606d41ff79ec0fb64a2888450c1d608adb17
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
