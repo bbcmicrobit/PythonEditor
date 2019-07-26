@@ -46,6 +46,26 @@
             'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
             'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
           },
+          'help': {
+            'docs-link':{
+              'title':'View the documentation for MicroPython',
+              'label':'Documentation'
+            },
+            'support-link':{
+              'title':'Get support for your micro:bit in a new tab',
+              'label':'Support'
+            },
+            'help-link':{
+              'title':'Open help for this editor in a new tab',
+              'label':'Help'
+            },
+            'issues-link':{
+              'title':'View open issues for the Python Editor in GitHub',
+              'label':'Issue Tracker'
+            },
+            'editor-ver': 'Editor Version:',
+            'mp-ver': 'MicroPython Version:'
+          },
           'confirms': {
             'quit': "Some of your changes have not been saved. Quit anyway?",
             'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
@@ -158,7 +178,8 @@
             },
           'options-dropdown':{
             'autocomplete': 'Autocomplete',
-            'on-enter': 'On Enter:'
+            'on-enter': 'On Enter:',
+            'lang-select':'Select Language:'
           }
           }
     };

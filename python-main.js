@@ -306,6 +306,15 @@ function translations() {
         for(var object in optionsStrings){
             $("#" + object).text(optionsStrings[object]);
         };
+        var helpStrings = language['help'];
+        for(var object in helpStrings){
+            if(object.match(/ver/)){
+                $('#' + object).text(helpStrings[object]);
+                continue;
+            };
+            $('#' + object).text(helpStrings[object]["label"]);
+            $('#' + object).attr("title",helpStrings[object]["title"]);
+        }
     }
 
     return {

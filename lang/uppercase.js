@@ -46,6 +46,26 @@ var language = {
             'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
             'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
         },
+        'help': {
+          'docs-link':{
+            'title':'VIEW THE DOCUMENTATION FOR MICROPYTHON',
+            'label':'DOCUMENTATION'
+          },
+          'support-link':{
+            'title':'GET SUPPORT FOR YOUR MICRO:BIT IN A NEW TAB',
+            'label':'SUPPORT'
+          },
+          'help-link':{
+            'title':'OPEN HELP FOR THIS EDITOR IN A NEW TAB',
+            'label':'HELP'
+          },
+          'issues-link':{
+            'title':'VIEW OPEN ISSUES FOR THE PYTHON EDITOR IN GITHUB',
+            'label':'ISSUE TRACKER'
+          },
+          'editor-ver': 'EDITOR VERSION:',
+          'mp-ver': 'MICROPYTHON VERSION:'
+        },
         'confirms': {
           'quit': "SOME OF YOUR CHANGES HAVE NOT BEEN SAVED. QUIT ANYWAY?",
           'blocks': "YOU HAVE UNSAVED CODE. USING BLOCKS WILL CHANGE YOUR CODE. YOU MAY LOSE YOUR CHANGES. DO YOU WANT TO CONTINUE?",
@@ -158,7 +178,8 @@ var language = {
         },
       'options-dropdown':{
         'autocomplete': 'AUTOCOMPLETE',
-        'on-enter': 'ON ENTER:'
+        'on-enter': 'ON ENTER:',
+        'lang-select':'SELECT LANGUAGE:'
         }
       }
 };
