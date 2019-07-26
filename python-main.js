@@ -428,12 +428,12 @@ function web_editor(config) {
             $("#command-share").removeClass('hidden');
         }
         if(config.flags.experimental) {
-            $("#known-issues").removeClass('hidden');
+            $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            EDITOR.enableAutocomplete(true);
+            $('#menu-switch-autocomplete').prop("checked", true);
         }
-        if(config.flags.options) {
-            $("#command-options").removeClass('hidden');
-        }
+
         // Update the help link to pass feature flag information.
         var helpAnchor = $("#help-link");
         var featureQueryString = Object.keys(config.flags).filter(function(f) {
@@ -490,8 +490,6 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-        EDITOR.enableAutocomplete(true);
-        $('#menu-switch-autocomplete').prop("checked", true);
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
