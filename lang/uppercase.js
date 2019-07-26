@@ -144,7 +144,7 @@ var language = {
           },
           'command-options':{
             'title':'CHANGE THE EDITOR SETTINGS',
-            'label':'OPTIONS'
+            'label':'BETA OPTIONS'
           },
           'command-blockly':{
             'title':'CLICK TO CREATE CODE WITH BLOCKLY',
@@ -178,7 +178,7 @@ var language = {
         },
       'options-dropdown':{
         'autocomplete': 'AUTOCOMPLETE',
-        'on-enter': 'ON ENTER:',
+        'on-enter': 'ON ENTER',
         'lang-select':'SELECT LANGUAGE:'
         }
       }

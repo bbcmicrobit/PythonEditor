@@ -428,12 +428,10 @@ function web_editor(config) {
             $("#command-share").removeClass('hidden');
         }
         if(config.flags.experimental) {
-            $('.experimental').show();
+            $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
         }
-        if(config.flags.options) {
-            $("#command-options").removeClass('hidden');
-        }
+
         // Update the help link to pass feature flag information.
         var helpAnchor = $("#help-link");
         var featureQueryString = Object.keys(config.flags).filter(function(f) {

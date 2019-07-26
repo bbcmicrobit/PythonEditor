@@ -144,7 +144,7 @@
               },
               'command-options':{
                 'title':'Change the editor settings',
-                'label':'Options'
+                'label':'Beta Options'
               },
               'command-blockly':{
                 'title':'Click to create code with blockly',
@@ -178,7 +178,7 @@
             },
           'options-dropdown':{
             'autocomplete': 'Autocomplete',
-            'on-enter': 'On Enter:',
+            'on-enter': 'On Enter',
             'lang-select':'Select Language:'
           }
           }

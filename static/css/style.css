@@ -34,7 +34,7 @@
 }
 
 .experimental {
-    display: none;
+    display: none !important;
 }
 
 .vbox {
