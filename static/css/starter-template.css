@@ -23,14 +23,8 @@ video {
     padding-bottom: 20px;
 }
 
-.hide-blocks {
+.hidden {
   display: none !important;
-}
-.hide-snippets {
-  display: none !important;
-}
-.hide-share {
-  display:none !important;
 }
 
 /* Menu Buttons */
