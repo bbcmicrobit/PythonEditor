@@ -46,6 +46,26 @@
             'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
             'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
           },
+          'help': {
+            'docs-link':{
+              'title':'View the documentation for MicroPython',
+              'label':'Documentation'
+            },
+            'support-link':{
+              'title':'Get support for your micro:bit in a new tab',
+              'label':'Support'
+            },
+            'help-link':{
+              'title':'Open help for this editor in a new tab',
+              'label':'Help'
+            },
+            'issues-link':{
+              'title':'View open issues for the Python Editor in GitHub',
+              'label':'Issue Tracker'
+            },
+            'editor-ver': 'Editor Version:',
+            'mp-ver': 'MicroPython Version:'
+          },
           'confirms': {
             'quit': "Some of your changes have not been saved. Quit anyway?",
             'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
@@ -61,6 +81,23 @@
                     "    display.show(Image.HEART)\n" +
                     "    sleep(2000)\n"
           },
+          'webusb':{
+            'err':{
+              'flash':{
+                'update-req': 'You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware',
+                'clear-connect': 'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
+                'restart-microbit': 'Please restart your micro:bit and try again'
+              },
+              'serial':{
+              'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!',
+              'clear-connect':'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
+              'restart-microbit':'Please restart your micro:bit and try again'
+              },
+            },
+            'close': 'Close',
+            'request-repl': 'Click here or press CTRL-C to enter the REPL',
+            'flashing-text': 'Flashing micro:bit'
+          },
           'load': {
             'save-hex' : 'Download Hex',
             'show-files' : 'Show Files',
@@ -68,7 +105,14 @@
             'instructions': 'Drag and drop a .hex or .py file in here to open it.',
             'submit': 'Load',
             'toggle-file': 'Or browse for a file',
-            'fs-add-file': 'Add file'
+            'fs-add-file': 'Add file',
+            'show-files': 'Show Files',
+            'hide-files': 'Hide Files',
+            'td-filename': 'Filename',
+            'td-size': 'Size',
+            'fs-space-free':'free',
+            'remove-but' : 'Remove',
+            'save-but': 'Save'
           },
           'static-strings':{
             'buttons':{
@@ -76,13 +120,23 @@
                 'title': 'Download a hex file to flash onto your micro:bit',
                 'label': 'Download'
               },
+              'command-disconnect':{
+                'title':'Disconnect from your micro:bit',
+                'label':'Disconnect'
+              },
+              'command-flash':{
+                'title':'Flash your project directly to your micro:bit',
+                'label':'Flash'
+              },
               'command-files':{
                 'title':'Load/Save files',
                 'label':'Load/Save'
               },
               'command-serial':{
                 'title':'Connect your micro:bit via serial',
-                'label':'Open Serial'
+                'label':'Open Serial',
+                'title-close': 'Close the serial connection and go back to the editor',
+                'label-close': 'Close Serial'
               },
               'command-connect':{
                 'title':'Connect to your micro:bit',
@@ -121,6 +175,11 @@
             },
           'script-name':{
             'label': 'Script Name'
-            }
+            },
+          'options-dropdown':{
+            'autocomplete': 'Autocomplete',
+            'on-enter': 'On Enter:',
+            'lang-select':'Select Language:'
+          }
           }
     };

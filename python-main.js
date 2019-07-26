@@ -285,6 +285,13 @@ function translations() {
         var buttons = language['static-strings']['buttons'];
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
+            if(button_id === "command-serial"){
+                if($("#repl").css("display") !== "none"){ //checks if serial is open (for "serial close" string)
+                    $(value).attr('title', buttons[button_id]['title-close']);
+                    $(value).children(':last').text(buttons[button_id]['label-close']);
+                    return; //equivalent to 'continue' for jquery loop
+                }
+            }
             $(value).attr('title', buttons[button_id]['title']);
             $(value).children(':last').text(buttons[button_id]['label']);
         });
@@ -293,6 +300,21 @@ function translations() {
             $(value).find('i').attr('title', buttons[button_id]['title']);
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
+        $('#request-repl').text(language['webusb']['request-repl']);
+        $('#flashing-text').text(language['webusb']['flashing-text']);
+        var optionsStrings = language['static-strings']['options-dropdown'];
+        for(var object in optionsStrings){
+            $("#" + object).text(optionsStrings[object]);
+        };
+        var helpStrings = language['help'];
+        for(var object in helpStrings){
+            if(object.match(/ver/)){
+                $('#' + object).text(helpStrings[object]);
+                continue;
+            };
+            $('#' + object).text(helpStrings[object]["label"]);
+            $('#' + object).attr("title",helpStrings[object]["title"]);
+        }
     }
 
     return {
@@ -692,7 +714,7 @@ function web_editor(config) {
     }
 
     // Regenerate the table showing the file list and call for the storage bar to be updated
-    function updateFileTables() {
+    function updateFileTables(loadStrings) {
         // Delete the current table body content and add rows file by file
         $('.fs-file-list table tbody').empty();
         micropythonFs.ls().forEach(function(filename) {
@@ -707,8 +729,8 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title="Remove"><i class="fa fa-trash"></i></button>' +
-                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title="Save"><i class="fa fa-download"></i></button></td></tr>'
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] +'><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
                 var output = micropythonFs.readBytes(filename);
@@ -727,7 +749,7 @@ function web_editor(config) {
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
                 micropythonFs.remove(filename);
-                updateFileTables();
+                updateFileTables(loadStrings);
                 var content = $('.expandable-content')[0];
                 content.style.maxHeight = content.scrollHeight + "px";
             });
@@ -781,11 +803,12 @@ function web_editor(config) {
         var template = $('#files-template').html();
         Mustache.parse(template);
         config.translate.load["program-title"] = $("#script-name").val();
+        var loadStrings = config.translate.load;
         vex.open({
-            content: Mustache.render(template, config.translate.load),
+            content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
-                $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
-                document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
                     doDownload();
                 });
@@ -794,13 +817,13 @@ function web_editor(config) {
                   if (content.style.maxHeight){
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
-                    $("#show-files").attr("title", "Show Files (" + micropythonFs.ls().length + ")");
-                    document.getElementById("show-files").innerHTML = "Show Files (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                    $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                   } else {
                     content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
-                    $("#hide-files").attr("title", "Hide Files");
-                    document.getElementById("hide-files").innerHTML = "Hide Files <i class='fa fa-caret-up'>";
+                    $("#hide-files").attr("title", loadStrings["hide-files"]);
+                    document.getElementById("hide-files").innerHTML =loadStrings["hide-files"] + " <i class='fa fa-caret-up'>";
                   }
                 });
                 $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
@@ -862,7 +885,7 @@ function web_editor(config) {
                         var fileReader = new FileReader();
                         fileReader.onload = function(e) {
                             loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
-                            updateFileTables();
+                            updateFileTables(loadStrings);
                             var content = $('.expandable-content')[0];
                             content.style.maxHeight = content.scrollHeight + "px";
                         };
@@ -872,7 +895,7 @@ function web_editor(config) {
                 });
             }
         });
-        updateFileTables();
+        updateFileTables(loadStrings);
     }
 
     // Triggered when a user clicks the blockly button. Toggles blocks on/off.
@@ -1039,13 +1062,13 @@ function web_editor(config) {
 
                 // Change button to disconnect
                 $("#command-connect").attr("id", "command-disconnect");
-                $("#command-disconnect > .roundlabel").text("Disconnect");
-                $("#command-disconnect").attr("title", "Disconnect from your micro:bit");
+                $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
+                $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
 
                 // Change download to flash
                 $("#command-download").attr("id", "command-flash");
-                $("#command-flash > .roundlabel").text("Flash");
-                $("#command-flash").attr("title", "Flash your project directly to your micro:bit");
+                $("#command-flash > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-flash"]["label"]);
+                $("#command-flash").attr("title", config["translate"]["static-strings"]["buttons"]["command-flash"]["title"]);
 
                 if (serial){
                   doSerial();
@@ -1058,14 +1081,14 @@ function web_editor(config) {
 
                 // If micro:bit does not support dapjs
                 if (err.message === "No valid interfaces found."){
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["flash"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                     return;
                 } else if (err.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["flash"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                     return;
                 }
 
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["flash"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
             });
         }).catch(function(err) {
             console.log("There was an error during connecting: " + err);
@@ -1078,8 +1101,8 @@ function web_editor(config) {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
-            $("#command-serial").attr("title", "Connect to your micro:bit via serial");
-            $("#command-serial > .roundlabel").text("Open Serial");
+            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
         }
 
         window.daplink.stopSerialRead();
@@ -1090,13 +1113,13 @@ function web_editor(config) {
 
         // Change button to connect
         $("#command-disconnect").attr("id", "command-connect");
-        $("#command-connect > .roundlabel").text("Connect");
-        $("#command-connect").attr("title", "Connect to your micro:bit");
+        $("#command-connect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-connect"]["label"]);
+        $("#command-connect").attr("title", config["translate"]["static-strings"]["buttons"]["command-connect"]["title"]);
 
         // Change flash to download
         $("#command-flash").attr("id", "command-download");
-        $("#command-download > .roundlabel").text("Download");
-        $("#command-download").attr("title", "Download a hex file to flash onto your micro:bit");
+        $("#command-download > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-download"]["label"]);
+        $("#command-download").attr("title", config["translate"]["static-strings"]["buttons"]["command-download"]["title"]);
     }
 
     function doFlash(e) {
@@ -1106,8 +1129,8 @@ function web_editor(config) {
             $("#request-repl").hide();
             $("#editor-container").show();
             window.daplink.stopSerialRead();
-            $("#command-serial").attr("title", "Connect to your micro:bit via serial");
-            $("#command-serial > .roundlabel").text("Open Serial");
+            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
         }
 
         // Event to monitor flashing progress
@@ -1146,26 +1169,27 @@ function web_editor(config) {
 
             // If micro:bit does not support dapjs
             if (err.message === "No valid interfaces found.") {
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["flash"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                 return;
             } else if(err.message === "Unable to claim interface.") {
-                $("#flashing-overlay-error").html('<div>Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["flash"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                 return;
             }
 
-            $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+            $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["flash"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
         });
     }
 
     function doSerial() {
         // Hide terminal
+        var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
             window.daplink.stopSerialRead();
-            $("#command-serial").attr("title", "Connect to your micro:bit via serial");
-            $("#command-serial > .roundlabel").text("Open Serial");
+            $("#command-serial").attr("title", serialButton["label"]);
+            $("#command-serial > .roundlabel").text(serialButton["label"]);
             return;
         }
 
@@ -1174,8 +1198,8 @@ function web_editor(config) {
             doConnect(undefined, true);
         } else {
             // Change Serial button to close
-            $("#command-serial").attr("title", "Close the serial connection and go back to the editor");
-            $("#command-serial > .roundlabel").text("Close Serial");
+            $("#command-serial").attr("title", serialButton["title-close"]);
+            $("#command-serial > .roundlabel").text(serialButton["label-close"]);
 
             window.daplink.connect()
             .then( function() {
@@ -1192,14 +1216,14 @@ function web_editor(config) {
                 // If micro:bit does not support dapjs
                 $("#flashing-overlay-error").show();
                 if (err.message === "No valid interfaces found.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div><a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["serial"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                     return;
                 } else if (err.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>Another process is connected to this device.</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["serial"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
                     return;
                 }
 
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>Please restart your micro:bit and try again</div><a href="#" onclick="flashErrorClose()">Close</a>');
+                $("#flashing-overlay-error").html('<div>' + err + '</div><div>' +  config["translate"]["webusb"]["err"]["serial"]["restart-microbit"] + '</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
             });
         }
     }
