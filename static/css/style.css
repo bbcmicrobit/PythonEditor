@@ -30,7 +30,11 @@
 
 /* Re-usable, generic rules */
 .hidden {
-  display: none !important;
+    display: none !important;
+}
+
+.experimental {
+    display: none;
 }
 
 .vbox {

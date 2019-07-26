@@ -428,7 +428,7 @@ function web_editor(config) {
             $("#command-share").removeClass('hidden');
         }
         if(config.flags.experimental) {
-            $("#known-issues").removeClass('hidden');
+            $('.experimental').show();
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
         }
         if(config.flags.options) {
