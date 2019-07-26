@@ -1,22 +1,25 @@
+const fs = require("fs");
+const puppeteer = require("puppeteer");
+
 jest.setTimeout(20000);
 
-//fs lib for file check tests
-var fs = require("fs");
-
 describe("Puppeteer basic tests for the Python Editor.", function() {
+    "use strict";
+
+    let browser = null;
 
     beforeAll(async() => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        global.browser = await global.puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
+        browser = await puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
     });
 
     afterAll(async() => {
-        global.browser.close();
+        browser.close();
     });
 
     it("Correctly loads a script from an import URL.", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         const projectURL = "http://localhost:5000/editor.html?#project:XQAAgAApAQAAAAAAAAA9gn0iDP5hOXUMBZ4M1sxt7nhTa/UMRecCSq6uHLM44uVEs1hTA1G/Oa3Hy9fjvqw9MOrrvyqKstR9g9oq4yc4pkk1m9E2hvucCCCVEeUdb6bwT0S5asuGStzirbKaXcmYjTAskliKk/1v60vUCxCI/fc8ZUstwqzchTG2zAzzDii/EzhUsce8bjtDMg+OOMAzY03WeyEN6x5Z3bkVA20HbuSfofyGzVIlKfTxKeZlZVU2Wt3DdOqe1ccGelN7y0dADIpV19vKoZ9AWI8K4l3FkQQ43EIIM/vyyq0+JjpgrLhtSv/8Ma+A";
         await page.goto(projectURL);
 
@@ -30,7 +33,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Shows an error dialog when loading a MakeCode hex file", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
 
         let hasShownError = false;
@@ -52,7 +55,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Correctly loads a v1.0.1 hex file", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
@@ -75,8 +78,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Correctly loads a v0.9 hex file", async function() {
-
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         let codeContent = "";
@@ -99,7 +101,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Shows an error when trying to download a Hex file if the Python code us too large", async function() {
-        const page = await global.browser.newPage();
+        const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
         const initialName = await page.evaluate("document.getElementById('script-name').value");
@@ -150,13 +152,13 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Saves a python file with the correct filename", async function(){
-        var checkFile = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
-        if(checkFile){
+        if (fs.existsSync("./spec/test-files/temp-test-files/program_test.py")) {
             fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
-        };
-        const page = await global.browser.newPage();
+        }
+        const page = await browser.newPage();
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/temp-test-files'});
         await page.goto("http://localhost:5000/editor.html");
+
         await page.evaluate( () => document.getElementById("script-name").value = "program test")
         const scriptName = await page.evaluate("document.getElementById('script-name').value");
         for (let ms=0; ms<100; ms++) {
@@ -167,9 +169,9 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.click("#show-files");
         await page.click(".save-button.save");
         await page.waitFor(1000); //waiting to ensure file is saved
-        var fileExists = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
-        expect(fileExists).toBeTruthy();
+        const fileExists = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
         fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
-    })
 
+        expect(fileExists).toBeTruthy();
+    });
 });
