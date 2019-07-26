@@ -430,6 +430,8 @@ function web_editor(config) {
         if(config.flags.experimental) {
             $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            EDITOR.enableAutocomplete(true);
+            $('#menu-switch-autocomplete').prop("checked", true);
         }
 
         // Update the help link to pass feature flag information.
@@ -488,8 +490,6 @@ function web_editor(config) {
             EDITOR.setCode(config.translate.code.start);
         }
         EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
-        EDITOR.enableAutocomplete(true);
-        $('#menu-switch-autocomplete').prop("checked", true);
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
