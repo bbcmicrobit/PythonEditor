@@ -153,6 +153,7 @@ h2 {
 
 #script-icons .holder {
   width: 54px;
+  min-width: 54px;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;

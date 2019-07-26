@@ -285,33 +285,27 @@ function translations() {
         var buttons = language['static-strings']['buttons'];
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
-            if(button_id === "command-serial"){
-                if($("#repl").css("display") !== "none"){ //checks if serial is open (for "serial close" string)
-                    $(value).attr('title', buttons[button_id]['title-close']);
-                    $(value).children(':last').text(buttons[button_id]['label-close']);
-                    return; //equivalent to 'continue' for jquery loop
-                }
-            }
             $(value).attr('title', buttons[button_id]['title']);
-            $(value).children(':last').text(buttons[button_id]['label']);
-        });
-        $('.zoomer').each(function(object, value) {
-            var button_id = $(value).attr('id');
-            $(value).find('i').attr('title', buttons[button_id]['title']);
+            $(value).children('.roundlabel').text(buttons[button_id]['label']);
+            if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
+                // Serial button strings depend on the REPL being visible
+                $(value).attr('title', buttons[button_id]['title-close']);
+                $(value).children(':last').text(buttons[button_id]['label-close']);
+            }
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
         $('#flashing-text').text(language['webusb']['flashing-text']);
         var optionsStrings = language['static-strings']['options-dropdown'];
-        for(var object in optionsStrings){
+        for (var object in optionsStrings) {
             $("#" + object).text(optionsStrings[object]);
-        };
+        }
         var helpStrings = language['help'];
-        for(var object in helpStrings){
-            if(object.match(/ver/)){
+        for (var object in helpStrings) {
+            if (object.match(/ver/)) {
                 $('#' + object).text(helpStrings[object]);
                 continue;
-            };
+            }
             $('#' + object).text(helpStrings[object]["label"]);
             $('#' + object).attr("title",helpStrings[object]["title"]);
         }
@@ -1320,6 +1314,7 @@ function web_editor(config) {
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
             $('#helpsupport_container').addClass('hidden');
+            $('#language_container').addClass('hidden');
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
             // Stop immediate closure
@@ -1328,22 +1323,32 @@ function web_editor(config) {
         $("#command-help").click(function (e) {
             // Hide any other open menus and show/hide help menu
             $('#options_container').addClass('hidden');
+            $('#language_container').addClass('hidden');
             $('#helpsupport_container').toggleClass('hidden');
             formatMenuContainer('command-help', 'helpsupport_container');
             // Stop immediate closure
             e.stopImmediatePropagation();
         });
-        $("#zoom-in").click(function (e) {
+        $("#command-zoom-in").click(function (e) {
             zoomIn();
             e.stopPropagation();
         });
-        $("#zoom-out").click(function (e) {
+        $("#command-zoom-out").click(function (e) {
             zoomOut();
             e.stopPropagation();
         });
+        $("#command-language").click(function (e) {
+            // Hide any other open menus and show/hide help menu
+            $('#options_container').addClass('hidden');
+            $('#helpsupport_container').addClass('hidden');
+            $('#language_container').toggleClass('hidden');
+            formatMenuContainer('command-language', 'language_container');
+            // Stop immediate closure
+            e.stopImmediatePropagation();
+        });
 
         $(".lang-choice").on("click", function() {
-            $("#options_container").addClass('hidden');
+            $("#language_container").addClass('hidden');
             TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
                 config.translate = translations;
             });
@@ -1366,6 +1371,7 @@ function web_editor(config) {
         window.addEventListener('resize', function() {
             formatMenuContainer('command-options', 'options_container');
             formatMenuContainer('command-help', 'helpsupport_container');
+            formatMenuContainer('command-language', 'language_container');
         });
 
         document.body.addEventListener('click', function(event) {

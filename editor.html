@@ -215,16 +215,8 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Blockly</div>
                 </a>
-                <a href="#" class="roundbutton action hidden" id="command-snippet"
-                    tabindex="6"
-                    title="Click to select a snippet (code shortcut)">
-                    <div class="roundsymbol">
-                        <i class="fa fa-cogs"></i>
-                    </div>
-                    <div class="roundlabel">Snippets</div>
-                </a>
                 <a href="#" class="roundbutton action hidden" id="command-share"
-                    tabindex="7"
+                    tabindex="6"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -232,7 +224,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <a href="#" class="roundbutton action experimental" id="command-options"
-                    tabindex="8"
+                    tabindex="7"
                     title="Change the editor settings">
                     <div class="roundsymbol">
                         <i class="fa fa-wrench"></i>
@@ -258,18 +250,10 @@ Nicholas and Damien.
                                 </li>
                             </ul>
                         </div>
-                        <div class="buttons_menu_item">
-                            <span id="lang-select">Select Language:</span>
-                            <ul class="tree">
-                                <li class="lang-choice" id="en">English</li>
-                                <li class="lang-choice" id="uppercase">Uppercase</li>
-                                <li class="lang-choice" id="pl">Polish</li>
-                            </ul>
-                      </div>
                     </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
-                    tabindex="9"
+                    tabindex="8"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -290,20 +274,32 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <div id="script-icons" class="vbox">
-                    <a class="holder zoomer action" tabindex="10" id="zoom-in"
-                        href="#">
-                        <div class="status-icon">
-                            <i class="fa fa-search-plus"
-                                title="Zoom in"></i>
-                        </div>
+                    <a class="roundbutton holder zoomer action" tabindex="9" id="command-zoom-in" href="#" title="Zoom in">
+                        <div class="status-icon"><i class="fa fa-search-plus"></i></div>
                     </a>
-                    <a class="holder zoomer action" tabindex="11" id="zoom-out"
-                        href="#">
-                        <div class="status-icon">
-                            <i class="fa fa-search-minus"
-                                title="Zoom out"></i>
-                        </div>
+                    <a class="roundbutton holder zoomer action" tabindex="10" id="command-zoom-out" href="#" title="Zoom out">
+                        <div class="status-icon"><i class="fa fa-search-minus"></i></div>
                     </a>
+                </div>
+                <div id="script-icons" class="vbox">
+                    <a class="roundbutton holder zoomer action" tabindex="11" id="command-snippet" href="#" title="Click to select a snippet (code shortcut)">
+                        <div class="status-icon"><i class="fa fa-cogs"></i></div>
+                    </a>
+                    <a class="roundbutton holder zoomer action" tabindex="12" id="command-language" href="#" title="Change the language">
+                        <div class="status-icon"><i class="fa fa-globe"></i></div>
+                    </a>
+                </div>
+                <div class="buttons_menu_container hidden" id="language_container">
+                    <div class="buttons_menu_lhs">
+                        <div class="buttons_menu_item">
+                            <span id="lang-select">Select Language:</span>
+                            <ul class="tree">
+                                <li class="lang-choice" id="en">English</li>
+                                <li class="lang-choice" id="uppercase">Uppercase</li>
+                                <li class="lang-choice" id="pl">Polish</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="vbox action" id="script-box">
