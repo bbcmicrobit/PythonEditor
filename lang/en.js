@@ -71,7 +71,8 @@ var language = {
     'blocks': "You have unsaved code. Using blocks will change your code. You may lose your changes. Do you want to continue?",
     'replace_main': 'Adding a main.py file will replace the code in the editor!',
     'replace_file': 'Do you want to replace the "{{file_name}}" file?',
-    'replace_module': 'Do you want to replace the "{{module_name}}" module?'
+    'replace_module': 'Do you want to replace the "{{module_name}}" module?',
+    'download_py_multiple': 'This project contains multiple files that will not be saved using this format.\nWe recommend downloading the Hex file, which contains your entire project and can be loaded back into the editor.\n\n Are you sure you want to download the {{file_name}} file only?'
   },
   'code': {
     'start': "# Add your Python code here. E.g.\n" +
@@ -99,11 +100,14 @@ var language = {
     'flashing-text': 'Flashing micro:bit'
   },
   'load': {
-    'save-hex' : 'Download Hex',
     'show-files' : 'Show Files',
-    'load-title': 'Load/Save',
+    'load-title': 'Load',
     'instructions': 'Drag and drop a .hex or .py file in here to open it.',
     'submit': 'Load',
+    'save-title': 'Save',
+    'save-hex' : 'Download Hex',
+    'save-py' : 'Download Python',
+    'fs-title': 'Files',
     'toggle-file': 'Or browse for a file',
     'fs-add-file': 'Add file',
     'hide-files': 'Hide Files',

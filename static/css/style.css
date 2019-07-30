@@ -434,16 +434,31 @@ a.command:hover {
 
 div.expandable {
     margin-top: 15px;
-    background: #ddd;
+    background: #eee;
     border: 1px solid #aaa;
     border-radius: 9px;
     position: relative;
-    padding: 0 10px 5px 10px;
+    padding: 12px;
 }
 
-div.expandable h2 {
-    display: inline-block;
-    margin: 10px 0 10px 5px;
+div.expandable-always-visible {
+    text-align: center;
+}
+div.expandable-always-visible button {
+    width: 100%;
+}
+div.expandable-always-visible button i {
+    color: black !important;
+}
+div.expandable-always-visible button:hover {
+    color: #326699;
+    font-weight: 500;
+    color: #000000;
+    /* text-decoration: underline; */
+    background-color: #e8e8e8;
+}
+div.expandable-always-visible button:hover i {
+    color: black !important;
 }
 
 div.expandable-content {
@@ -569,6 +584,16 @@ input:checked + .menu-switch-slider:before {
     transform: translateX(14px);
 }
 
+/* Modals */
+.modal-title {
+    margin: 24px 0px 12px 0px;
+    text-transform: capitalize;
+}
+.modal-title:first-of-type {
+    margin-top: 0;
+}
+
+
 /* WebUSB */
 #flashing-overlay-container {
     position: absolute;
@@ -604,7 +629,7 @@ input:checked + .menu-switch-slider:before {
     width: 100%;
     width: -moz-available;
     width: -webkit-fill-available;
-    background: #c7c7c7;
+    background: #ddd;
     border: 1px solid #aaa;
     margin: 5px 2px 5px 1px;
     border-radius: 5px;
@@ -626,6 +651,7 @@ input:checked + .menu-switch-slider:before {
     outline:none;
     cursor:pointer;
     background-color: #f3f3f3;
+    border: 1px solid #aaaaaa;
 }
 
 .save-button:hover {
@@ -637,9 +663,45 @@ input:checked + .menu-switch-slider:before {
     color: #ffffff !important;
 }
 
+
+.save-buttons-container {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+.save-button.hex,
+.save-button.py {
+    padding: 10px 20px;
+    margin: 10px;
+}
 .save-button.hex {
-    width: 10em;
-    float: right;
+    width: 40%;
+    min-width: 200px;
+    background-color: #326699;
+    color: white;
+    border: none;
+}
+.save-button.hex i {
+    color: white !important;
+}
+.save-button.hex:hover, 
+.save-button.hex:hover i {
+    background-color: #FFCC33;
+    color: black !important;
+    border: none;
+}
+.save-button.py {
+    width: 40%;
+    min-width: 200px;
+    background-color: white;
+    color: black;
+}
+.save-button.py i {
+    color: #303030 !important;
+}
+.save-button.py:hover {
+    background-color: #eee;
+    color: #black;
 }
 
 .save-button.show {
