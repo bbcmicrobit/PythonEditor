@@ -663,7 +663,6 @@ input:checked + .menu-switch-slider:before {
     color: #ffffff !important;
 }
 
-
 .save-buttons-container {
     display: inline-block;
     width: 100%;
@@ -672,14 +671,15 @@ input:checked + .menu-switch-slider:before {
 .save-button.hex,
 .save-button.py {
     padding: 10px 20px;
-    margin: 10px;
+    margin: 10px 0px;
 }
 .save-button.hex {
-    width: 40%;
-    min-width: 200px;
+    width: 49%;
+    min-width: 250px;
     background-color: #326699;
     color: white;
     border: none;
+    float: right;
 }
 .save-button.hex i {
     color: white !important;
@@ -691,17 +691,24 @@ input:checked + .menu-switch-slider:before {
     border: none;
 }
 .save-button.py {
-    width: 40%;
-    min-width: 200px;
+    width: 49%;
+    min-width: 250px;
     background-color: white;
     color: black;
+    float: left;
 }
 .save-button.py i {
     color: #303030 !important;
 }
 .save-button.py:hover {
     background-color: #eee;
-    color: #black;
+    color: black;
+}
+@media (max-width: 480px) {
+    .save-button.py,
+    .save-button.hex {
+        float: unset;
+    }
 }
 
 .save-button.show {
