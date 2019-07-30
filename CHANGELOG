@@ -1,3 +1,16 @@
+2.0.0-beta.2
+------------
+* Updated the Load/Save modal UI (#203) (#204)
+* Added language selection functionality (#151) (#198) (#205)
+* Added feedback link to the Help menu (#200)
+* Moved snippets and Language to be small buttons. (#202)
+* Moved Options and Autocomplete to always be part of the experimental flag (#201) (#192)
+* Added a global way to process URL parameters (#184)
+* Release checklist updated (#195)
+* Automated and manual tests updated (#196) (#194)
+* Fix: Set the correct Script Name when a Python file is loaded (#193)
+* Fix: Save main.py with the Script Name as the file name (#191)
+
 2.0.0-beta.1
 ------------
 * Added WebUSB functionality (#99)
