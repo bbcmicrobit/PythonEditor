@@ -166,10 +166,10 @@ var language = {
             'title':'CREATE A LINK TO SHARE YOUR SCRIPT',
             'label':'SHARE'
           },
-          'zoom-in':{
+          'command-zoom-in':{
             'title':'ZOOM IN'
           },
-          'zoom-out':{
+          'command-zoom-out':{
             'title':'ZOOM OUT'
           }
         },

@@ -165,10 +165,10 @@ var language = {
         'title': 'Create a link to share your script',
         'label': 'Share'
       },
-      'zoom-in': {
+      'command-zoom-in': {
         'title': 'Zoom in'
       },
-      'zoom-out': {
+      'command-zoom-out': {
         'title': 'Zoom out'
       }
     },

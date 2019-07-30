@@ -121,7 +121,7 @@ h2 {
   border-radius: 0.5rem;
 }
 
-#script-icons > *:not(:first-child) {
+#small-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
 }
@@ -131,12 +131,18 @@ h2 {
   cursor: pointer !important;
 }
 
-#script-icons {
+#small-icons {
     width: 54px;
     min-width: 54px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 
-#script-icons .status-icon {
+#small-icons .status-icon {
   width: 2rem;
   height: 2rem;
   border: 6px solid #FFCC33;
@@ -151,25 +157,13 @@ h2 {
   background: #FFFFFF;
 }
 
-#script-icons .holder {
+#small-icons .holder {
   width: 54px;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
+  min-width: 54px;
   color: #336699;
   text-decoration: none;
-  background-image: url("../img/triangle.svg");
-  background-size: 100%;
-  background-repeat: no-repeat;
   text-align: center;
   padding: 0px;
-}
-
-#script-icons .holder:focus, #script-icons #holder:active {
-  background-image: url("../img/triangle2.svg");
 }
 
 /* Popups */
@@ -327,15 +321,27 @@ a.command:hover {
 
 /* Some overrides for narrow displays */
 @media (max-width: 890px) {
-  .roundbutton {
-    display: inline;
-    padding: 0.75em;
-    min-width: 48px;
-  }
+    .roundbutton {
+        display: inline;
+        min-width: 48px;
+    }
 
-  #script-icons {
-    display: none;
-  }
+    #commands a {
+        padding: .4em;
+    }
+
+    #small-icons {
+        min-width: 120px;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+
+    #small-icons .holder {
+        padding: 0.2em;
+    }
 
   .roundsymbol {
     width: 2rem;
@@ -348,10 +354,6 @@ a.command:hover {
   .roundlabel {
     padding-top: 0;
     display: none;
-  }
-
-  .roundbutton > * {
-    /*display: inline-block;*/
   }
 
   #script-name {
@@ -377,16 +379,17 @@ a.command:hover {
 }
 
 @media (max-width: 480px) {
-  #toolbox {
-    flex-direction: column;
-    -ms-flex-direction: column;
-  }
+    #toolbox {
+        flex-direction: column;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+    }
 
-  #script-box {
-    margin: 1rem;
-    text-align: left;
-    width: 100%;
-  }
+    #script-box {
+        margin: 1rem;
+        text-align: left;
+        width: 100%;
+    }
 }
 
 .snippet-selection:hover {
