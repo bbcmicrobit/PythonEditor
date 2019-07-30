@@ -1,6 +1,6 @@
 var language = {
   'code_snippets': {
-    'title': 'Code Snippets',
+    'title': 'Fragmentos de Codigo',
     'description': "Code snippets are short blocks of code to re-use in your own programs. There are snippets for most common things you'll want to do using MicroPython.",
     'instructions': "Select one of the snippets below, or type the snippet's trigger then tap the TAB key.",
     'trigger_heading': 'trigger',
@@ -48,27 +48,27 @@ var language = {
   },
   'help': {
     'docs-link': {
-      'title':'View the documentation for MicroPython',
-      'label':'Documentation'
+      'title':'Ver la documentación de MicroPython',
+      'label':'Documentación'
     },
     'support-link': {
-      'title':'Get support for your micro:bit in a new tab',
-      'label':'Support'
+      'title':'Obtenga apoyo para su micro:bit en una nueva pestaña',
+      'label':'Soporte'
     },
     'help-link': {
-      'title':'Open the help for this editor in a new tab',
-      'label':'Help'
+      'title':'Abra la ayuda para este editor en una pestaña nueva',
+      'label':'Ayuda'
     },
     'issues-link': {
-      'title':'View open issues for the Python Editor in GitHub',
-      'label':'Issue Tracker'
+      'title':'Ver problemas abiertos para el editor de Python en GitHub',
+      'label':'Bug Tracker'
     },
     'feedback-link': {
-      'title':'Send us your feedback about the Python Editor',
-      'label':'Send Feedback'
+      'title':'Envíanos tus comentarios sobre el editor de Python',
+      'label':'Enviar Comentarios'
     },
-    'editor-ver': 'Editor Version:',
-    'mp-ver': 'MicroPython Version:'
+    'editor-ver': 'Versión del Editor:',
+    'mp-ver': 'Versión de MicroPython:'
   },
   'confirms': {
     'quit': "Some of your changes have not been saved. Quit anyway?",
@@ -104,89 +104,89 @@ var language = {
     'flashing-text': 'Flashing micro:bit'
   },
   'load': {
-    'show-files' : 'Show Files',
-    'load-title': 'Load',
-    'instructions': 'Drag and drop a .hex or .py file in here to open it.',
-    'submit': 'Load',
-    'save-title': 'Save',
-    'save-hex' : 'Download Project Hex',
-    'save-py' : 'Download Python Script',
-    'fs-title': 'Files',
-    'toggle-file': 'Or browse for a file',
-    'fs-add-file': 'Add file',
-    'hide-files': 'Hide Files',
-    'td-filename': 'Filename',
-    'td-size': 'Size',
-    'fs-space-free':'free',
-    'remove-but' : 'Remove',
-    'save-but': 'Save'
+    'show-files' : 'Mostrar Archivos',
+    'load-title': 'Cargar',
+    'instructions': 'Arrastre y suelte aqui un archivo .hex o .py para abrirlo.',
+    'submit': 'Cargar',
+    'save-title': 'Guardar',
+    'save-hex' : 'Descargar Proyecto Hex',
+    'save-py' : 'Descargar Script de Python',
+    'fs-title': 'Archivos',
+    'toggle-file': 'O busque un archivo',
+    'fs-add-file': 'Agregar archivo',
+    'hide-files': 'Ocultar Archivos',
+    'td-filename': 'Nombre de archivo',
+    'td-size': 'Tamaño',
+    'fs-space-free':'disponible',
+    'remove-but' : 'Borrar',
+    'save-but': 'Guardar'
   },
   'static-strings': {
     'buttons': {
       'command-download': {
-        'title': 'Download a hex file to flash onto the micro:bit',
-        'label': 'Download'
+        'title': 'Descargue un archivo hex para flashear el micro:bit',
+        'label': 'Descargar'
       },
       'command-disconnect': {
-        'title': 'Disconnect from the micro:bit',
+        'title': 'Desconectarse del micro:bit',
         'label': 'Disconnect'
       },
       'command-flash': {
-        'title': 'Flash the project directly to the micro:bit',
+        'title': 'Flash el proyecto directamente al micro:bit',
         'label': 'Flash'
       },
       'command-files': {
-        'title': 'Load/Save files',
-        'label': 'Load/Save'
+        'title': 'Cargar/Guardar archivos',
+        'label': 'Cargar/Guardar'
       },
       'command-serial': {
-        'title': 'Connect the micro:bit via serial',
-        'label': 'Open Serial',
-        'title-close': 'Close the serial connection and go back to the editor',
-        'label-close': 'Close Serial'
+        'title': 'Conecte el micro:bit a través de serie',
+        'label': 'Abrir Serie',
+        'title-close': 'Cierra la conexión en serie y vuelva al editor.',
+        'label-close': 'Cerrar Serie'
       },
       'command-connect': {
-        'title': 'Connect to the micro:bit',
-        'label': 'Connect'
+        'title': 'Conéctea al micro:bit',
+        'label': 'Conectar'
       },
       'command-options': {
-        'title': 'Change the editor settings',
-        'label': 'Beta Options'
+        'title': 'Cambie la configuración del editor',
+        'label': 'Opciones Beta'
       },
       'command-blockly': {
-        'title': 'Click to create code with blockly',
+        'title': 'Haga clic para crear código con blockly',
         'label': 'Blockly'
       },
       'command-snippet': {
-        'title': 'Click to select a snippet (code shortcut)',
-        'label': 'Snippets'
+        'title': 'Haga clic para seleccionar un fragmento (acceso directo de código)',
+        'label': 'Fragmentos'
       },
       'command-help': {
-        'title': 'Discover helpful resources',
-        'label': 'Help'
+        'title': 'Descubre recursos útiles',
+        'label': 'Ayuda'
       },
       'command-language': {
-        'title': 'Select a language',
-        'label': 'Language'
+        'title': 'Seleccionar Idioma',
+        'label': 'Idioma'
       },
       'command-share': {
-        'title': 'Create a link to share your script',
-        'label': 'Share'
+        'title': 'Crear un enlace para compartir tu script',
+        'label': 'Compartir'
       },
       'command-zoom-in': {
-        'title': 'Zoom in'
+        'title': 'Aumentar zoom'
       },
       'command-zoom-out': {
-        'title': 'Zoom out'
+        'title': 'Disminuir zoom'
       }
     },
     'script-name': {
-      'label': 'Script Name'
+      'label': 'Nombre del Script'
     },
     'options-dropdown': {
-      'autocomplete': 'Autocomplete',
-      'on-enter': 'On Enter',
-      'lang-select': 'Select Language:'
+      'autocomplete': 'Autocompletar',
+      'on-enter': 'Al presionar Intro',
+      'lang-select': 'Seleccionar Idioma:'
     }
   }
 };
