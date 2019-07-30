@@ -71,7 +71,8 @@ var language = {
           'blocks': "YOU HAVE UNSAVED CODE. USING BLOCKS WILL CHANGE YOUR CODE. YOU MAY LOSE YOUR CHANGES. DO YOU WANT TO CONTINUE?",
           'replace_main': 'Adding a main.py file will replace the code in the editor!',
           'replace_file': 'Do you want to replace the "{{file_name}}" file?',
-          'replace_module': 'Do you want to replace the "{{module_name}}" module?'
+          'replace_module': 'Do you want to replace the "{{module_name}}" module?',
+          'download_py_multiple': 'This project contains multiple files that will not be saved using this format.\nWe recommend downloading the Hex file, which contains your entire project and can be loaded back into the editor.\n\n Are you sure you want to download the {{file_name}} file only?'
       },
       'code': {
         'start': "# ADD YOUR PYTHON CODE HERE. E.g.\n" +

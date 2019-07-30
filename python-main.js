@@ -814,6 +814,11 @@ function web_editor(config) {
                     doDownload();
                 });
                 $('#save-py').click(function() {
+                    if (micropythonFs.ls().length > 1) {
+                        if (!confirm(config.translate.confirms.download_py_multiple.replace('{{file_name}}', getSafeName() + '.py'))) {
+                            return;
+                        }
+                    }
                     downloadFileFromFilesystem('main.py');
                 });
                 $('#show-files').click(function() {
