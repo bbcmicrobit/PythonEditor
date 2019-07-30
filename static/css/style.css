@@ -676,7 +676,7 @@ input:checked + .menu-switch-slider:before {
 }
 .save-button.hex {
     width: 40%;
-    min-width: 200px;
+    min-width: 250px;
     background-color: #326699;
     color: white;
     border: none;
@@ -692,7 +692,7 @@ input:checked + .menu-switch-slider:before {
 }
 .save-button.py {
     width: 40%;
-    min-width: 200px;
+    min-width: 250px;
     background-color: white;
     color: black;
 }
