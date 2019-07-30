@@ -663,6 +663,22 @@ function web_editor(config) {
         }
     }
 
+    // Downloads a file from the filesystem, main.py is renamed to the script name
+    function downloadFileFromFilesystem(filename) {
+        var output = micropythonFs.readBytes(filename);
+        var ua = navigator.userAgent.toLowerCase();
+        if ((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+            alert(config.translate.alerts.save);
+            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+        } else {
+            var blob = new Blob([output], {type: 'text/plain'});
+            if (filename === 'main.py'){
+                filename = getSafeName() + '.py';
+            }
+            saveAs(blob, filename);
+        }
+    }
+
     // Update the widget that shows how much space is used in the filesystem
     function updateStorageBar() {
         var modulesSize = 0;
@@ -718,12 +734,11 @@ function web_editor(config) {
         micropythonFs.ls().forEach(function(filename) {
             var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
             var name = filename;
-            var disabled = "";
-            var scriptName = getName();
+            var disabled = '';
             if (filename === 'main.py') {
-              name = scriptName + " (" + filename + ")";
-              disabled = "disabled";
-            };
+              name = getName() + ' (' + filename + ')';
+              disabled = 'disabled';
+            }
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
@@ -731,19 +746,7 @@ function web_editor(config) {
                 '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
-                var output = micropythonFs.readBytes(filename);
-                var ua = navigator.userAgent.toLowerCase();
-                if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-                    alert(config.translate.alerts.save);
-                    window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-                } else {
-                    var blob = new Blob([output], {type: "text/plain"});
-                    if(filename === 'main.py'){
-                        scriptName = getSafeName();
-                        filename = scriptName + ".py";
-                    }
-                    saveAs(blob, filename);
-                }
+                downloadFileFromFilesystem(filename);
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
                 micropythonFs.remove(filename);
@@ -809,6 +812,9 @@ function web_editor(config) {
                 document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
                     doDownload();
+                });
+                $('#save-py').click(function() {
+                    downloadFileFromFilesystem('main.py');
                 });
                 $('#show-files').click(function() {
                   var content = $('.expandable-content')[0];

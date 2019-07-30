@@ -99,11 +99,14 @@ var language = {
     'flashing-text': 'Flashing micro:bit'
   },
   'load': {
-    'save-hex' : 'Download Hex',
     'show-files' : 'Show Files',
-    'load-title': 'Load/Save',
+    'load-title': 'Load',
     'instructions': 'Drag and drop a .hex or .py file in here to open it.',
     'submit': 'Load',
+    'save-title': 'Save',
+    'save-hex' : 'Download Hex',
+    'save-py' : 'Download Python',
+    'fs-title': 'Files',
     'toggle-file': 'Or browse for a file',
     'fs-add-file': 'Add file',
     'hide-files': 'Hide Files',

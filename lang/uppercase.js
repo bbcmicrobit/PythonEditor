@@ -101,9 +101,11 @@ var language = {
       'load': {
         'save-hex' : 'DOWNLOAD HEX',
         'show-files' : 'SHOW FILES',
-        'load-title': 'LOAD/SAVE',
+        'load-title': 'LOAD',
         'instructions': 'DRAG AND DROP A .HEX OR .PY FILE IN HERE TO OPEN IT.',
         'submit': 'LOAD',
+        'save-title': 'SAVE',
+        'fs-title': 'FILES',
         'toggle-file': 'OR BROWSE FOR A FILE',
         'fs-add-file': 'ADD FILE',
         'show-files': 'SHOW FILES',
