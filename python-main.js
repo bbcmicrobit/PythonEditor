@@ -851,7 +851,7 @@ function web_editor(config) {
                 return window.daplink.getSerialBaudrate();
             })
             .then(function(baud) {
-                window.daplink.startSerialRead(50);
+                window.daplink.startSerialRead(1);
                 lib.init(setupHterm);
             })
             .catch(function(err) {
