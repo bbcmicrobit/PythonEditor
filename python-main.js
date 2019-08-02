@@ -855,21 +855,22 @@ function web_editor(config) {
                     e.stopPropagation();
 
                     var inputFile = this;
+                    document.dispatchEvent(new CustomEvent('file-upload', { detail: inputFile.files }));
                     if (inputFile.files.length === 1) {
                         var f = inputFile.files[0];
-                            var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
-                            var reader = new FileReader();
-                            if (ext == 'py') {
-                                reader.onload = function(e) {
-                                    loadPy(f.name, e.target.result);
-                                };
-                                reader.readAsText(f);
-                            } else if (ext == 'hex') {
-                                reader.onload = function(e) {
-                                    loadHex(f.name, e.target.result);
-                                };
-                                reader.readAsText(f);
-                            }
+                        var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
+                        var reader = new FileReader();
+                        if (ext == 'py') {
+                            reader.onload = function(e) {
+                                loadPy(f.name, e.target.result);
+                            };
+                            reader.readAsText(f);
+                        } else if (ext == 'hex') {
+                            reader.onload = function(e) {
+                                loadHex(f.name, e.target.result);
+                            };
+                            reader.readAsText(f);
+                        }
                     }
                     inputFile.value = '';
                     vex.close();
@@ -1328,8 +1329,8 @@ function web_editor(config) {
             $('#language_container').addClass('hidden');
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
-            // Stop immediate closure
-            e.stopImmediatePropagation();
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
         });
         $("#command-help").click(function (e) {
             // Hide any other open menus and show/hide help menu
@@ -1337,16 +1338,14 @@ function web_editor(config) {
             $('#language_container').addClass('hidden');
             $('#helpsupport_container').toggleClass('hidden');
             formatMenuContainer('command-help', 'helpsupport_container');
-            // Stop immediate closure
-            e.stopImmediatePropagation();
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
         });
         $("#command-zoom-in").click(function (e) {
             zoomIn();
-            e.stopPropagation();
         });
         $("#command-zoom-out").click(function (e) {
             zoomOut();
-            e.stopPropagation();
         });
         $("#command-language").click(function (e) {
             // Hide any other open menus and show/hide help menu
@@ -1354,8 +1353,8 @@ function web_editor(config) {
             $('#helpsupport_container').addClass('hidden');
             $('#language_container').toggleClass('hidden');
             formatMenuContainer('command-language', 'language_container');
-            // Stop immediate closure
-            e.stopImmediatePropagation();
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
         });
 
         $(".lang-choice").on("click", function() {
@@ -1386,6 +1385,7 @@ function web_editor(config) {
         });
 
         document.body.addEventListener('click', function(event) {
+            if (event.keepMenuOpen) return;
             // Close any button menu on a click is outside menu or a link within
             if ($(event.target).closest('.buttons_menu_container').length == 0 ||
                     $(event.target).prop('tagName').toLowerCase() === 'a') {
