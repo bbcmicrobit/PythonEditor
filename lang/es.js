@@ -88,20 +88,13 @@ var language = {
   },
   'webusb': {
     'err': {
-      'flash': {
-        'update-req': 'You need to <a target="_blank" href="https://microbit.org/guide/firmware/">update your micro:bit firmware',
-        'clear-connect': 'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
-        'restart-microbit': 'Please restart your micro:bit and try again'
-      },
-      'serial': {
-        'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Update your micro:bit firmware</a> to make use of this feature!',
-        'clear-connect':'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
-        'restart-microbit':'Please restart your micro:bit and try again'
-      },
+      'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">actualizar el firmware del micro:bit firmware </a> para poder usar esta función!',
+      'clear-connect':'Hay otro proceso conectado a este dispositivo.</div><div>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
+      'restart-microbit':'Por favor reinicie el micro:bit e intentelo de nuevo.'
     },
-    'close': 'Close',
-    'request-repl': 'Click here or press CTRL-C to enter the REPL',
-    'flashing-text': 'Flashing micro:bit'
+    'close': 'Cerrar',
+    'request-repl': 'Haz clic aqui o presione CTRL-C para entrar al REPL',
+    'flashing-text': 'Flasheando micro:bit'
   },
   'load': {
     'show-files' : 'Mostrar Archivos',
@@ -112,7 +105,7 @@ var language = {
     'save-hex' : 'Descargar Proyecto Hex',
     'save-py' : 'Descargar Script de Python',
     'fs-title': 'Archivos',
-    'toggle-file': 'O busque un archivo',
+    'toggle-file': 'O busque un archivo.',
     'fs-add-file': 'Agregar archivo',
     'hide-files': 'Ocultar Archivos',
     'td-filename': 'Nombre de archivo',
@@ -129,7 +122,7 @@ var language = {
       },
       'command-disconnect': {
         'title': 'Desconectarse del micro:bit',
-        'label': 'Disconnect'
+        'label': 'Desconectar'
       },
       'command-flash': {
         'title': 'Flash el proyecto directamente al micro:bit',

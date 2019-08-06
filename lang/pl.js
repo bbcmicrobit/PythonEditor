@@ -88,16 +88,9 @@ var language = {
    },
    'webusb': {
       'err': {
-         'flash': {
-            'update-req': 'Musisz <a target="_blank" href="https://microbit.org/guide/firmware/">zaktualizować oprogramowanie układowe micro:bit',
-            'clear-connect': 'Inny proces jest podłączony do tego urządzenia.</div><div> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
-            'restart-microbit': 'Proszę uruchom ponownie twój micro:bit i spróbuj ponownie'
-         },
-         'serial': {
-            'update-req': '<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">Zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji!',
-            'clear-connect': 'Inny proces jest podłączony do tego urządzenia.</div><div> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
-            'restart-microbit': 'Proszę uruchom ponownie twój micro:bit i spróbuj ponownie'
-         }
+         'update-req': 'Musisz <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.',
+         'clear-connect': 'Inny proces jest podłączony do tego urządzenia.</div><div> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
+         'restart-microbit': 'Proszę uruchom ponownie twój micro:bit i spróbuj ponownie'
       },
       'close': 'Zamknij',
       'request-repl': 'Kliknij tutaj lub naciśnij CTRL-C, aby otworzyć REPL',
@@ -112,7 +105,7 @@ var language = {
       'save-title': 'Save',
       'save-py': 'Pobierz Scrypt Python',
       'fs-title': 'Pliki',
-      'toggle-file': 'Lub wyszukaj plik',
+      'toggle-file': 'Lub wyszukaj plik.',
       'fs-add-file': 'Dodaj Plik',
       'hide-files': 'Ukryj pliki',
       'td-filename': 'Nazwa pliku',
