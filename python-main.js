@@ -344,28 +344,28 @@ function web_editor(config) {
     window.micropythonFs = undefined;
 
     //Sets the language of the page
-    function setLang() {
-        URL = "https://python.microbit.org/de/v/beta"
-        langs = ['ar','de','es','fi','fr','he','hk','hr','hu','ja','ko','lt','nl','no','si','ta','zh-CN'];
-        var fcheck = false
-        for (var i =0;i<langs.length;i++){
-            var check = URL.includes("/"+langs[i]+"/");
-            if (check == true){
-                var lang = langs[i]
-                fcheck = true
-            }else{
-            }
-        if (fcheck == true){
-            TRANSLATIONS.updateLang(lang, function(translations){
-                config.translate = translations;
-            });
-        }else{
-        } 
-        }   
+    // function setLang() {
+    //     URL = "https://python.microbit.org/de/v/beta"
+    //     langs = ['ar','de','es','fi','fr','he','hk','hr','hu','ja','ko','lt','nl','no','si','ta','zh-CN'];
+    //     var fcheck = false
+    //     for (var i =0;i<langs.length;i++){
+    //         var check = URL.includes("/"+langs[i]+"/");
+    //         if (check == true){
+    //             var lang = langs[i]
+    //             fcheck = true
+    //         }else{
+    //         }
+    //     if (fcheck == true){
+    //         TRANSLATIONS.updateLang(lang, function(translations){
+    //             config.translate = translations;
+    //         });
+    //     }else{
+    //     } 
+    //     }   
     
-    }
+    // }
 
-    setLang()
+    // setLang()
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
