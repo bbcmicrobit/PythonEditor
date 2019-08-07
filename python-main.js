@@ -1103,7 +1103,7 @@ function web_editor(config) {
         } else if (err.message === "Unable to claim interface.") {
             errorMessage = "clear-connect";
         } else {
-            errorMessage = "restart-microbit";
+            errorMessage = "reconnect-microbit";
         }
 
         // Show error message
