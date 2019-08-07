@@ -1079,24 +1079,49 @@ function web_editor(config) {
                 }
             })
             .catch(function(err) {
-                console.log("Error connecting: " + err);
-                $("#flashing-overlay-container").css("display", "flex");
-                $("#flashing-info").addClass('hidden');
-
-                // If micro:bit does not support dapjs
-                if (err.message === "No valid interfaces found."){
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                } else if (err.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                }
-
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
+                    errorHandler();
             });
         }).catch(function(err) {
             console.log("There was an error during connecting: " + err);
         });
+    }
+
+    function errorHandler(err) {
+        // Disconnect
+        doDisconnect();
+
+        // Error handler
+        console.log("Error connecting: " + err);
+        $("#flashing-overlay-container").css("display", "flex");
+        $("#flashing-info").addClass('hidden');
+
+
+        // If micro:bit does not support dapjs
+        var errorMessage;
+        if (err.message === "No valid interfaces found."){
+            errorMessage = "update-req";
+        } else if (err.message === "Unable to claim interface.") {
+            errorMessage = "clear-connect";
+        } else {
+            errorMessage = "restart-microbit";
+        }
+
+        // Show error message
+        $("#flashing-overlay-error").html(
+                '<div>' + err + '</div><div>' + 
+                config["translate"]["webusb"]["err"][errorMessage] +
+                '</div><a href="#" id="flashing-overlay-download">' +
+                config["translate"]["webusb"]["download"] + 
+                '</a> | <a href="#" onclick="flashErrorClose()">' +
+                config["translate"]["webusb"]["close"] +
+                '</a>'
+        );
+
+        // Attach download handler
+        $("#flashing-overlay-download").click(function () {
+            doDownload();
+        });
+
     }
 
     function doDisconnect(e) {
@@ -1167,20 +1192,7 @@ function web_editor(config) {
             return;
         })
         .catch(function(err) {
-            console.log("Error flashing: " + err);
-            $("#flashing-overlay-container").css("display", "flex");
-            $("#webusb-flashing-progress").css("display", "none");
-
-            // If micro:bit does not support dapjs
-            if (err.message === "No valid interfaces found.") {
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            } else if(err.message === "Unable to claim interface.") {
-                $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            }
-
-            $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
+            errorHandler(err);
         });
     }
 
@@ -1217,17 +1229,7 @@ function web_editor(config) {
                 lib.init(setupHterm);
             })
             .catch(function(err) {
-                // If micro:bit does not support dapjs
-                $("#flashing-overlay-error").show();
-                if (err.message === "No valid interfaces found.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                } else if (err.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                }
-
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>' +  config["translate"]["webusb"]["err"]["restart-microbit"] + '</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
+                errorHandler(err);
             });
         }
     }

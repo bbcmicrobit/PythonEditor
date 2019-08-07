@@ -94,7 +94,8 @@ var language = {
     },
     'close': 'Close',
     'request-repl': 'Click here or press CTRL-C to enter the REPL',
-    'flashing-text': 'Flashing micro:bit'
+    'flashing-text': 'Flashing micro:bit',
+    'download': 'Download Hex'
   },
   'load': {
     'show-files' : 'Show Files',
