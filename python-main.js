@@ -1133,9 +1133,9 @@ function web_editor(config) {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
-            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
         }
+        $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+        $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
 
         window.daplink.stopSerialRead();
         $("#repl").empty();
