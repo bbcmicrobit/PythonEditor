@@ -1122,6 +1122,9 @@ function web_editor(config) {
             doDownload();
         });
 
+        // Send event
+        document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorMessage }));
+
     }
 
     function doDisconnect(e) {
