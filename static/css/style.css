@@ -718,7 +718,7 @@ input:checked + .menu-switch-slider:before {
 }
 
 .save-button.add {
-    width: 8em;
+    padding: 0 20px;
 }
 
 .save-button.remove {
