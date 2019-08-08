@@ -1292,7 +1292,7 @@ function web_editor(config) {
 
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
-    function setupButtons() {
+    function setupButtons(message) {
         $("#command-download").click(function () {
             if ($("#command-download").length) {
                 doDownload();
@@ -1393,12 +1393,19 @@ function web_editor(config) {
                 $('.buttons_menu_container').addClass('hidden');
             }
         });
+        if (message.l){
+            var lang = message.l;
+            TRANSLATIONS.updateLang(lang, function(translations) {
+                config.translate = translations;
+
+        });
+    }
     }
 
     // Extracts the query string and turns it into an object of key/value
     // pairs.
     function get_qs_context() {
-        var query_string = window.location.search.substring(1);
+        var query_string = 'l=es'//window.location.search.substring(1);
         if(window.location.href.indexOf("file://") == 0 ) {
             // Running from the local file system so switch off network share.
             $('#command-share').hide();
@@ -1425,7 +1432,7 @@ function web_editor(config) {
     var migration = get_migration();
     setupFeatureFlags();
     setupEditor(qs, migration);
-    setupButtons();
+    setupButtons(qs);
     TRANSLATIONS.translateEmbedStrings(config.translate);
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
