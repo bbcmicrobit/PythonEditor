@@ -1079,11 +1079,18 @@ function web_editor(config) {
                 }
             })
             .catch(function(err) {
-                    errorHandler();
+                    errorHandler(err);
             });
         }).catch(function(err) {
             console.log("There was an error during connecting: " + err);
         });
+    
+        // WebUSB Disconnect Events
+        navigator.usb.addEventListener('disconnect', event => {
+            var error = {"message": "Device disconnected."};
+            errorHandler(error);
+        });
+
     }
 
     function errorHandler(err) {
@@ -1108,7 +1115,7 @@ function web_editor(config) {
 
         // Show error message
         $("#flashing-overlay-error").html(
-                '<div>' + err + '</div><div>' + 
+                '<div>' + err.message + '</div><div>' + 
                 config["translate"]["webusb"]["err"][errorMessage] +
                 '</div><a href="#" id="flashing-overlay-download">' +
                 config["translate"]["webusb"]["download"] + 
@@ -1435,6 +1442,13 @@ function web_editor(config) {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
     });
+
+    // Catch any unhandled events
+    window.addEventListener("unhandledrejection", function(promiseRejectionEvent) { 
+        // Hide them
+    	promiseRejectionEvent.preventDefault();
+    });
+
 }
 
 /*
