@@ -1395,17 +1395,20 @@ function web_editor(config) {
         });
         if (message.l){
             var lang = message.l;
-            TRANSLATIONS.updateLang(lang, function(translations) {
-                config.translate = translations;
-
-        });
+            var validLangs = ['en','es','pl'];
+            if (validLangs.indexOf(message.l)>-1){
+                TRANSLATIONS.updateLang(lang, function(translations) {
+                    config.translate = translations;
+                });
+            }else{
+            }
     }
     }
 
     // Extracts the query string and turns it into an object of key/value
     // pairs.
     function get_qs_context() {
-        var query_string = 'l=es'//window.location.search.substring(1);
+        var query_string = 'l=pl'//window.location.search.substring(1);
         if(window.location.href.indexOf("file://") == 0 ) {
             // Running from the local file system so switch off network share.
             $('#command-share').hide();
