@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Make directory for downloaded translations 
+mkdir translations
+
+# Setup Crowdin
+read -p 'Crowdin API Key: ' crowdinApiVar
+export CROWDIN_API_KEY=$crowdinApiVar
+echo ""
+echo "testing Crowdin configuration"
+crowdin lint
+
+# Download current translations
+echo "downloading translations"
+crowdin download
+echo "unzipping translation folders"
+unzip *.zip -d translations
+rm *.zip
+
+# Process translations and convert back from JSON to JS
+node json-js.js
+
+# Clean up
+mv translations/*.js ../lang/
+rm -R translations

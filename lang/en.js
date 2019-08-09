@@ -191,3 +191,4 @@ var language = {
     }
   }
 };
+module.exports = { language: language };

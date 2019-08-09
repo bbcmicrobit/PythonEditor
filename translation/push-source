@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Setup Crowdin
+read -p 'Crowdin API Key: ' crowdinApiVar
+export CROWDIN_API_KEY=$crowdinApiVar
+echo ""
+echo "Testing Crowdin configuration"
+crowdin lint
+
+# Convert en.js to en.json
+node ./js-json.js
+
+# Upload strings to Crowdin
+echo "Uploading source en.json to crowdin"
+crowdin upload sources
+
+# cleanup directory by removing en.json
+rm ./en.json

@@ -1,0 +1,44 @@
+#
+# Your crowdin's credentials
+#
+"project_identifier" : "microbit-python-editor"
+"api_key_env" : CROWDIN_API_KEY
+"base_path" : "."
+#"base_url" : ""
+
+#
+# Choose file structure in crowdin
+# e.g. true or false
+#
+"preserve_hierarchy": true
+
+#
+# Files configuration
+#
+files: [
+ {
+  #
+  # Source files filter
+  # e.g. "/resources/en/*.json"
+  #
+  "source" : "en.json",
+
+  #
+  # where translations live
+  # e.g. "/resources/%two_letters_code%/%original_file_name%"
+  #
+  "translation" : "%two_letters_code%.json",
+
+  #
+  # files or directories for ignore
+  # e.g. ["/**/?.txt", "/**/[0-9].txt", "/**/*\?*.txt"]
+  #
+  #"ignore" : [],
+
+  #
+  # The dest allows you to specify a file name on Crowdin
+  # e.g. "/messages.json"
+  #
+  #"dest" : "",
+ }
+] 
