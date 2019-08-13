@@ -1432,7 +1432,7 @@ function web_editor(config) {
     }
     
     function get_language_hash(){
-        var hash_statement = window.location.match(/#.*/);
+        var hash_statement = window.location.match(/#l.*/);
         var languageExt = hash_statement.match(/=.*/).substr(1);
         return languageExt;
         
