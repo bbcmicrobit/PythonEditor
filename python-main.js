@@ -8,6 +8,8 @@ everything does.)
 /*
 Lazy load JS script files.
 */
+
+
 function script(url, id) {
     var s = document.createElement('script');
     if(id){
@@ -1290,7 +1292,7 @@ function web_editor(config) {
 
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
-    function setupButtons() {
+    function setupButtons(message,language) {
         $("#command-download").click(function () {
             if ($("#command-download").length) {
                 doDownload();
@@ -1356,7 +1358,6 @@ function web_editor(config) {
             // Stop closure of the menu in other local event handlers
             e.originalEvent.keepMenuOpen = true;
         });
-
         $(".lang-choice").on("click", function() {
             $("#language_container").addClass('hidden');
             TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
@@ -1392,6 +1393,24 @@ function web_editor(config) {
                 $('.buttons_menu_container').addClass('hidden');
             }
         });
+        var validLangs = ['en','es','pl'];
+        if (message.l){
+            var lang = message.l;
+            if (validLangs.indexOf(message.l)>-1){
+                TRANSLATIONS.updateLang(lang, function(translations) {
+                    config.translate = translations;
+                });
+            }else{
+            }
+            }
+        if (language){
+            if (validLangs.indexOf(language)>=-1){
+                TRANSLATIONS.updateLang(language, function(translations) {
+                    config.translate = translations;
+                });
+            }else{
+            }
+            }
     }
 
     // Extracts the query string and turns it into an object of key/value
@@ -1411,6 +1430,13 @@ function web_editor(config) {
         }
         return result;
     }
+    
+    function get_language_hash(){
+        var hash_statement = window.location.match(/#l.*/);
+        var languageExt = hash_statement.match(/=.*/).substr(1);
+        return languageExt;
+        
+    }
 
     function get_migration() {
         var compressed_project = window.location.toString().split("#project:")[1];
@@ -1421,10 +1447,11 @@ function web_editor(config) {
     }
 
     var qs = get_qs_context();
+    var lang = get_language_hash();
     var migration = get_migration();
     setupFeatureFlags();
     setupEditor(qs, migration);
-    setupButtons();
+    setupButtons(qs,lang);
     TRANSLATIONS.translateEmbedStrings(config.translate);
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
