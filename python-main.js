@@ -1362,6 +1362,7 @@ function web_editor(config) {
             $("#language_container").addClass('hidden');
             TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
                 config.translate = translations;
+            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
             });
         });
 
@@ -1400,6 +1401,7 @@ function web_editor(config) {
                 TRANSLATIONS.updateLang(lang, function(translations) {
                     config.translate = translations;
                 });
+                document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
             }else{
             }
             }
@@ -1408,6 +1410,7 @@ function web_editor(config) {
                 TRANSLATIONS.updateLang(language, function(translations) {
                     config.translate = translations;
                 });
+                document.getElementsByTagName("HTML")[0].setAttribute("lang", language);
             }else{
             }
             }
@@ -1432,8 +1435,10 @@ function web_editor(config) {
     }
     
     function get_language_hash(){
-        var hash_statement = window.location.match(/#l.*/);
-        var languageExt = hash_statement.match(/=.*/).substr(1);
+        var hash_statement = window.location.href.match(/#l.*/);
+        if (hash_statement){    
+            var languageExt = hash_statement.match(/=.*/).substr(1);
+        }
         return languageExt;
         
     }
