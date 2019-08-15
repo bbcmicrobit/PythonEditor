@@ -90,7 +90,8 @@ var language = {
     'err': {
       'update-req':'You need to <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">update your micro:bit firmware</a> to make use of this feature.',
       'clear-connect':'Another process is connected to this device.</div><div>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
-      'reconnect-microbit':'Please reconnect your micro:bit and try again'
+      'reconnect-microbit':'Please reconnect your micro:bit and try again',
+      'device-disconnected':'Device disconnected'
     },
     'close': 'Close',
     'request-repl': 'Click here or press CTRL-C to enter the REPL',

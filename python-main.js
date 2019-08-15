@@ -1075,17 +1075,15 @@ function web_editor(config) {
             $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
             $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
 
-                if (serial){
+            if (serial){
                   doSerial();
-                }
-            })
-            .catch(function(err) {
-                    errorHandler(err);
-            });
+            }
+        })
+        .catch(errorHandler);
     
         // WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', event => {
-            var error = {"message": "Device disconnected."};
+            var error = {"message": config["translate"]["webusb"]["err"]["device-disconnected"]};
             errorHandler(error);
         });
 
@@ -1096,7 +1094,6 @@ function web_editor(config) {
         doDisconnect();
 
         // Error handler
-        console.log("Error connecting: " + err);
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
 
@@ -1123,9 +1120,7 @@ function web_editor(config) {
         );
 
         // Attach download handler
-        $("#flashing-overlay-download").click(function () {
-            doDownload();
-        });
+        $("#flashing-overlay-download").click(doDownload);
 
         // Send event
         document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorMessage }));
@@ -1243,9 +1238,7 @@ function web_editor(config) {
             // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
         })
-        .catch(function(err) {
-            errorHandler(err);
-        });
+        .catch(errorHandler);
     }
 
     function doSerial() {
@@ -1509,7 +1502,7 @@ function web_editor(config) {
     // Catch any unhandled events
     window.addEventListener("unhandledrejection", function(promiseRejectionEvent) { 
         // Hide them
-    	promiseRejectionEvent.preventDefault();
+        promiseRejectionEvent.preventDefault();
     });
 
 }
