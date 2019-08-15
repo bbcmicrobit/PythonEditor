@@ -1047,9 +1047,16 @@ function web_editor(config) {
         $('#editor').focus();
     }
 
-    function doConnect(e, serial) {
-        var p = Promise.resolve();
+    function showDisconnectError(event) {
+        var error = {"message": config["translate"]["webusb"]["err"]["device-disconnected"]};
+        webusbErrorHandler(error);
+    }
 
+    function doConnect(serial) {
+        // Show error on WebUSB Disconnect Events
+        navigator.usb.addEventListener('disconnect', showDisconnectError);
+
+        var p = Promise.resolve();
         if (usePartialFlashing) {
             p = PartialFlashing.connectDapAsync();
         }
@@ -1075,28 +1082,25 @@ function web_editor(config) {
             $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
             $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
 
-            if (serial){
+            // Change download to flash
+            $("#command-download").attr("id", "command-flash");
+            $("#command-flash > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-flash"]["label"]);
+            $("#command-flash").attr("title", config["translate"]["static-strings"]["buttons"]["command-flash"]["title"]);
+
+            if (serial) {
                 doSerial();
             }
         })
-        .catch(errorHandler);
-    
-        // WebUSB Disconnect Events
-        navigator.usb.addEventListener('disconnect', event => {
-            var error = {"message": config["translate"]["webusb"]["err"]["device-disconnected"]};
-            errorHandler(error);
-        });
-
+        .catch(webusbErrorHandler);
     }
 
-    function errorHandler(err) {
+    function webusbErrorHandler(err) {
         // Disconnect
         doDisconnect();
 
         // Error handler
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
-
 
         // If micro:bit does not support dapjs
         var errorMessage;
@@ -1124,10 +1128,9 @@ function web_editor(config) {
 
         // Send event
         document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorMessage }));
-
     }
 
-    function doDisconnect(e) {
+    function doDisconnect() {
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1167,7 +1170,7 @@ function web_editor(config) {
         return p;
     }
 
-    function doFlash(e) {
+    function doFlash() {
         // var startTime = new Date().getTime();
 
         // Hide serial and disconnect if open
@@ -1238,7 +1241,7 @@ function web_editor(config) {
             // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
         })
-        .catch(errorHandler);
+        .catch(webubsErrorHandler);
     }
 
     function doSerial() {
@@ -1263,7 +1266,7 @@ function web_editor(config) {
 
         // Check if we need to connect
         if ($("#command-connect").length){
-            doConnect(undefined, true);
+            doConnect(true);
         } else {
             // Change Serial button to close
             $("#command-serial").attr("title", serialButton["title-close"]);
@@ -1282,9 +1285,7 @@ function web_editor(config) {
                 daplink.startSerialRead(50);
                 lib.init(setupHterm);
             })
-            .catch(function(err) {
-                errorHandler(err);
-            });
+            .catch(webusbErrorHandler);
         }
     }
 
@@ -1380,6 +1381,7 @@ function web_editor(config) {
             doSerial();
         });
         $("#request-repl").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
             daplink.serialWrite("\x03");
         });
         $("#command-options").click(function (e) {
@@ -1498,13 +1500,6 @@ function web_editor(config) {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
     });
-
-    // Catch any unhandled events
-    window.addEventListener("unhandledrejection", function(promiseRejectionEvent) { 
-        // Hide them
-        promiseRejectionEvent.preventDefault();
-    });
-
 }
 
 /*
