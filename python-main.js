@@ -1082,9 +1082,6 @@ function web_editor(config) {
             .catch(function(err) {
                     errorHandler(err);
             });
-        }).catch(function(err) {
-            console.log("There was an error during connecting: " + err);
-        });
     
         // WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', event => {
