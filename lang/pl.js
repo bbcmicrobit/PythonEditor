@@ -90,7 +90,7 @@ var language = {
       'err': {
          'update-req': 'Musisz <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.',
          'clear-connect': 'Inny proces jest podłączony do tego urządzenia.</div><div> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
-         'reconnect-microbit': 'Proszę uruchom ponownie twój micro:bit i spróbuj ponownie'
+         'reconnect-microbit': 'Please reconnect your micro:bit and try again'
       },
       'close': 'Zamknij',
       'request-repl': 'Kliknij tutaj lub naciśnij CTRL-C, aby otworzyć REPL',
