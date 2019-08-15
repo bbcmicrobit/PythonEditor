@@ -1076,7 +1076,7 @@ function web_editor(config) {
             $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
 
             if (serial){
-                  doSerial();
+                doSerial();
             }
         })
         .catch(errorHandler);
