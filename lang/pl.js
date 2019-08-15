@@ -180,6 +180,7 @@ var language = {
       'options-dropdown': {
          'autocomplete': 'Autocomplete',
          'on-enter': 'Na Enter:',
+         'partial-flashing': 'Partial Flashing',
          'lang-select': 'Wybierz Język:'
       }
    }

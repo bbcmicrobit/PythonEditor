@@ -191,7 +191,7 @@ function blocks() {
 
     var blocklyWrapper = {};
     var resizeSensorInstance = null;
-    // Stores the Blockly workspace created during injection 
+    // Stores the Blockly workspace created during injection
     var workspace = null;
 
     blocklyWrapper.init = function() {
@@ -338,6 +338,8 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
+    var usePartialFlashing = true;
+
     // MicroPython filesystem to be initialised on page load.
     window.micropythonFs = undefined;
 
@@ -439,7 +441,9 @@ function web_editor(config) {
 
         if (navigator.usb) {
             script('static/js/dap.umd.js');
+            script('static/js/intel-hex.browser.js');
             script('static/js/hterm_all.js');
+            script('partial-flashing.js');
             $("#command-connect").removeClass('hidden');
             $("#command-serial").removeClass('hidden');
         }
@@ -1044,35 +1048,32 @@ function web_editor(config) {
     }
 
     function doConnect(e, serial) {
-        navigator.usb.requestDevice({
-            filters: [{vendorId: 0x0d28, productId: 0x0204}]
-        }).then(function(device) {
-            // Connect to device
-            window.transport = new DAPjs.WebUSB(device);
-            window.daplink = new DAPjs.DAPLink(window.transport);
+        var p = Promise.resolve();
 
-            // Ensure disconnected
-            window.daplink.disconnect();
+        if (usePartialFlashing) {
+            p = PartialFlashing.connectDapAsync();
+        }
+        else {
+            p = navigator.usb.requestDevice({
+                filters: [{vendorId: 0x0d28, productId: 0x0204}]
+            }).then(function(device) {
+                // Connect to device
+                window.transport = new DAPjs.WebUSB(device);
+                window.daplink = new DAPjs.DAPLink(window.transport);
 
-            // Connect to board
-            return window.daplink.connect()
-            .then(function() {
-                try {
-                 var output = generateFullHexStr();
-               } catch(err) {
-                 alert(err.message);
-                 return;
-                }
+                // Ensure disconnected
+                window.daplink.disconnect();
 
-                // Change button to disconnect
-                $("#command-connect").attr("id", "command-disconnect");
-                $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
-                $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
+                // Connect to board
+                return window.daplink.connect();
+            });
+        }
 
-                // Change download to flash
-                $("#command-download").attr("id", "command-flash");
-                $("#command-flash > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-flash"]["label"]);
-                $("#command-flash").attr("title", config["translate"]["static-strings"]["buttons"]["command-flash"]["title"]);
+        return p.then(function() {
+            // Change button to disconnect
+            $("#command-connect").attr("id", "command-disconnect");
+            $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
+            $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
 
                 if (serial){
                   doSerial();
@@ -1144,11 +1145,8 @@ function web_editor(config) {
         $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
         $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
 
-        window.daplink.stopSerialRead();
         $("#repl").empty();
         REPL = null;
-
-        window.daplink.disconnect();
 
         // Change button to connect
         $("#command-disconnect").attr("id", "command-connect");
@@ -1159,47 +1157,94 @@ function web_editor(config) {
         $("#command-flash").attr("id", "command-download");
         $("#command-download > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-download"]["label"]);
         $("#command-download").attr("title", config["translate"]["static-strings"]["buttons"]["command-download"]["title"]);
+
+        var p = Promise.resolve();
+
+        if (usePartialFlashing) {
+            if (window.dapwrapper) {
+                p = p.then(() => window.dapwrapper.daplink.stopSerialRead())
+                    .then(() => window.dapwrapper.disconnectAsync());
+            }
+        }
+        else {
+            if (window.daplink) {
+                p = p.then(() => window.daplink.stopSerialRead())
+                    .then(() => window.daplink.disconnect());
+            }
+        }
+        return p;
     }
 
     function doFlash(e) {
+        // var startTime = new Date().getTime();
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
-            window.daplink.stopSerialRead();
             $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
             $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
+
+            if (usePartialFlashing) {
+                if (window.dapwrapper) {
+                    window.dapwrapper.daplink.stopSerialRead();
+                }
+            }
+            else {
+                window.daplink.stopSerialRead();
+            }
         }
 
-        // Event to monitor flashing progress
-        window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-            $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-        });
+        var p = Promise.resolve();
 
-        // Push binary to board
-        return window.daplink.connect()
-        .then(function() {
-            try {
-             var output = generateFullHexStr();
-            } catch(error) {
-             alert(err.message);
-             return;
-            }
+        $("#webusb-flashing-progress").val(0);
+        $("#webusb-flashing-progress").val(0).css("display", "inline-block");
+        $('#flashing-overlay-error').html("");
+        $("#flashing-info").removeClass('hidden');
+        $("#flashing-overlay-container").css("display", "flex");
 
-            // Encode firmware for flashing
-            var enc = new TextEncoder();
-            var image = enc.encode(output).buffer;
+        if (usePartialFlashing) {
+            // Push binary to board
+            p = PartialFlashing.connectDapAsync()
+                .then(function() {
+                    var output = generateFullHexStr();
+                    var image = MemoryMap.fromHex(output).slicePad(0, PartialFlashingUtils.pageSize * PartialFlashingUtils.numPages);
 
-            $("#webusb-flashing-progress").val(0);
-            $('#flashing-overlay-error').html("");
-            $("#flashing-info").removeClass('hidden');
-            $("#flashing-overlay-container").css("display", "flex");
-            return window.daplink.flash(image);
-        })
-        .then(function() {
+                    var updateProgress = function(progress) {
+                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
+                    }
+                    return PartialFlashing.flashAsync(window.dapwrapper, image, updateProgress);
+                })
+        }
+        else {
+            // Push binary to board
+            p = window.daplink.connect()
+                .then(function() {
+                    // Event to monitor flashing progress
+                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
+                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
+                    });
+
+                    try {
+                     var output = generateFullHexStr();
+                    } catch(error) {
+                     alert(err.message);
+                     return;
+                    }
+
+                    // Encode firmware for flashing
+                    var enc = new TextEncoder();
+                    var image = enc.encode(output).buffer;
+                    return window.daplink.flash(image);
+                });
+        }
+
+        return p.then(function() {
             $("#flashing-overlay-container").hide();
-            return;
+            // var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
+            // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
+            //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
         })
         .catch(function(err) {
             errorHandler(err);
@@ -1213,9 +1258,16 @@ function web_editor(config) {
             $("#repl").hide();
             $("#request-repl").hide();
             $("#editor-container").show();
-            window.daplink.stopSerialRead();
             $("#command-serial").attr("title", serialButton["label"]);
             $("#command-serial > .roundlabel").text(serialButton["label"]);
+            if (usePartialFlashing) {
+                if (window.dapwrapper) {
+                    window.dapwrapper.daplink.stopSerialRead();
+                }
+            }
+            else {
+                window.daplink.stopSerialRead();
+            }
             return;
         }
 
@@ -1227,15 +1279,17 @@ function web_editor(config) {
             $("#command-serial").attr("title", serialButton["title-close"]);
             $("#command-serial > .roundlabel").text(serialButton["label-close"]);
 
-            window.daplink.connect()
+            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+
+            daplink.connect()
             .then( function() {
-                return window.daplink.setSerialBaudrate(115200);
+                return daplink.setSerialBaudrate(115200);
             })
             .then( function() {
-                return window.daplink.getSerialBaudrate();
+                return daplink.getSerialBaudrate();
             })
             .then(function(baud) {
-                window.daplink.startSerialRead(50);
+                daplink.startSerialRead(50);
                 lib.init(setupHterm);
             })
             .catch(function(err) {
@@ -1254,10 +1308,12 @@ function web_editor(config) {
             REPL.onTerminalReady = function() {
                 var io = REPL.io.push();
                 io.onVTKeystroke = function(str) {
-                    window.daplink.serialWrite(str);
+                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+                    daplink.serialWrite(str);
                 };
                 io.sendString = function(str) {
-                    window.daplink.serialWrite(str);
+                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+                    daplink.serialWrite(str);
                 };
                 io.onTerminalResize = function(columns, rows) {
                 };
@@ -1265,8 +1321,9 @@ function web_editor(config) {
             REPL.decorate(document.querySelector('#repl'));
             REPL.installKeyboard();
 
-            window.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
-                    REPL.io.print(data); // first byte of data is length
+            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+            daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+                REPL.io.print(data); // first byte of data is length
             });
         }
 
@@ -1388,6 +1445,15 @@ function web_editor(config) {
         $('#menu-switch-autocomplete-enter').on('change', function() {
             var setEnable = $(this).is(':checked');
             EDITOR.triggerAutocompleteWithEnter(setEnable);
+        });
+        $('#menu-switch-partial-flashing').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            return doDisconnect()
+                .catch(err => {
+                    // Assume an error means that it is already disconnected.
+                    // console.log("Error disconnecting when " + (setEnable ? "not " : "") + "using partial flashing: \r\n" + err);
+                })
+                .then(() => usePartialFlashing = setEnable)
         });
 
         window.addEventListener('resize', function() {
