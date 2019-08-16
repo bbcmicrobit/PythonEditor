@@ -286,6 +286,7 @@ function translations() {
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
             $(value).attr('title', buttons[button_id]['title']);
+            $(value).attr('aria-label', buttons[button_id]['aria-label']);
             $(value).children('.roundlabel').text(buttons[button_id]['label']);
             if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
                 // Serial button strings depend on the REPL being visible
@@ -360,6 +361,15 @@ function web_editor(config) {
     function getFontSize() {
         return EDITOR.ACE.getFontSize();
     }
+
+    // Get the editor text area and add ARIA attribute
+    function addLabel() {
+        var textArea = document.getElementsByClassName("ace_text-input")[0];
+        var textAreaLabel = document.createAttribute("aria-label");
+        textAreaLabel.value = "text editor";
+        textArea.setAttributeNode(textAreaLabel);
+    }
+    addLabel();
 
     // Set the font size of the text currently displayed in the editor.
     function setFontSize(size) {
