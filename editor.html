@@ -171,7 +171,7 @@ Nicholas and Damien.
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
                 <a href="#" class="roundbutton action" id="command-download"
-                    tabindex="1"
+                    tabindex="10"
                     title="Download a hex file to flash onto your micro:bit">
                     <div class="roundsymbol">
                         <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="download">
@@ -181,7 +181,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Download</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-connect"
-                    tabindex="2"
+                    tabindex="20"
                     title="Connect to your micro:bit">
                     <div class="roundsymbol">
                         <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="connect">
@@ -191,7 +191,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Connect</div>
                 </a>
                 <a href="#" class="roundbutton action" id="command-files"
-                    tabindex="3"
+                    tabindex="30"
                     title="Load/Save files">
                     <div class="roundsymbol">
                         <i class="fa fa-file"></i>
@@ -199,7 +199,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Load/Save</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-serial"
-                    tabindex="4"
+                    tabindex="40"
                     title="Connect to your micro:bit via serial">
                     <div class="roundsymbol">
                         <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
@@ -209,7 +209,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Open Serial</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-blockly"
-                    tabindex="5"
+                    tabindex="50"
                     title="Click to create code with blockly">
                     <div class="roundsymbol">
                       <svg class="svg svg-icon-touchdevelop" viewBox="-20 0 500 500" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
@@ -219,7 +219,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Blockly</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-share"
-                    tabindex="6"
+                    tabindex="60"
                     title="Create a link to share your script">
                     <div class="roundsymbol">
                         <i class="fa fa-share-alt"></i>
@@ -227,7 +227,7 @@ Nicholas and Damien.
                     <div class="roundlabel">Share</div>
                 </a>
                 <a href="#" class="roundbutton action experimental" id="command-options"
-                    tabindex="7"
+                    tabindex="70"
                     title="Change the editor settings">
                     <div class="roundsymbol">
                         <i class="fa fa-wrench"></i>
@@ -239,7 +239,7 @@ Nicholas and Damien.
                         <div class="buttons_menu_item">
                             <span id="autocomplete" class="menu-switch-label">Autocomplete:</span>
                             <label class="menu-switch" id="menu-switch-autocomplete-label">
-                                <input type="checkbox" class="action" id="menu-switch-autocomplete">
+                                <input type="checkbox" class="action menu-switch-input" id="menu-switch-autocomplete" tabindex="71">
                                 <span class="menu-switch-slider"></span>
                             </label>
                         </div>
@@ -247,7 +247,7 @@ Nicholas and Damien.
                             <ul class="tree">
                                 <li><span id="on-enter" class="menu-switch-label">On Enter</span>
                                     <label class="menu-switch" id="menu-switch-autocomplete-enter-label">
-                                        <input type="checkbox" class="action" id="menu-switch-autocomplete-enter" checked>
+                                        <input type="checkbox" class="action menu-switch-input" id="menu-switch-autocomplete-enter" checked  tabindex="72">
                                         <span class="menu-switch-slider"></span>
                                     </label>
                                 </li>
@@ -256,7 +256,7 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
-                    tabindex="8"
+                    tabindex="80"
                     title="Discover helpful resources">
                     <div class="roundsymbol">
                         <i class="fa fa-question"></i>
@@ -265,11 +265,11 @@ Nicholas and Damien.
                 </a>
                 <div class="buttons_menu_container hidden" id="helpsupport_container">
                     <div class="buttons_menu_lhs">
-                        <div class="buttons_menu_item"><a id="docs-link" class="action" title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/" target="_blank">Documentation</a></div>
-                        <div class="buttons_menu_item"><a id="help-link" class="action" title="Open help for this editor in a new tab" href="help.html" target="_blank" >Help</a></div>
-                        <div class="buttons_menu_item"><a id="support-link" class="action" title="Get support for your micro:bit in a new tab" href="https://support.microbit.org/support/home" target="_blank">Support</a></div>
-                        <div class="buttons_menu_item experimental"><a id="feedback-link" class="action" title="Provide some feedback on the editor" href="https://support.microbit.org/en/support/tickets/new" target="_blank"> Send Feedback</a></div>
-                        <div class="buttons_menu_item experimental"><a id="issues-link" class="action" title="View open issues for the Python Editor in GitHub" href="https://github.com/bbcmicrobit/PythonEditor/issues" target="_blank">Issue Tracker</a></div>
+                        <div class="buttons_menu_item"><a id="docs-link" class="action" title="View the documentation for MicroPython" href="https://microbit-micropython.readthedocs.io/" target="_blank" tabindex="81">Documentation</a></div>
+                        <div class="buttons_menu_item"><a id="help-link" class="action" title="Open help for this editor in a new tab" href="help.html" target="_blank" tabindex="82">Help</a></div>
+                        <div class="buttons_menu_item"><a id="support-link" class="action" title="Get support for your micro:bit in a new tab" href="https://support.microbit.org/support/home" target="_blank" tabindex="83">Support</a></div>
+                        <div class="buttons_menu_item experimental"><a id="feedback-link" class="action" title="Provide some feedback on the editor" href="https://support.microbit.org/en/support/tickets/new" target="_blank" tabindex="84">Send Feedback</a></div>
+                        <div class="buttons_menu_item experimental"><a id="issues-link" class="action" title="View open issues for the Python Editor in GitHub" href="https://github.com/bbcmicrobit/PythonEditor/issues" target="_blank" tabindex="85">Issue Tracker</a></div>
                     </div>
                     <div class="buttons_menu_rhs">
                         <div class="buttons_menu_item"><span id="editor-ver">Editor Version:</span> <script>document.write(EDITOR_VERSION);</script></div>
@@ -277,18 +277,18 @@ Nicholas and Damien.
                     </div>
                 </div>
                 <div id="small-icons" class="vbox">
-                    <a aria-label="Zoom in" class="roundbutton holder zoomer action" tabindex="9" id="command-zoom-in" href="#" title="Zoom in">
+                    <a aria-label="Zoom in" class="roundbutton holder zoomer action" tabindex="90" id="command-zoom-in" href="#" title="Zoom in">
                         <div class="status-icon"><i class="fa fa-search-plus"></i></div>
                     </a>
-                    <a aria-label="Zoom out" class="roundbutton holder zoomer action" tabindex="10" id="command-zoom-out" href="#" title="Zoom out">
+                    <a aria-label="Zoom out" class="roundbutton holder zoomer action" tabindex="100" id="command-zoom-out" href="#" title="Zoom out">
                         <div class="status-icon"><i class="fa fa-search-minus"></i></div>
                     </a>
                 </div>
                 <div id="small-icons" class="vbox">
-                    <a aria-label="Show snippets (code shortcuts)" class="roundbutton holder zoomer action" tabindex="11" id="command-snippet" href="#" title="Show snippets (code shortcuts)">
+                    <a aria-label="Show snippets (code shortcuts)" class="roundbutton holder zoomer action" tabindex="110" id="command-snippet" href="#" title="Show snippets (code shortcuts)">
                         <div class="status-icon"><i class="fa fa-cogs"></i></div>
                     </a>
-                    <a aria-label="Change the language" class="roundbutton holder zoomer action" tabindex="12" id="command-language" href="#" title="Change the language">
+                    <a aria-label="Change the language" class="roundbutton holder zoomer action" tabindex="120" id="command-language" href="#" title="Change the language">
                         <div class="status-icon"><i class="fa fa-globe"></i></div>
                     </a>
                 </div>
@@ -297,9 +297,9 @@ Nicholas and Damien.
                         <div class="buttons_menu_item">
                             <span id="lang-select">Select Language:</span>
                             <ul class="tree">
-                                <li class="lang-choice" id="en">English</li>
-                                <li class="lang-choice" id="es">Spanish</li>
-                                <li class="lang-choice" id="pl">Polish</li>
+                                <li><a href="#" class="lang-choice" id="en" tabindex="121">English</a></li>
+                                <li><a href="#" class="lang-choice" id="es" tabindex="122">Spanish</a></li>
+                                <li><a href="#" class="lang-choice" id="pl" tabindex="123">Polish</a></li>
                             </ul>
                         </div>
                     </div>

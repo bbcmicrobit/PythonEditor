@@ -519,10 +519,6 @@ function web_editor(config) {
         $("#script-name").on("input keyup blur", function () {
             dirty = true;
         });
-        // Handles what to do if the description is changed.
-        $("#script-description").on("input keyup blur", function () {
-            dirty = true;
-        });
         // Describes what to do if the user attempts to close the editor without first saving their work.
         window.addEventListener("beforeunload", function (e) {
             if (dirty) {
@@ -534,7 +530,7 @@ function web_editor(config) {
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#link-log').focus();
+                $('#command-download').focus();
             }
         });
         // Bind drag and drop into editor.

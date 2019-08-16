@@ -577,6 +577,9 @@ div.load-form {
 input:checked + .menu-switch-slider {
     background-color: #336699;
 }
+.menu-switch-input:focus~.menu-switch-slider {
+    box-shadow: 0px 0px 5px 3px #FFCC33;
+}
 input:checked + .menu-switch-slider:before {
     /* Width 30px - 2px (borders) - 12px box*/
     -webkit-transform: translateX(14px);
@@ -795,6 +798,10 @@ input:checked + .menu-switch-slider:before {
 }
 
 /* Language selection drop down menu */
+.lang-choice{
+    text-decoration: none;
+    color: black;
+}
 .lang-choice:hover{
     font-weight: bold;
     cursor: pointer;
