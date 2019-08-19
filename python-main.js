@@ -8,8 +8,6 @@ everything does.)
 /*
 Lazy load JS script files.
 */
-
-
 function script(url, id) {
     var s = document.createElement('script');
     if(id){
@@ -1358,11 +1356,12 @@ function web_editor(config) {
             // Stop closure of the menu in other local event handlers
             e.originalEvent.keepMenuOpen = true;
         });
+
         $(".lang-choice").on("click", function() {
             $("#language_container").addClass('hidden');
             TRANSLATIONS.updateLang($(this).attr('id'), function(translations) {
                 config.translate = translations;
-            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+                document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
             });
         });
 
@@ -1400,8 +1399,8 @@ function web_editor(config) {
             if (validLangs.indexOf(message.l)>-1){
                 TRANSLATIONS.updateLang(lang, function(translations) {
                     config.translate = translations;
+                    document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
                 });
-                document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
             }else{
             }
             }
@@ -1409,8 +1408,8 @@ function web_editor(config) {
             if (validLangs.indexOf(language)>=-1){
                 TRANSLATIONS.updateLang(language, function(translations) {
                     config.translate = translations;
+                    document.getElementsByTagName("HTML")[0].setAttribute("lang", language);
                 });
-                document.getElementsByTagName("HTML")[0].setAttribute("lang", language);
             }else{
             }
             }
