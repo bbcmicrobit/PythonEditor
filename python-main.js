@@ -1451,8 +1451,8 @@ function web_editor(config) {
     }
 
     var qs = get_qs_context();
-    var lang = get_language_hash();
     var migration = get_migration();
+    var lang = get_language_hash();
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons(qs,lang);
