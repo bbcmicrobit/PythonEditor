@@ -268,6 +268,7 @@ function blocks() {
  */
 function translations() {
     'use strict';
+    var validLangs = ['en','es','pl'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
@@ -278,6 +279,20 @@ function translations() {
             translateEmbedStrings(language);
             callback(language);
         };
+    }
+
+    /* Checks URL for query parameter 'l' and translates page to that language. */
+    function setLang(message){
+        if (message.l){
+            var lang = message.l;
+            if (validLangs.indexOf(lang)>-1){
+                updateLang(lang, function(translations) {
+                    config.translate = translations;
+                    document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+                });
+            }else{
+            }
+            }
     }
 
     /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
@@ -314,6 +329,7 @@ function translations() {
     return {
         'updateLang': updateLang,
         'translateEmbedStrings': translateEmbedStrings,
+        'setLang': setLang,
     };
 }
 
@@ -1290,7 +1306,7 @@ function web_editor(config) {
 
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
-    function setupButtons(message,language) {
+    function setupButtons() {
         $("#command-download").click(function () {
             if ($("#command-download").length) {
                 doDownload();
@@ -1393,26 +1409,6 @@ function web_editor(config) {
                 $('.buttons_menu_container').addClass('hidden');
             }
         });
-        var validLangs = ['en','es','pl'];
-        if (message.l){
-            var lang = message.l;
-            if (validLangs.indexOf(message.l)>-1){
-                TRANSLATIONS.updateLang(lang, function(translations) {
-                    config.translate = translations;
-                    document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
-                });
-            }else{
-            }
-            }
-        if (language){
-            if (validLangs.indexOf(language)>=-1){
-                TRANSLATIONS.updateLang(language, function(translations) {
-                    config.translate = translations;
-                    document.getElementsByTagName("HTML")[0].setAttribute("lang", language);
-                });
-            }else{
-            }
-            }
     }
 
     // Extracts the query string and turns it into an object of key/value
@@ -1432,15 +1428,7 @@ function web_editor(config) {
         }
         return result;
     }
-    
-    function get_language_hash(){
-        var hash_statement = window.location.href.match(/#l.*/);
-        if (hash_statement){    
-            var languageExt = hash_statement.match(/=.*/).substr(1);
-        }
-        return languageExt;
-        
-    }
+
 
     function get_migration() {
         var compressed_project = window.location.toString().split("#project:")[1];
@@ -1452,11 +1440,11 @@ function web_editor(config) {
 
     var qs = get_qs_context();
     var migration = get_migration();
-    var lang = get_language_hash();
     setupFeatureFlags();
     setupEditor(qs, migration);
-    setupButtons(qs,lang);
+    setupButtons();
     TRANSLATIONS.translateEmbedStrings(config.translate);
+    TRANSLATIONS.setLang(qs);
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
