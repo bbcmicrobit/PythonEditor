@@ -1429,7 +1429,6 @@ function web_editor(config) {
         return result;
     }
 
-
     function get_migration() {
         var compressed_project = window.location.toString().split("#project:")[1];
         if(typeof compressed_project === "undefined") return null;
