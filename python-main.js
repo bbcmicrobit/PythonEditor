@@ -1241,7 +1241,7 @@ function web_editor(config) {
             // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
         })
-        .catch(webubsErrorHandler);
+        .catch(webusbErrorHandler);
     }
 
     function doSerial() {
