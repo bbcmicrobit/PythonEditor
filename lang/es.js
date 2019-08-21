@@ -89,7 +89,7 @@ var language = {
   'webusb': {
     'err': {
       'update-req': 'Necesitas <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">actualizar el firmware del micro:bit </a> para poder usar esta función!',
-      'clear-connect': 'Hay otro proceso conectado a este dispositivo.</div><div>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
+      'clear-connect': 'Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
       'reconnect-microbit': 'Por favor reconecta el micro:bit e intentalo de nuevo.',
       'device-disconnected': 'Dispositivo desconectado.'
     },
