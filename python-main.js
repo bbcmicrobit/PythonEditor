@@ -1114,7 +1114,7 @@ function web_editor(config) {
 
         // Show error message
         $("#flashing-overlay-error").html(
-                '<div>' + err.message + '</div><div>' + 
+                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</div><div>' + 
                 config["translate"]["webusb"]["err"][errorMessage] +
                 '</div><a href="#" id="flashing-overlay-download">' +
                 config["translate"]["webusb"]["download"] + 
