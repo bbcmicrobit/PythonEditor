@@ -606,6 +606,7 @@ input:checked + .menu-switch-slider:before {
     align-items: center;
     text-align: center;
     display: none;
+    line-height: 30px;
 }
 
 #flashing-overlay {
@@ -616,6 +617,15 @@ input:checked + .menu-switch-slider:before {
 }
 
 #request-repl {
+    display: none;
+    cursor: pointer;
+    background-color: #3758ce;
+    padding: .2em;
+    color: #fff;
+    font-size: 22px;
+}
+
+#request-serial {
     display: none;
     cursor: pointer;
     background-color: #3758ce;

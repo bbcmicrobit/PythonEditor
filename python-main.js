@@ -295,6 +295,7 @@ function translations() {
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
+        $('#request-serial').text(language['webusb']['request-serial']);
         $('#flashing-text').text(language['webusb']['flashing-text']);
         var optionsStrings = language['static-strings']['options-dropdown'];
         for (var object in optionsStrings) {
@@ -367,6 +368,7 @@ function web_editor(config) {
     function setFontSize(size) {
         EDITOR.ACE.setFontSize(size);
         $("#request-repl")[0].style.fontSize = "" + size + "px";
+        $("#request-serial")[0].style.fontSize = "" + size + "px";
 
         // Only update font size if REPL is open
         if ($("#repl").css('display') != 'none') {
@@ -1117,10 +1119,13 @@ function web_editor(config) {
         // Show error message
         $("#flashing-overlay-error").html(
                 '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
-                (err.name === 'device-disconnected' ? "" : config["translate"]["webusb"]["err"][errorMessage]) +
-                '<br ><a href="#" id="flashing-overlay-download">' +
-                config["translate"]["webusb"]["download"] + 
-                '</a> | <a href="#" onclick="flashErrorClose()">' +
+                (err.name === 'device-disconnected'
+                        ?  "" 
+                        : config["translate"]["webusb"]["err"][errorMessage] +
+                          '<br ><a href="#" id="flashing-overlay-download">' +
+                          config["translate"]["webusb"]["download"] + 
+                          '</a> | ') +
+                '<a href="#" onclick="flashErrorClose()">' +
                 config["translate"]["webusb"]["close"] +
                 '</a>'
         );
@@ -1140,6 +1145,7 @@ function web_editor(config) {
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
         }
         $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
@@ -1185,6 +1191,7 @@ function web_editor(config) {
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
             $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
             $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
@@ -1261,6 +1268,7 @@ function web_editor(config) {
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
             $("#command-serial").attr("title", serialButton["label"]);
             $("#command-serial > .roundlabel").text(serialButton["label"]);
@@ -1332,6 +1340,7 @@ function web_editor(config) {
         $("#editor-container").hide();
         $("#repl").show();
         $("#request-repl").show();
+        $("#request-serial").show();
 
         // Recalculate terminal height
         $("#repl > iframe").css("position", "relative");
@@ -1394,6 +1403,10 @@ function web_editor(config) {
         $("#request-repl").click(function () {
             var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
             daplink.serialWrite("\x03");
+        });
+        $("#request-serial").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+            daplink.serialWrite("\x04");
         });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
