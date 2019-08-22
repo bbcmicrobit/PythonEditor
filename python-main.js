@@ -286,6 +286,7 @@ function translations() {
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
             $(value).attr('title', buttons[button_id]['title']);
+            $(value).attr('aria-label', buttons[button_id]['title']);
             $(value).children('.roundlabel').text(buttons[button_id]['label']);
             if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
                 // Serial button strings depend on the REPL being visible
@@ -293,6 +294,7 @@ function translations() {
                 $(value).children(':last').text(buttons[button_id]['label-close']);
             }
         });
+        $('.ace_text-input').attr('aria-label',language['static-strings']['text-editor']['aria-label']);
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
         $('#flashing-text').text(language['webusb']['flashing-text']);

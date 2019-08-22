@@ -180,6 +180,9 @@ var language = {
       'autocomplete': 'Autocompletar',
       'on-enter': 'Al presionar Intro',
       'lang-select': 'Seleccionar Idioma:'
+    },
+    'text-editor': {
+      'aria-label': 'editor de texto'
     }
   }
 };
