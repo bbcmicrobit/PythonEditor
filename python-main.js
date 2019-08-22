@@ -294,6 +294,7 @@ function translations() {
                 $(value).children(':last').text(buttons[button_id]['label-close']);
             }
         });
+        $('.ace_text-input').attr('aria-label',language['static-strings']['text-editor']['aria-label']);
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
         $('#flashing-text').text(language['webusb']['flashing-text']);
