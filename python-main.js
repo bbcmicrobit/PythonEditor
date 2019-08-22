@@ -526,9 +526,6 @@ function web_editor(config) {
         $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
-
-        // A11y add aria-label to text area    
-        $('.ace_text-input').attr('aria-label', 'text editor')
     }
 
     // Sets up the file system and adds the initial main.py
