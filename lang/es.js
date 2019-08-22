@@ -94,8 +94,8 @@ var language = {
       'device-disconnected': 'Dispositivo desconectado.'
     },
     'close': 'Cerrar',
-    'request-repl': 'Haz clic aqui o presione CTRL-C para entrar al REPL',
-    'request-serial': 'Click here or press CTRL-D to reset',
+    'request-repl': 'Send CTRL-C for REPL',
+    'request-serial': 'Send CTRL-D to reset',
     'flashing-text': 'Flasheando micro:bit',
     'download': 'Descargar Hex'
   },

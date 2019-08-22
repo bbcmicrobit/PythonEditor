@@ -616,22 +616,19 @@ input:checked + .menu-switch-slider:before {
     border: #febf2e 6px solid;
 }
 
-#request-repl {
-    display: none;
-    cursor: pointer;
-    background-color: #3758ce;
-    padding: .2em;
-    color: #fff;
-    font-size: 22px;
+#serial-buttons {
+    display: flex;
 }
 
-#request-serial {
+#serial-buttons > div {
     display: none;
     cursor: pointer;
     background-color: #3758ce;
     padding: .2em;
     color: #fff;
     font-size: 22px;
+    width: 50%;
+    border: thin solid #aaa;
 }
 
 /* File system */
