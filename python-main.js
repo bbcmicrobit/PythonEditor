@@ -1113,7 +1113,7 @@ function web_editor(config) {
         } else if (err.name === "device-disconnected") {
             errorMessage = "device-disconnected";
         } else {
-            errorMessage = "reconnect-microbit";
+            errorMessage = usePartialFlashing ? "reconnect-microbit-partial-flashing" : "reconnect-microbit";
         }
 
         // Show error message
