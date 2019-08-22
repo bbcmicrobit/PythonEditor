@@ -1174,6 +1174,9 @@ function web_editor(config) {
 
     function doFlash() {
         // var startTime = new Date().getTime();
+        
+        // Listen for unhandled rejections in DAPjs
+        window.addEventListener("unhandledrejection", webusbErrorHandler));
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
@@ -1244,6 +1247,9 @@ function web_editor(config) {
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
         })
         .catch(webusbErrorHandler);
+
+        // Remove event listener
+        window.removeEventListener("unhandledrejection", webusbErrorHandler);
     }
 
     function doSerial() {
@@ -1511,3 +1517,5 @@ function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
+
+
