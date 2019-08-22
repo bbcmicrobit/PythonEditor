@@ -1176,7 +1176,7 @@ function web_editor(config) {
         // var startTime = new Date().getTime();
         
         // Listen for unhandled rejections in DAPjs
-        window.addEventListener("unhandledrejection", webusbErrorHandler));
+        window.addEventListener("unhandledrejection", webusbErrorHandler);
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
