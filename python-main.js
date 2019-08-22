@@ -1135,9 +1135,6 @@ function web_editor(config) {
 
         // Send event
         document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorMessage }));
-
-        // Remove event listener
-        window.removeEventListener("unhandledrejection", webusbErrorHandler);
     }
 
     function doDisconnect() {
@@ -1256,10 +1253,12 @@ function web_editor(config) {
             // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
 
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         })
-        .catch(webusbErrorHandler);
+        .catch(webusbErrorHandler)
+        .finally(
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler)
+        );
     }
 
     function doSerial() {
