@@ -1048,7 +1048,7 @@ function web_editor(config) {
     }
 
     function showDisconnectError(event) {
-        var error = {"message": config["translate"]["webusb"]["err"]["device-disconnected"]};
+        var error = {"name": "device-disconnected", "message": config["translate"]["webusb"]["err"]["device-disconnected"]};
         webusbErrorHandler(error);
     }
 
@@ -1108,15 +1108,17 @@ function web_editor(config) {
             errorMessage = "update-req";
         } else if (err.message === "Unable to claim interface.") {
             errorMessage = "clear-connect";
+        } else if (err.name === "device-disconnected") {
+            errorMessage = "device-disconnected";
         } else {
             errorMessage = "reconnect-microbit";
         }
 
         // Show error message
         $("#flashing-overlay-error").html(
-                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</div><div>' + 
-                config["translate"]["webusb"]["err"][errorMessage] +
-                '</div><a href="#" id="flashing-overlay-download">' +
+                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
+                (err.name === 'device-disconnected' ? "" : config["translate"]["webusb"]["err"][errorMessage]) +
+                '<br ><a href="#" id="flashing-overlay-download">' +
                 config["translate"]["webusb"]["download"] + 
                 '</a> | <a href="#" onclick="flashErrorClose()">' +
                 config["translate"]["webusb"]["close"] +
