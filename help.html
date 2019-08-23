@@ -26,12 +26,15 @@
     
      <script>
         $(document).ready(function() {
-            var paramsToCheck = ["snippets","blocks","share"];
+            var paramsToCheck = ["snippets","blocks","share","experimental"];
             paramsToCheck.forEach(function(key){
                 var urlFlag = urlparse(key) || "false";
                 if( urlFlag === "true"){
-                    var hiddenFeatureClass = 'hide-' + key;
-                    $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
+                    $("#nav-" + key).removeClass('hidden');
+                    $("#btn-" + key).removeClass('hidden');
+                    $("#" + key).removeClass('hidden');
+                    $("." + key).removeClass('hidden');
+                    
                 };
             })
         });
@@ -56,8 +59,9 @@
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
             <li ><a href="#fs">Files and Modules</a></li>
-            <li class="hide-blocks"><a href="#blockly">Blockly</a></li>
-            <li class="hide-snippets"><a href="#snippets">Snippets</a></li>
+            <li id="nav-blocks" class="hidden"><a href="#blockly">Blockly</a></li>
+            <li id="nav-snippets" class="hidden"><a href="#snippets">Snippets</a></li>
+            <li><a href="#REPL">REPL</a></li>
             <li><a href="#bugs">Bugs</a></li>
             <li><a href="#more">Further Information</a></li>
           </ul>
@@ -82,7 +86,9 @@
     <img src="static/img/comic1.png" class="img-responsive center-block"
             alt="http://goo.gl/SrIrIE"/>
     <h2 id="Editor"> The Editor</h2>
-      <p>The Python editor is perfect for those who want to push their coding skills further. A selection of snippets and a range of pre-made images and music give you a helping hand with your code. The editor is powered by the global <a href="http://python.org/community/microbit/">Python Community</a>.</p>
+      <p>The Python editor is perfect for those who want to push their coding skills further. 
+      A selection of snippets and a range of pre-made images and music give you a helping hand with your code. 
+      The editor is powered by the global <a href="http://python.org/community/microbit/">Python Community</a>.</p>
     
     <h3 id="Menu">Menu</h3>
     <p>The main menu of the editor contains various buttons that allow you to interact with the editor and the micro:bit device.
@@ -105,48 +111,59 @@
                 </div>                
             </td>
             <td>
-            Click on the "Download" button to save a special "hex" file on
+            Click on the <strong>Download</strong> button to save a special "hex" file on
              computer. Plug in  BBC micro:bit (it'll show up as USB
             storage) and drag the newly saved file onto the device. Code
             will run (or you'll see an error message scroll past on the
             device's display). See below for how to extract  code from a
-            hex file back into the editor.
+            hex file back into the editor.<br><br>
+        
+            <strong>Download becomes 'Flash' when connected over <a href="#command-connect">WebUSB</a></strong>
+            </td>
+        </tr>
+         <tr>
+            <td>
+                <div id="command-connect" class="roundsymbol" title="Connect to the micro:bit via WebUSB" style="font-size: 0rem;">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="connect">
+                        <path d="m 295.37672,362.40336 -41.029,-41.029 0,72.8347 -27.352,0 -0.001,-72.8347 -41.029,41.029 0,-31.911 34.68462,-34.68462 20.02138,-20.02138 54.705,54.706 z m -98.203,-181.9 c 0,9.128 -7.406,16.539 -16.541,16.539 -9.146,0 -16.535,-7.411 -16.535,-16.539 0,-9.131 7.389,-16.548 16.535,-16.548 9.135,0 16.541,7.417 16.541,16.548 z m 121.494,-0.003 c 0,9.129 -7.413,16.542 -16.548,16.542 -9.129,0 -16.537,-7.413 -16.537,-16.542 0,-9.131 7.408,-16.547 16.537,-16.547 9.135,0 16.548,7.416 16.548,16.547 z m -16.544,81.93 -122.554,-0.202 c -45.667,0 -82.284997,-36.553 -82.284997,-81.732 0,-45.179 36.756997,-81.934 81.936997,-81.934 l 122.902,0 c 45.177,0 81.9344,36.755 81.9344,81.934 0,45.179 -36.7574,81.934 -81.9344,81.934 z m 49.164,-81.934 c 0,-27.105 -22.059,-49.164 -49.164,-49.164 l -122.902,0 c -27.107,0 -49.159,22.059 -49.159,49.164 0,27.112 22.052,49.164 49.159,49.164 l 122.902,0 c 27.105,0 49.164,-22.052 49.164,-49.164 z" id="path3341" inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss"></path>
+                    </svg>
+                </div>                
+            </td>
+            <td>
+            The <strong>Connect</strong> button allows you to connect to your micro:bit in your browser, using a tool called <a href="#WebUSB">WebUSB</a>.
+            When you choose to connect, a window will pop up in your browser asking you to choose the micro:bit, you want to connect to.
+            If you see the message 'no compatible devices found', you may need to <a href="https://microbit.org/guide/firmware">update the micro:bit firmware.</a>
+            When you are connected you will see this menu item change to 'Disconnect'.
             </td>
         </tr>
         <tr>
             <td>
-                <div id="command-save" class="roundsymbol" title="Save  Python code to  computer">
-                        <i class="fa fa-download"></i>
+                <div id="command-files" class="roundsymbol" title="Load or Save files on your computer">
+                        <i class="fa fa-file"></i>
                 </div>
             </td>
             <td>
-            Click on the "Save" button to save the code onto your computer.
-            Because you're downloading Python code  computer might check
-            you want to save the file. It's trying to protect you from
-            downloading random software from the internet. But since this is
-             own code you're safe to proceed. See below for how to load
-            code back into the editor.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div id="command-upload" class="roundsymbol" title="Load files into the editor">
-                    <i class="fa fa-upload"></i>
-                 </div>
-            </td>
-            <td>
-            It's very easy to load files from  computer into the editor:
-            click the load button then drag the file from  computer onto
-            the grey "drop" area. Alternatively, you could use the file
-            picker (just click on the link at the bottom to toggle between the
-            two options). The editor knows how to read Python files (whose name
-            ends with ".py") and extract Python code from hex files (whose name
-            ends with ".hex").<br><br>
+            As well as being able to drag&drop a .Hex file or .py script into the editor to load it, 
+            the<strong>Load/Save</strong> button will open a file window that let's you inspect the files
+            on the micro:bit. You can drag&drop files into the grey "drop" area or use the file
+            picker to browse for a file on your computer. You can also download your .hex or .py files from here too.<br><br>
             The <a href="#fs">file system</a> adds functionality to add or remove python modules, 
             data logs and other file types from the micro:bit.
             </td>
         </tr>
-        <tr class="hide-blocks">
+   <tr>
+            <td>
+                <div id="command-serial" class="roundsymbol" title="Connect to your micro:bit via serial" style="font-size: 0rem;">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="connect">
+                        <path d="m 123.7051,148.34921 c -2.89667,0.7124 -3.12083,4.34726 -2.52182,6.73621 0.0802,14.71098 -0.21958,29.42698 0.27409,44.13341 3.32459,3.91031 8.88495,4.22528 13.02744,6.89911 18.98534,8.63879 37.97074,17.27741 56.95602,25.91632 -23.08661,10.54025 -46.23337,20.9492 -69.22578,31.69428 -2.4063,3.98087 -0.37642,8.72319 -1.01647,13.03636 0.0189,12.59711 -0.24199,25.20185 0.31304,37.79166 1.42704,2.21788 4.745,1.58443 6.32834,-0.10552 39.47152,-19.90837 78.95331,-39.79626 118.38368,-59.78576 2.45594,-3.86876 0.45217,-8.56637 1.06388,-12.79766 -9.2e-4,-10.44221 0.23596,-20.89313 -0.30258,-31.32695 -3.92629,-4.28756 -10.10353,-5.0331 -14.76392,-8.27141 -35.9248,-18.0005 -71.81395,-36.07349 -107.83418,-53.88207 -0.22666,-0.0159 -0.45378,-0.0542 -0.68174,-0.038 z m 233.85267,151.79873 c -41.10937,0.16168 -82.21926,0.0656 -123.32866,0.21518 -2.79907,1.273 -2.46862,4.90246 -2.05358,7.38358 0.0849,9.39989 -0.47292,18.82688 0.44779,28.20219 2.56216,2.59475 6.51332,1.10343 9.70184,1.34537 39.23126,-0.019 78.46295,0.0642 117.69372,-0.17539 2.70897,-1.44807 2.26294,-5.04936 1.90027,-7.59696 -0.0601,-9.31199 0.42409,-18.64747 -0.41926,-27.93817 -0.81939,-1.31659 -2.54446,-1.46994 -3.94212,-1.4358 z" id="rect12318" inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss"></path>
+                    </svg>
+                </div>                
+            </td>
+            <td>
+            The <strong>Open/Close Serial</strong> button allows you to dynamically interact with MicroPython on the micro:bit using the <a href="#REPL">REPL</a>
+            </td>
+        </tr>
+        <tr id="btn-blocks" class="hidden">
             <td>
                 <div id="command-blockly" class="roundsymbol" title="Go to the blockly editor">
                     <i class="fa fa-puzzle-piece"></i>
@@ -154,7 +171,7 @@
             </td>
             <td>
             <strong>This is an experimental feature. It may change in the future
-            and could contain bugs.</strong> Clicking the "Blockly" button
+            and could contain bugs.</strong> Clicking the <strong>Blockly</strong> button
             displays a set of drag-and-drop
             blocks that can be used to quickly create Python code. Move the
             blocks, watch Python code appear and change. <strong>Moving such
@@ -163,19 +180,36 @@
             just the resulting Python code.</strong>
             </td>
         </tr>
-        <tr class="hide-snippets">
+        <tr id="btn-snippets" class="hidden">
             <td>
                 <div id="command-snippet" class="roundsymbol" title="Load Python code or .hex file into the editor">
                     <i class="fa fa-cogs"></i>
                 </div>
             </td>
             <td>
-            Clicking on the "Snippets" button brings up a menu of Python
+            Clicking on the <strong>Snippets</strong> button brings up a menu of Python
             short-cuts (snippets). Code snippets are short blocks of code to
             re-use in your own programs. There are snippets for most common
             things you'll want to do with Python. Select the one you want and
             fill in the gaps in the code editor to make it do what you want.
             <strong class="hide-blocks">Snippets are disabled when blockly is enabled.</strong>
+            </td>
+        </tr>
+        <tr id="btn-options" class="experimental hidden">
+            <td>
+                <div id="command-options" class="roundsymbol" title="Change the editor settings">
+                    <i class="fa fa-wrench"></i>
+                </div>
+            </td>
+            <td>
+            The <strong>Options</strong> menu allows users to change settings within the editor.
+            Clicking on the menu item will open a dropdown with the various options.
+
+            The <a href="#autocomplete">autocomplete</a> option can be switched on or off here.
+            When it is on you also have the option to complete code on pressing <kbd>Enter</kbd>
+            as well as <kbd>Tab</kbd>.   
+
+            You can also switch the <a href="#partial-flashing">partial flashing</a> service on or off.
             </td>
         </tr>
         <tr>
@@ -185,14 +219,14 @@
                  </div>
             </td>
             <td>
-            Clicking on the "Help" button gets you here. But you knew that
-            already, right..? :-) Notice that  editor is still available
-            but in a separate tab in  browser.
+            Clicking on the <strong>Help</strong> button opens a range of support options. From here
+            you can navigate to the MicroPython language reference documentation, this help page :),
+            the micro:bit support knowledgebase, the feedback form and the Python Editor issue tracker.
             </td>
         </tr>
-        <tr class="hide-share">
+        <tr id="btn-share" class="hidden">
             <td>
-                <div id="command-help" class="roundsymbol" title="Share  project">
+                <div id="command-share" class="roundsymbol" title="Share  project">
                     <i class="fa fa-share-alt"></i>
                 </div>
             </td>
@@ -241,17 +275,23 @@
     strings of characters to display. All the lines are numbered with the
     current line highlighted.</p>
 
-    <h4 id="autocomplete">Autocomplete</h4>
+    <div id="autocomplete" class="experimental hidden">
+    <h4>Autocomplete</h4>
 
     <p>Autocomplete gives you suggestions for your Python code as you type, giving you more of an understanding of what features are available to you and helping you to create working programs.</p>
 
-    <p><img src="static/img/autocomplete-1.gif" class="img-responsive center-block" alt="Autocomplete gives suggestions as you type."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/autocomplete-1.mp4" type="video/mp4">
+    </video>
 
     <p>Press the <kbd>TAB</kbd> key on your keyboard to automatically complete the current line:</p>
 
-    <p><img src="static/img/autocomplete-2.gif" class="img-responsive center-block" alt="Press TAB to complete the line."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/autocomplete-2.mp4" type="video/mp4">
+    </video>
 
     <p>It's important to note that autocomplete isn't aware of your import statements, so you'll still need to check that your code is correct before flashing it to your device. Remember that typing <code>import microbit</code> means you should then use <code>microbit.display.scroll</code>, whereas <code>from microbit import display</code> allows you to write <code>display.scroll</code>. You can learn more about what this means <a href="https://support.microbit.org/support/solutions/articles/19000080153-what-is-the-difference-between-import-microbit-and-from-microbit-import-">by reading this support article</a>.</p>
+    </div>
 
     <h2 id="hello">Hello, World!</h2>
     <p>A 'Hello, World!' program is traditionally used as a quick test to see if we've got 
@@ -262,8 +302,6 @@
     <p>Here's how we do this in the Python editor:</p>
 
     <pre><code class="python">from microbit import *
-
-
 display.scroll("Hello, World!")</code></pre>
 
     <p>The first line (<code>from microbit import *</code>) tells <a href="#micropython">MicroPython</a>
@@ -274,8 +312,9 @@ display.scroll("Hello, World!")</code></pre>
     module) to scroll the text, <kbd>"Hello, World!"</kbd> across the physical
     display on the front of the device.</p>
 
-    <p><img src="static/img/scroll-hello.gif" class="image img-responsive center-block img-rounded"
-        alt="An animation of 'hello world' scrolling over the display."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/scroll-hello.mp4" type="video/mp4">
+    </video>
 
     <p>When you load the Python editor in your browser, this is the default script you will see,
         asking the micro:bit to scroll the words across the LED screen and then display an image of a heart.</p>
@@ -292,26 +331,22 @@ display.scroll("Hello, World!")</code></pre>
 
     <p>In addition to using MicroPython's <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">built-in-modules</a>, you can use the file system to include the external python modules in your program.</p>
     
-    <p>You can drag and drop files or use the <strong>Add a file to the filesystem</strong> button to open the file dialogue.</p>
+    <p>You can drag and drop files into the load area or use the <strong>Add file</strong> button to open the file dialogue.</p>
     
     <p>A status bar shows you the file types you have uploaded and how much free space you still have available. 
         The file size shown is the space it consumes inside of the micro:bit file system, 
         not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.
-        The status bar is handily colour coded to indicate file types.</p>
+        The status bar is colour coded to indicate file types.</p>
     
     <p>The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status
         bar and cannot be removed. If you try to upload another <strong>main.py</strong> file this will replace your code in the text window.</p>
-    
-    <p><img src="static/img/file-system2.png"
-        class="image img-responsive center-block img-rounded" style="max-width: 75%;"
-        alt="modal dialogue for the file system interface with files uploaded"/></p>
-    </div>
 
     <p>As you add files, they will appear in a list underneath the status bar. The list indicates
         the filename, the file type (eg. <strong>py</strong> is a python script), the size of the file
         and also a button with the option to <strong>Remove</strong> the file if you have added it in error.</p>
+    </div>
 
-    <div class="hide-blocks">
+    <div id="blocks" class="hidden">
         <h2 id="blockly">Blockly</h2>
     
         <p>Use blockly to make new Python code from easy to assemble blocks of
@@ -339,16 +374,17 @@ display.scroll("Hello, World!")</code></pre>
     
         <p>However, by using Blockly you'll very quickly get the hang of how Python
         code works and fits together.</p>
-        </div>
-    <div class="hide-snippets">
-    <h2 id="snippets">Snippets</h2>
+    </div>
+
+    <div id=snippets class="hidden">
+    <h2>Snippets</h2>
 
     <p>Snippets are a cool way to avoid typing. The animation below shows you
     how to use them:</p>
 
-    <p><img src="static/img/snippet_example.gif"
-        class="img-responsive center-block img-rounded"
-        alt="An animation demonstrating how to use snippets."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/snippet_example.mp4" type="video/mp4">
+    </video>
 
     <p>You can access snippets from the "Snippets" button (see above), but
     it's a lot quicker and easier to learn the <em>triggers</em> for the
@@ -356,12 +392,70 @@ display.scroll("Hello, World!")</code></pre>
     snippet and then fill in the remaining blocks of code so it does what you
     want.</p>
 
-    <p class="hide-blocks">When blockly is enabled the "Snippets" button is disabled. This avoids
+    <p>When blockly is enabled the "Snippets" button is disabled. This avoids
     snippets from interfering with code that blockly may be generating.</p>
     
 
     <p><img src="static/img/comic4.png" class="img-responsive center-block"
         alt="http://goo.gl/bT8a8M"/></p>
+    </div>
+    
+    <div>
+    <h2 id="WebUSB">WebUSB</h2>
+    
+    <p><a href="https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web">WebUSB</a>
+    provides a simple way to connect to and control USB devices from the web. At present it is only available in
+    <a href="https://caniuse.com/#feat=webusb"> browsers that are based on Google Chrome</a>.</p>
+
+    <p>In the Python Editor, webUSB means that we can connect to the micro:bit, flash a .Hex file 
+    to it and communicate with it using the <a href="#REPL">REPL</a>.</p>
+
+    <p>If you see the message 'no compatible devices found' when you try to connect, 
+    you may need to <a href="https://microbit.org/guide/firmware">update the micro:bit firmware.</a></p>
+  
+    <h3>Flash</h3>
+    <p>To flash the micro:bit from the browser, use the <strong>Connect</strong> button to pair the device
+        and then choose <strong>Flash</strong>. Your program will then be transferred to the micro:bit.</p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/flash.mp4" type="video/mp4">
+    </video>
+
+    <h3 id="REPL">REPL</h3>
+        <p>The Read, Evaluate, Print Loop (REPL) is a way of dynamically interacting with the micro:bit using MicroPython.
+        To do this, the micro:bit does four things:</p>
+    
+            <ol>
+                <li>Read the user input</li>
+                <li>Evaluate your code</li>
+                <li>Print the response</li>
+                <li>Loop back to step 1</li>
+            </ol>
+        
+        <p>To interact with the REPL on the micro:bit, when you <strong>Open Serial</strong> you will be asked to
+        <strong>Click here or press CTRL-C to enter the REPL</strong>. Once you have done so, try typing something
+        in MicroPython.</p>
+
+        <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+            <source src="static/img/repl.mp4" type="video/mp4">
+        </video>
+
+        <p>Try these things in the REPL:</p>
+        <pre><code class="python">>>> from microbit import *
+>>> display.scroll("Hello from the REPL")
+>>> import this
+>>> import love
+>>> import antigravity</code></pre>
+        <div class="alert alert-info">
+            <p>Due to a technical limitation in the software you may 
+                experience data loss if you are sending data over serial at a high rate.</p>
+        </div>
+    </div>
+    <div id="partial-flashing" class="experimental hidden">
+    <h2>Partial flashing</h2>
+    <p>The partial flashing feature allows for super fast updates to be sent to the micro:bit 
+        when edits are made to a program.</p>
+    <p>To do this, only the section of the .Hex file that represents the python script is updated.</p>
+    <p>With this feature turned on, once you have flashed the initial MicroPython program to the micro:bit, all subsequent flash attempts will be much quicker.</p>
     </div>
 
     <h2 id="bugs">Bug Fixes</h2>
