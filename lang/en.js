@@ -91,7 +91,7 @@ var language = {
       'update-req': 'You need to <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">update your micro:bit firmware</a> to make use of this feature.',
       'clear-connect': 'Another process is connected to this device.<br>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
       'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
-      'reconnect-microbit-partial-flashing': 'Please reconnect your micro:bit and try again.<br >If the errors persist, try disabling partial flashing in the beta options.',
+      'partial-flashing-disable': 'If the errors persist, try disabling partial flashing in the beta options.',
       'device-disconnected': 'Device disconnected.'
     },
     'close': 'Close',

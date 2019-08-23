@@ -1105,24 +1105,33 @@ function web_editor(config) {
         $("#flashing-info").addClass('hidden');
 
         // If micro:bit does not support dapjs
-        var errorMessage;
-        if (err.message === "No valid interfaces found."){
-            errorMessage = "update-req";
+        var errorType;
+        var errorDescription;
+        if (err.message === "No valid interfaces found.") {
+            errorType = "update-req";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
         } else if (err.message === "Unable to claim interface.") {
-            errorMessage = "clear-connect";
+            errorType = "clear-connect";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
         } else if (err.name === "device-disconnected") {
-            errorMessage = "device-disconnected";
+            errorType = "device-disconnected";
+            // No additional message provided here, err.message is enough
+            errorDescription = "";
         } else {
-            errorMessage = usePartialFlashing ? "reconnect-microbit-partial-flashing" : "reconnect-microbit";
+            errorType = "reconnect-microbit";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
+            if (usePartialFlashing) {
+                errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+            } 
         }
 
         // Show error message
         $("#flashing-overlay-error").html(
                 '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
+                errorDescription +
                 (err.name === 'device-disconnected'
-                        ?  "" 
-                        : config["translate"]["webusb"]["err"][errorMessage] +
-                          '<br ><a href="#" id="flashing-overlay-download">' +
+                        ?  ""
+                        : '<br ><a href="#" id="flashing-overlay-download">' +
                           config["translate"]["webusb"]["download"] + 
                           '</a> | ') +
                 '<a href="#" onclick="flashErrorClose()">' +
@@ -1134,7 +1143,7 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
-        document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorMessage }));
+        document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorType }));
     }
 
     function doDisconnect() {
@@ -1255,10 +1264,10 @@ function web_editor(config) {
 
         })
         .catch(webusbErrorHandler)
-        .finally(
+        .finally(function() {
             // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler)
-        );
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
+        });
     }
 
     function doSerial() {
