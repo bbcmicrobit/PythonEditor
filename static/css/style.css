@@ -606,6 +606,7 @@ input:checked + .menu-switch-slider:before {
     align-items: center;
     text-align: center;
     display: none;
+    line-height: 30px;
 }
 
 #flashing-overlay {
@@ -615,13 +616,19 @@ input:checked + .menu-switch-slider:before {
     border: #febf2e 6px solid;
 }
 
-#request-repl {
+#serial-buttons {
+    display: flex;
+}
+
+#serial-buttons > div {
     display: none;
     cursor: pointer;
     background-color: #3758ce;
     padding: .2em;
     color: #fff;
     font-size: 22px;
+    width: 50%;
+    border: thin solid #aaa;
 }
 
 /* File system */

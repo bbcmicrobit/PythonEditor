@@ -295,6 +295,7 @@ function translations() {
         });
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
+        $('#request-serial').text(language['webusb']['request-serial']);
         $('#flashing-text').text(language['webusb']['flashing-text']);
         var optionsStrings = language['static-strings']['options-dropdown'];
         for (var object in optionsStrings) {
@@ -367,6 +368,7 @@ function web_editor(config) {
     function setFontSize(size) {
         EDITOR.ACE.setFontSize(size);
         $("#request-repl")[0].style.fontSize = "" + size + "px";
+        $("#request-serial")[0].style.fontSize = "" + size + "px";
 
         // Only update font size if REPL is open
         if ($("#repl").css('display') != 'none') {
@@ -1047,9 +1049,16 @@ function web_editor(config) {
         $('#editor').focus();
     }
 
-    function doConnect(e, serial) {
-        var p = Promise.resolve();
+    function showDisconnectError(event) {
+        var error = {"name": "device-disconnected", "message": config["translate"]["webusb"]["err"]["device-disconnected"]};
+        webusbErrorHandler(error);
+    }
 
+    function doConnect(serial) {
+        // Show error on WebUSB Disconnect Events
+        navigator.usb.addEventListener('disconnect', showDisconnectError);
+
+        var p = Promise.resolve();
         if (usePartialFlashing) {
             p = PartialFlashing.connectDapAsync();
         }
@@ -1080,37 +1089,73 @@ function web_editor(config) {
             $("#command-flash > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-flash"]["label"]);
             $("#command-flash").attr("title", config["translate"]["static-strings"]["buttons"]["command-flash"]["title"]);
 
-            if (serial){
-              doSerial();
+            if (serial) {
+                doSerial();
             }
         })
-        .catch(function(err) {
-            console.log("Error connecting: " + err);
-            $("#flashing-overlay-container").css("display", "flex");
-            $("#flashing-info").addClass('hidden');
-
-            // If micro:bit does not support dapjs
-            if (err.message === "No valid interfaces found."){
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            } else if (err.message === "Unable to claim interface.") {
-                $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            }
-
-            $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-        });
+        .catch(webusbErrorHandler);
     }
 
-    function doDisconnect(e) {
+    function webusbErrorHandler(err) {
+        // Disconnect
+        doDisconnect();
+
+        // Error handler
+        $("#flashing-overlay-container").css("display", "flex");
+        $("#flashing-info").addClass('hidden');
+
+        // If micro:bit does not support dapjs
+        var errorType;
+        var errorDescription;
+        if (err.message === "No valid interfaces found.") {
+            errorType = "update-req";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
+        } else if (err.message === "Unable to claim interface.") {
+            errorType = "clear-connect";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
+        } else if (err.name === "device-disconnected") {
+            errorType = "device-disconnected";
+            // No additional message provided here, err.message is enough
+            errorDescription = "";
+        } else {
+            errorType = "reconnect-microbit";
+            errorDescription = config["translate"]["webusb"]["err"][errorType];
+            if (usePartialFlashing) {
+                errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+            } 
+        }
+
+        // Show error message
+        $("#flashing-overlay-error").html(
+                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
+                errorDescription +
+                (err.name === 'device-disconnected'
+                        ?  ""
+                        : '<br ><a href="#" id="flashing-overlay-download">' +
+                          config["translate"]["webusb"]["download"] + 
+                          '</a> | ') +
+                '<a href="#" onclick="flashErrorClose()">' +
+                config["translate"]["webusb"]["close"] +
+                '</a>'
+        );
+
+        // Attach download handler
+        $("#flashing-overlay-download").click(doDownload);
+
+        // Send event
+        document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorType }));
+    }
+
+    function doDisconnect() {
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
-            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
         }
+        $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+        $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
 
         $("#repl").empty();
         REPL = null;
@@ -1142,13 +1187,17 @@ function web_editor(config) {
         return p;
     }
 
-    function doFlash(e) {
+    function doFlash() {
         // var startTime = new Date().getTime();
+        
+        // Listen for unhandled rejections in DAPjs
+        window.addEventListener("unhandledrejection", webusbErrorHandler);
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
             $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
             $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
@@ -1212,22 +1261,12 @@ function web_editor(config) {
             // var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
             // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
             //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
+
         })
-        .catch(function(err) {
-            console.log("Error flashing: " + err);
-            $("#flashing-overlay-container").css("display", "flex");
-            $("#webusb-flashing-progress").css("display", "none");
-
-            // If micro:bit does not support dapjs
-            if (err.message === "No valid interfaces found.") {
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            } else if(err.message === "Unable to claim interface.") {
-                $("#flashing-overlay-error").html('<div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                return;
-            }
-
-            $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["restart-microbit"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
@@ -1237,6 +1276,7 @@ function web_editor(config) {
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
             $("#request-repl").hide();
+            $("#request-serial").hide();
             $("#editor-container").show();
             $("#command-serial").attr("title", serialButton["label"]);
             $("#command-serial > .roundlabel").text(serialButton["label"]);
@@ -1253,7 +1293,7 @@ function web_editor(config) {
 
         // Check if we need to connect
         if ($("#command-connect").length){
-            doConnect(undefined, true);
+            doConnect(true);
         } else {
             // Change Serial button to close
             $("#command-serial").attr("title", serialButton["title-close"]);
@@ -1272,19 +1312,7 @@ function web_editor(config) {
                 daplink.startSerialRead(50);
                 lib.init(setupHterm);
             })
-            .catch(function(err) {
-                // If micro:bit does not support dapjs
-                $("#flashing-overlay-error").show();
-                if (err.message === "No valid interfaces found.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["update-req"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                } else if (err.message === "Unable to claim interface.") {
-                    $("#flashing-overlay-error").html('<div>' + err + '</div><div>'+ config["translate"]["webusb"]["err"]["clear-connect"] +'</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-                    return;
-                }
-
-                $("#flashing-overlay-error").html('<div>' + err + '</div><div>' +  config["translate"]["webusb"]["err"]["restart-microbit"] + '</div><a href="#" onclick="flashErrorClose()">'+ config["translate"]["webusb"]["close"] +'</a>');
-            });
+            .catch(webusbErrorHandler);
         }
     }
 
@@ -1320,6 +1348,7 @@ function web_editor(config) {
         $("#editor-container").hide();
         $("#repl").show();
         $("#request-repl").show();
+        $("#request-serial").show();
 
         // Recalculate terminal height
         $("#repl > iframe").css("position", "relative");
@@ -1380,7 +1409,12 @@ function web_editor(config) {
             doSerial();
         });
         $("#request-repl").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
             daplink.serialWrite("\x03");
+        });
+        $("#request-serial").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+            daplink.serialWrite("\x04");
         });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
@@ -1507,3 +1541,5 @@ function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
+
+
