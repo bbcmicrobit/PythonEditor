@@ -1143,7 +1143,8 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
-        document.dispatchEvent(new CustomEvent('webusb', { type: "error", detail: errorType }));
+        var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "error", "message": errorType};
+        document.dispatchEvent(new CustomEvent('webusb', { detail: details });
     }
 
     function doDisconnect() {
@@ -1259,7 +1260,10 @@ function web_editor(config) {
         return p.then(function() {
             $("#flashing-overlay-container").hide();
             var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
-            var event = new CustomEvent("webusb", { type: usePartialFlashing ? "partialflash" : "fullflash" , detail: timeTaken });
+            
+            // Send event
+            var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
+            document.dispatchEvent(new CustomEvent('webusb', { detail: details });
         })
         .catch(webusbErrorHandler)
         .finally(function() {
