@@ -623,10 +623,10 @@ input:checked + .menu-switch-slider:before {
 #serial-buttons > div {
     display: none;
     cursor: pointer;
-    background-color: #3758ce;
-    padding: .2em;
+    background-color: #336699;
+    padding: .5em;
     color: #fff;
-    font-size: 22px;
+    font-size: 1em;
     width: 50%;
     border: thin solid #aaa;
 }
