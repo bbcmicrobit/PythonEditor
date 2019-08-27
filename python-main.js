@@ -1259,9 +1259,9 @@ function web_editor(config) {
 
         return p.then(function() {
             $("#flashing-overlay-container").hide();
-            var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
-            
-            // Send event
+
+            // Send flash timing event
+            var timeTaken = (new Date().getTime() - startTime);
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
         })
