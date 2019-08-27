@@ -390,6 +390,10 @@ a.command:hover {
         text-align: left;
         width: 100%;
     }
+
+    #commands {
+        overflow-x: scroll;
+    }
 }
 
 .snippet-selection:hover {
