@@ -1311,7 +1311,7 @@ function web_editor(config) {
                 return daplink.getSerialBaudrate();
             })
             .then(function(baud) {
-                daplink.startSerialRead(50);
+                daplink.startSerialRead(1);
                 lib.init(setupHterm);
             })
             .catch(webusbErrorHandler);
