@@ -1143,7 +1143,7 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
-        document.dispatchEvent(new CustomEvent('webusb-error', { detail: errorType }));
+        document.dispatchEvent(new CustomEvent('webusb', { type: "error", detail: errorType }));
     }
 
     function doDisconnect() {
@@ -1188,7 +1188,7 @@ function web_editor(config) {
     }
 
     function doFlash() {
-        // var startTime = new Date().getTime();
+        var startTime = new Date().getTime();
         
         // Listen for unhandled rejections in DAPjs
         window.addEventListener("unhandledrejection", webusbErrorHandler);
@@ -1258,10 +1258,8 @@ function web_editor(config) {
 
         return p.then(function() {
             $("#flashing-overlay-container").hide();
-            // var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
-            // console.log("Time taken to flash: " + Math.floor(timeTaken) + " minutes, "
-            //           + Math.ceil((timeTaken - Math.floor(timeTaken)) * 60) + " seconds");
-
+            var timeTaken = (new Date().getTime() - startTime) / (1000 * 60);
+            var event = new CustomEvent("webusb", { type: usePartialFlashing ? "partialflash" : "fullflash" , detail: timeTaken });
         })
         .catch(webusbErrorHandler)
         .finally(function() {
