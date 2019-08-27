@@ -1144,7 +1144,7 @@ function web_editor(config) {
 
         // Send event
         var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "error", "message": errorType};
-        document.dispatchEvent(new CustomEvent('webusb', { detail: details });
+        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
     }
 
     function doDisconnect() {
@@ -1263,7 +1263,7 @@ function web_editor(config) {
             
             // Send event
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
-            document.dispatchEvent(new CustomEvent('webusb', { detail: details });
+            document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
         })
         .catch(webusbErrorHandler)
         .finally(function() {
