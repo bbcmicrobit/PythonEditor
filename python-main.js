@@ -1215,8 +1215,8 @@ function web_editor(config) {
 
         var p = Promise.resolve();
 
-        $("#webusb-flashing-progress").val(0);
-        $("#webusb-flashing-progress").val(0).css("display", "inline-block");
+        $("#webusb-flashing-progress").val(0).hide();
+        $("#webusb-flashing-loader").show();
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
@@ -1229,6 +1229,10 @@ function web_editor(config) {
                     var image = MemoryMap.fromHex(output).slicePad(0, PartialFlashingUtils.pageSize * PartialFlashingUtils.numPages);
 
                     var updateProgress = function(progress) {
+                        if(progress == 0) return;
+
+                        // Show progress bar
+                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
                     return PartialFlashing.flashAsync(window.dapwrapper, image, updateProgress);
@@ -1240,6 +1244,7 @@ function web_editor(config) {
                 .then(function() {
                     // Event to monitor flashing progress
                     window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
+                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 

@@ -566,17 +566,7 @@ let PartialFlashing = {
         PartialFlashingUtils.log("Partial flash");
         let startTime = new Date().getTime();
         for (let i = 0; i < pages.length; ++i) {
-            if (i != 0) {
-                let progress = (i / pages.length) * 100;
-                // let currentTime = new Date().getTime();
-                // let rate = (currentTime - startTime) / progress;
-                // let remaining = rate * (100 - progress);
-                // PartialFlashingUtils.log("Time: " + Math.floor((currentTime - startTime) / (1000 * 60)) + " minutes");
-                // PartialFlashingUtils.log("Rate: " + Math.ceil(rate) + "ms per page");
-                // PartialFlashingUtils.log("Progress: " + Math.floor(progress) + "%");
-                // PartialFlashingUtils.log(Math.ceil(remaining / (1000 * 60)) + " minute(s) remaining");
-                updateProgress(progress);
-            }
+            updateProgress(i / pages.length);
             await this.partialFlashPageAsync(dapwrapper, pages[i], pages[i+1], i);
         }
         updateProgress(1);
