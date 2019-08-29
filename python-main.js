@@ -1071,7 +1071,9 @@ function web_editor(config) {
                 window.daplink = new DAPjs.DAPLink(window.transport);
 
                 // Ensure disconnected
-                window.daplink.disconnect();
+                window.daplink.disconnect().catch(function(e) {
+                    // Do nothing if already disconnected
+                });
 
                 // Connect to board
                 return window.daplink.connect();
