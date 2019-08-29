@@ -1228,8 +1228,7 @@ function web_editor(config) {
             // Push binary to board
             p = PartialFlashing.connectDapAsync()
                 .then(function() {
-                    var output = generateFullHex("bytes");
-                    var image = micropythonFs.getIntelHexBytes(); //.slicePad(0, PartialFlashingUtils.pageSize * PartialFlashingUtils.numPages);
+                    var image = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
