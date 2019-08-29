@@ -470,8 +470,6 @@ function web_editor(config) {
             script('static/js/dap.umd.js');
             script('static/js/hterm_all.js');
             script('partial-flashing.js');
-            $("#command-connect").removeClass('hidden');
-            $("#command-serial").removeClass('hidden');
         }
     }
 
@@ -1434,16 +1432,21 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
-        $("#command-connect").click(function () {
-            if ($("#command-connect").length) {
-                doConnect();
-            } else {
-                doDisconnect();
-            }
-        });
-        $("#command-serial").click(function () {
-            doSerial();
-        });
+        if (navigator.usb) {
+            $("#command-serial").click(function () {
+                doSerial();
+            });  
+            $("#command-connect").click(function () {
+                if ($("#command-connect").length) {
+                    doConnect();
+                } else {
+                    doDisconnect();
+                }
+            }); 
+        }else{
+            document.getElementById('command-serial').setAttribute('href',"help.html#WebUSB");
+            document.getElementById('command-connect').setAttribute('href',"help.html#WebUSB");
+        }
         $("#request-repl").click(function () {
             var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
             daplink.serialWrite("\x03");
