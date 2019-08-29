@@ -339,7 +339,7 @@
 	  return store[key] || (store[key] = value !== undefined ? value : {});
 	})('versions', []).push({
 	  version: _core.version,
-	  mode: 'global',
+	  mode: _library ? 'pure' : 'global',
 	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	});
 	});
@@ -5099,13 +5099,17 @@
 	 */
 
 
-	function addIntelHexFiles(intelHex, files) {
+	function addIntelHexFiles(intelHex, files, returnBytes) {
+	  if (returnBytes === void 0) {
+	    returnBytes = false;
+	  }
+
 	  var intelHexClean = cleanseOldHexFormat(intelHex);
 	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
 	  Object.keys(files).forEach(function (filename) {
 	    intelHexMap = addMemMapFile(intelHexMap, filename, files[filename]);
 	  });
-	  return intelHexMap.asHexString() + '\n';
+	  return returnBytes ? intelHexMap.slicePad(0, FLASH_END) : intelHexMap.asHexString() + '\n';
 	}
 	/**
 	 * Reads the filesystem included in a MicroPython Intel Hex string.
@@ -5579,6 +5583,27 @@
 	      files[file.filename] = file.getBytes();
 	    });
 	    return addIntelHexFiles(finalHex, files);
+	  };
+	  /**
+	   * Generate a byte array of the MicroPython and filesystem data.
+	   *
+	   * @throws {Error} When a file doesn't have any data.
+	   * @throws {Error} When there are issues calculating file system boundaries.
+	   * @throws {Error} When there is no space left for a file.
+	   *
+	   * @param intelHex - Optionally provide a different Intel Hex to include the
+	   *    filesystem into.
+	   * @returns A Uint8Array with MicroPython and the filesystem included.
+	   */
+
+
+	  MicropythonFsHex.prototype.getIntelHexBytes = function (intelHex) {
+	    var finalHex = intelHex || this._intelHex;
+	    var files = {};
+	    Object.values(this._files).forEach(function (file) {
+	      files[file.filename] = file.getBytes();
+	    });
+	    return addIntelHexFiles(finalHex, files, true);
 	  };
 
 	  return MicropythonFsHex;
