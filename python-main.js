@@ -443,7 +443,6 @@ function web_editor(config) {
 
         if (navigator.usb) {
             script('static/js/dap.umd.js');
-            script('static/js/intel-hex.browser.js');
             script('static/js/hterm_all.js');
             script('partial-flashing.js');
             $("#command-connect").removeClass('hidden');
@@ -759,8 +758,8 @@ function web_editor(config) {
     }
 
     // Generates the text for a hex file with MicroPython and the user code
-    function generateFullHexStr() {
-        var fullHexStr = '';
+    function generateFullHex(format) {
+        var fullHex;
         try {
             // Remove main.py if editor content is empty to download a hex file
             // that includes the filesystem but doesn't try to run any code
@@ -772,18 +771,22 @@ function web_editor(config) {
                 micropythonFs.write('main.py', EDITOR.getCode());
             }
             // Generate hex file
-            fullHexStr = micropythonFs.getIntelHex();
+            if(format == "bytes") {
+                fullHex = micropythonFs.getIntelHexBytes();
+            } else {
+                fullHex = micropythonFs.getIntelHex();
+            }
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
             throw new Error(config.translate.alerts.load_code + '\n' + e.message);
         }
-        return fullHexStr;
+        return fullHex;
     }
 
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         try {
-            var output = generateFullHexStr();
+            var output = generateFullHex("string");
         } catch(e) {
             alert(config.translate.alerts.error + e.message);
             return;
@@ -1227,9 +1230,7 @@ function web_editor(config) {
             // Push binary to board
             p = PartialFlashing.connectDapAsync()
                 .then(function() {
-                    var output = generateFullHexStr();
-                    var image = MemoryMap.fromHex(output).slicePad(0, PartialFlashingUtils.pageSize * PartialFlashingUtils.numPages);
-
+                    var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         if(progress == 0) return;
 
@@ -1237,8 +1238,9 @@ function web_editor(config) {
                         $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
-                    return PartialFlashing.flashAsync(window.dapwrapper, image, updateProgress);
+                    return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
                 })
+
         }
         else {
             // Push binary to board
@@ -1250,12 +1252,7 @@ function web_editor(config) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
-                    try {
-                     var output = generateFullHexStr();
-                    } catch(error) {
-                     alert(err.message);
-                     return;
-                    }
+                     var output = generateFullHex("string");
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
