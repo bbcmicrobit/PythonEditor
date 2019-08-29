@@ -1234,6 +1234,11 @@ function web_editor(config) {
                     }
                     return PartialFlashing.flashAsync(window.dapwrapper, image, updateProgress);
                 })
+                .catch(function(e) {
+                    alert(config.translate.alerts.error + e.message);
+                    return;
+                });
+
         }
         else {
             // Push binary to board
