@@ -1228,16 +1228,12 @@ function web_editor(config) {
             // Push binary to board
             p = PartialFlashing.connectDapAsync()
                 .then(function() {
-                    var image = generateFullHex("bytes");
+                    var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
-                    return PartialFlashing.flashAsync(window.dapwrapper, image, updateProgress);
+                    return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
                 })
-                .catch(function(e) {
-                    alert(config.translate.alerts.error + e.message);
-                    return;
-                });
 
         }
         else {
@@ -1249,12 +1245,7 @@ function web_editor(config) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
-                    try {
                      var output = generateFullHex("string");
-                    } catch(error) {
-                     alert(err.message);
-                     return;
-                    }
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
