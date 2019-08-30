@@ -1236,6 +1236,7 @@ function web_editor(config) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
                     $("#webusb-flashing-loader").hide();
+                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
                 })
 
@@ -1256,6 +1257,7 @@ function web_editor(config) {
                     var image = enc.encode(output).buffer;
                         
                     $("#webusb-flashing-loader").hide();
+                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return window.daplink.flash(image);
                 });
         }
