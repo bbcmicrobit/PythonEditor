@@ -1180,14 +1180,14 @@ function web_editor(config) {
 
         if (usePartialFlashing) {
             if (window.dapwrapper) {
-                p = p.then(() => window.dapwrapper.daplink.stopSerialRead())
-                    .then(() => window.dapwrapper.disconnectAsync());
+                p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
+                    .then(function() { window.dapwrapper.disconnectAsync() } );
             }
         }
         else {
             if (window.daplink) {
-                p = p.then(() => window.daplink.stopSerialRead())
-                    .then(() => window.daplink.disconnect());
+                p = p.then(function() { window.daplink.stopSerialRead() } )
+                    .then(function() { window.daplink.disconnect() } );
             }
         }
         return p;
@@ -1479,11 +1479,11 @@ function web_editor(config) {
         $('#menu-switch-partial-flashing').on('change', function() {
             var setEnable = $(this).is(':checked');
             return doDisconnect()
-                .catch(err => {
+                .catch(function(err) {
                     // Assume an error means that it is already disconnected.
                     // console.log("Error disconnecting when " + (setEnable ? "not " : "") + "using partial flashing: \r\n" + err);
                 })
-                .then(() => usePartialFlashing = setEnable)
+                .then(function() { usePartialFlashing = setEnable } ) 
         });
 
         window.addEventListener('resize', function() {
