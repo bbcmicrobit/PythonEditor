@@ -323,8 +323,9 @@ body.hasFota .notfota {
 
 .modal-content{
   background-color: #f2f2f2;
-  margin: 15% auto;
-  padding: 20px;
+  margin: 10% auto;
+  padding: 10px;
+  padding-left: 20px;
   border: 2px solid #FFCC33;
   width: 80%;
   border-radius: 7px;
