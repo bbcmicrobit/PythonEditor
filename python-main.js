@@ -1233,12 +1233,9 @@ function web_editor(config) {
                 .then(function() {
                     var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
-                        if(progress == 0) return;
-
-                        // Show progress bar
-                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
+                    $("#webusb-flashing-loader").hide();
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
                 })
 
@@ -1249,7 +1246,6 @@ function web_editor(config) {
                 .then(function() {
                     // Event to monitor flashing progress
                     window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
@@ -1258,6 +1254,8 @@ function web_editor(config) {
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
                     var image = enc.encode(output).buffer;
+                        
+                    $("#webusb-flashing-loader").hide();
                     return window.daplink.flash(image);
                 });
         }
