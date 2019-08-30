@@ -1433,9 +1433,6 @@ function web_editor(config) {
             doShare();
         });
         if (navigator.usb) {
-            $("#command-serial").click(function () {
-                doSerial();
-            });  
             $("#command-connect").click(function () {
                 if ($("#command-connect").length) {
                     doConnect();
@@ -1443,9 +1440,22 @@ function web_editor(config) {
                     doDisconnect();
                 }
             }); 
+            $("#command-serial").click(function () {
+                doSerial();
+            });  
         }else{
-            document.getElementById('command-serial').setAttribute('href',"help.html#WebUSB");
-            document.getElementById('command-connect').setAttribute('href',"help.html#WebUSB");
+            var incomp_modal = document.getElementById("incomp-modal");
+            var span = document.getElementsByClassName("close")[0];
+
+            function buttonClicked(){
+                incomp_modal.style.display = "block";
+            }
+            $("#command-connect").click(buttonClicked);
+            $("#command-serial").click(buttonClicked);
+
+            span.onclick = function(){
+                incomp_modal.style.display = "none";
+            }
         }
         $("#request-repl").click(function () {
             var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
