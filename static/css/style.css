@@ -635,7 +635,7 @@ input:checked + .menu-switch-slider:before {
 
 
 /* WebUSB */
-#flashing-overlay-container {
+.modal-msg-overlay-container {
     position: absolute;
     background-color: rgba(255,255,255,0.6);
     margin: auto auto;
@@ -649,7 +649,7 @@ input:checked + .menu-switch-slider:before {
     line-height: 30px;
 }
 
-#flashing-overlay {
+.modal-msg-overlay {
     background: white;
     padding: 1rem;
     border-radius: 6px;

@@ -335,8 +335,8 @@ Nicholas and Damien.
             <div id="blockly"></div>
             <div id="editor" class="flex3" tabindex="-1"></div>
           </div>
-        <div id="flashing-overlay-container">
-          <div id="flashing-overlay">
+        <div id="flashing-overlay-container" class="modal-msg-overlay-container">
+          <div id="flashing-overlay" class="modal-msg-overlay">
             <div id="flashing-info">
               <h2 id="flashing-text">Flashing micro:bit</h2>
               <div id="webusb-flashing-loader"></div>
@@ -345,6 +345,15 @@ Nicholas and Damien.
               <i id="webusb-flashing-complete" class="fa fa-check"></i>
             </div>
             <div id="flashing-overlay-error"></div>
+          </div>
+        </div>
+        <div id="modal-msg-overlay-container" class="modal-msg-overlay-container">
+          <div id="modal-msg-overlay" class="modal-msg-overlay">
+            <div>
+              <h2 id="modal-msg-title"></h2>
+              <div id="modal-msg-content"></div>
+              <div><a id="modal-msg-close"></a></div>
+            </div>
           </div>
         </div>
         <script src="ace/ace.js" type="application/javascript"
