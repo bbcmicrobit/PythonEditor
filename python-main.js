@@ -1221,6 +1221,7 @@ function web_editor(config) {
         var p = Promise.resolve();
 
         $("#webusb-flashing-progress").val(0).hide();
+        $("#webusb-flashing-complete").hide();
         $("#webusb-flashing-loader").show();
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
@@ -1232,12 +1233,9 @@ function web_editor(config) {
                 .then(function() {
                     var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
-                        if(progress == 0) return;
-
-                        // Show progress bar
-                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
+                    $("#webusb-flashing-loader").hide();
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
                 })
 
@@ -1248,7 +1246,6 @@ function web_editor(config) {
                 .then(function() {
                     // Event to monitor flashing progress
                     window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                        $("#webusb-flashing-loader").hide();
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
@@ -1257,12 +1254,16 @@ function web_editor(config) {
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
                     var image = enc.encode(output).buffer;
+                        
+                    $("#webusb-flashing-loader").hide();
                     return window.daplink.flash(image);
                 });
         }
 
         return p.then(function() {
-            $("#flashing-overlay-container").hide();
+            // Show tick
+            $("#webusb-flashing-progress").hide();
+            $("#webusb-flashing-complete").show();
 
             // Send flash timing event
             var timeTaken = (new Date().getTime() - startTime);
@@ -1273,6 +1274,12 @@ function web_editor(config) {
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
+            
+            // Close overview
+            setTimeout(function(){
+                $("#flashing-overlay-container").hide();
+            }, 500);
+
         });
     }
 

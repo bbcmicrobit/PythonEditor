@@ -854,3 +854,8 @@ ul.tree li:last-child:before {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+#webusb-flashing-complete {
+    font-size: 2em;
+    color: #336699;
+}
