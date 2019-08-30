@@ -1221,6 +1221,7 @@ function web_editor(config) {
         var p = Promise.resolve();
 
         $("#webusb-flashing-progress").val(0).hide();
+        $("#webusb-flashing-complete").hide();
         $("#webusb-flashing-loader").show();
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
@@ -1262,7 +1263,9 @@ function web_editor(config) {
         }
 
         return p.then(function() {
-            $("#flashing-overlay-container").hide();
+            // Show tick
+            $("#webusb-flashing-progress").hide();
+            $("#webusb-flashing-complete").show();
 
             // Send flash timing event
             var timeTaken = (new Date().getTime() - startTime);
@@ -1273,6 +1276,12 @@ function web_editor(config) {
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
+            
+            // Close overview
+            setTimeout(function(){
+                $("#flashing-overlay-container").hide();
+            }, 500);
+
         });
     }
 
