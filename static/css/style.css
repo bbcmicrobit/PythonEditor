@@ -386,11 +386,19 @@ a.command:hover {
     }
 
     #script-box {
-        margin: 1rem;
+        margin: .4rem;
         text-align: left;
         width: 100%;
     }
 
+    #script-name {
+        line-height: 1rem;
+    }
+    
+    #script-box > label {
+        font-size: 0.5rem;
+    }
+    
     #commands {
         overflow-x: scroll;
     }
@@ -536,6 +544,13 @@ div.load-form {
 }
 .buttons_menu_rhs {
     margin: auto;
+}
+
+@media (max-width: 480px) {
+    .buttons_menu_container {
+        width: 60%;
+        left: 20% !important;
+    }
 }
 
 /* Switches in the Options menu */
