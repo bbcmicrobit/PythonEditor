@@ -644,17 +644,52 @@ input:checked + .menu-switch-slider:before {
     z-index: 99;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    text-align: left;
     display: none;
     line-height: 30px;
+    font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
 }
 
 .modal-msg-overlay {
+    top: -150px;
     background: white;
-    padding: 1rem;
-    border-radius: 6px;
-    border: #febf2e 6px solid;
+    position: relative;
+    width: 600px;
+    max-width: 100%;
+    padding: 2em;
+    font-size: 1rem;
+    margin: 0 auto;
+    border: 6px solid #FFCC33;
+    border-radius: 15px;
+    display: block;
 }
+
+#modal-msg-title{
+  color:#336699;
+  font-weight: bold;
+
+}
+.modal-msg-overlay-container #modal-msg-close{
+  color:#336699;
+  content: "\00D7";
+  line-height: 80px;
+  height: 80px;
+  width: 80px;
+  text-align: center;
+  top:3px;
+  right:3px;
+  font-size: 40px;
+  position: absolute;
+  float:right;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+#modal-msg-close:hover{
+  color:#febf2e;
+}
+
+
 
 #serial-buttons {
     display: flex;

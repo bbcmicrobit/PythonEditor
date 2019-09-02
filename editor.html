@@ -283,14 +283,6 @@ Nicholas and Damien.
                         <div class="buttons_menu_item"><span id="mp-ver">MicroPython Version:</span> <script>document.write(UPY_VERSION);</script></div>
                     </div>
                 </div>
-                <div id="incomp-modal" class="modal">
-                    <div class=modal-content>
-                      <span class="close">&times;</span>
-                      <p> With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor. </p>
-                      <p>However this feature is not supported on this browser.</p>
-                      <p>Click Ok to find out more.<a href=help.html#WebUSB>Ok</a></p>
-                    </div>
-                  </div>
                 <div id="small-icons" class="vbox">
                     <a aria-label="Zoom in" class="roundbutton holder zoomer action" tabindex="90" id="command-zoom-in" href="#" title="Zoom in">
                         <div class="status-icon"><i class="fa fa-search-plus"></i></div>
@@ -349,10 +341,10 @@ Nicholas and Damien.
         </div>
         <div id="modal-msg-overlay-container" class="modal-msg-overlay-container">
           <div id="modal-msg-overlay" class="modal-msg-overlay">
+            <a class="vex-close" id="modal-msg-close" onclick="document.getElementById('modal-msg-overlay-container').style.display='none'"></a>
             <div>
               <h2 id="modal-msg-title"></h2>
               <div id="modal-msg-content"></div>
-              <div><a id="modal-msg-close"></a></div>
             </div>
           </div>
         </div>
