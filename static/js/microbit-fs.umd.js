@@ -33,7 +33,7 @@
 	});
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.1' };
+	var core = module.exports = { version: '2.6.9' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -116,14 +116,29 @@
 	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 	};
 
+	var _shared = createCommonjsModule(function (module) {
+	var SHARED = '__core-js_shared__';
+	var store = _global[SHARED] || (_global[SHARED] = {});
+
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: _core.version,
+	  mode: _library ? 'pure' : 'global',
+	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+	});
+	});
+
+	var _functionToString = _shared('native-function-to-string', Function.toString);
+
 	var _redefine = createCommonjsModule(function (module) {
 	var SRC = _uid('src');
+
 	var TO_STRING = 'toString';
-	var $toString = Function[TO_STRING];
-	var TPL = ('' + $toString).split(TO_STRING);
+	var TPL = ('' + _functionToString).split(TO_STRING);
 
 	_core.inspectSource = function (it) {
-	  return $toString.call(it);
+	  return _functionToString.call(it);
 	};
 
 	(module.exports = function (O, key, val, safe) {
@@ -143,7 +158,7 @@
 	  }
 	// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 	})(Function.prototype, TO_STRING, function toString() {
-	  return typeof this == 'function' && this[SRC] || $toString.call(this);
+	  return typeof this == 'function' && this[SRC] || _functionToString.call(this);
 	});
 	});
 
@@ -330,19 +345,6 @@
 	    } return !IS_INCLUDES && -1;
 	  };
 	};
-
-	var _shared = createCommonjsModule(function (module) {
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-
-	(module.exports = function (key, value) {
-	  return store[key] || (store[key] = value !== undefined ? value : {});
-	})('versions', []).push({
-	  version: _core.version,
-	  mode: 'global',
-	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-	});
-	});
 
 	var shared = _shared('keys');
 
@@ -1887,12 +1889,12 @@
 	          break;
 	        default: // \d\d?
 	          var n = +ch;
-	          if (n === 0) return ch;
+	          if (n === 0) return match;
 	          if (n > m) {
 	            var f = floor$1(n / 10);
-	            if (f === 0) return ch;
+	            if (f === 0) return match;
 	            if (f <= m) return captures[f - 1] === undefined ? ch.charAt(1) : captures[f - 1] + ch.charAt(1);
-	            return ch;
+	            return match;
 	          }
 	          capture = captures[n - 1];
 	      }
@@ -2539,6 +2541,8 @@
 
 
 
+
+
 	var gOPD$1 = _objectGopd.f;
 	var dP$2 = _objectDp.f;
 	var gOPN$1 = _objectGopnExt.f;
@@ -2553,7 +2557,7 @@
 	var AllSymbols = _shared('symbols');
 	var OPSymbols = _shared('op-symbols');
 	var ObjectProto$1 = Object[PROTOTYPE$2];
-	var USE_NATIVE = typeof $Symbol == 'function';
+	var USE_NATIVE = typeof $Symbol == 'function' && !!_objectGops.f;
 	var QObject = _global.QObject;
 	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 	var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
@@ -2712,6 +2716,16 @@
 	  getOwnPropertyNames: $getOwnPropertyNames,
 	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
 	  getOwnPropertySymbols: $getOwnPropertySymbols
+	});
+
+	// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+	// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+	var FAILS_ON_PRIMITIVES = _fails(function () { _objectGops.f(1); });
+
+	_export(_export.S + _export.F * FAILS_ON_PRIMITIVES, 'Object', {
+	  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+	    return _objectGops.f(_toObject(it));
+	  }
 	});
 
 	// 24.3.2 JSON.stringify(value [, replacer [, space]])
@@ -2965,6 +2979,16 @@
 	  });
 	}
 
+	// 19.1.3.6 Object.prototype.toString()
+
+	var test$1 = {};
+	test$1[_wks('toStringTag')] = 'z';
+	if (test$1 + '' != '[object z]') {
+	  _redefine(Object.prototype, 'toString', function toString() {
+	    return '[object ' + _classof(this) + ']';
+	  }, true);
+	}
+
 	var _stringRepeat = function repeat(count) {
 	  var str = String(_defined(this));
 	  var res = '';
@@ -3001,7 +3025,9 @@
 
 
 	// https://github.com/zloirock/core-js/issues/280
-	_export(_export.P + _export.F * /Version\/10\.\d+(\.\d+)? Safari\//.test(_userAgent), 'String', {
+	var WEBKIT_BUG = /Version\/10\.\d+(\.\d+)?( Mobile\/\w+)? Safari\//.test(_userAgent);
+
+	_export(_export.P + _export.F * WEBKIT_BUG, 'String', {
 	  padStart: function padStart(maxLength /* , fillString = ' ' */) {
 	    return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
 	  }
@@ -3131,8 +3157,8 @@
 	      // Try iterating through the object's keys
 	      var addrs = Object.keys(blocks);
 
-	      for (var _i = 0; _i < addrs.length; _i++) {
-	        var addr = addrs[_i];
+	      for (var _i = 0, _addrs = addrs; _i < _addrs.length; _i++) {
+	        var addr = _addrs[_i];
 	        this.set(parseInt(addr), blocks[addr]);
 	      }
 	    } else if (blocks !== undefined && blocks !== null) {
@@ -4396,7 +4422,17 @@
 	  return combined;
 	};
 
+	/** User script located at specific flash address. */
+
+
+
+	(function (AppendedBlock) {
+	  AppendedBlock[AppendedBlock["StartAdd"] = 253952] = "StartAdd";
+	  AppendedBlock[AppendedBlock["Length"] = 8192] = "Length";
+	  AppendedBlock[AppendedBlock["EndAdd"] = 262144] = "EndAdd";
+	})(exports.AppendedBlock || (exports.AppendedBlock = {}));
 	/** Start of user script marked by "MP" + 2 bytes for the script length. */
+
 
 	var HEADER_START_BYTE_0 = 77; // 'M'
 
@@ -4417,17 +4453,9 @@
 	  var pyCode = '';
 	  var hexFileMemMap = MemoryMap.fromHex(intelHex); // Check that the known flash location has user code
 
-	  if (hexFileMemMap.has(253952
-	  /* StartAdd */
-	  )) {
-	    var pyCodeMemMap = hexFileMemMap.slice(253952
-	    /* StartAdd */
-	    , 8192
-	    /* Length */
-	    );
-	    var codeBytes = pyCodeMemMap.get(253952
-	    /* StartAdd */
-	    );
+	  if (hexFileMemMap.has(exports.AppendedBlock.StartAdd)) {
+	    var pyCodeMemMap = hexFileMemMap.slice(exports.AppendedBlock.StartAdd, exports.AppendedBlock.Length);
+	    var codeBytes = pyCodeMemMap.get(exports.AppendedBlock.StartAdd);
 
 	    if (codeBytes[0
 	    /* Byte0 */
@@ -4490,18 +4518,14 @@
 	  var codeBytes = strToBytes(pyCode);
 	  var blockBytes = createAppendedBlock(codeBytes);
 
-	  if (blockBytes.length > 8192
-	  /* Length */
-	  ) {
-	      throw new RangeError('Too long');
-	    } // Convert to Intel Hex format
+	  if (blockBytes.length > exports.AppendedBlock.Length) {
+	    throw new RangeError('Too long');
+	  } // Convert to Intel Hex format
 
 
 	  var intelHexClean = cleanseOldHexFormat(intelHex);
 	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
-	  intelHexMap.set(253952
-	  /* StartAdd */
-	  , blockBytes); // Older versions of DAPLink need the file to end in a new line
+	  intelHexMap.set(exports.AppendedBlock.StartAdd, blockBytes); // Older versions of DAPLink need the file to end in a new line
 
 	  return intelHexMap.asHexString() + '\n';
 	}
@@ -4523,9 +4547,7 @@
 	    intelHexMap = intelHex;
 	  }
 
-	  var headerMagic = intelHexMap.slicePad(253952
-	  /* StartAdd */
-	  , 2, 0xff);
+	  var headerMagic = intelHexMap.slicePad(exports.AppendedBlock.StartAdd, 2, 0xff);
 	  return headerMagic[0] === HEADER_START_BYTE_0 && headerMagic[1] === HEADER_START_BYTE_1;
 	}
 
@@ -4538,9 +4560,13 @@
 	    var i = 0;
 	    var result = [];
 	    var key;
-	    while (length > i) if (isEnum$1.call(O, key = keys[i++])) {
-	      result.push(isEntries ? [key, O[key]] : O[key]);
-	    } return result;
+	    while (length > i) {
+	      key = keys[i++];
+	      if (!_descriptors || isEnum$1.call(O, key)) {
+	        result.push(isEntries ? [key, O[key]] : O[key]);
+	      }
+	    }
+	    return result;
 	  };
 	};
 
@@ -4837,9 +4863,7 @@
 	  var endAddress = FLASH_END;
 
 	  if (isAppendedScriptPresent(intelHexMap)) {
-	    endAddress = 253952
-	    /* StartAdd */
-	    ;
+	    endAddress = exports.AppendedBlock.StartAdd;
 	  }
 
 	  return endAddress - CALIBRATION_PAGE_SIZE;
@@ -5099,13 +5123,17 @@
 	 */
 
 
-	function addIntelHexFiles(intelHex, files) {
+	function addIntelHexFiles(intelHex, files, returnBytes) {
+	  if (returnBytes === void 0) {
+	    returnBytes = false;
+	  }
+
 	  var intelHexClean = cleanseOldHexFormat(intelHex);
 	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
 	  Object.keys(files).forEach(function (filename) {
 	    intelHexMap = addMemMapFile(intelHexMap, filename, files[filename]);
 	  });
-	  return intelHexMap.asHexString() + '\n';
+	  return returnBytes ? intelHexMap.slicePad(0, FLASH_END) : intelHexMap.asHexString() + '\n';
 	}
 	/**
 	 * Reads the filesystem included in a MicroPython Intel Hex string.
@@ -5579,6 +5607,27 @@
 	      files[file.filename] = file.getBytes();
 	    });
 	    return addIntelHexFiles(finalHex, files);
+	  };
+	  /**
+	   * Generate a byte array of the MicroPython and filesystem data.
+	   *
+	   * @throws {Error} When a file doesn't have any data.
+	   * @throws {Error} When there are issues calculating file system boundaries.
+	   * @throws {Error} When there is no space left for a file.
+	   *
+	   * @param intelHex - Optionally provide a different Intel Hex to include the
+	   *    filesystem into.
+	   * @returns A Uint8Array with MicroPython and the filesystem included.
+	   */
+
+
+	  MicropythonFsHex.prototype.getIntelHexBytes = function (intelHex) {
+	    var finalHex = intelHex || this._intelHex;
+	    var files = {};
+	    Object.values(this._files).forEach(function (file) {
+	      files[file.filename] = file.getBytes();
+	    });
+	    return addIntelHexFiles(finalHex, files, true);
 	  };
 
 	  return MicropythonFsHex;

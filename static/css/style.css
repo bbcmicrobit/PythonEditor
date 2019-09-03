@@ -609,6 +609,7 @@ input:checked + .menu-switch-slider:before {
     align-items: center;
     text-align: center;
     display: none;
+    line-height: 30px;
 }
 
 #flashing-overlay {
@@ -618,13 +619,19 @@ input:checked + .menu-switch-slider:before {
     border: #febf2e 6px solid;
 }
 
-#request-repl {
+#serial-buttons {
+    display: flex;
+}
+
+#serial-buttons > div {
     display: none;
     cursor: pointer;
-    background-color: #3758ce;
-    padding: .2em;
+    background-color: #336699;
+    padding: .5em;
     color: #fff;
-    font-size: 22px;
+    font-size: 1em;
+    width: 50%;
+    border: thin solid #aaa;
 }
 
 /* File system */
@@ -838,4 +845,24 @@ ul.tree li:before {
 }
 ul.tree li:last-child:before {
     border-left: 1px solid rgb(100, 100, 100);
+}
+
+#webusb-flashing-loader {
+  border: .2em solid #eee;
+  border-top: .2em solid #336699;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#webusb-flashing-complete {
+    font-size: 2em;
+    color: #336699;
 }

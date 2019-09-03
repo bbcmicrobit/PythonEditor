@@ -89,12 +89,16 @@ var language = {
    'webusb': {
       'err': {
          'update-req': 'Musisz <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.',
-         'clear-connect': 'Inny proces jest podłączony do tego urządzenia.</div><div> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
-         'restart-microbit': 'Proszę uruchom ponownie twój micro:bit i spróbuj ponownie'
+         'clear-connect': 'Inny proces jest podłączony do tego urządzenia.<br> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
+         'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
+         'partial-flashing-disable': 'If the errors persist, try disabling partial flashing in the beta options.',
+         'device-disconnected': 'Device disconnected.'
       },
       'close': 'Zamknij',
-      'request-repl': 'Kliknij tutaj lub naciśnij CTRL-C, aby otworzyć REPL',
-      'flashing-text': 'Instalowanie na micro:bit'
+      'request-repl': 'Send CTRL-C for REPL',
+      'request-serial': 'Send CTRL-D to reset',
+      'flashing-text': 'Instalowanie na micro:bit',
+      'download': 'Download hex'
    },
    'load': {
       'save-hex': 'Pobierz hex',
@@ -179,6 +183,7 @@ var language = {
       'options-dropdown': {
          'autocomplete': 'Autocomplete',
          'on-enter': 'Na Enter:',
+         'partial-flashing': 'Partial Flashing',
          'lang-select': 'Wybierz Język:'
       },
       'text-editor': {

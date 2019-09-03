@@ -88,13 +88,17 @@ var language = {
   },
   'webusb': {
     'err': {
-      'update-req':'<a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">actualizar el firmware del micro:bit firmware </a> para poder usar esta función!',
-      'clear-connect':'Hay otro proceso conectado a este dispositivo.</div><div>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
-      'restart-microbit':'Por favor reinicie el micro:bit e intentelo de nuevo.'
+      'update-req': 'Necesitas <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">actualizar el firmware del micro:bit </a> para poder usar esta función!',
+      'clear-connect': 'Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
+      'reconnect-microbit': 'Por favor reconecta el micro:bit e intentalo de nuevo.',
+      'partial-flashing-disable': 'Si el error persiste, intenta deshabilitar el flasheo parcial en las opciones beta.',
+      'device-disconnected': 'Dispositivo desconectado.'
     },
     'close': 'Cerrar',
-    'request-repl': 'Haz clic aqui o presione CTRL-C para entrar al REPL',
-    'flashing-text': 'Flasheando micro:bit'
+    'request-repl': 'Envia CTRL-C para el REPL',
+    'request-serial': 'Envia CTRL-D para reiniciar',
+    'flashing-text': 'Flasheando micro:bit',
+    'download': 'Descargar Hex'
   },
   'load': {
     'show-files' : 'Mostrar Archivos',
@@ -179,6 +183,7 @@ var language = {
     'options-dropdown': {
       'autocomplete': 'Autocompletar',
       'on-enter': 'Al presionar Intro',
+      'partial-flashing': 'Flasheo Parcial',
       'lang-select': 'Seleccionar Idioma:'
     },
     'text-editor': {

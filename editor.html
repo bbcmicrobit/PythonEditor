@@ -253,6 +253,13 @@ Nicholas and Damien.
                                 </li>
                             </ul>
                         </div>
+                        <div class="buttons_menu_item">
+                            <span id="partial-flashing" class="menu-switch-label">Partial Flashing:</span>
+                            <label class="menu-switch" id="menu-switch-partial-flashing-label">
+                                <input type="checkbox" class="action" id="menu-switch-partial-flashing" checked>
+                                <span class="menu-switch-slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
@@ -310,7 +317,10 @@ Nicholas and Damien.
                 <input id="script-name" class="flex1">
             </div>
           </div>
-          <div id="request-repl" style="">Click here or press CTRL-C to enter the REPL</div>
+          <div id="serial-buttons">
+            <div id="request-repl" style="">Send CTRL-C for REPL</div>
+            <div id="request-serial" style="">Send CTRL-D to reset</div>
+          </div>
           <div id="repl" style="display: none;">
           </div>
           <div id="editor-container" class="hbox flex1">
@@ -321,8 +331,10 @@ Nicholas and Damien.
           <div id="flashing-overlay">
             <div id="flashing-info">
               <h2 id="flashing-text">Flashing micro:bit</h2>
+              <div id="webusb-flashing-loader"></div>
               <progress id="webusb-flashing-progress" max="1">
               </progress>
+              <i id="webusb-flashing-complete" class="fa fa-check"></i>
             </div>
             <div id="flashing-overlay-error"></div>
           </div>
