@@ -1390,12 +1390,13 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
-    function openModalMsg(title,content){
+    function openModalMsg(title,content,helplink){
         $("#modal-msg-overlay-container").css("display", "flex");
         $("#modal-msg-title").text(title);
-        $("#modal-msg-content").html(content);       
-        
+        $("#modal-msg-content").html(content); 
+        $("#modal-msg-helplink").attr("href",helplink);         
     }
+
     function formatMenuContainer(parentButtonId, containerId) {
         var container = $('#' + containerId);
         if (container.is(':visible')) {
@@ -1449,12 +1450,20 @@ function web_editor(config) {
             $("#command-serial").click(function () {
                 doSerial();
             });  
+
         }else{
             function buttonClicked(){
-                openModalMsg("WebUSB Error", "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>However this feature is not supported on this browser.<br/>Click Ok to find out more. <a href=help.html#WebUSB>Ok</a>");
+                openModalMsg("WebUSB not supported", "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>However this feature is not supported on this browser.", "help.html#WebUSB");
             }
             $("#command-connect").click(buttonClicked);
             $("#command-serial").click(buttonClicked);
+
+            $("#modal-msg-overlay-container").click(function(){
+                $("#modal-msg-overlay-container").hide()
+            });
+            $("#modal-msg-overlay").click(function(e){
+                e.stopPropagation();
+            });
         }
         $("#request-repl").click(function () {
             var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;

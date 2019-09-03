@@ -635,7 +635,7 @@ input:checked + .menu-switch-slider:before {
 
 
 /* WebUSB */
-.modal-msg-overlay-container {
+.modal-overlay-container {
     position: absolute;
     background-color: rgba(255,255,255,0.6);
     margin: auto auto;
@@ -644,24 +644,22 @@ input:checked + .menu-switch-slider:before {
     z-index: 99;
     justify-content: center;
     align-items: center;
-    text-align: left;
     display: none;
     line-height: 30px;
     font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
 }
 
-.modal-msg-overlay {
-    top: -150px;
+.modal-msg-overlay-container {
+  text-align: left;
+}
+
+.modal-overlay {
     background: white;
-    position: relative;
-    width: 600px;
-    max-width: 100%;
     padding: 2em;
     font-size: 1rem;
     margin: 0 auto;
     border: 6px solid #FFCC33;
     border-radius: 15px;
-    display: block;
 }
 
 #modal-msg-title{
@@ -669,24 +667,28 @@ input:checked + .menu-switch-slider:before {
   font-weight: bold;
 
 }
-.modal-msg-overlay-container #modal-msg-close{
+.modal-overlay-container #modal-msg-close{
   color:#336699;
   content: "\00D7";
-  line-height: 80px;
   height: 80px;
   width: 80px;
-  text-align: center;
-  top:3px;
-  right:3px;
+  text-align: right;
   font-size: 40px;
-  position: absolute;
+  position: relative;
   float:right;
   cursor: pointer;
   font-weight: normal;
+  top: -10px;
 }
 
 #modal-msg-close:hover{
   color:#febf2e;
+}
+
+#modal-msg-links{
+  text-align: center;
+  position: relative;
+  padding-top: 20px;
 }
 
 
