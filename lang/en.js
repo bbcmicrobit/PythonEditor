@@ -42,7 +42,7 @@ var language = {
     'no_python': 'Could not find valid Python code in the hex file.',
     'no_script': 'Hex file does not contain a Python script.',
     'no_main': 'The hex file does not contain a main.py file.',
-    'cant_add_file': 'Could not add file to the system:',
+    'cant_add_file': 'Could not add file to the filesystem:',
     'module_added': 'The "{{module_name}}" module has been added to the filesystem.',
     'module_out_of_space': 'Could not add file to the system as there is no storage space left.'
   },
