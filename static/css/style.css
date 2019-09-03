@@ -548,8 +548,8 @@ div.load-form {
 
 @media (max-width: 480px) {
     .buttons_menu_container {
-        width: 60%;
-        left: 20% !important;
+        left: 50% !important;
+        transform: translate(-50%, 0);
     }
 }
 
