@@ -180,7 +180,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Download</div>
                 </a>
-                <a href="#" class="roundbutton action hidden" id="command-connect"
+                <a href="#" class="roundbutton action" id="command-connect"
                     tabindex="20"
                     title="Connect to your micro:bit">
                     <div class="roundsymbol">
@@ -198,7 +198,7 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Load/Save</div>
                 </a>
-                <a href="#" class="roundbutton action hidden" id="command-serial"
+                <a href="#" class="roundbutton action" id="command-serial"
                     tabindex="40"
                     title="Connect to your micro:bit via serial">
                     <div class="roundsymbol">
@@ -327,8 +327,8 @@ Nicholas and Damien.
             <div id="blockly"></div>
             <div id="editor" class="flex3" tabindex="-1"></div>
           </div>
-        <div id="flashing-overlay-container">
-          <div id="flashing-overlay">
+        <div id="flashing-overlay-container" class="modal-overlay-container">
+          <div id="flashing-overlay" class="modal-overlay">
             <div id="flashing-info">
               <h2 id="flashing-text">Flashing micro:bit</h2>
               <div id="webusb-flashing-loader"></div>
@@ -337,6 +337,16 @@ Nicholas and Damien.
               <i id="webusb-flashing-complete" class="fa fa-check"></i>
             </div>
             <div id="flashing-overlay-error"></div>
+          </div>
+        </div>
+        <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
+          <div id="modal-msg-overlay" class="modal-overlay">
+            <a class="vex-close" id="modal-msg-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
+            <div>
+              <h2 id="modal-msg-title"></h2>
+              <div id="modal-msg-content"></div>
+              <div id="modal-msg-links" class="modal-msg-links"></div>
+            </div>
           </div>
         </div>
         <script src="ace/ace.js" type="application/javascript"

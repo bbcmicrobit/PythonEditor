@@ -470,8 +470,6 @@ function web_editor(config) {
             script('static/js/dap.umd.js');
             script('static/js/hterm_all.js');
             script('partial-flashing.js');
-            $("#command-connect").removeClass('hidden');
-            $("#command-serial").removeClass('hidden');
         }
     }
 
@@ -1130,6 +1128,11 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
 
+        // We might get Error objects as Promise rejection arguments
+        if (!err.message && err.promise && err.reason) {
+            err = err.reason;
+        }
+
         // If micro:bit does not support dapjs
         var errorType;
         var errorDescription;
@@ -1153,16 +1156,20 @@ function web_editor(config) {
 
         // Show error message
         $("#flashing-overlay-error").html(
-                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
+            '<div>' +
+                '<strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br>' + 
                 errorDescription +
-                (err.name === 'device-disconnected'
-                        ?  ""
-                        : '<br ><a href="#" id="flashing-overlay-download">' +
-                          config["translate"]["webusb"]["download"] + 
-                          '</a> | ') +
-                '<a href="#" onclick="flashErrorClose()">' +
-                config["translate"]["webusb"]["close"] +
-                '</a>'
+                '<div class="modal-msg-links">' +
+                    (err.name === 'device-disconnected'
+                            ?  ""
+                            : '<br ><a href="#" id="flashing-overlay-download">' +
+                            config["translate"]["webusb"]["download"] +
+                            '</a> | ') +
+                    '<a href="#" onclick="flashErrorClose()">' +
+                    config["translate"]["webusb"]["close"] +
+                    '</a>' +
+                '</div>' +
+            '</div>'
         );
 
         // Attach download handler
@@ -1392,6 +1399,24 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
+    function modalMsg(title, content, links){
+        var overlayContainer = "#modal-msg-overlay-container";
+        $(overlayContainer).css("display", "flex");
+        $("#modal-msg-title").text(title);
+        $("#modal-msg-content").html(content); 
+        if (links) {
+            var modalLinks = [];
+            Object.keys(links).forEach(function(key) {
+                if (links[key] === "close") {
+                    modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
+                } else {
+                    modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
+                }
+            });
+            $("#modal-msg-links").html((modalLinks).join(' | '));
+        }
+    }
+
     function formatMenuContainer(parentButtonId, containerId) {
         var container = $('#' + containerId);
         if (container.is(':visible')) {
@@ -1434,16 +1459,33 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
-        $("#command-connect").click(function () {
-            if ($("#command-connect").length) {
-                doConnect();
-            } else {
-                doDisconnect();
-            }
-        });
-        $("#command-serial").click(function () {
-            doSerial();
-        });
+        if (navigator.usb) {
+            $("#command-connect").click(function () {
+                if ($("#command-connect").length) {
+                    doConnect();
+                } else {
+                    doDisconnect();
+                }
+            }); 
+            $("#command-serial").click(function () {
+                doSerial();
+            });  
+        } else {
+            var WebUSBUnavailable = function() {
+                var links = {};
+                links[config['translate']['webusb']['err']['find-more']] = 'help.html#WebUSB';
+                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links);
+            };
+            $("#command-connect").click(WebUSBUnavailable);
+            $("#command-serial").click(WebUSBUnavailable);
+
+            $("#modal-msg-overlay-container").click(function(){
+                $("#modal-msg-overlay-container").hide()
+            });
+            $("#modal-msg-overlay").click(function(e){
+                e.stopPropagation();
+            });
+        }
         $("#request-repl").click(function () {
             var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
             daplink.serialWrite("\x03");
