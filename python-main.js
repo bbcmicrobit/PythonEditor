@@ -1128,6 +1128,11 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
 
+        // We might get Error objects as Promise rejection arguments
+        if (!err.message && err.promise && err.reason) {
+            err = err.reason;
+        }
+
         // If micro:bit does not support dapjs
         var errorType;
         var errorDescription;
@@ -1151,16 +1156,20 @@ function web_editor(config) {
 
         // Show error message
         $("#flashing-overlay-error").html(
-                '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
+            '<div>' +
+                '<strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br>' + 
                 errorDescription +
-                (err.name === 'device-disconnected'
-                        ?  ""
-                        : '<br ><a href="#" id="flashing-overlay-download">' +
-                          config["translate"]["webusb"]["download"] + 
-                          '</a> | ') +
-                '<a href="#" onclick="flashErrorClose()">' +
-                config["translate"]["webusb"]["close"] +
-                '</a>'
+                '<div class="modal-msg-links">' +
+                    (err.name === 'device-disconnected'
+                            ?  ""
+                            : '<br ><a href="#" id="flashing-overlay-download">' +
+                            config["translate"]["webusb"]["download"] +
+                            '</a> | ') +
+                    '<a href="#" onclick="flashErrorClose()">' +
+                    config["translate"]["webusb"]["close"] +
+                    '</a>' +
+                '</div>' +
+            '</div>'
         );
 
         // Attach download handler
@@ -1395,20 +1404,16 @@ function web_editor(config) {
         $(overlayContainer).css("display", "flex");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
-        if(links){
-            var linkstr = "";
-            for (var i=0; i<Object.keys(links).length; i++){
-                var currentKey = Object.keys(links)[i];
-                if (currentKey=="Close"){
-                    var currentLink = '<li><a href="#" onclick = "$(\''+overlayContainer+'\').hide()">Close</a></li><li> | </li>';
-                }else{
-                    var currentLink = '<li><a href="'+links[currentKey]+'">'+currentKey+"</a></li><li> | </li>";
+        if (links) {
+            var modalLinks = [];
+            Object.keys(links).forEach(function(key) {
+                if (links[key] === "close") {
+                    modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
+                } else {
+                    modalLinks.push('<a href="' + links[key] + '">' + key + '</a>');
                 }
-                linkstr=linkstr.concat(currentLink);
-            }
-            var newlinkstr = "<ul>"+linkstr+"</ul>"
-            $("#modal-msg-links").html(newlinkstr);
-            $('#modal-msg-links li:last').remove();
+            });
+            $("#modal-msg-links").html((modalLinks).join(' | '));
         }
     }
 
@@ -1466,15 +1471,13 @@ function web_editor(config) {
                 doSerial();
             });  
         }else{
-            function WebUSBError(){
+            var WebUSBError = function() {
                 webUSBModalMsg(
                     "WebUSB",
                     "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.",
-                    {
-                        "Find Out More": "help.html#WebUSB",
-                    }
+                    { "Find Out More": "help.html#WebUSB" }
                 );
-            }
+            };
             $("#command-connect").click(WebUSBError);
             $("#command-serial").click(WebUSBError);
 

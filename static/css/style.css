@@ -685,17 +685,14 @@ input:checked + .menu-switch-slider:before {
   color:#febf2e;
 }
 
-#modal-msg-links{
-  position: relative;
+.modal-msg-links {
   text-align: center;
   padding-top: 10px;
+  line-height: 1rem;
 }
-#modal-msg-links ul{
-  padding-inline-start: 0px;
-  margin-block-end: 0.5em;
-}
-#modal-msg-links li{
-  display: inline;
+
+.modal-msg-links a {
+  padding: 0px 10px;
 }
 
 #serial-buttons {
