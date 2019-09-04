@@ -1399,7 +1399,7 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
-    function webUSBModalMsg(title,content,links){
+    function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
         $(overlayContainer).css("display", "flex");
         $("#modal-msg-title").text(title);
@@ -1410,7 +1410,7 @@ function web_editor(config) {
                 if (links[key] === "close") {
                     modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
                 } else {
-                    modalLinks.push('<a href="' + links[key] + '">' + key + '</a>');
+                    modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
             $("#modal-msg-links").html((modalLinks).join(' | '));
@@ -1470,16 +1470,14 @@ function web_editor(config) {
             $("#command-serial").click(function () {
                 doSerial();
             });  
-        }else{
-            var WebUSBError = function() {
-                webUSBModalMsg(
-                    "WebUSB",
-                    "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.",
-                    { "Find Out More": "help.html#WebUSB" }
-                );
+        } else {
+            var WebUSBUnavailable = function() {
+                var links = {};
+                links[config['translate']['webusb']['err']['find-more']] = 'help.html#WebUSB';
+                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links);
             };
-            $("#command-connect").click(WebUSBError);
-            $("#command-serial").click(WebUSBError);
+            $("#command-connect").click(WebUSBUnavailable);
+            $("#command-serial").click(WebUSBUnavailable);
 
             $("#modal-msg-overlay-container").click(function(){
                 $("#modal-msg-overlay-container").hide()

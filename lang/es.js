@@ -92,7 +92,9 @@ var language = {
       'clear-connect': 'Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
       'reconnect-microbit': 'Por favor reconecta el micro:bit e intentalo de nuevo.',
       'partial-flashing-disable': 'Si el error persiste, intenta deshabilitar el flasheo parcial en las opciones beta.',
-      'device-disconnected': 'Dispositivo desconectado.'
+      'device-disconnected': 'Dispositivo desconectado.',
+      'unavailable': 'Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.',
+      'find-more': 'Saber más'
     },
     'close': 'Cerrar',
     'request-repl': 'Envia CTRL-C para el REPL',
