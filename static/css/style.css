@@ -644,6 +644,7 @@ input:checked + .menu-switch-slider:before {
     z-index: 99;
     justify-content: center;
     align-items: center;
+    text-align: center;
     display: none;
     line-height: 25px;
     font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
