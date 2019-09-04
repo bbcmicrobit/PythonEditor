@@ -645,12 +645,13 @@ input:checked + .menu-switch-slider:before {
     justify-content: center;
     align-items: center;
     display: none;
-    line-height: 30px;
+    line-height: 25px;
     font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
 }
 
 .modal-msg-overlay-container {
   text-align: left;
+
 }
 
 .modal-overlay {
@@ -674,7 +675,6 @@ input:checked + .menu-switch-slider:before {
   width: 80px;
   text-align: right;
   font-size: 40px;
-  position: relative;
   float:right;
   cursor: pointer;
   font-weight: normal;
@@ -686,12 +686,17 @@ input:checked + .menu-switch-slider:before {
 }
 
 #modal-msg-links{
-  text-align: center;
   position: relative;
-  padding-top: 20px;
+  text-align: center;
+  padding-top: 10px;
 }
-
-
+#modal-msg-links ul{
+  padding-inline-start: 0px;
+  margin-block-end: 0.5em;
+}
+#modal-msg-links li{
+  display: inline;
+}
 
 #serial-buttons {
     display: flex;

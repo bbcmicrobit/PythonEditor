@@ -1390,11 +1390,26 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
-    function openModalMsg(title,content,helplink){
-        $("#modal-msg-overlay-container").css("display", "flex");
+    function webUSBModalMsg(title,content,links){
+        var overlayContainer = "#modal-msg-overlay-container";
+        $(overlayContainer).css("display", "flex");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
-        $("#modal-msg-helplink").attr("href",helplink);         
+        if(links){
+            var linkstr = "";
+            for (var i=0; i<Object.keys(links).length; i++){
+                var currentKey = Object.keys(links)[i];
+                if (currentKey=="Close"){
+                    var currentLink = '<li><a href="#" onclick = "$(\''+overlayContainer+'\').hide()">Close</a></li><li> | </li>';
+                }else{
+                    var currentLink = '<li><a href="'+links[currentKey]+'">'+currentKey+"</a></li><li> | </li>";
+                }
+                linkstr=linkstr.concat(currentLink);
+            }
+            var newlinkstr = "<ul>"+linkstr+"</ul>"
+            $("#modal-msg-links").html(newlinkstr);
+            $('#modal-msg-links li:last').remove();
+        }
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
@@ -1450,13 +1465,18 @@ function web_editor(config) {
             $("#command-serial").click(function () {
                 doSerial();
             });  
-
         }else{
-            function buttonClicked(){
-                openModalMsg("WebUSB not supported", "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>However this feature is not supported on this browser.", "help.html#WebUSB");
+            function WebUSBError(){
+                webUSBModalMsg(
+                    "WebUSB",
+                    "With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.",
+                    {
+                        "Find Out More": "help.html#WebUSB",
+                    }
+                );
             }
-            $("#command-connect").click(buttonClicked);
-            $("#command-serial").click(buttonClicked);
+            $("#command-connect").click(WebUSBError);
+            $("#command-serial").click(WebUSBError);
 
             $("#modal-msg-overlay-container").click(function(){
                 $("#modal-msg-overlay-container").hide()
