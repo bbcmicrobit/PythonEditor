@@ -1401,7 +1401,9 @@ function web_editor(config) {
 
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
-        $(overlayContainer).css("display", "flex");
+        //$(overlayContainer).css({"display": "-webkit-box", "display": "-ms-flexbox", "display": "-webkit-flex", "display": "flex"});
+        $(overlayContainer).css("display","block");
+        //$("#modal-overlay-container").css({"width":"100%","height":"100%"});
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
         if (links) {
