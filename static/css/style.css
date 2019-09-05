@@ -423,9 +423,21 @@ a.command:hover {
     }
 
     #script-box {
-        margin: 1rem;
+        margin: .4rem;
         text-align: left;
         width: 100%;
+    }
+
+    #script-name {
+        line-height: 1rem;
+    }
+    
+    #script-box > label {
+        font-size: 0.5rem;
+    }
+    
+    #commands {
+        overflow-x: scroll;
     }
 }
 
@@ -532,6 +544,10 @@ div.load-form {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .load-drag-target a, .load-drag-target a.visited {
@@ -569,6 +585,17 @@ div.load-form {
 }
 .buttons_menu_rhs {
     margin: auto;
+}
+
+@media (max-width: 480px) {
+    .buttons_menu_container {
+        left: 50% !important;
+        -webkit-transform: translate(-50%, 0);
+        -moz-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+        transform: translate(-50%, 0);
+        width: fit-content;
+    }
 }
 
 /* Switches in the Options menu */
