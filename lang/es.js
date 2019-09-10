@@ -185,7 +185,7 @@ var language = {
     'options-dropdown': {
       'autocomplete': 'Autocompletar',
       'on-enter': 'Al presionar Intro',
-      'partial-flashing': 'Flasheo Parcial',
+      'partial-flashing': 'Flasheo Rapido',
       'lang-select': 'Seleccionar Idioma:'
     },
     'text-editor': {
