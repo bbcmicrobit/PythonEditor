@@ -1,6 +1,6 @@
 2.0.0-beta.3
 ------------
-* Added WebUSB Partial Flashing (#217) (#222) (#224) (#225) (#227) (#228) (#229)
+* Added WebUSB 'Quick Flash' using partial flashing (#217) (#222) (#224) (#225) (#227) (#228) (#229)
 * Improved WebUSB error handling (#211)
 * WebUSB buttons are always displayed (#226)
 * Help page updated with the new features (#199)

@@ -91,7 +91,7 @@ var language = {
       'update-req': 'Necesitas <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">actualizar el firmware del micro:bit </a> para poder usar esta función!',
       'clear-connect': 'Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.',
       'reconnect-microbit': 'Por favor reconecta el micro:bit e intentalo de nuevo.',
-      'partial-flashing-disable': 'Si el error persiste, intenta deshabilitar el flasheo parcial en las opciones beta.',
+      'partial-flashing-disable': 'Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.',
       'device-disconnected': 'Dispositivo desconectado.',
       'unavailable': 'Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.',
       'find-more': 'Saber más'
@@ -185,7 +185,7 @@ var language = {
     'options-dropdown': {
       'autocomplete': 'Autocompletar',
       'on-enter': 'Al presionar Intro',
-      'partial-flashing': 'Flasheo Parcial',
+      'partial-flashing': 'Flasheo Rapido',
       'lang-select': 'Seleccionar Idioma:'
     },
     'text-editor': {
