@@ -21,7 +21,9 @@ codebase <https://github.com/bbcmicrobit/PythonEditor/lang/en.js>`__. The defaul
 the editor is English and you may select another available language
 using the Globe icon in the main menu.
 
-**1.1 Crowdin** The Micro:bit Educational Foundation use the `Crowdin
+1.1 Crowdin
++++++++++++
+The Micro:bit Educational Foundation use the `Crowdin
 platform <https://crowdin.com/project/microbitorg>`__ to manage
 translations to manage and support community translations for it’s web
 projects. We have an amazing team of volunteer translators and
@@ -30,7 +32,9 @@ support them through the process. There is some more information on how
 this works at
 `microbit.org/translate <https://microbit.org/translate/>`__
 
-**1.2 Translating the editor** We encourage translators to use
+1.2 Translating the editor
+++++++++++++++++++++++++++
+We encourage translators to use
 `Crowdin <https://crowdin.com/project/microbitorg>`__ as it has a
 rigorous process for translation, proofreading and syncronisation and
 the Foundation use it to communicate and help guide the translation
@@ -45,8 +49,9 @@ this file opens the Crowdin editor where you can submit your own or use
 a suggested translation for the string. It will then need to be verified
 by a proofreader for that language.
 
-**1.3 Syncing Translations** Crowdin can perform a sync between itself
-and Github, meaning that we can pass language updates either way. This
+1.3 Syncing Translations
+++++++++++++++++++++++++
+Crowdin can perform a sync between itself and Github, meaning that we can pass language updates either way. This
 is currently triggered manually. When a new release of the editor is
 made, any updates to the strings in en.js will be uploaded to Crowdin
 and translators are notified that translation strings have changed.
@@ -60,7 +65,9 @@ either case please `get in touch with the
 Foundation <https://support.microbit.org/en/support/tickets/new>`__ to
 ask if it can be made available.
 
-**1.5 Available languages** The Foundation strives to make it’s online
+1.5 Available languages
++++++++++++++++++++++++
+The Foundation strives to make it’s online
 offerings as accessible as possible and new translations to the Crowdin
 project are always welcome. To ensure a consistent experience for users,
 we need to ensure that any languages we make available for translation
@@ -72,10 +79,11 @@ released language.
 2. Release cycle
 ----------------
 
-**2.1 Releases and freezes** At a predefined time during the release
-cycle there will be a "string freeze”, which means that after this point
-strings marked for translation in the codebase can no longer be changed
-except in the case of critical-priority bugs.
+2.1 Releases and freezes
+++++++++++++++++++++++++
+At a predefined time during the release cycle there will be a "string freeze”, 
+which means that after this point strings marked for translation in the codebase 
+can no longer be changed except in the case of critical-priority bugs.
 
 Translators will be notified via the Crowdin messaging platform when the
 string freeze will occur, but will have the entire duration of the `beta
@@ -89,12 +97,12 @@ Crowdin can be assumed to be static. This is not to say that translation
 can't happen all the time. But during the development process strings
 may change and translation efforts may end up being wasted.
 
-**2.2 Stable releases and backports** There two main stable release
-branches of the editor can be found at:
+2.2 Stable releases and backports
++++++++++++++++++++++++++++++++++
+There two main stable release branches of the editor can be found at:
 
 `python.microbit.org <http://python.microbit.org>`__ - which contains
-available languages that have been translated (`see
-2.3 <https://paper.dropbox.com/doc/Python-Editor-Translation-Release-Strategy-DRAFT--AkD8w7FV~luvLTduPPtgQXZlAg-51mKmhhctvRyNxmN38aZ7#:h2=2.3-Available-languages>`__)
+available languages that have been translated.
 
 `python.microbit.org/v/beta <http://python.microbit.org/v/beta>`__ -
 which contains available languages that have been translated and any
@@ -128,10 +136,10 @@ issue with the translation, you can suggest a change in Crowdin or `open
 an issue with micro:bit
 support. <https://support.microbit.org/en/support/tickets/new>`__
 
-This work, "TRANSLATIONS.MD", is a derivative of
-"`wiki.openstack.org/wiki/Translations <https://wiki.openstack.org/wiki/Translations#String_Freeze>`__\ ”
+This work, "TRANSLATIONS.rst", is a derivative of
+"`wiki.openstack.org/wiki/Translations <https://wiki.openstack.org/wiki/Translations>`__\ ”
 by `OpenStack <https://openstack.org>`__, used under `CC
-BY <https://creativecommons.org/licenses/by/2.0/>`__. "TRANSLATIONS.MD"
+BY <https://creativecommons.org/licenses/by/2.0/>`__. "TRANSLATIONS.rst"
 is licensed under `CC
 BY <https://creativecommons.org/licenses/by/2.0/>`__ by the Micro:Bit
 Educational Foundation.
