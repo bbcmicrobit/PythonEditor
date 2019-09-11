@@ -44,4 +44,4 @@ Translations
 ++++++++++++
 
 If you're talented enough to speak another language, we'd love you to contribute a 
-translation to the editor. Learn more about how this works in the translation strategy within the docs folder 
+translation to the editor. Learn more about how this works in the translation strategy within the docs folder. 
