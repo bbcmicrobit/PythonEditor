@@ -1,7 +1,7 @@
 # 🐍 🌍 🚀Translation Release Strategy
 Thanks for your interest in translating the micro:bit Python Editor. Translations for all the Micro:bit Educational Foundation’s editors and apps are contributed by an amazing team of volunteers and we’d love for you to be a part of this too. 
 
-This document sets out the strategy and process for how the Foundation manages the translation of the Python Editor hosted at python.microbit.org
+This document sets out the strategy and process for how the Foundation manages the translation of the Python Editor.
 
 ## 1. Translation and Management in the Python Editor
 
