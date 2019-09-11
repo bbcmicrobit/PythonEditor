@@ -455,7 +455,7 @@ function web_editor(config) {
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
-            $('#menu-switch-autocomplete-on-enter').prop("checked", false);
+            $('#menu-switch-autocomplete-enter').prop("checked", false);
         }
 
         // Update the help link to pass feature flag information.
