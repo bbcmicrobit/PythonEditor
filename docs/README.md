@@ -1,5 +1,5 @@
 # Developer docs
 
 - [Filesystem](filesystem.md)
-- [Translation Strategy](TRANSLATIONS.MD)
+- [Translation Strategy](translations.md)
 
