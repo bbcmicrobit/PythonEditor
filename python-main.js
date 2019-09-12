@@ -86,9 +86,7 @@ function pythonEditor(id, autocompleteApi) {
         ACE.setOption('enableBasicAutocompletion', enable);
         ACE.setOption('enableLiveAutocompletion', enable);
         if(!ACE.completer){ACE.execCommand('startAutocomplete');
-        ACE.completer.detach();
-        ACE.completer.keyboardHandler.removeCommand('Return');
-        editor.triggerAutocompleteWithEnter(false)}
+        editor.triggerAutocompleteWithEnter(false);}
     };
 
     editor.triggerAutocompleteWithEnter = function(enable) {
