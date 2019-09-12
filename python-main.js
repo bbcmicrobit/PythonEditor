@@ -1183,6 +1183,10 @@ function web_editor(config) {
     }
 
     function doDisconnect() {
+
+        // Remove disconnect listenr
+        navigator.usb.removeEventListener('disconnect', showDisconnectError);
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
