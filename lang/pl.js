@@ -2,7 +2,7 @@ var language = {
    'code_snippets': {
       'title': 'Fragmenty Kodu',
       'description': 'Fragmenty kodu są krótkimi blokami kodu do użycia we własnych programach. Znajdują się fragmenty dla zwykłych rzeczy, które będziemy chcieli zrobić za pomocą MicroPython.',
-      'instructions': 'Wybierz jeden z poniższych fragmentów, lub wpisz wyzwalacz fragmentu i naciśnij klawisz TAB.',
+      'instructions': 'Select one of the snippets below to inject the code block.',
       'trigger_heading': 'spust',
       'description_heading': 'opisanie',
       'docs': 'utworzyć komentarz, aby opisać swój kod',
