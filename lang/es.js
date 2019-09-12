@@ -2,7 +2,7 @@ var language = {
   'code_snippets': {
     'title': 'Fragmentos de Codigo',
     'description': "Los fragmentos de código son bloques cortos de código para reutilizar en tus programas. Hay fragmentos de las cosas más comunes que querrás hacer con MicroPython.",
-    'instructions': "Selecciona uno de los fragmentos o escribe el atajo del fragmento y presiona la tecla TAB.",
+    'instructions': "Selecciona uno de los fragmentos para incluir el bloque de codigo.",
     'trigger_heading': 'atajo',
     'description_heading': 'descripción',
     'docs': 'crea un comentario para describir tu código',
