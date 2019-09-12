@@ -1249,20 +1249,21 @@ function web_editor(config) {
         }
 
         var errorHTML = '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
-                    errorDescription +
+                    errorDescription + '<div class="flashing-overlay-buttons">' +
                     (err.name === 'device-disconnected'
                             ?  ""
-                            : '<br ><a href="#" id="flashing-overlay-download">' +
+                            : '<a href="#" id="flashing-overlay-download">' +
                               config["translate"]["webusb"]["download"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
                     config["translate"]["webusb"]["close"] +
-                    '</a></div>';
+                    '</a></div></div>';
 
         // Show error message
         if($("#flashing-overlay-error").html() == "") {
             $("#flashing-overlay-error").html(errorHTML);
         } else {
+            $(".flashing-overlay-buttons").hide(); // Hide previous buttons
             $("#flashing-overlay-error").append("<hr />" + errorHTML);
         }
 
