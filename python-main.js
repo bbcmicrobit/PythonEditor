@@ -85,6 +85,9 @@ function pythonEditor(id, autocompleteApi) {
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
         ACE.setOption('enableLiveAutocompletion', enable);
+        EDITOR.ACE.execCommand('startAutocomplete');
+        EDITOR.ACE.completer.detach();
+        ACE.completer.keyboardHandler.removeCommand('Return');
     };
 
     editor.triggerAutocompleteWithEnter = function(enable) {
