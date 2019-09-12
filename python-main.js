@@ -85,16 +85,18 @@ function pythonEditor(id, autocompleteApi) {
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
         ACE.setOption('enableLiveAutocompletion', enable);
-        EDITOR.ACE.execCommand('startAutocomplete');
-        EDITOR.ACE.completer.detach();
-        ACE.completer.keyboardHandler.removeCommand('Return');
+        ACE.execCommand('startAutocomplete');
+        if(!ACE.completer){
+            ACE.completer.detach();
+            ACE.completer.keyboardHandler.removeCommand('Return');
+        }
     };
 
     editor.triggerAutocompleteWithEnter = function(enable) {
         if (!ACE.completer) {
             // Completer not yet initialise, force it by opening and closing it
-            EDITOR.ACE.execCommand('startAutocomplete');
-            EDITOR.ACE.completer.detach();
+            ACE.execCommand('startAutocomplete');
+            ACE.completer.detach();
         }
         if (enable) {
             ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
