@@ -85,13 +85,14 @@ function pythonEditor(id, autocompleteApi) {
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
         ACE.setOption('enableLiveAutocompletion', enable);
+        editor.triggerAutocompleteWithEnter(false); 
     };
 
     editor.triggerAutocompleteWithEnter = function(enable) {
         if (!ACE.completer) {
             // Completer not yet initialise, force it by opening and closing it
-            EDITOR.ACE.execCommand('startAutocomplete');
-            EDITOR.ACE.completer.detach();
+            ACE.execCommand('startAutocomplete');
+            ACE.completer.detach();
         }
         if (enable) {
             ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
@@ -455,6 +456,7 @@ function web_editor(config) {
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
+            $('#menu-switch-autocomplete-enter').prop("checked", false);
         }
 
         // Update the help link to pass feature flag information.
@@ -1541,6 +1543,8 @@ function web_editor(config) {
                 $('#autocomplete-enter').addClass('hidden');
             }
             EDITOR.enableAutocomplete(setEnable);
+            var setEnterEnable = $('#menu-switch-autocomplete-enter').is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnterEnable);
         });
         $('#menu-switch-autocomplete-enter').on('change', function() {
             var setEnable = $(this).is(':checked');
