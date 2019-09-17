@@ -1543,6 +1543,8 @@ function web_editor(config) {
                 $('#autocomplete-enter').addClass('hidden');
             }
             EDITOR.enableAutocomplete(setEnable);
+            var setEnterEnable = $('#menu-switch-autocomplete-enter').is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnterEnable);
         });
         $('#menu-switch-autocomplete-enter').on('change', function() {
             var setEnable = $(this).is(':checked');
