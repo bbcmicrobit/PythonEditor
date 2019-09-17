@@ -2,7 +2,7 @@ var language = {
   'code_snippets': {
     'title': 'Code Snippets',
     'description': "Code snippets are short blocks of code to re-use in your own programs. There are snippets for most common things you'll want to do using MicroPython.",
-    'instructions': "Select one of the snippets below, or type the snippet's trigger then tap the TAB key.",
+    'instructions': "Select one of the snippets below to inject the code block.",
     'trigger_heading': 'trigger',
     'description_heading': 'description',
     'docs': 'create a comment to describe your code',
