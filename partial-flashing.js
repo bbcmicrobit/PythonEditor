@@ -591,7 +591,7 @@ let PartialFlashing = {
 
                 if (aligned.length > 100) {
                     try {
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image_string);
                     } catch {
                         PartialFlashingUtils.log(`Full flash failed, attempting partial flash.`);
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
@@ -602,7 +602,7 @@ let PartialFlashing = {
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
                     } catch {
                         PartialFlashingUtils.log(`Partial flash failed, attempting full flash.`);
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image_string);
                     }
                 }
 
@@ -648,7 +648,7 @@ let PartialFlashing = {
 
     // Flash the micro:bit's ROM with the provided image, resetting the micro:bit first.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L439
-    flashAsync: async function(dapwrapper, image, updateProgress) {
+    flashAsync: async function(dapwrapper, image_bytes, image_string, updateProgress) {
         try {
             let p = Promise.resolve()
                 .then(() => {
@@ -673,13 +673,13 @@ let PartialFlashing = {
             let ret = await Promise.race([p, timeout])
             .then(() => {
                 PartialFlashingUtils.log("Begin Flashing");
-                return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                return this.partialFlashAsync(dapwrapper, image_bytes, updateProgress);
             });
             return ret;
         } catch (err) {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
-                return this.fullFlashAsync(dapwrapper, image);
+                return this.fullFlashAsync(dapwrapper, image_string);
             }
             return Promise.reject(err);
         }
