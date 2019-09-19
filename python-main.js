@@ -1267,7 +1267,7 @@ function web_editor(config) {
             p = PartialFlashing.connectDapAsync()
                 .then(function() {
                     var output_bytes = generateFullHex("bytes");
-                    var output_string = generateFullHex("string");
+                    var output_string = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }

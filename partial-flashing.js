@@ -591,7 +591,7 @@ let PartialFlashing = {
 
                 if (aligned.length > 100) {
                     try {
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image_string);
                     } catch {
                         PartialFlashingUtils.log(`Full flash failed, attempting partial flash.`);
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
@@ -602,7 +602,7 @@ let PartialFlashing = {
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
                     } catch {
                         PartialFlashingUtils.log(`Partial flash failed, attempting full flash.`);
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image_string);
                     }
                 }
 
