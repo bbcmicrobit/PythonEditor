@@ -589,22 +589,7 @@ let PartialFlashing = {
                 aligned = PartialFlashingUtils.onlyChanged(aligned, checksums);
                 PartialFlashingUtils.log("Changed pages: " + aligned.length);
 
-                if (aligned.length > 100) {
-                    try {
-                        await this.fullFlashAsync(dapwrapper, image_string);
-                    } catch {
-                        PartialFlashingUtils.log(`Full flash failed, attempting partial flash.`);
-                        await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
-                    }
-                }
-                else {
-                    try {
-                        await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
-                    } catch {
-                        PartialFlashingUtils.log(`Partial flash failed, attempting full flash.`);
-                        await this.fullFlashAsync(dapwrapper, image_string);
-                    }
-                }
+                await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
 
                 return Promise.resolve()
                     .then(() => dapwrapper.reset())
@@ -615,6 +600,10 @@ let PartialFlashing = {
                         dapwrapper.flashing = false;
                     });
             })
+            .catch(error => {
+                PartialFlashingUtils.log(error);
+                this.fullFlashAsync(dapwrapper, image);
+            });
     },
 
     // Perform full flash of micro:bit's ROM using daplink.
@@ -648,7 +637,7 @@ let PartialFlashing = {
 
     // Flash the micro:bit's ROM with the provided image, resetting the micro:bit first.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L439
-    flashAsync: async function(dapwrapper, image_bytes, image_string, updateProgress) {
+    flashAsync: async function(dapwrapper, image, updateProgress) {
         try {
             let p = Promise.resolve()
                 .then(() => {
@@ -664,7 +653,6 @@ let PartialFlashing = {
 
             let timeout = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    PartialFlashingUtils.log("Resetting micro:bit timed out");
                     reject('Timeout')
                 }, 1000)
             })
@@ -673,13 +661,13 @@ let PartialFlashing = {
             let ret = await Promise.race([p, timeout])
             .then(() => {
                 PartialFlashingUtils.log("Begin Flashing");
-                return this.partialFlashAsync(dapwrapper, image_bytes, updateProgress);
+                return this.partialFlashAsync(dapwrapper, image, updateProgress);
             });
             return ret;
         } catch (err) {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
-                return this.fullFlashAsync(dapwrapper, image_string);
+                PartialFlashingUtils.log("Resetting micro:bit timed out");
             }
             return Promise.reject(err);
         }
