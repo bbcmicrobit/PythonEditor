@@ -972,7 +972,8 @@ ul.tree li:last-child:before {
 }
 
 #addFile{
-  height: 30px;
+  height: 40px;
+  line-height: 40px;
 }
 
 #addFileHeader{
@@ -980,6 +981,10 @@ ul.tree li:last-child:before {
 }
 
 #addFileHelp{
-  line-height: 30px;
   float: right;
+}
+
+#addFileHelp span{
+  font-weight: bold;
+  font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
 }
