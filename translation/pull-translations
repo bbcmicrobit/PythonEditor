@@ -2,6 +2,9 @@
 
 # Make directory for downloaded translations 
 mkdir translations
+touch translations/en.json
+cp crowdin.yml translations/
+cd translations
 
 # Setup Crowdin
 read -p 'Crowdin API Key: ' crowdinApiVar
@@ -13,9 +16,8 @@ crowdin lint
 # Download current translations
 echo "downloading translations"
 crowdin download
-echo "unzipping translation folders"
-unzip *.zip -d translations
-rm *.zip
+rm en.json
+cd ..
 
 # Process translations and convert back from JSON to JS
 node json-js.js
