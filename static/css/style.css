@@ -970,3 +970,16 @@ ul.tree li:last-child:before {
     font-size: 2em;
     color: #336699;
 }
+
+#addFile{
+  height: 30px;
+}
+
+#addFileHeader{
+  float:left;
+}
+
+#addFileHelp{
+  line-height: 30px;
+  float: right;
+}

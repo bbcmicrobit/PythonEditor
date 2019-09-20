@@ -92,7 +92,12 @@ Nicholas and Damien.
                 <button type="button" class="action save-button py" id="save-py" title="{{ save-py }}"><i class="fa fa-download"></i> {{ save-py}}</button>
                 <button type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
             </div>
-            <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ program-title }} {{ fs-title }}</strong></h2>
+            <div id="addFile">
+              <div id="addFileHeader">
+                <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ program-title }} {{ fs-title }}</strong></h2>
+              </div>
+              <div id="addFileHelp"><span><a href='/help.html?#fs'>Find out more about Microbit Program Files</a></span></div>
+            </div>
             <div class="expandable">
                 <div class="expandable-always-visible">
                     <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
