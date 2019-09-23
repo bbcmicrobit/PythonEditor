@@ -482,7 +482,6 @@ a.command:hover {
 }
 
 div.expandable {
-    margin-top: 15px;
     background: #eee;
     border: 1px solid #aaa;
     border-radius: 9px;
@@ -972,19 +971,36 @@ ul.tree li:last-child:before {
 }
 
 #addFile{
-  height: 40px;
-  line-height: 40px;
+  position: relative;
+  margin: 24px 0px 12px 0px;
+  height: 29px;
 }
 
 #addFileHeader{
   float:left;
+  position: absolute;
+  bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#addFileHeader .modal-title{
+  margin: 0px 0px 0px 0px;
 }
 
 #addFileHelp{
   float: right;
+  line-height: 29px;
+  right: 0px;
 }
 
 #addFileHelp span{
-  font-weight: bold;
   font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+}
+
+#save-py{
+  margin: 0px 0px 0px 0px;
+}
+
+#save-hex{
+  margin: 0px 0px 0px 0px;
 }
