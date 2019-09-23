@@ -305,6 +305,14 @@ function translations() {
             $(value).attr('title', buttons[button_id]['title']);
             $(value).attr('aria-label', buttons[button_id]['title']);
             $(value).children('.roundlabel').text(buttons[button_id]['label']);
+            $(document).ready(function(){
+                $("ul.tree > li").each(function(){
+                    $(this).click(function(){
+                        $("ul.tree > li").css('font-weight','normal');
+                        $(this).css('font-weight','bold');
+                    });
+                });
+            });
             if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
                 // Serial button strings depend on the REPL being visible
                 $(value).attr('title', buttons[button_id]['title-close']);
