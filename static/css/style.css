@@ -652,7 +652,7 @@ input:checked + .menu-switch-slider:before {
 
 /* Modals */
 .modal-title {
-    margin: 24px 0px 12px 0px;
+    margin: 24px 0px 22px 0px;
     text-transform: capitalize;
 }
 .modal-title:first-of-type {
@@ -972,7 +972,7 @@ ul.tree li:last-child:before {
 
 #addFile{
   position: relative;
-  margin: 24px 0px 12px 0px;
+  margin: 24px 0px 22px 0px;
   height: 29px;
 }
 
