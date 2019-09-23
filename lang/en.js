@@ -191,4 +191,4 @@ var language = {
     }
   }
 };
-module.exports = { language: language };
+if (typeof module !== 'undefined') module.exports = { language: language };
