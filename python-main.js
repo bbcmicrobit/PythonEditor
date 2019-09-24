@@ -1017,7 +1017,6 @@ function web_editor(config) {
                         invalidExt();
                     }
                     return false;
-                
                 });
                 $('#fs-file-upload-button').click(function() {
                     $('#fs-file-upload-input').trigger('click');
