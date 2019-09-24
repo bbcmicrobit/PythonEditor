@@ -305,14 +305,6 @@ function translations() {
             $(value).attr('title', buttons[button_id]['title']);
             $(value).attr('aria-label', buttons[button_id]['title']);
             $(value).children('.roundlabel').text(buttons[button_id]['label']);
-            $(document).ready(function(){
-                $("ul.tree > li").each(function(){
-                    $(this).click(function(){
-                        $("ul.tree > li").css('font-weight','normal');
-                        $(this).css('font-weight','bold');
-                    });
-                });
-            });
             if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
                 // Serial button strings depend on the REPL being visible
                 $(value).attr('title', buttons[button_id]['title-close']);
@@ -489,6 +481,18 @@ function web_editor(config) {
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
     function setupEditor(message, migration) {
+    
+        //to set the current language bold
+        $(document).ready(function(){
+            $("ul.tree > li").each(function(){
+                $(this).click(function(){
+                    $("ul.tree > li").css('font-weight','normal');
+                    $(this).css('font-weight','bold');
+                });                   
+            });
+            $('ul.tree > li #en').trigger('click');
+        });  
+         
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
@@ -556,6 +560,7 @@ function web_editor(config) {
         $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
+        
     }
 
     // Sets up the file system and adds the initial main.py
