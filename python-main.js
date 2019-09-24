@@ -821,8 +821,10 @@ function web_editor(config) {
         }
     }
 
-    function invalidExt(){
-        $("#filetype-overlay-container").css("display","inline");
+    function invalidExt(check){
+        if (check!="py" && check!="hex"){
+            $("#filetype-overlay-container").css("display","inline");
+        }
     }
 
     // Describes what to do when the save/load button is clicked.
@@ -878,9 +880,7 @@ function web_editor(config) {
                     var check = doDrop(e);
                     vex.close();
                     EDITOR.focus();
-                    if(check!="py" && check!="hex"){
-                        invalidExt();
-                    }
+                    invalidExt(check);
                 });
                 $('#file-upload-link').click(function() {
                     $('#file-upload-input').trigger('click');
@@ -910,9 +910,7 @@ function web_editor(config) {
                     inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
-                    if (ext!="py" && ext!="hex"){
-                        invalidExt();
-                    }
+                    invalidExt(ext);
                     return false;
                 });
                 $('#fs-file-upload-button').click(function() {
