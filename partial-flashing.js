@@ -602,6 +602,10 @@ let PartialFlashing = {
             })
             .catch(error => {
                 PartialFlashingUtils.log(error);
+
+                var details = {"flash-type": "partial-flash", "event-type": "fallback-to-full", "message": 0 };
+                document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+
                 this.fullFlashAsync(dapwrapper, image);
             });
     },
