@@ -666,6 +666,7 @@ input:checked + .menu-switch-slider:before {
     position: absolute;
     background-color: rgba(255,255,255,0.6);
     margin: auto auto;
+    top:0px;
     width: 100%;
     height: 100%;
     z-index: 99;
@@ -679,7 +680,12 @@ input:checked + .menu-switch-slider:before {
 
 .modal-msg-overlay-container {
   text-align: left;
+}
 
+#modal-msg-overlay{
+  position: relative;
+  top: 19%;
+  width: 70%;
 }
 
 .modal-overlay {
@@ -696,11 +702,9 @@ input:checked + .menu-switch-slider:before {
   font-weight: bold;
 
 }
-.modal-overlay-container #modal-msg-close{
+.modal-close{
   color:#336699;
   content: "\00D7";
-  height: 80px;
-  width: 80px;
   text-align: right;
   font-size: 40px;
   float:right;
@@ -709,7 +713,7 @@ input:checked + .menu-switch-slider:before {
   top: -10px;
 }
 
-#modal-msg-close:hover{
+.modal-close:hover{
   color:#febf2e;
 }
 
@@ -969,4 +973,11 @@ ul.tree li:last-child:before {
 #webusb-flashing-complete {
     font-size: 2em;
     color: #336699;
+}
+
+#filetype-overlay{
+  width: 50%;
+  min-width: 100px;
+  position: relative;
+  top: 20%;
 }
