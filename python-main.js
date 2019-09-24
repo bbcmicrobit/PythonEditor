@@ -482,7 +482,7 @@ function web_editor(config) {
     // sane defaults.
     function setupEditor(message, migration) {
     
-        //to set the current language bold
+     // Set the current language to bold in the dropdown menu
         $(document).ready(function(){
             $("ul.tree > li").each(function(){
                 $(this).click(function(){
@@ -560,7 +560,6 @@ function web_editor(config) {
         $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
-        
     }
 
     // Sets up the file system and adds the initial main.py
