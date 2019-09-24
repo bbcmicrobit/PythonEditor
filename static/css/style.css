@@ -701,11 +701,9 @@ input:checked + .menu-switch-slider:before {
   font-weight: bold;
 
 }
-.modal-overlay-container #modal-msg-close{
+.modal-close{
   color:#336699;
   content: "\00D7";
-  height: 80px;
-  width: 80px;
   text-align: right;
   font-size: 40px;
   float:right;
@@ -714,7 +712,7 @@ input:checked + .menu-switch-slider:before {
   top: -10px;
 }
 
-#modal-msg-close:hover{
+.modal-close:hover{
   color:#febf2e;
 }
 

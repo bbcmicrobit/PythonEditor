@@ -915,6 +915,10 @@ function web_editor(config) {
         }
     }
 
+    function invalidExt(){
+        $("#filetype-overlay-container").css("display","inline");
+    }
+
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -974,9 +978,12 @@ function web_editor(config) {
                     // Dispatch an event to allow others to listen to it
                     var event = new CustomEvent("load-drop", { detail: e.originalEvent.dataTransfer.files[0] });
                     document.dispatchEvent(event);
-                    doDrop(e);
+                    var check = doDrop(e);
                     vex.close();
                     EDITOR.focus();
+                    if(check!="py" && check!="hex"){
+                        invalidExt();
+                    }
                 });
                 $('#file-upload-link').click(function() {
                     $('#file-upload-input').trigger('click');
@@ -1006,7 +1013,11 @@ function web_editor(config) {
                     inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
+                    if (ext!="py" && ext!="hex"){
+                        invalidExt();
+                    }
                     return false;
+                
                 });
                 $('#fs-file-upload-button').click(function() {
                     $('#fs-file-upload-input').trigger('click');
@@ -1172,6 +1183,7 @@ function web_editor(config) {
             reader.readAsText(file);
         }
         $('#editor').focus();
+        return ext
     }
 
     function showDisconnectError(event) {
@@ -1508,7 +1520,11 @@ function web_editor(config) {
 
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
+<<<<<<< HEAD
         $(overlayContainer).css("display","block");
+=======
+        $(overlayContainer).css("display", "block");
+>>>>>>> Added error message when loading an invalid file
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
         if (links) {

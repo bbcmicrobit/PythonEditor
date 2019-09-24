@@ -347,11 +347,20 @@ Nicholas and Damien.
         </div>
         <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
           <div id="modal-msg-overlay" class="modal-overlay">
-            <a class="vex-close" id="modal-msg-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
+            <a class="vex-close modal-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
             <div>
               <h2 id="modal-msg-title"></h2>
               <div id="modal-msg-content"></div>
               <div id="modal-msg-links" class="modal-msg-links"></div>
+            </div>
+          </div>
+        </div>
+        <div id="filetype-overlay-container" class="modal-overlay-container">
+          <div id="filetype-overlay" class="modal-overlay">
+            <a class="vex-close modal-close" onclick="$('#filetype-overlay-container').hide()"></a>
+            <div id="filetype-info">
+              <h2 id="filetype-header">Invalid File Type</h2>
+              <p id="filetype-text">You can only load files with the extensions .hex or .py. Please try again.</p>
             </div>
           </div>
         </div>
