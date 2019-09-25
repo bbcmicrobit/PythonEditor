@@ -917,7 +917,7 @@ function web_editor(config) {
 
     function showWarning(check){
         if(check=="mpy"){
-            $("#filetype-text").text("You just tried to load a .mpy file. We are currently working on supporting these files but currently the only supported filet types are .hex and .py. We hope to implement this feature soon!")
+            $("#filetype-text").text("You just tried to load a .mpy file. We are currently working on supporting these files but currently the only supported file types are .hex and .py. We hope to implement this feature soon!")
         }else{
             $("#filetype-text").text("You can only load files with the extensions .hex or .py. Please try again.")
         }
