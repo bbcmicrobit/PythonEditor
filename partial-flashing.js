@@ -643,6 +643,17 @@ let PartialFlashing = {
             .then(w => {
                 window.dapwrapper = w;
                 PartialFlashingUtils.log("Connection Complete");
+            })
+            .then(() => {
+                return dapwrapper.cortexM.readMem32(0x10000010);
+            })
+            .then((pageSize) => {
+                PartialFlashingUtils.pageSize = pageSize;
+
+                return dapwrapper.cortexM.readMem32(0x10000014);
+            })
+            .then((numPages) => {
+                PartialFlashingUtils.numPages = numPages;
             });
     },
 
