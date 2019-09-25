@@ -490,7 +490,6 @@ function web_editor(config) {
                     $(this).css('font-weight','bold');
                 });                   
             });
-            $('ul.tree > li #en').trigger('click');
         });  
          
         // Set version in document title
