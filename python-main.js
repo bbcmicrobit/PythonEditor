@@ -915,9 +915,18 @@ function web_editor(config) {
         }
     }
 
+    function showWarning(check){
+        if(check=="mpy"){
+            $("#filetype-text").text("You just tried to load a .mpy file. We are currently working on supporting these files but they are still currently unsupported. We hope to implement this feature soon!")
+        }else{
+            $("#filetype-text").text("You can only load files with the extensions .hex or .py. Please try again.")
+        }
+        $("#filetype-overlay-container").css("display","inline")
+    }
+
     function invalidExt(check){
         if (check!="py" && check!="hex"){
-            $("#filetype-overlay-container").css("display","inline");
+            showWarning(check);
         }
     }
 
