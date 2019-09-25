@@ -1526,11 +1526,8 @@ function web_editor(config) {
 
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
-<<<<<<< HEAD
         $(overlayContainer).css("display","block");
-=======
         $(overlayContainer).css("display", "block");
->>>>>>> Added error message when loading an invalid file
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
         if (links) {
