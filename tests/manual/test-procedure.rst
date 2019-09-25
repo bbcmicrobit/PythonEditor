@@ -404,6 +404,18 @@ Test Case: Autocomplete
   eg type 'di' and be offered 'display'.
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
+Test Case: Incompatible File Handling
+'''''''''''''''''''''''''''''''''''''
+- Click the Load/Save button.
+- Load by any method any file that does not have a '.hex','.py', or '.mpy' extension.
+- [ ] Confirm that the Load/Save modal closes.
+- [ ] Confirm that a second 'Invalid File Type' modal opens.
+- [ ] Confirm text below header is "You can only load files with the extensions .hex or .py. Please try again.".
+- Close the 'Invalid File Type' modal and load by any method a file with a '.mpy' extension.
+- [ ] Confirm that the Load/Save modal closes.
+- [ ] Confirm that a second 'Invalid File Type' modal opens.
+- [ ] Confirm text below header is "You just tried to load a .mpy file. We are currently working on supporting these files but currently the only supported file types are .hex and .py. We hope to implement this feature soon!".
+
 Test results
 ------------
 
