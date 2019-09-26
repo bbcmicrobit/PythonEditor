@@ -21,6 +21,37 @@ function script(url, id) {
     x.appendChild(s);
 }
 
+/**
+ * JS debounce 
+ * TODO: could be moved to some helper/util file
+ */
+function debounce(callback, wait) {
+  var timeout = null;
+
+  return function () {
+    var args = arguments;
+    var next = function () {
+      return callback.apply(this, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(next, wait);
+  }
+}
+
+// Constants used for iframe messaging
+var EDITOR_IFRAME_MESSAGING = Object.freeze({
+  // Embed editor host type
+  host: "pyeditor",
+  // Embed editor messaging actions
+  actions: {
+    workspacesync: "workspacesync",
+    workspacesave: "workspacesave",
+    workspaceloaded: "workspaceloaded",
+    importproject: "importproject"
+  }
+})
+
 /*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
@@ -111,6 +142,7 @@ function pythonEditor(id, autocompleteApi) {
     // Sets the textual content of the editor (i.e. the Python script).
     editor.setCode = function(code) {
         ACE.setValue(code);
+        ACE.gotoLine(ACE.session.getLength());
     };
 
     // Give the editor user input focus.
@@ -358,6 +390,11 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
+    var inIframe = window !== window.parent;
+
+    // Indicate if editor can listen and respond to messages
+    var controllerMode = inIframe && urlparse("controller") === "1";
+
     var usePartialFlashing = true;
 
     // MicroPython filesystem to be initialised on page load.
@@ -513,7 +550,6 @@ function web_editor(config) {
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -550,6 +586,62 @@ function web_editor(config) {
         $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
+    }
+
+    function initializeIframeMessaging() {
+      window.addEventListener("load", function () {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
+      });
+
+      window.addEventListener(
+        "message",
+        function (event) {
+          if (event.data) {
+            var type = event.data.type;
+
+            if (type === EDITOR_IFRAME_MESSAGING.host) {
+              var action = event.data.action;
+              
+              switch (action) {
+                // Parent is sending code to update editor
+                case EDITOR_IFRAME_MESSAGING.actions.importproject:
+                  if (!event.data.project || typeof event.data.project !== "string") {
+                    throw new Error("Invalid 'project' data type. String should be provided.");
+                  }
+                  EDITOR.setCode(event.data.project);
+                  break;
+
+                // Parent is sending initial code for editor
+                // Also here we can sync parent data with editor's data
+                case EDITOR_IFRAME_MESSAGING.actions.workspacesync:
+                  if (!event.data.projects || !Array.isArray(event.data.projects)) {
+                    throw new Error("Invalid 'projects' data type. Array should be provided.");
+                  }
+                  if (event.data.projects.length < 1) {
+                    throw new Error("'projects' array should contain at least one item.");
+                  }
+                  EDITOR.setCode(event.data.projects[0]);
+                  // Notify parent about editor successfully configured
+                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
+                  break;
+
+                default:
+                  throw new Error("Unsupported action.")
+              }
+            }
+          }
+        },
+        false
+      );
+
+      var debounceCodeChange = debounce(function (code) {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
+      }, 1000);
+
+      EDITOR.setCode(" ");
+      EDITOR.on_change(function () {
+        debounceCodeChange(EDITOR.getCode());
+      });
     }
 
     // Sets up the file system and adds the initial main.py
@@ -607,7 +699,6 @@ function web_editor(config) {
         } else {
             setName(moduleName);
             EDITOR.setCode(codeStr);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         }
     }
 
@@ -651,7 +742,6 @@ function web_editor(config) {
         }
         setName(filename.replace('.hex', ''));
         EDITOR.setCode(code);
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
     }
 
     // Function for adding file to filesystem
@@ -1612,6 +1702,11 @@ function web_editor(config) {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
     });
+
+    // If iframe messaging allowed, initialize it
+    if (controllerMode) {
+      initializeIframeMessaging();
+    }
 }
 
 /*
@@ -1621,5 +1716,3 @@ function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
-
-
