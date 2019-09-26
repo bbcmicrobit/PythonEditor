@@ -387,12 +387,12 @@ function web_editor(config) {
         EDITOR.ACE.setFontSize(size);
         $("#request-repl")[0].style.fontSize = "" + size + "px";
         $("#request-serial")[0].style.fontSize = "" + size + "px";
-    
-    // Only update font size if REPL is open
+
+        // Only update font size if REPL is open
         if ($("#repl").css('display') != 'none') {
-            REPL.prefs_.set('font-size', size);
-             }
+             REPL.prefs_.set('font-size', size);
         }
+    }
 
     // Sets up the zoom-in functionality.
     function zoomIn() {
@@ -434,16 +434,6 @@ function web_editor(config) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
             document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
-          
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.innerHTML = '.cssClass { font-weight: bold; color: black; }';
-            document.getElementsByTagName('head')[0].appendChild(style);
-
-            document.getElementsById('ul.tree > li ').removeClass = 'cssClass';
-     
-            document.getElementById(lang).className = 'cssClass';
-                 
         });
     }
 
@@ -491,7 +481,18 @@ function web_editor(config) {
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
     function setupEditor(message, migration) {
-
+    
+     // Set the current language to bold in the dropdown menu
+        $(document).ready(function(){
+            $("ul.tree > li").each(function(){
+                $(this).click(function(){
+                    $("ul.tree > li").css('font-weight','normal');
+                    $(this).css('font-weight','bold');
+                });                   
+            });
+            $('ul.tree > li #en').trigger('click');
+        });  
+         
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
@@ -1542,7 +1543,6 @@ function web_editor(config) {
         $(".lang-choice").on("click", function() {
             $("#language_container").addClass('hidden');
             setLanguage($(this).attr('id'));
-
         });
 
         $('#menu-switch-autocomplete').on('change', function() {
