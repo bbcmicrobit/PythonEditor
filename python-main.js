@@ -917,11 +917,10 @@ function web_editor(config) {
 
     function showWarning(check){
         if(check=="mpy"){
-            $("#filetype-text").text("You just tried to load a .mpy file. We are currently working on supporting these files but currently the only supported file types are .hex and .py. We hope to implement this feature soon!")
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'])
         }else{
-            $("#filetype-text").text("You can only load files with the extensions .hex or .py. Please try again.")
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'])
         }
-        $("#filetype-overlay-container").css("display","inline")
     }
 
     function invalidExt(check){

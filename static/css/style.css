@@ -678,13 +678,21 @@ input:checked + .menu-switch-slider:before {
 }
 
 .modal-msg-overlay-container {
-  text-align: left;
+  text-align: center;
 }
 
 #modal-msg-overlay{
+  text-align: left;
+  display: inline-block;
   position: relative;
   top: 19%;
-  width: 70%;
+  margin: 0 auto;
+  padding: 24px;
+  
+}
+
+#modal-msg-text{
+  padding: 20px 20px 10px 20px;
 }
 
 .modal-overlay {
