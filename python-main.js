@@ -435,13 +435,11 @@ function web_editor(config) {
             config.translate = translations;
             document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
             
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.innerHTML = '.cssClass { font-weight: bold; color: black; }';
-            document.getElementsByTagName('head')[0].appendChild(style);
-     
-            document.getElementById(lang).className = 'cssClass';
-
+            $('ul.tree > li #en').removeClass('is-selected');
+            $('ul.tree > li #es').removeClass('is-selected');
+            $('ul.tree > li #pl').removeClass('is-selected');
+            $('#'+lang).addClass('is-selected'); 
+                       
         });
     }
     
