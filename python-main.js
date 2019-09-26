@@ -439,13 +439,12 @@ function web_editor(config) {
             style.type = 'text/css';
             style.innerHTML = '.cssClass { font-weight: bold; color: black; }';
             document.getElementsByTagName('head')[0].appendChild(style);
-
-            document.getElementsById('ul.tree > li ').removeClass = 'cssClass';
      
             document.getElementById(lang).className = 'cssClass';
 
         });
     }
+    
 
     // Checks for feature flags in the config object and shows/hides UI
     // elements as required.
@@ -492,17 +491,6 @@ function web_editor(config) {
     // sane defaults.
     function setupEditor(message, migration) {
     
-     // Set the current language to bold in the dropdown menu
-        $(document).ready(function(){
-            $("ul.tree > li").each(function(){
-                $(this).click(function(){
-                    $("ul.tree > li").css('font-weight','normal');
-                    $(this).css('font-weight','bold');
-                });                   
-            });
-            $('ul.tree > li #en').trigger('click');
-        });  
-         
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
