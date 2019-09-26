@@ -434,6 +434,16 @@ function web_editor(config) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
             document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+            
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = '.cssClass { font-weight: bold; color: black; }';
+            document.getElementsByTagName('head')[0].appendChild(style);
+
+            document.getElementsById('ul.tree > li ').removeClass = 'cssClass';
+     
+            document.getElementById(lang).className = 'cssClass';
+
         });
     }
 
