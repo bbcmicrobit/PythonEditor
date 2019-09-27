@@ -54,6 +54,12 @@ let PartialFlashingUtils = {
         PC: 15
     },
 
+    // FICR Registers
+    FICR: {
+        CODEPAGESIZE: 0x10000000 | 0x10,
+        CODESIZE:     0x10000000 | 0x14,
+    },
+
     read32FromUInt8Array: function(data, i) {
         return (data[i] | (data[i + 1] << 8) | (data[i + 2] << 16) | (data[i + 3] << 24)) >>> 0;
     },
@@ -643,6 +649,17 @@ let PartialFlashing = {
             .then(w => {
                 window.dapwrapper = w;
                 PartialFlashingUtils.log("Connection Complete");
+            })
+            .then(() => {
+                return dapwrapper.cortexM.readMem32(PartialFlashingUtils.FICR.CODEPAGESIZE);
+            })
+            .then((pageSize) => {
+                PartialFlashingUtils.pageSize = pageSize;
+
+                return dapwrapper.cortexM.readMem32(PartialFlashingUtils.FICR.CODESIZE);
+            })
+            .then((numPages) => {
+                PartialFlashingUtils.numPages = numPages;
             });
     },
 
