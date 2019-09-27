@@ -956,6 +956,9 @@ ul.tree li:before {
 ul.tree li:last-child:before {
     border-left: 1px solid rgb(100, 100, 100);
 }
+.is-selected {
+    font-weight: bold;
+}
 
 #webusb-flashing-loader {
   border: .2em solid #eee;

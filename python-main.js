@@ -434,7 +434,9 @@ function web_editor(config) {
     function setLanguage(lang) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
-            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+            document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
+            $('ul.tree > li > a').removeClass('is-selected');
+            $('#'+lang).addClass('is-selected'); 
         });
     }
 
