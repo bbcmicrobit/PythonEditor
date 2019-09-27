@@ -1248,16 +1248,16 @@ function web_editor(config) {
             } 
         }
 
-        var errorHTML = '<div>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '<br >' + 
-                    errorDescription + '<div class="flashing-overlay-buttons">' +
-                    (err.name === 'device-disconnected'
+        var errorHTML = '<div><strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br >' + 
+                    errorDescription + '</div>' + '<div class="flashing-overlay-buttons"><hr />' +
+                    ((err.name === 'device-disconnected' && $("#flashing-overlay-error").html() === "")
                             ?  ""
                             : '<a href="#" id="flashing-overlay-download">' +
                               config["translate"]["webusb"]["download"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
                     config["translate"]["webusb"]["close"] +
-                    '</a></div></div>';
+                    '</a></div>';
 
         // Show error message
         if($("#flashing-overlay-error").html() == "") {
