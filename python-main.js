@@ -433,16 +433,11 @@ function web_editor(config) {
     function setLanguage(lang) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
-            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
-            
-            $('ul.tree > li #en').removeClass('is-selected');
-            $('ul.tree > li #es').removeClass('is-selected');
-            $('ul.tree > li #pl').removeClass('is-selected');
+            document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
+            $('ul.tree > li > a').removeClass('is-selected');
             $('#'+lang).addClass('is-selected'); 
-                       
         });
     }
-    
 
     // Checks for feature flags in the config object and shows/hides UI
     // elements as required.
@@ -488,7 +483,6 @@ function web_editor(config) {
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
     function setupEditor(message, migration) {
-    
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
