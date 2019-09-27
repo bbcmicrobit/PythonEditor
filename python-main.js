@@ -21,6 +21,37 @@ function script(url, id) {
     x.appendChild(s);
 }
 
+/**
+ * JS debounce 
+ * TODO: could be moved to some helper/util file
+ */
+function debounce(callback, wait) {
+  var timeout = null;
+
+  return function () {
+    var args = arguments;
+    var next = function () {
+      return callback.apply(this, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(next, wait);
+  }
+}
+
+// Constants used for iframe messaging
+var EDITOR_IFRAME_MESSAGING = Object.freeze({
+  // Embed editor host type
+  host: "pyeditor",
+  // Embed editor messaging actions
+  actions: {
+    workspacesync: "workspacesync",
+    workspacesave: "workspacesave",
+    workspaceloaded: "workspaceloaded",
+    importproject: "importproject"
+  }
+})
+
 /*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
@@ -85,13 +116,14 @@ function pythonEditor(id, autocompleteApi) {
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
         ACE.setOption('enableLiveAutocompletion', enable);
+        editor.triggerAutocompleteWithEnter(false); 
     };
 
     editor.triggerAutocompleteWithEnter = function(enable) {
         if (!ACE.completer) {
             // Completer not yet initialise, force it by opening and closing it
-            EDITOR.ACE.execCommand('startAutocomplete');
-            EDITOR.ACE.completer.detach();
+            ACE.execCommand('startAutocomplete');
+            ACE.completer.detach();
         }
         if (enable) {
             ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
@@ -110,6 +142,7 @@ function pythonEditor(id, autocompleteApi) {
     // Sets the textual content of the editor (i.e. the Python script).
     editor.setCode = function(code) {
         ACE.setValue(code);
+        ACE.gotoLine(ACE.session.getLength());
     };
 
     // Give the editor user input focus.
@@ -357,6 +390,11 @@ function web_editor(config) {
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
+    var inIframe = window !== window.parent;
+
+    // Indicate if editor can listen and respond to messages
+    var controllerMode = inIframe && urlparse("controller") === "1";
+
     var usePartialFlashing = true;
 
     // MicroPython filesystem to be initialised on page load.
@@ -433,7 +471,9 @@ function web_editor(config) {
     function setLanguage(lang) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
-            document.getElementsByTagName("HTML")[0].setAttribute("lang", lang);
+            document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
+            $('ul.tree > li > a').removeClass('is-selected');
+            $('#'+lang).addClass('is-selected'); 
         });
     }
 
@@ -455,6 +495,7 @@ function web_editor(config) {
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
+            $('#menu-switch-autocomplete-enter').prop("checked", false);
         }
 
         // Update the help link to pass feature flag information.
@@ -511,7 +552,6 @@ function web_editor(config) {
             // A sane default starting point for a new script.
             EDITOR.setCode(config.translate.code.start);
         }
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -548,6 +588,62 @@ function web_editor(config) {
         $('#editor').on('drop', doDrop);
         // Focus on the element with TAB-STATE=1
         $("#command-download").focus();
+    }
+
+    function initializeIframeMessaging() {
+      window.addEventListener("load", function () {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
+      });
+
+      window.addEventListener(
+        "message",
+        function (event) {
+          if (event.data) {
+            var type = event.data.type;
+
+            if (type === EDITOR_IFRAME_MESSAGING.host) {
+              var action = event.data.action;
+              
+              switch (action) {
+                // Parent is sending code to update editor
+                case EDITOR_IFRAME_MESSAGING.actions.importproject:
+                  if (!event.data.project || typeof event.data.project !== "string") {
+                    throw new Error("Invalid 'project' data type. String should be provided.");
+                  }
+                  EDITOR.setCode(event.data.project);
+                  break;
+
+                // Parent is sending initial code for editor
+                // Also here we can sync parent data with editor's data
+                case EDITOR_IFRAME_MESSAGING.actions.workspacesync:
+                  if (!event.data.projects || !Array.isArray(event.data.projects)) {
+                    throw new Error("Invalid 'projects' data type. Array should be provided.");
+                  }
+                  if (event.data.projects.length < 1) {
+                    throw new Error("'projects' array should contain at least one item.");
+                  }
+                  EDITOR.setCode(event.data.projects[0]);
+                  // Notify parent about editor successfully configured
+                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
+                  break;
+
+                default:
+                  throw new Error("Unsupported action.")
+              }
+            }
+          }
+        },
+        false
+      );
+
+      var debounceCodeChange = debounce(function (code) {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
+      }, 1000);
+
+      EDITOR.setCode(" ");
+      EDITOR.on_change(function () {
+        debounceCodeChange(EDITOR.getCode());
+      });
     }
 
     // Sets up the file system and adds the initial main.py
@@ -605,7 +701,6 @@ function web_editor(config) {
         } else {
             setName(moduleName);
             EDITOR.setCode(codeStr);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         }
     }
 
@@ -649,7 +744,6 @@ function web_editor(config) {
         }
         setName(filename.replace('.hex', ''));
         EDITOR.setCode(code);
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
     }
 
     // Function for adding file to filesystem
@@ -1154,23 +1248,24 @@ function web_editor(config) {
             } 
         }
 
-        // Show error message
-        $("#flashing-overlay-error").html(
-            '<div>' +
-                '<strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br>' + 
-                errorDescription +
-                '<div class="modal-msg-links">' +
-                    (err.name === 'device-disconnected'
+        var errorHTML = '<div><strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br >' + 
+                    errorDescription + '</div>' + '<div class="flashing-overlay-buttons"><hr />' +
+                    ((err.name === 'device-disconnected' && $("#flashing-overlay-error").html() === "")
                             ?  ""
-                            : '<br ><a href="#" id="flashing-overlay-download">' +
-                            config["translate"]["webusb"]["download"] +
-                            '</a> | ') +
+                            : '<a href="#" id="flashing-overlay-download">' +
+                              config["translate"]["webusb"]["download"] + 
+                              '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
                     config["translate"]["webusb"]["close"] +
-                    '</a>' +
-                '</div>' +
-            '</div>'
-        );
+                    '</a></div>';
+
+        // Show error message
+        if($("#flashing-overlay-error").html() == "") {
+            $("#flashing-overlay-error").html(errorHTML);
+        } else {
+            $(".flashing-overlay-buttons").hide(); // Hide previous buttons
+            $("#flashing-overlay-error").append("<hr />" + errorHTML);
+        }
 
         // Attach download handler
         $("#flashing-overlay-download").click(doDownload);
@@ -1181,6 +1276,10 @@ function web_editor(config) {
     }
 
     function doDisconnect() {
+
+        // Remove disconnect listenr
+        navigator.usb.removeEventListener('disconnect', showDisconnectError);
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1299,17 +1398,16 @@ function web_editor(config) {
             var timeTaken = (new Date().getTime() - startTime);
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-        })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
             // Close overview
             setTimeout(function(){
                 $("#flashing-overlay-container").hide();
             }, 500);
-
+        })
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
@@ -1401,7 +1499,7 @@ function web_editor(config) {
 
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
-        $(overlayContainer).css("display", "flex");
+        $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
         if (links) {
@@ -1541,6 +1639,8 @@ function web_editor(config) {
                 $('#autocomplete-enter').addClass('hidden');
             }
             EDITOR.enableAutocomplete(setEnable);
+            var setEnterEnable = $('#menu-switch-autocomplete-enter').is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnterEnable);
         });
         $('#menu-switch-autocomplete-enter').on('change', function() {
             var setEnable = $(this).is(':checked');
@@ -1608,6 +1708,11 @@ function web_editor(config) {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
     });
+
+    // If iframe messaging allowed, initialize it
+    if (controllerMode) {
+      initializeIframeMessaging();
+    }
 }
 
 /*
@@ -1617,5 +1722,3 @@ function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
 }
-
-

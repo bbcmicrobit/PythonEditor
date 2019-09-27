@@ -209,7 +209,7 @@
             When it is on you also have the option to complete code on pressing <kbd>Enter</kbd>
             as well as <kbd>Tab</kbd>.   
 
-            You can also switch the <a href="#partial-flashing">partial flashing</a> service on or off.
+            You can also switch the <a href="#partial-flashing">Quick Flash</a> service on or off.
             </td>
         </tr>
         <tr>
@@ -323,27 +323,28 @@ display.scroll("Hello, World!")</code></pre>
     <div >
     <h2 id="fs">Files and Modules</h2>
 
-    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store files on device. Selecting the load button in the menu will bring up the files modal window.</p>
+    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store files on the device. 
+        You can use the file system to <a href="https://support.microbit.org/solution/articles/19000098018-python-editor-files-and-modules/#emoji">include external python modules in your program</a>, 
+        similarly to using <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">MicroPython's built-in-modules</a>.</p>
+    
+    <p>Selecting the <strong>Load/Save</strong> button in the menu will bring up the files modal window.</p>
 
     <p><img src="static/img/file-system.png"
         class="image img-responsive center-block img-rounded" style="max-width: 75%;"
         alt="modal dialogue for the file system interface"/></p>
 
-    <p>In addition to using MicroPython's <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">built-in-modules</a>, you can use the file system to include the external python modules in your program.</p>
+    <p>You can drag and drop files into the Load area or use the <strong>Add file</strong> button to open the file dialogue.</p>
     
-    <p>You can drag and drop files into the load area or use the <strong>Add file</strong> button to open the file dialogue.</p>
-    
-    <p>A status bar shows you the file types you have uploaded and how much free space you still have available. 
-        The file size shown is the space it consumes inside of the micro:bit file system, 
-        not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.
-        The status bar is colour coded to indicate file types.</p>
-    
-    <p>The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status
-        bar and cannot be removed. If you try to upload another <strong>main.py</strong> file this will replace your code in the text window.</p>
+    <p>A status bar shows you the file types you have uploaded and how much free space you still have available.
+        The status bar is colour coded to indicate file types; main.py is purple and the external emoji.py shown in the example is green.
+        The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status bar and cannot be removed. 
+        If you try to upload another main.py file this will replace your code in the text window. The emoji.py is a python module, that we can now reference in main.py.</p>    
 
     <p>As you add files, they will appear in a list underneath the status bar. The list indicates
-        the filename, the file type (eg. <strong>py</strong> is a python script), the size of the file
-        and also a button with the option to <strong>Remove</strong> the file if you have added it in error.</p>
+        the filename, the file type, the size of the file and the options to download or to trash/delete the file if you have added it by accident.</p>
+    
+    <p>The file size shown is the space it consumes inside of the micro:bit file system, 
+        not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.</p>
     </div>
 
     <div id="blocks" class="hidden">
@@ -451,10 +452,10 @@ display.scroll("Hello, World!")</code></pre>
         </div>
     </div>
     <div id="partial-flashing" class="experimental hidden">
-    <h2>Partial flashing</h2>
-    <p>The partial flashing feature allows for super fast updates to be sent to the micro:bit 
+    <h2>Quick Flash</h2>
+    <p>The Quick Flash feature allows for super fast updates to be sent to the micro:bit 
         when edits are made to a program.</p>
-    <p>To do this, only the section of the .Hex file that represents the python script is updated.</p>
+    <p>To do this, we use a process called 'partial flashing' where only the section of the .Hex file that represents the python script is updated.</p>
     <p>With this feature turned on, once you have flashed the initial MicroPython program to the micro:bit, all subsequent flash attempts will be much quicker.</p>
     </div>
 
