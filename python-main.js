@@ -937,6 +937,15 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
+                $("#expandHelpPara").click(function(){
+                    if ($("#fileHelpPara").css("display")=="none"){
+                        $("#fileHelpPara").show();
+                        $("#addFile").css("margin-bottom","10px");
+                    }else{
+                        $("#fileHelpPara").hide();
+                        $("#addFile").css("margin-bottom","22px");
+                    }
+                });
                 $('#show-files').click(function() {
                   var content = $('.expandable-content')[0];
                   if (content.style.maxHeight){

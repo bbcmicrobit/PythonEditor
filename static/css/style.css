@@ -482,7 +482,6 @@ a.command:hover {
 }
 
 div.expandable {
-    margin-top: 15px;
     background: #eee;
     border: 1px solid #aaa;
     border-radius: 9px;
@@ -653,7 +652,7 @@ input:checked + .menu-switch-slider:before {
 
 /* Modals */
 .modal-title {
-    margin: 24px 0px 12px 0px;
+    margin: 28px 0px 22px 0px;
     text-transform: capitalize;
 }
 .modal-title:first-of-type {
@@ -978,4 +977,45 @@ ul.tree li:last-child:before {
 #webusb-flashing-complete {
     font-size: 2em;
     color: #336699;
+}
+
+#addFile{
+  position: relative;
+  margin: 28px 0px 22px 0px;
+  height: 29px;
+}
+
+#addFileHeader{
+  float:left;
+  position: absolute;
+  bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#addFileHeader .modal-title{
+  margin: 0px 0px 0px 0px;
+}
+
+#addFileHelp{
+  float: right;
+  line-height: 29px;
+  right: 0px;
+  cursor: pointer;
+}
+
+#addFileHelp span{
+  font-family: "Segoe UI Light","Segoe UI","Segoe WP Light","Segoe WP","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+}
+
+#save-py{
+  margin: 0px 0px 0px 0px;
+}
+
+#save-hex{
+  margin: 0px 0px 0px 0px;
+}
+
+#fileHelpPara{
+  display:none;
+  margin-bottom: 10px;
 }
