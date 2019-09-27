@@ -118,7 +118,11 @@ var language = {
     'td-size': 'Size',
     'fs-space-free':'free',
     'remove-but' : 'Remove',
-    'save-but': 'Save'
+    'save-but': 'Save',
+    'help-button' : 'Project Files',
+    'file-help-text' : 'The Project Files area shows you the files included in your program and lets you add or remove external python modules and other files. Find out more in the ',
+    'help-link' : 'Python Editor help documentation'
+
   },
   'static-strings': {
     'buttons': {
