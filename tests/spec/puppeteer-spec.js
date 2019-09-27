@@ -54,6 +54,21 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(hasShownError).toEqual(true);
     });
 
+    // it("Shows an error dialog when loading a file with an invalid extension", async function() {
+    //     const page = await browser.newPage();
+    //     await page.goto("http://localhost:5000/editor.html");
+
+    //     await page.click("#command-files");
+    //     await page.click(".load-drag-target.load-toggle");
+    //     let fileInput = await page.$("[name='load-form-file-upload']");
+    //     await fileInput.uploadFile("./spec/test-files/makecode.hex");
+    //     for (let ms=0; ms<100; ms++) {
+    //         if (hasShownError) break;
+    //         await page.waitFor(10);
+    //     }
+    //     await page.close();
+    // });
+
     it("Correctly loads a v1.0.1 hex file", async function() {
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");

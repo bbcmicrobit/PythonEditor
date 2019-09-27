@@ -916,10 +916,10 @@ function web_editor(config) {
     }
 
     function showWarning(check){
-        if(check=="mpy"){
-            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'])
+        if(check=="rtf"){
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
         }else{
-            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'])
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
 
@@ -1529,8 +1529,8 @@ function web_editor(config) {
         $(overlayContainer).css("display", "block");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
+        var modalLinks = [];
         if (links) {
-            var modalLinks = [];
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
                     modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
@@ -1538,8 +1538,8 @@ function web_editor(config) {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
-            $("#modal-msg-links").html((modalLinks).join(' | '));
         }
+        $("#modal-msg-links").html((modalLinks).join(' | '));
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
