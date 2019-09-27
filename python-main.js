@@ -1248,23 +1248,24 @@ function web_editor(config) {
             } 
         }
 
-        // Show error message
-        $("#flashing-overlay-error").html(
-            '<div>' +
-                '<strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br>' + 
-                errorDescription +
-                '<div class="modal-msg-links">' +
-                    (err.name === 'device-disconnected'
+        var errorHTML = '<div><strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br >' + 
+                    errorDescription + '</div>' + '<div class="flashing-overlay-buttons"><hr />' +
+                    ((err.name === 'device-disconnected' && $("#flashing-overlay-error").html() === "")
                             ?  ""
-                            : '<br ><a href="#" id="flashing-overlay-download">' +
-                            config["translate"]["webusb"]["download"] +
-                            '</a> | ') +
+                            : '<a href="#" id="flashing-overlay-download">' +
+                              config["translate"]["webusb"]["download"] + 
+                              '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
                     config["translate"]["webusb"]["close"] +
-                    '</a>' +
-                '</div>' +
-            '</div>'
-        );
+                    '</a></div>';
+
+        // Show error message
+        if($("#flashing-overlay-error").html() == "") {
+            $("#flashing-overlay-error").html(errorHTML);
+        } else {
+            $(".flashing-overlay-buttons").hide(); // Hide previous buttons
+            $("#flashing-overlay-error").append("<hr />" + errorHTML);
+        }
 
         // Attach download handler
         $("#flashing-overlay-download").click(doDownload);
@@ -1275,6 +1276,10 @@ function web_editor(config) {
     }
 
     function doDisconnect() {
+
+        // Remove disconnect listenr
+        navigator.usb.removeEventListener('disconnect', showDisconnectError);
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1393,17 +1398,16 @@ function web_editor(config) {
             var timeTaken = (new Date().getTime() - startTime);
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-        })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
             // Close overview
             setTimeout(function(){
                 $("#flashing-overlay-container").hide();
             }, 500);
-
+        })
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
