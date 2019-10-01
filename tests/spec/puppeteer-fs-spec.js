@@ -13,11 +13,24 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     beforeAll(async () => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        browser = await puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
+        browser = await puppeteer.launch({headless: false, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
     });
 
     afterAll(async () => {
         browser.close();
+    });
+
+    it("Correctly handles a file with an invalid extension", async function(){
+        const page = await browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        await page.click("#command-files");
+        let fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
+        await page.waitFor(1000);
+        const modalContent = await page.evaluate("document.getElementById('modal-msg-content').getAttribute('innerText')");
+        const modalDisplay = await page.evaluate("document.getElementById('modal-msg-overlay-container').getAttribute('display')");
+        expect(modalContent).toContain("extensions");
+        expect(modalDisplay).toContain("block");
     });
 
     it("Can store the correct number of small files in the filesystem", async function() {
@@ -231,5 +244,5 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await page.waitFor(500);
         const fileName = await page.evaluate("document.getElementById('script-name').value");
         expect(fileName).toContain("samplefile");
-    })
+    });
 });

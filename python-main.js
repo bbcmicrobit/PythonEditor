@@ -915,17 +915,11 @@ function web_editor(config) {
         }
     }
 
-    function showWarning(check){
-        if(check=="rtf"){
+    function invalidFileWarning(check){
+        if(check=="mpy"){
             modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
         }else{
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
-        }
-    }
-
-    function invalidExt(check){
-        if (check!="py" && check!="hex"){
-            showWarning(check);
         }
     }
 
@@ -988,10 +982,9 @@ function web_editor(config) {
                     // Dispatch an event to allow others to listen to it
                     var event = new CustomEvent("load-drop", { detail: e.originalEvent.dataTransfer.files[0] });
                     document.dispatchEvent(event);
-                    var check = doDrop(e);
+                    doDrop(e);
                     vex.close();
                     EDITOR.focus();
-                    invalidExt(check);
                 });
                 $('#file-upload-link').click(function() {
                     $('#file-upload-input').trigger('click');
@@ -1016,12 +1009,13 @@ function web_editor(config) {
                                 loadHex(f.name, e.target.result);
                             };
                             reader.readAsText(f);
+                        } else{
+                            invalidFileWarning(ext);
                         }
                     }
                     inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
-                    invalidExt(ext);
                     return false;
                 });
                 $('#fs-file-upload-button').click(function() {
@@ -1186,9 +1180,10 @@ function web_editor(config) {
                 loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
+        }else{
+            invalidFileWarning(ext);
         }
         $('#editor').focus();
-        return ext
     }
 
     function showDisconnectError(event) {
