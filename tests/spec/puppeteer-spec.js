@@ -54,21 +54,6 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(hasShownError).toEqual(true);
     });
 
-    // it("Shows an error dialog when loading a file with an invalid extension", async function() {
-    //     const page = await browser.newPage();
-    //     await page.goto("http://localhost:5000/editor.html");
-
-    //     await page.click("#command-files");
-    //     await page.click(".load-drag-target.load-toggle");
-    //     let fileInput = await page.$("[name='load-form-file-upload']");
-    //     await fileInput.uploadFile("./spec/test-files/makecode.hex");
-    //     for (let ms=0; ms<100; ms++) {
-    //         if (hasShownError) break;
-    //         await page.waitFor(10);
-    //     }
-    //     await page.close();
-    // });
-
     it("Correctly loads a v1.0.1 hex file", async function() {
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
@@ -196,12 +181,10 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplempyfile.mpy");
-        await page.waitFor(500);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
         expect(modalContent).toContain("This version of the Python Editor doesn\'t currently support adding .mpy files.");
         expect(modalDisplay).toContain("block");
-        await page.waitFor(1000);
     });
 
     it("Correctly handles a file with an invalid extension", async function(){
@@ -210,11 +193,9 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
-        await page.waitFor(500);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
         expect(modalContent).toContain("The Python Editor can only load files with the .hex or .py extensions.");
         expect(modalDisplay).toContain("block");
-        await page.waitFor(1000);
     });
 });
