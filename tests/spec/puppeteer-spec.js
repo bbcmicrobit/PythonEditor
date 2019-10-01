@@ -195,7 +195,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.goto("http://localhost:5000/editor.html");
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
-        await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
+        await fileInput.uploadFile("./spec/test-files/samplempyfile.mpy");
         await page.waitFor(500);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
@@ -209,7 +209,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.goto("http://localhost:5000/editor.html");
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
-        await fileInput.uploadFile("./spec/test-files/samplempyfile.rtf");
+        await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
         await page.waitFor(500);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
