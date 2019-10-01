@@ -194,7 +194,10 @@ var language = {
       'autocomplete': 'Autocompletar',
       'on-enter': 'Al presionar Intro',
       'partial-flashing': 'Flasheo Rapido',
-      'lang-select': 'Seleccionar Idioma:'
+      'lang-select': 'Seleccionar Idioma:',
+      'english': 'Inglés',
+      'spanish': 'Español',
+      'polish': 'Polaco'
     },
     'text-editor': {
       'aria-label': 'editor de texto'
