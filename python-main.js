@@ -916,7 +916,7 @@ function web_editor(config) {
     }
 
     function invalidFileWarning(check){
-        if(check=="mpy"){
+        if(check=="txt"){
             modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
         }else{
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
