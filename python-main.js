@@ -915,6 +915,14 @@ function web_editor(config) {
         }
     }
 
+    function invalidFileWarning(fileType){
+        if(fileType=="mpy"){
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
+        }else{
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
+        }
+    }
+
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -1001,6 +1009,8 @@ function web_editor(config) {
                                 loadHex(f.name, e.target.result);
                             };
                             reader.readAsText(f);
+                        } else{
+                            invalidFileWarning(ext);
                         }
                     }
                     inputFile.value = '';
@@ -1170,6 +1180,8 @@ function web_editor(config) {
                 loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
+        }else{
+            invalidFileWarning(ext);
         }
         $('#editor').focus();
     }
@@ -1511,8 +1523,8 @@ function web_editor(config) {
         $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
+        var modalLinks = [];
         if (links) {
-            var modalLinks = [];
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
                     modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
@@ -1520,8 +1532,8 @@ function web_editor(config) {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
-            $("#modal-msg-links").html((modalLinks).join(' | '));
         }
+        $("#modal-msg-links").html((modalLinks).join(' | '));
     }
 
     function formatMenuContainer(parentButtonId, containerId) {

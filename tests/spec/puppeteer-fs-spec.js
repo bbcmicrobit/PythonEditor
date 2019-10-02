@@ -231,5 +231,5 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await page.waitFor(500);
         const fileName = await page.evaluate("document.getElementById('script-name').value");
         expect(fileName).toContain("samplefile");
-    })
+    });
 });

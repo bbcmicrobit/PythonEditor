@@ -174,4 +174,28 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
 
         expect(fileExists).toBeTruthy();
     });
+
+    it("Correctly handles an mpy file", async function(){
+        const page = await browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        await page.click("#command-files");
+        let fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/samplempyfile.mpy");
+        const modalContent = await page.evaluate("$('#modal-msg-content').text()");
+        const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+        expect(modalContent).toContain("This version of the Python Editor doesn\'t currently support adding .mpy files.");
+        expect(modalDisplay).toContain("block");
+    });
+
+    it("Correctly handles a file with an invalid extension", async function(){
+        const page = await browser.newPage();
+        await page.goto("http://localhost:5000/editor.html");
+        await page.click("#command-files");
+        let fileInput = await page.$("#file-upload-input");
+        await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
+        const modalContent = await page.evaluate("$('#modal-msg-content').text()");
+        const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+        expect(modalContent).toContain("The Python Editor can only load files with the .hex or .py extensions.");
+        expect(modalDisplay).toContain("block");
+    });
 });
