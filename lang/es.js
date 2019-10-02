@@ -67,6 +67,15 @@ var language = {
       'title':'Envíanos tus comentarios sobre el editor de Python',
       'label':'Enviar Comentarios'
     },
+    'en': {
+      'title': 'Inglés'
+    },
+    'es': {
+      'title': 'Español'
+    },
+    'pl': {
+      'title': 'Polaco'
+    },
     'editor-ver': 'Versión del Editor:',
     'mp-ver': 'Versión de MicroPython:'
   },

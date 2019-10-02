@@ -67,6 +67,15 @@ var language = {
          'title':'Prześlij nam swoją opinię o edytorze',
          'label':'Wyślij opinię'
       },
+      'en': {
+         'title': 'Język Angielski'
+       },
+       'es': {
+         'title': 'Hiszpański'
+       },
+       'pl': {
+         'title': 'Polskie'
+       },
       'editor-ver': 'Wersja Edytora:',
       'mp-ver': 'Wersja MicroPythona:'
    },

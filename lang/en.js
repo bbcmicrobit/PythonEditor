@@ -67,6 +67,15 @@ var language = {
       'title':'Send us your feedback about the Python Editor',
       'label':'Send Feedback'
     },
+    'en': {
+      'title': 'English'
+    },
+    'es': {
+      'title': 'Spanish'
+    },
+    'pl': {
+      'title': 'Polish'
+    },
     'editor-ver': 'Editor Version:',
     'mp-ver': 'MicroPython Version:'
   },
