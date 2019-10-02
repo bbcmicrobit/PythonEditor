@@ -1520,7 +1520,7 @@ function web_editor(config) {
 
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
-        $(overlayContainer).css("display", "block");
+        $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content); 
         var modalLinks = [];
@@ -1532,9 +1532,8 @@ function web_editor(config) {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
-            $("#modal-msg-links").html((modalLinks).join(' | '));
         }
-        
+        $("#modal-msg-links").html((modalLinks).join(' | '));
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
