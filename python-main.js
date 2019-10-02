@@ -472,7 +472,7 @@ function web_editor(config) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
             document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
-            $('ul.tree > li > a').removeClass('is-selected');
+            $('ul.tree > li > span > a').removeClass('is-selected');
             $('#'+lang).addClass('is-selected'); 
         });
     }
