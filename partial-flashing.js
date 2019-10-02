@@ -38,8 +38,7 @@
 let PartialFlashingUtils = {
     pageSize: 1024,
     numPages: 256,
-    log: function() {},
-    // log: console.log,
+    log: console.log,
 
     // The Control/Status Word register is used to configure and control transfers through the APB interface.
     // This is drawn from https://github.com/mmoskal/dapjs/blob/a32f11f54e9e76a9c61896ddd425c1cb1a29c143/src/dap/constants.ts#L28
