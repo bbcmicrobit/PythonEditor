@@ -1,213 +1,209 @@
 var language = {
-   'code_snippets': {
-      'title': 'Fragmenty Kodu',
-      'description': 'Fragmenty kodu są krótkimi blokami kodu do użycia we własnych programach. Znajdują się fragmenty dla zwykłych rzeczy, które będziemy chcieli zrobić za pomocą MicroPython.',
-      'instructions': 'Select one of the snippets below to inject the code block.',
-      'trigger_heading': 'spust',
-      'description_heading': 'opisanie',
-      'docs': 'utworzyć komentarz, aby opisać swój kod',
-      'wh': 'podczas gdy niektóry warunek jest prawidłowy, powtarzaj kod',
-      'with': 'zrób coś z czymś przypisanym do jakieś nazwy',
-      'cl': 'utwórz nową klasę która definuje zachowanie nowego typu obiektu',
-      'def': 'zdefiniuj nazwaną funkcję, która pobiera pewne argumenty i opcjonalnie dodaj opis',
-      'if': 'jeśli jakiś warunek jest prawidłowy, zrób coś',
-      'ei': 'jeśli jakiś warunek jest prawidłowy, zrób coś',
-      'el': 'inaczej zrób inną rzecz',
-      'for': 'dla każdego przedmiotu w kolekcji przedmiotów zrób co coś z każdym przedmiotem',
-      'try': 'spróbuj coś zrobić i obsłuż wyjątki (błędy)'
-   },
-   'share': {
-      'title': 'Udostępnij Kod',
-      'instructions': 'Użyj hasła i opcjonalnej podpowiedzi (aby pomóc ci zapamiętać hasło), aby bezpiecznie utworzyć link do udostępniania twojego kodu z innymi.',
-      'passphrase': 'Hasło: ',
-      'hint': 'Podpowiedź do hasła: ',
-      'button': 'Utwórz Link',
-      'description': 'Ten URL wskazuje do twojego kodu:',
-      'shortener': 'To jest skrócona wersia linku:'
-   },
-   'decrypt': {
-      'title': 'Odszyfruj kod',
-      'instructions': 'Wpisz hasło aby odszyfrować kod.',
-      'passphrase': 'Hasło: ',
-      'button': 'Odszyfruj'
-   },
-   'alerts': {
-      'download': 'Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.',
-      'save': 'Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.',
-      'load_code': 'Ups! Nie można załadować kodu do pliku hex.',
-      'unrecognised_hex': 'Przepraszamy, nie mogliśmy rozpoznać tego pliku ',
-      'snippets': 'Fragmenty są wyłączone, gdy blockly jest włączony.',
-      'error': 'Błąd:\n',
-      'empty': 'Plik Pythona nie zawiera żadnego kodu.',
-      'no_python': 'Nie znaleźono poprawnego kodu Pythona w pliku hex.',
-      'no_script': 'Plik hex nie zawiera skyrptu Pythona.',
-      'no_main': 'Hex plik nie zawiera main.py.',
-      'cant_add_file': 'Plik nie mógł być dodany do systemu:',
-      'module_added': 'Moduł "{{module_name}}" został dodany do systemu plików.',
-      'module_out_of_space': 'Nie udało się dodać pliku do systemu bo nie ma dosyć miejsca.'
-   },
-   'help': {
-      'docs-link': {
-         'title': 'Zobacz dokumentację MicroPythona',
-         'label': 'Dokumentacja'
+  "code_snippets": {
+    "title": "Fragmenty Kodu",
+    "description": "Fragmenty kodu są krótkimi blokami kodu do użycia we własnych programach. Znajdują się fragmenty dla zwykłych rzeczy, które będziemy chcieli zrobić za pomocą MicroPython.",
+    "instructions": "Wybierz jeden z poniższych fragmentów, aby wstrzyknąć blok kodu.",
+    "trigger_heading": "spust",
+    "description_heading": "opisanie",
+    "docs": "utworzyć komentarz, aby opisać swój kod",
+    "wh": "podczas gdy niektóry warunek jest prawidłowy, powtarzaj kod",
+    "with": "zrób coś z czymś przypisanym do jakieś nazwy",
+    "cl": "utwórz nową klasę która definuje zachowanie nowego typu obiektu",
+    "def": "zdefiniuj nazwaną funkcję, która pobiera pewne argumenty i opcjonalnie dodaj opis",
+    "if": "jeśli jakiś warunek jest prawidłowy, zrób coś",
+    "ei": "jeśli jakiś warunek jest prawidłowy, zrób coś",
+    "el": "inaczej zrób inną rzecz",
+    "for": "dla każdego przedmiotu w kolekcji przedmiotów zrób co coś z każdym przedmiotem",
+    "try": "spróbuj coś zrobić i obsłuż wyjątki (błędy)"
+  },
+  "share": {
+    "title": "Udostępnij Kod",
+    "instructions": "Użyj hasła i opcjonalnej podpowiedzi (aby pomóc ci zapamiętać hasło), aby bezpiecznie utworzyć link do udostępniania twojego kodu z innymi.",
+    "passphrase": "Hasło: ",
+    "hint": "Podpowiedź do hasła: ",
+    "button": "Utwórz Link",
+    "description": "Ten URL wskazuje do twojego kodu:",
+    "shortener": "To jest skrócona wersia linku:"
+  },
+  "decrypt": {
+    "title": "Odszyfruj kod",
+    "instructions": "Wpisz hasło aby odszyfrować kod.",
+    "passphrase": "Hasło: ",
+    "button": "Odszyfruj"
+  },
+  "alerts": {
+    "download": "Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.",
+    "save": "Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.",
+    "load_code": "Ups! Nie można załadować kodu do pliku hex.",
+    "unrecognised_hex": "Przepraszamy, nie mogliśmy rozpoznać tego pliku ",
+    "snippets": "Fragmenty są wyłączone, gdy blockly jest włączony.",
+    "error": "Błąd:\n",
+    "empty": "Plik Pythona nie zawiera żadnego kodu.",
+    "no_python": "Nie znaleziono poprawnego kodu Pythona w pliku hex.",
+    "no_script": "Plik hex nie zawiera skyrptu Pythona.",
+    "no_main": "Plik hex nie zawiera pliku main.py.",
+    "cant_add_file": "Plik nie mógł być dodany do systemu:",
+    "module_added": "Moduł \"{{module_name}}\" został dodany do systemu plików.",
+    "module_out_of_space": "Nie udało się dodać pliku do systemu bo nie ma dosyć miejsca."
+  },
+  "help": {
+    "docs-link": {
+      "title": "Zobacz dokumentację MicroPythona",
+      "label": "Dokumentacja"
+    },
+    "support-link": {
+      "title": "Znajć pomoc dla twojego micro:bit w nowym oknie",
+      "label": "Wsparcie"
+    },
+    "help-link": {
+      "title": "Otwórz pomoc dla tego edytora w nowym oknie",
+      "label": "Pomoc"
+    },
+    "issues-link": {
+      "title": "Zobacz otwarte problemy dla edytora Python w GitHub",
+      "label": "Lista problemow"
+    },
+    "feedback-link": {
+      "title": "Prześlij nam swoją opinię o edytorze",
+      "label": "Wyślij opinię"
+    },
+    "editor-ver": "Wersja Edytora:",
+    "mp-ver": "Wersja MicroPythona:"
+  },
+  "confirms": {
+    "quit": "Niektóre z twoich zmian nie były zapisanę. Chcesz i tak zamknąć?",
+    "blocks": "Masz niezapisany kod. Użycie bloków zmieni twój kod. Możesz stracić zmiany. Czy chcesz kontynuować?",
+    "replace_main": "Dodanie pliku main.py zastąpi kod w edytorze!",
+    "replace_file": "Czy chcesz zastąpić plik \"{{file_name}}\"?",
+    "replace_module": "Czy chcesz zastąpić moduł \"{{module_name}}\"?",
+    "download_py_multiple": "Ten projekt zawiera wiele plików, które nie zostaną zapisane w tym formacie. \nZalecamy pobranie pliku Hex zawierającego cały projekt i załadowanie go z powrotem do edytora. \n\n Czy na pewno chcesz pobrać {{file_name}}?"
+  },
+  "code": {
+    "start": "# Dodaj twój python kod tutaj.from microbit import *\n\n\nwhile True:\n    display.scroll('Hello, World!')\n    display.show(Image.HEART)\n    sleep(2000)\n"
+  },
+  "webusb": {
+    "err": {
+      "update-req": "Musisz <a target=\"_blank\" href=\"https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit\">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.",
+      "clear-connect": "Inny proces jest podłączony do tego urządzenia.<br> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.",
+      "reconnect-microbit": "Podłącz jeszcze raz swój micro:bit i spróbuj ponownie.",
+      "partial-flashing-disable": "Jeśli error się powtarza, spróbuj wyłączyć Quick Flash w opcjach beta.",
+      "device-disconnected": "Urządzenie odłączone.",
+      "unavailable": "Za pomocą WebUSB możesz zaprogramować swój micro:bit i połączyć się z konsolą szeregową bezpośrednio z edytora online.<br/> Niestety, WebUSB nie jest obsługiwany w tej przeglądarce. Do korzystania z WebUSB zalecamy Chrome lub inną przeglądarkę opartą na Chrome.",
+      "find-more": "Dowiedz się więcej"
+    },
+    "troubleshoot": "Troubleshoot",
+    "close": "Zamknij",
+    "request-repl": "Wyślij CTRL-C aby wystartować REPL",
+    "request-serial": "Wyślij CTRL-D aby zresetować",
+    "flashing-text": "Instalowanie na micro:bit",
+    "download": "Download hex"
+  },
+  "load": {
+    "show-files": "Pokaż pliki",
+    "load-title": "Załaduj/Zapisz",
+    "instructions": "Przeciągnij i upuść plik .hex lub .py tutaj, aby go otworzyć.",
+    "submit": "Załaduj",
+    "save-title": "Zapisz",
+    "save-hex": "Pobierz hex",
+    "save-py": "Pobierz Scrypt Python",
+    "fs-title": "Pliki",
+    "toggle-file": "Lub wyszukaj plik.",
+    "fs-add-file": "Dodaj Plik",
+    "hide-files": "Ukryj pliki",
+    "td-filename": "Nazwa pliku",
+    "td-size": "Rozmiar",
+    "fs-space-free": "wolne",
+    "remove-but": "Usuń",
+    "save-but": "Zapisz",
+    "files-title": "Pliki projektu",
+    "help-button": "Pliki pomocy",
+    "file-help-text": "Obszar Pliki projektu pokazuje pliki zawarte w programie i pozwala dodawać lub usuwać zewnętrzne moduły Pythona i inne pliki. Dowiedz się więcej w ",
+    "help-link": "Dokumentacja pomocy edytora Python",
+    "invalid-file-title": "Nieprawidłowy typ pliku",
+    "mpy-warning": "Ta wersja edytora Python obecnie nie obsługuje dodawania plików .mpy.",
+    "extension-warning": "Edytor Python może jedynie załadować pliki z rozszerzeniem .hex lub .py."
+  },
+  "languages": {
+    "en": {
+      "title": "Angielski"
+    },
+    "es": {
+      "title": "Hiszpański"
+    },
+    "pl": {
+      "title": "Polski"
+    }
+  },
+  "static-strings": {
+    "buttons": {
+      "command-download": {
+        "title": "Pobierz plik hex do flashowania na micro:bit",
+        "label": "Pobierz"
       },
-      'support-link': {
-         'title': 'Znajć pomoc dla twojego micro:bit w nowym oknie',
-         'label': 'Wsparcie'
+      "command-disconnect": {
+        "title": "Odłącz od swojego micro:bit",
+        "label": "Odłącz"
       },
-      'help-link': {
-         'title': 'Otwórz pomoc dla tego edytora w nowym oknie',
-         'label': 'Pomoc'
+      "command-flash": {
+        "title": "Załaduj swój projekt bezpośrednio na micro:bit",
+        "label": "Zainstaluj"
       },
-      'issues-link': {
-         'title': 'Zobacz otwarte problemy dla edytora Python w GitHub',
-         'label': 'Lista problemow'
+      "command-files": {
+        "title": "Załaduj/Zapisz pliki",
+        "label": "Załaduj/Zapisz"
       },
-      'feedback-link': {
-         'title':'Prześlij nam swoją opinię o edytorze',
-         'label':'Wyślij opinię'
+      "command-serial": {
+        "title": "Podłącz swój micro:bit przez serial",
+        "label": "Otwórz Serial",
+        "title-close": "Zamknij połączenie serial i wróć do edytora",
+        "label-close": "Zamknij Serial"
       },
-      'editor-ver': 'Wersja Edytora:',
-      'mp-ver': 'Wersja MicroPythona:'
-   },
-   'confirms': {
-      'quit': 'Niektóre z twoich zmian nie były zapisanę. Chcesz i tak zamknąć?',
-      'blocks': 'Masz niezapisany kod. Użycie bloków zmieni twój kod. Możesz stracić zmiany. Czy chcesz kontynuować?',
-      'replace_main': 'Dodanie pliku main.py zastąpi kod w edytorze!',
-      'replace_file': 'Czy chcesz zastąpić plik "{{file_name}}"?',
-      'replace_module': 'Czy chcesz zastąpić moduł "{{module_name}}"?',
-      'download_py_multiple': 'Ten projekt zawiera wiele plików, które nie zostaną zapisane w tym formacie. \nZalecamy pobranie pliku Hex zawierającego cały projekt i załadowanie go z powrotem do edytora. \n\n Czy na pewno chcesz pobrać {{file_name}}?'
-   },
-   'code': {
-      'start': '# Dodaj twój python kod tutaj.' +
-         "from microbit import *\n\n\n" +
-         "while True:\n" +
-         "    display.scroll('Hello, World!')\n" +
-         "    display.show(Image.HEART)\n" +
-         "    sleep(2000)\n"
-   },
-   'webusb': {
-      'err': {
-         'update-req': 'Musisz <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.',
-         'clear-connect': 'Inny proces jest podłączony do tego urządzenia.<br> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.',
-         'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
-         'partial-flashing-disable': 'If the errors persist, try disabling Quick Flash in the beta options.',
-         'device-disconnected': 'Device disconnected.',
-         'unavailable': 'With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.',
-         'find-more': 'Find Out More'
+      "command-connect": {
+        "title": "Podłącz do swojego micro: bit",
+        "label": "Podłącz"
       },
-      'close': 'Zamknij',
-      'request-repl': 'Send CTRL-C for REPL',
-      'request-serial': 'Send CTRL-D to reset',
-      'flashing-text': 'Instalowanie na micro:bit',
-      'download': 'Download hex'
-   },
-   'load': {
-      'save-hex': 'Pobierz hex',
-      'show-files': 'Pokaż pliki',
-      'load-title': 'Załaduj/Zapisz',
-      'instructions': 'Przeciągnij i upuść plik .hex lub .py tutaj, aby go otworzyć.',
-      'submit': 'Załaduj',
-      'save-title': 'Save',
-      'save-py': 'Pobierz Scrypt Python',
-      'fs-title': 'Pliki',
-      'toggle-file': 'Lub wyszukaj plik.',
-      'fs-add-file': 'Dodaj Plik',
-      'hide-files': 'Ukryj pliki',
-      'td-filename': 'Nazwa pliku',
-      'td-size': 'Rozmiar',
-      'fs-space-free': 'wolne',
-      'remove-but': 'Usuń',
-      'save-but': 'Zapisz',
-      'files-title' : 'Project Files',
-      'help-button' : 'Files Help',
-      'file-help-text' : 'The Project Files area shows you the files included in your program and lets you add or remove external python modules and other files. Find out more in the ',
-      'help-link' : 'Python Editor help documentation',
-      'invalid-file-title' : 'Invalid File Type',
-      'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
-      'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
-   },
-   'languages': {
-      'en': {
-        'title': 'Angielski'
+      "command-options": {
+        "title": "Zmień opcje editora",
+        "label": "Opcje"
       },
-      'es': {
-        'title': 'Hiszpański'
+      "command-blockly": {
+        "title": "Stwórz kod używając blockly",
+        "label": "Blockly"
       },
-      'pl': {
-        'title': 'Polski'
+      "command-snippet": {
+        "title": "Kliknij aby wybrać fragment (skrót kodu)",
+        "label": "Fragmenty"
+      },
+      "command-help": {
+        "title": "Odkryj pomocne strony",
+        "label": "Pomoc"
+      },
+      "command-language": {
+        "title": "Wybierz Język",
+        "label": "Język"
+      },
+      "command-share": {
+        "title": "Utwórz link, aby udostępnić swój kod",
+        "label": "Udostępnić"
+      },
+      "command-zoom-in": {
+        "title": "Powiększ"
+      },
+      "command-zoom-out": {
+        "title": "Pomniejsz"
       }
-   },
-   'static-strings': {
-      'buttons': {
-         'command-download': {
-            'title': 'Pobierz plik hex do flashowania na micro:bit',
-            'label': 'Pobierz'
-         },
-         'command-disconnect': {
-            'title': 'Odłącz od swojego micro:bit',
-            'label': 'Odłącz'
-         },
-         'command-flash': {
-            'title': 'Załaduj swój projekt bezpośrednio na micro:bit',
-            'label': 'Zainstaluj'
-         },
-         'command-files': {
-            'title': 'Załaduj/Zapisz pliki',
-            'label': 'Załaduj/Zapisz'
-         },
-         'command-serial': {
-            'title': 'Podłącz swój micro:bit przez serial',
-            'label': 'Otwórz Serial',
-            'title-close': 'Zamknij połączenie serial i wróć do edytora',
-            'label-close': 'Zamknij Serial'
-         },
-         'command-connect': {
-            'title': 'Podłącz do swojego micro: bit',
-            'label': 'Podłącz'
-         },
-         'command-options': {
-            'title': 'Zmień opcje editora',
-            'label': 'Opcje'
-         },
-         'command-blockly': {
-            'title': 'Stwórz kod używając blockly',
-            'label': 'Blockly'
-         },
-         'command-snippet': {
-            'title': 'Kliknij aby wybrać fragment (skrót kodu)',
-            'label': 'Fragmenty'
-         },
-         'command-help': {
-            'title': 'Odkryj pomocne strony',
-            'label': 'Pomoc'
-         },
-         'command-language': {
-            'title': 'Wybierz Język',
-            'label': 'Język'
-         },
-         'command-share': {
-            'title': 'Utwórz link, aby udostępnić swój kod',
-            'label': 'Udostępnić'
-         },
-         'command-zoom-in': {
-            'title': 'Powiększ'
-         },
-         'command-zoom-out': {
-            'title': 'Pomniejsz'
-         }
-      },
-      'script-name': {
-         'label': 'Nazwa Skryptu'
-      },
-      'options-dropdown': {
-         'autocomplete': 'Autocomplete',
-         'on-enter': 'Na Enter:',
-         'partial-flashing': 'Quick Flash',
-         'lang-select': 'Wybierz Język:'
-      },
-      'text-editor': {
-         'aria-label': 'Edytor tekstu'
-       }
-   }
+    },
+    "script-name": {
+      "label": "Nazwa Skryptu"
+    },
+    "options-dropdown": {
+      "autocomplete": "Autouzupełnianie",
+      "on-enter": "Na Enter:",
+      "partial-flashing": "Quick Flash",
+      "lang-select": "Wybierz Język:"
+    },
+    "text-editor": {
+      "aria-label": "Edytor tekstu"
+    }
+  }
 };
