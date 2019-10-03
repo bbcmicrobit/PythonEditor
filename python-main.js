@@ -1197,9 +1197,11 @@ function web_editor(config) {
 
         var p = Promise.resolve();
         if (usePartialFlashing) {
+            console.log("Connecting: Using Quick Flash");
             p = PartialFlashing.connectDapAsync();
         }
         else {
+            console.log("Connecting: Using Full Flash");
             p = navigator.usb.requestDevice({
                 filters: [{vendorId: 0x0d28, productId: 0x0204}]
             }).then(function(device) {
@@ -1214,6 +1216,9 @@ function web_editor(config) {
 
                 // Connect to board
                 return window.daplink.connect();
+            })
+            .then(() => {
+                console.log("Connection Complete");
             });
         }
 
@@ -1236,6 +1241,10 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
+        // Log error to console for feedback
+        console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
+        console.log(err);
+
         // Disconnect
         doDisconnect();
 
@@ -1328,16 +1337,23 @@ function web_editor(config) {
 
         if (usePartialFlashing) {
             if (window.dapwrapper) {
+                console.log("Disconnecting: Using Quick Flash");
                 p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
                     .then(function() { window.dapwrapper.disconnectAsync() } );
             }
         }
         else {
             if (window.daplink) {
+                console.log("Disconnecting: Using Full Flash");
                 p = p.then(function() { window.daplink.stopSerialRead() } )
                     .then(function() { window.daplink.disconnect() } );
             }
         }
+
+        p.finally(() => {
+            console.log("Disconnection Complete");
+        });
+
         return p;
     }
 
@@ -1391,6 +1407,7 @@ function web_editor(config) {
         }
         else {
             // Push binary to board
+            console.log("Starting Full Flash");
             p = window.daplink.connect()
                 .then(function() {
                     // Event to monitor flashing progress
@@ -1419,6 +1436,13 @@ function web_editor(config) {
             var timeTaken = (new Date().getTime() - startTime);
             var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+
+            console.log("Flash complete");
+        })
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
             // Close overview
             setTimeout(function(){
@@ -1433,6 +1457,7 @@ function web_editor(config) {
     }
 
     function doSerial() {
+        console.log("Setting Up Serial Terminal");
         // Hide terminal
         var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
