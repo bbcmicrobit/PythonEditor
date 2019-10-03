@@ -695,6 +695,7 @@ let PartialFlashing = {
         } catch (err) {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
+                PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
                 return this.fullFlashAsync(dapwrapper, image);
             }
             return Promise.reject(err);
