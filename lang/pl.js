@@ -67,15 +67,6 @@ var language = {
          'title':'Prześlij nam swoją opinię o edytorze',
          'label':'Wyślij opinię'
       },
-      'en': {
-         'title': 'Język Angielski'
-       },
-       'es': {
-         'title': 'Hiszpański'
-       },
-       'pl': {
-         'title': 'Polskie'
-       },
       'editor-ver': 'Wersja Edytora:',
       'mp-ver': 'Wersja MicroPythona:'
    },
@@ -135,6 +126,17 @@ var language = {
       'invalid-file-title' : 'Invalid File Type',
       'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
       'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
+   },
+   'languages': {
+      'en': {
+        'title': 'English'
+      },
+      'es': {
+        'title': 'Spanish'
+      },
+      'pl': {
+        'title': 'Polish'
+      }
    },
    'static-strings': {
       'buttons': {

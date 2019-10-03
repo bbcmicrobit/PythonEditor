@@ -67,15 +67,6 @@ var language = {
       'title':'Envíanos tus comentarios sobre el editor de Python',
       'label':'Enviar Comentarios'
     },
-    'en': {
-      'title': 'Inglés'
-    },
-    'es': {
-      'title': 'Español'
-    },
-    'pl': {
-      'title': 'Polaco'
-    },
     'editor-ver': 'Versión del Editor:',
     'mp-ver': 'Versión de MicroPython:'
   },
@@ -136,6 +127,17 @@ var language = {
     'invalid-file-title' : 'Invalid File Type',
     'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
     'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
+  },
+  'languages': {
+    'en': {
+      'title': 'English'
+    },
+    'es': {
+      'title': 'Spanish'
+    },
+    'pl': {
+      'title': 'Polish'
+    }
   },
   'static-strings': {
     'buttons': {

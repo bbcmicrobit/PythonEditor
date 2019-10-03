@@ -362,6 +362,14 @@ function translations() {
             $('#' + object).text(helpStrings[object]["label"]);
             $('#' + object).attr("title",helpStrings[object]["title"]);
         }
+        var languages = language['languages'];
+        for (var object in languages) {
+            if (object.match(/ver/)) {
+                $('#' + object).text(languages[object]);
+                continue;
+            }
+            $('#' + object).attr("title",languages[object]["title"]);
+        }
     }
 
     return {
