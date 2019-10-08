@@ -1245,6 +1245,12 @@ function web_editor(config) {
         console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
 
+        // If there was an error clear dapwrapper
+        if(usePartialFlashing) {
+            window.dapwrapper = null;
+            window.previousDapWrapper = null;
+        }
+
         // Disconnect
         doDisconnect();
 
