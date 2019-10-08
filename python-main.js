@@ -1455,16 +1455,17 @@ function web_editor(config) {
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
 
             console.log("Flash complete");
+            
+            // Close overview
+            setTimeout(function(){
+                $("#flashing-overlay-container").hide();
+            }, 500);
         })
         .catch(webusbErrorHandler)
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
-            // Close overview
-            setTimeout(function(){
-                $("#flashing-overlay-container").hide();
-            }, 500);
         })
         .catch(webusbErrorHandler)
         .finally(function() {
