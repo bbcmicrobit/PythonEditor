@@ -1,0 +1,13 @@
+"project_identifier" : "microbitorg"
+"api_key_env" : CROWDIN_API_KEY
+"base_path" : "./lang"
+"preserve_hierarchy": true
+
+files: [
+ {
+  "source" : "en.js",
+  "dest" : "new/apps/python-editor/en.json",
+  "type" : "json",
+  "translation" : "apps/python-editor/%two_letters_code%.js"
+ }
+] 
