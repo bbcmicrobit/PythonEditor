@@ -49,7 +49,33 @@ At present, changes to translations will not be backported to legacy stable rele
 
 ## 3. Translation infrastructure CI and automation
 
-We are currently using a manually triggered script to convert the JS object to JSON and upload the strings to Crowdin. There is another script to do this in reverse. This is currently manageable as we are only translating one file. It may be the case that we add further configuration to do this in [CI.](https://en.wikipedia.org/wiki/Continuous_integration)
+We are currently using a manually triggered script to convert the JS object to JSON via Crowdin. There is another script to do this in reverse. This is currently manageable as we are only translating one file. It may be the case that we add further configuration to do this in [CI.](https://en.wikipedia.org/wiki/Continuous_integration).
+
+### 3.1 Updating translations
+This process requires:
+- the [Crowdin CLI](https://support.crowdin.com/cli-tool/) installed locally in order to run
+- 'Manager' level permissions in the microbitorg Crowdin project.
+- API Key from https://crowdin.com/project/microbitorg/settings#api
+
+The `lang` folder in the Python Editor contains the source `en.js` and any other translated files identified by their two-letter country code. The `crowdin.yml` file is configured to export/import translations from the `apps/python-editor/` folder in our microbitorg project https://crowdin.com/project/microbitorg/settings#files
+
+The Crowdin project contains a pre-processor that handles the conversion from js > JSON and back again.
+
+Our process is to round trip the translation to and from Crowdin as the **last step prior to merging a PR** that contains translated text.
+
+To export/import translations from Crowdin:
+
+1. Save the API key as a variable to be used by the Crowdin CLI
+
+`export CROWDIN_API_KEY=<API Key from Crowdin>`
+
+2. Push an update to `en.js`
+
+`crowdin upload sources`
+
+3. Pull translated updates eg to `lang/es.js` for Spanish
+
+`crowdin download -l es-ES` where es-ES is the country code
 
 ## 4. Help
 
