@@ -118,7 +118,15 @@ var language = {
     'td-size': 'Tamaño',
     'fs-space-free':'disponible',
     'remove-but' : 'Borrar',
-    'save-but': 'Guardar'
+    'files-title' : 'Project Files',
+    'save-but' : 'Guardar',
+    'files-title' : 'Project Files',
+    'help-button' : 'Files Help',
+    'file-help-text' : 'The Project Files area shows you the files included in your program and lets you add or remove external python modules and other files. Find out more in the ',
+    'help-link' : 'Python Editor help documentation',
+    'invalid-file-title' : 'Invalid File Type',
+    'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
+    'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
   },
   'static-strings': {
     'buttons': {

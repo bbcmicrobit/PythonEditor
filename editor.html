@@ -78,7 +78,7 @@ Nicholas and Damien.
         </script>
         <script type="application/javascript">
             // VERSION INFORMATION
-            EDITOR_VERSION = "2.0.0-beta.3";
+            EDITOR_VERSION = "2.0.0-beta.4";
             UPY_VERSION = "1.0.1";
         </script>
         <script id="files-template" type="x-tmpl-mustache">
@@ -87,12 +87,18 @@ Nicholas and Damien.
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
                 <p>{{ instructions }}<br><a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
             </div>
-            <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-title }}</strong></h2>
+            <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-but }}</strong></h2>
             <div class="save-buttons-container">
                 <button type="button" class="action save-button py" id="save-py" title="{{ save-py }}"><i class="fa fa-download"></i> {{ save-py}}</button>
                 <button type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
             </div>
-            <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ program-title }} {{ fs-title }}</strong></h2>
+            <div id="addFile">
+              <div id="addFileHeader">
+                <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
+              </div>
+              <div id="addFileHelp"><a id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
+            </div>
+            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank">{{ help-link }}</a>.</div>
             <div class="expandable">
                 <div class="expandable-always-visible">
                     <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
@@ -341,8 +347,8 @@ Nicholas and Damien.
         </div>
         <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
           <div id="modal-msg-overlay" class="modal-overlay">
-            <a class="vex-close" id="modal-msg-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
-            <div>
+            <a class="vex-close modal-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
+            <div id="modal-msg-text">
               <h2 id="modal-msg-title"></h2>
               <div id="modal-msg-content"></div>
               <div id="modal-msg-links" class="modal-msg-links"></div>

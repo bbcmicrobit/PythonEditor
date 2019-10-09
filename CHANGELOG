@@ -1,3 +1,16 @@
+2.0.0-beta.4
+------------
+* Term "Partial Flashing" renamed to "Quick Flashing" (#233)
+* Add support for an iframe messaging protocol (#246)
+* Edit Snippets modal wording and translate table header (#236)
+* Disable autocomplete on enter by default (#235) (current default is tab key)
+* Update files and modules user docs (#243)
+* Highlight the current language in the language menu (#242)
+* Add more info about the filesystem in the Load/Save modal (#241)
+* WebUSB flashing fixes (#239) (#237) (#248)
+* Top buttons are now scrollable on small (mobile) resolutions (#232)
+* Fix rendering of the WebUSB modal in IE10 (#238)
+
 2.0.0-beta.3
 ------------
 * Added WebUSB 'Quick Flash' using partial flashing (#217) (#222) (#224) (#225) (#227) (#228) (#229)

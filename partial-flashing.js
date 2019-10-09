@@ -38,8 +38,7 @@
 let PartialFlashingUtils = {
     pageSize: 1024,
     numPages: 256,
-    log: function() {},
-    // log: console.log,
+    log: console.log,
 
     // The Control/Status Word register is used to configure and control transfers through the APB interface.
     // This is drawn from https://github.com/mmoskal/dapjs/blob/a32f11f54e9e76a9c61896ddd425c1cb1a29c143/src/dap/constants.ts#L28
@@ -52,6 +51,12 @@ let PartialFlashingUtils = {
         SP: 13,
         LR: 14,
         PC: 15
+    },
+
+    // FICR Registers
+    FICR: {
+        CODEPAGESIZE: 0x10000000 | 0x10,
+        CODESIZE:     0x10000000 | 0x14,
     },
 
     read32FromUInt8Array: function(data, i) {
@@ -485,14 +490,19 @@ let PartialFlashing = {
         return Promise.resolve()
             .then(() => {
                 if (window.previousDapWrapper) {
-                    return window.previousDapWrapper.disconnectAsync()
-                        .finally(() => {
-                                window.previousDapWrapper = null;
-                            });
+                    return window.previousDapWrapper.disconnectAsync();
                 }
                 return Promise.resolve();
             })
-            .then(() => navigator.usb.requestDevice({ filters: [{vendorId: 0x0d28, productId: 0x0204}] }))
+            .then(() => {
+                if(window.previousDapWrapper) {
+                    if(window.previousDapWrapper.device) {
+                        return window.previousDapWrapper.device;
+                    }
+                }
+
+                return navigator.usb.requestDevice({ filters: [{vendorId: 0x0d28, productId: 0x0204}] });
+            })
             .then(device => {
                 let w = new DAPWrapper(device);
                 window.previousDapWrapper = w;
@@ -643,6 +653,20 @@ let PartialFlashing = {
             .then(w => {
                 window.dapwrapper = w;
                 PartialFlashingUtils.log("Connection Complete");
+            })
+            .then(() => {
+                return dapwrapper.cortexM.readMem32(PartialFlashingUtils.FICR.CODEPAGESIZE);
+            })
+            .then((pageSize) => {
+                PartialFlashingUtils.pageSize = pageSize;
+
+                return dapwrapper.cortexM.readMem32(PartialFlashingUtils.FICR.CODESIZE);
+            })
+            .then((numPages) => {
+                PartialFlashingUtils.numPages = numPages;
+            })
+            .then(() => {
+                return dapwrapper.disconnectAsync();
             });
     },
 
@@ -674,11 +698,15 @@ let PartialFlashing = {
             .then(() => {
                 PartialFlashingUtils.log("Begin Flashing");
                 return this.partialFlashAsync(dapwrapper, image, updateProgress);
+            })
+            .finally(() => {
+                return dapwrapper.disconnectAsync();
             });
             return ret;
         } catch (err) {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
+                PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
                 return this.fullFlashAsync(dapwrapper, image);
             }
             return Promise.reject(err);
