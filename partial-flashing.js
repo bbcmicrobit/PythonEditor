@@ -490,14 +490,19 @@ let PartialFlashing = {
         return Promise.resolve()
             .then(() => {
                 if (window.previousDapWrapper) {
-                    return window.previousDapWrapper.disconnectAsync()
-                        .finally(() => {
-                                window.previousDapWrapper = null;
-                            });
+                    return window.previousDapWrapper.disconnectAsync();
                 }
                 return Promise.resolve();
             })
-            .then(() => navigator.usb.requestDevice({ filters: [{vendorId: 0x0d28, productId: 0x0204}] }))
+            .then(() => {
+                if(window.previousDapWrapper) {
+                    if(window.previousDapWrapper.device) {
+                        return window.previousDapWrapper.device;
+                    }
+                }
+
+                return navigator.usb.requestDevice({ filters: [{vendorId: 0x0d28, productId: 0x0204}] });
+            })
             .then(device => {
                 let w = new DAPWrapper(device);
                 window.previousDapWrapper = w;
@@ -659,6 +664,9 @@ let PartialFlashing = {
             })
             .then((numPages) => {
                 PartialFlashingUtils.numPages = numPages;
+            })
+            .then(() => {
+                return dapwrapper.disconnectAsync();
             });
     },
 
@@ -690,6 +698,9 @@ let PartialFlashing = {
             .then(() => {
                 PartialFlashingUtils.log("Begin Flashing");
                 return this.partialFlashAsync(dapwrapper, image, updateProgress);
+            })
+            .finally(() => {
+                return dapwrapper.disconnectAsync();
             });
             return ret;
         } catch (err) {
