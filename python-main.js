@@ -1191,7 +1191,18 @@ function web_editor(config) {
         webusbErrorHandler(error);
     }
 
+    function clearDapWrapper(event) {
+        if(window.dapwrapper || window.previousDapWrapper) {
+            window.dapwrapper = null;
+            window.previousDapWrapper = null;
+        }
+    }
+
     function doConnect(serial) {
+        // Device disconnect listener
+        // Clears dapwrapper
+        navigator.usb.addEventListener('disconnect', clearDapWrapper);
+
         // Show error on WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', showDisconnectError);
 
