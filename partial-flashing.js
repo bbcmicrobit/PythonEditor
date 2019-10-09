@@ -490,10 +490,7 @@ let PartialFlashing = {
         return Promise.resolve()
             .then(() => {
                 if (window.previousDapWrapper) {
-                    return window.previousDapWrapper.disconnectAsync()
-                        .finally(() => {
-                                // window.previousDapWrapper = null;
-                            });
+                    return window.previousDapWrapper.disconnectAsync();
                 }
                 return Promise.resolve();
             })
