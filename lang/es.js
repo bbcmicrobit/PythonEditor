@@ -128,6 +128,17 @@ var language = {
     'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
     'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
   },
+  'languages': {
+    'en': {
+      'title': 'Inglés'
+    },
+    'es': {
+      'title': 'Español'
+    },
+    'pl': {
+      'title': 'Polaco'
+    }
+  },
   'static-strings': {
     'buttons': {
       'command-download': {

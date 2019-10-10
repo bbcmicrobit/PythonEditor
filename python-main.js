@@ -355,12 +355,20 @@ function translations() {
         }
         var helpStrings = language['help'];
         for (var object in helpStrings) {
-            if (object.match(/ver/)) {
-                $('#' + object).text(helpStrings[object]);
-                continue;
+            if (helpStrings.hasOwnProperty(object)) {
+                if (object.match(/ver/)) {
+                    $('#' + object).text(helpStrings[object]);
+                    continue;
+                }
+                $('#' + object).text(helpStrings[object]['label']);
+                $('#' + object).attr('title',helpStrings[object]['title']);
             }
-            $('#' + object).text(helpStrings[object]["label"]);
-            $('#' + object).attr("title",helpStrings[object]["title"]);
+        }
+        var languages = language['languages'];
+        for (var object in languages) {
+            if (languages.hasOwnProperty(object)) {
+                $('#' + object).attr('title',languages[object]['title']);
+            }
         }
     }
 
@@ -472,7 +480,7 @@ function web_editor(config) {
         TRANSLATIONS.updateLang(lang, function(translations) {
             config.translate = translations;
             document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
-            $('ul.tree > li > a').removeClass('is-selected');
+            $('ul.tree > li > span > a').removeClass('is-selected');
             $('#'+lang).addClass('is-selected'); 
         });
     }
