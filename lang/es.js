@@ -130,13 +130,13 @@ var language = {
   },
   'languages': {
     'en': {
-      'title': 'English'
+      'title': 'Inglés'
     },
     'es': {
-      'title': 'Spanish'
+      'title': 'Español'
     },
     'pl': {
-      'title': 'Polish'
+      'title': 'Polaco'
     }
   },
   'static-strings': {
