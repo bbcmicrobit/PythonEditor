@@ -355,20 +355,20 @@ function translations() {
         }
         var helpStrings = language['help'];
         for (var object in helpStrings) {
-            if (object.match(/ver/)) {
-                $('#' + object).text(helpStrings[object]);
-                continue;
+            if (helpStrings.hasOwnProperty(object)) {
+                if (object.match(/ver/)) {
+                    $('#' + object).text(helpStrings[object]);
+                    continue;
+                }
+                $('#' + object).text(helpStrings[object]['label']);
+                $('#' + object).attr('title',helpStrings[object]['title']);
             }
-            $('#' + object).text(helpStrings[object]["label"]);
-            $('#' + object).attr("title",helpStrings[object]["title"]);
         }
         var languages = language['languages'];
         for (var object in languages) {
-            if (object.match(/ver/)) {
-                $('#' + object).text(languages[object]);
-                continue;
+            if (languages.hasOwnProperty(object)) {
+                $('#' + object).attr('title',languages[object]['title']);
             }
-            $('#' + object).attr("title",languages[object]["title"]);
         }
     }
 
