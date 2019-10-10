@@ -1309,6 +1309,9 @@ function web_editor(config) {
                             ?  ""
                             : '<a href="#" id="flashing-overlay-download">' +
                               config["translate"]["webusb"]["download"] + 
+                              '</a> | ' +
+                              '<a href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot">' +
+                              config["translate"]["webusb"]["troubleshoot"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
                     config["translate"]["webusb"]["close"] +

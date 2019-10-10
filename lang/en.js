@@ -96,6 +96,7 @@ var language = {
       'unavailable': 'With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.',
       'find-more': 'Find Out More'
     },
+    'troubleshoot': 'Troubleshoot',
     'close': 'Close',
     'request-repl': 'Send CTRL-C for REPL',
     'request-serial': 'Send CTRL-D to reset',
