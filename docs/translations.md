@@ -41,8 +41,7 @@ Once the string freeze is in effect, the translation files in Github and Crowdin
 ### 2.2 Stable releases and backports
 There two main stable release branches of the editor can be found at:
 
-[python.microbit.org](http://python.microbit.org)  - which contains available languages that have been translated ([see 2.3](https://paper.dropbox.com/doc/Python-Editor-Translation-Release-Strategy-DRAFT--AkD8w7FV~luvLTduPPtgQXZlAg-51mKmhhctvRyNxmN38aZ7#:h2=2.3-Available-languages))
-
+[python.microbit.org](http://python.microbit.org)  - which contains available languages that have been translated.
 [python.microbit.org/v/beta](http://python.microbit.org/v/beta) - which contains available languages that have been translated and any proposed available languages. It may be the case that the beta editor is updated with new languages and strings more often than the live editor as we test out new languages.
 
 At present, changes to translations will not be backported to legacy stable release branches, for example python.microbit.org/v/0. Doing so would require maintaining wholly separate copies of each set of translations and massively increases the burden on translators. Previous releases will have translations frozen at the time they are released.
@@ -57,7 +56,7 @@ This process requires:
 - 'Manager' level permissions in the microbitorg Crowdin project.
 - API Key from https://crowdin.com/project/microbitorg/settings#api
 
-The `lang` folder in the Python Editor contains the source `en.js` and any other translated files identified by their two-letter country code. The `crowdin.yml` file is configured to export/import translations from the `apps/python-editor/` folder in our microbitorg project https://crowdin.com/project/microbitorg/settings#files
+The `lang` folder in the Python Editor contains the source `en.js` and any other translated files identified by their two-letter country code. The `crowdin.yml` file is configured to export/import translations from the `apps/python-editor/` folder in the `new` branch of our microbitorg project https://crowdin.com/project/microbitorg/settings#files
 
 The Crowdin project contains a pre-processor that handles the conversion from js > JSON and back again.
 
@@ -71,11 +70,11 @@ To export/import translations from Crowdin:
 
 2. Push an update to `en.js`
 
-`crowdin upload sources`
+`crowdin upload sources -b new` where `new` is the branch we are using
 
 3. Pull translated updates eg to `lang/es.js` for Spanish
 
-`crowdin download -l es-ES` where es-ES is the country code
+`crowdin download -l es-ES -b new` where es-ES is the country code
 
 ## 4. Help
 
