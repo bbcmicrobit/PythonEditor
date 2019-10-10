@@ -634,7 +634,18 @@ let PartialFlashing = {
         dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
             $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
         });
-        return dapwrapper.daplink.flash(image);
+        return dapwrapper.transport.open()
+                    .then(() => { return dapwrapper.daplink.flash(image) } )
+                    .then(() => {
+                        // Send event
+                        var details = {
+                                "flash-type": "partial-flash",
+                                "event-type": "info",
+                                "message": "full-flash-successful"
+                        };
+
+                        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+                    } );
     },
 
     // Connect to the micro:bit using WebUSB and setup DAPWrapper.
@@ -707,6 +718,14 @@ let PartialFlashing = {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
                 PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
+                // Send event
+                var details = {
+                        "flash-type": "partial-flash",
+                        "event-type": "error",
+                        "message": "flash-failed" + "/" + "attempting-full-flash"
+                };
+
+                document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
                 return this.fullFlashAsync(dapwrapper, image);
             }
             return Promise.reject(err);

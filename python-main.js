@@ -1243,9 +1243,8 @@ function web_editor(config) {
 
         return p.then(function() {
             // Change button to disconnect
-            $("#command-connect").attr("id", "command-disconnect");
-            $("#command-disconnect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-disconnect"]["label"]);
-            $("#command-disconnect").attr("title", config["translate"]["static-strings"]["buttons"]["command-disconnect"]["title"]);
+            $("#command-connect").hide();
+            $("#command-disconnect").show();
 
             // Change download to flash
             $("#command-download").attr("id", "command-flash");
@@ -1307,10 +1306,10 @@ function web_editor(config) {
                     errorDescription + '</div>' + '<div class="flashing-overlay-buttons"><hr />' +
                     ((err.name === 'device-disconnected' && $("#flashing-overlay-error").html() === "")
                             ?  ""
-                            : '<a href="#" id="flashing-overlay-download">' +
+                            : '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["download"] + 
                               '</a> | ' +
-                              '<a href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot">' +
+                              '<a href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["troubleshoot"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
@@ -1329,7 +1328,13 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
-        var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "error", "message": errorType};
+        // Append error message, replace all special chars with '-', if last char is '-' remove it
+        var details = {
+                "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
+                "event-type": ((err.name == "device-disconnected") ? "info" : "error"), 
+                "message": errorType + "/" + err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()
+        };
+
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
     }
 
@@ -1352,9 +1357,8 @@ function web_editor(config) {
         REPL = null;
 
         // Change button to connect
-        $("#command-disconnect").attr("id", "command-connect");
-        $("#command-connect > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-connect"]["label"]);
-        $("#command-connect").attr("title", config["translate"]["static-strings"]["buttons"]["command-connect"]["title"]);
+        $("#command-disconnect").hide();
+        $("#command-connect").show();
 
         // Change flash to download
         $("#command-flash").attr("id", "command-download");
@@ -1388,9 +1392,6 @@ function web_editor(config) {
     function doFlash() {
         var startTime = new Date().getTime();
         
-        // Listen for unhandled rejections in DAPjs
-        window.addEventListener("unhandledrejection", webusbErrorHandler);
-
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1508,7 +1509,7 @@ function web_editor(config) {
         }
 
         // Check if we need to connect
-        if ($("#command-connect").length){
+        if ($("#command-connect").is(":visible")){
             doConnect(true);
         } else {
             // Change Serial button to close
@@ -1634,11 +1635,10 @@ function web_editor(config) {
         });
         if (navigator.usb) {
             $("#command-connect").click(function () {
-                if ($("#command-connect").length) {
-                    doConnect();
-                } else {
-                    doDisconnect();
-                }
+                doConnect();
+            });
+            $("#command-disconnect").click(function () {
+                doDisconnect();
             }); 
             $("#command-serial").click(function () {
                 doSerial();

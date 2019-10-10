@@ -196,6 +196,16 @@ Nicholas and Damien.
                     </div>
                     <div class="roundlabel">Connect</div>
                 </a>
+                <a href="#" class="roundbutton action" id="command-disconnect"
+                    tabindex="21"
+                    title="Disconnect your micro:bit">
+                    <div class="roundsymbol">
+                        <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="disconnect">
+                            <path d="m 295.37672,362.40336 -41.029,-41.029 0,72.8347 -27.352,0 -0.001,-72.8347 -41.029,41.029 0,-31.911 34.68462,-34.68462 20.02138,-20.02138 54.705,54.706 z m -98.203,-181.9 c 0,9.128 -7.406,16.539 -16.541,16.539 -9.146,0 -16.535,-7.411 -16.535,-16.539 0,-9.131 7.389,-16.548 16.535,-16.548 9.135,0 16.541,7.417 16.541,16.548 z m 121.494,-0.003 c 0,9.129 -7.413,16.542 -16.548,16.542 -9.129,0 -16.537,-7.413 -16.537,-16.542 0,-9.131 7.408,-16.547 16.537,-16.547 9.135,0 16.548,7.416 16.548,16.547 z m -16.544,81.93 -122.554,-0.202 c -45.667,0 -82.284997,-36.553 -82.284997,-81.732 0,-45.179 36.756997,-81.934 81.936997,-81.934 l 122.902,0 c 45.177,0 81.9344,36.755 81.9344,81.934 0,45.179 -36.7574,81.934 -81.9344,81.934 z m 49.164,-81.934 c 0,-27.105 -22.059,-49.164 -49.164,-49.164 l -122.902,0 c -27.107,0 -49.159,22.059 -49.159,49.164 0,27.112 22.052,49.164 49.159,49.164 l 122.902,0 c 27.105,0 49.164,-22.052 49.164,-49.164 z" id="path3342" inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
+                        </svg>
+                    </div>
+                    <div class="roundlabel">Disconnect</div>
+                </a>
                 <a href="#" class="roundbutton action" id="command-files"
                     tabindex="30"
                     title="Load/Save files">
@@ -347,8 +357,8 @@ Nicholas and Damien.
         </div>
         <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
           <div id="modal-msg-overlay" class="modal-overlay">
-            <a class="vex-close modal-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
-            <div id="modal-msg-text">
+            <a class="vex-close" id="modal-msg-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
+            <div>
               <h2 id="modal-msg-title"></h2>
               <div id="modal-msg-content"></div>
               <div id="modal-msg-links" class="modal-msg-links"></div>
