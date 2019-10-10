@@ -397,7 +397,7 @@ Carry out this test in Chrome or a Chrome-powered browser:
 
 
 Test Case: WebUSB not supported message is working
-''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in non-Chrome-based browsers 
 - Click the 'Connect' button .
 - [ ] Confirm the WebUSB not supported message box is displayed.
