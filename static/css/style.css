@@ -1034,3 +1034,12 @@ ul.tree li:last-child:before {
   display:none;
   margin-bottom: 10px;
 }
+
+/* Hide disconnect initially */
+#command-disconnect {
+  display: none;
+}
+
+#command-flash {
+  display: none;
+}

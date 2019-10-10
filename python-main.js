@@ -1247,9 +1247,8 @@ function web_editor(config) {
             $("#command-disconnect").show();
 
             // Change download to flash
-            $("#command-download").attr("id", "command-flash");
-            $("#command-flash > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-flash"]["label"]);
-            $("#command-flash").attr("title", config["translate"]["static-strings"]["buttons"]["command-flash"]["title"]);
+            $("#command-download").hide();
+            $("#command-flash").show();
 
             if (serial) {
                 doSerial();
@@ -1361,9 +1360,8 @@ function web_editor(config) {
         $("#command-connect").show();
 
         // Change flash to download
-        $("#command-flash").attr("id", "command-download");
-        $("#command-download > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-download"]["label"]);
-        $("#command-download").attr("title", config["translate"]["static-strings"]["buttons"]["command-download"]["title"]);
+        $("#command-flash").hide();
+        $("#command-download").show();
 
         var p = Promise.resolve();
 
@@ -1615,11 +1613,10 @@ function web_editor(config) {
     // handling what to do when they're clicked.
     function setupButtons() {
         $("#command-download").click(function () {
-            if ($("#command-download").length) {
-                doDownload();
-            } else {
-                doFlash();
-            }
+            doDownload();
+        });
+        $("#command-flash").click(function () {
+            doFlash();
         });
         $("#command-files").click(function () {
             doFiles();
