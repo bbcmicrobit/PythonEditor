@@ -704,6 +704,15 @@ input:checked + .menu-switch-slider:before {
     border-radius: 15px;
 }
 
+.modal-overlay hr {
+  display: block;
+  width: 60%;
+  border-top: solid #ffde81 1px;
+  border-bottom: none;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
 #modal-msg-title{
   color:#336699;
   font-weight: bold;
