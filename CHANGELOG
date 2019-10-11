@@ -1,3 +1,17 @@
+2.0.0-beta.5
+------------
+* Added new icons for the Download, Flash, Connect and Disconnect buttons (#262) (#264) 
+* Added a warning if the user tries to load incompatible files (#245)
+* Enable WebUSB logging into the console for better error reports (#250)
+* WebUSB now keeps device details between connections (#255)
+* Added troubleshooting links to WebUSB docs and WebUSB error modal. (#251)
+* Added translation documentation, including translation strategy (#234) (#255) (#260)
+* Added initial steps to integrate with Crowdin translations (#247) (#257)
+* Set language links wording to their native language (#249)
+* Updated the manual test procedure to sync with the latest editor updates (#258)
+* Fix USB drag and drop flashing while WebUSB is connected (#255)
+* Improve the style of separators in the WebUSB error modal (#259)
+
 2.0.0-beta.4
 ------------
 * Term "Partial Flashing" renamed to "Quick Flashing" (#233)
