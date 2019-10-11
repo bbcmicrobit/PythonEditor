@@ -6,8 +6,8 @@
 files: [
  {
   "source" : "en.js",
-  "dest" : "new/apps/python-editor/en.json",
+  "dest" : "/apps/python-editor/en.json",
   "type" : "json",
-  "translation" : "apps/python-editor/%two_letters_code%.js"
+  "translation" : "/%two_letters_code%.js"
  }
 ] 
