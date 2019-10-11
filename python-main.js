@@ -1236,12 +1236,19 @@ function web_editor(config) {
                 // Connect to board
                 return window.daplink.connect();
             })
-            .then(() => {
-                console.log("Connection Complete");
+            .then(function() {
+                console.log('Connection Complete');
             });
         }
 
         return p.then(function() {
+            // Dispatch event for listeners
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'connected'
+            }}));
+
             // Change button to disconnect
             $("#command-connect").hide();
             $("#command-disconnect").show();
@@ -1380,8 +1387,8 @@ function web_editor(config) {
             }
         }
 
-        p.finally(() => {
-            console.log("Disconnection Complete");
+        p.finally(function() {
+            console.log('Disconnection Complete');
         });
 
         return p;
