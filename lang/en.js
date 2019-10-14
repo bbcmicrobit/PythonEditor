@@ -205,7 +205,8 @@ var language = {
       'autocomplete': 'Autocomplete',
       'on-enter': 'On Enter',
       'partial-flashing': 'Quick Flash',
-      'lang-select': 'Select Language:'
+      'lang-select': 'Select Language:',
+      'add-language-link':'Add a language'
     },
     'text-editor': {
       'aria-label': 'text editor'
