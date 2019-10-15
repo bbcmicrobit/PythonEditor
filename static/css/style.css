@@ -944,6 +944,7 @@ ul.tree, ul.tree ul {
     margin: 0;
     padding: 0;
     margin-left: 6px;
+    margin-bottom: 6px;
 }
 ul.tree ul {
     margin-left: 16px;
