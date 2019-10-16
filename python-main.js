@@ -1315,7 +1315,7 @@ function web_editor(config) {
                             : '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["download"] + 
                               '</a> | ' +
-                              '<a target="_blank" href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                              '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["troubleshoot"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
