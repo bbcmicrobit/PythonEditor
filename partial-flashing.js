@@ -699,7 +699,6 @@ let PartialFlashing = {
 
             let timeout = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    PartialFlashingUtils.log("Resetting micro:bit timed out");
                     reject('Timeout')
                 }, 1000)
             })
@@ -717,6 +716,7 @@ let PartialFlashing = {
         } catch (err) {
             // Fall back to full flash if attempting to reset times out.
             if (err === "Timeout") {
+                PartialFlashingUtils.log("Resetting micro:bit timed out");
                 PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
                 // Send event
                 var details = {
