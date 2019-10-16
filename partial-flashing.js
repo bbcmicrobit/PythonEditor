@@ -685,8 +685,6 @@ let PartialFlashing = {
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L439
     flashAsync: async function(dapwrapper, image, updateProgress) {
         try {
-            let resetTimeout = null;
-
             let p = Promise.resolve()
                 .then(() => {
                     // Reset micro:bit to ensure interface responds correctly.
@@ -700,40 +698,37 @@ let PartialFlashing = {
                 });
 
             let timeout = new Promise((resolve, reject) => {
-                resetTimeout = setTimeout(() => {
-                    PartialFlashingUtils.log("Resetting micro:bit timed out");
-                    reject('Timeout')
+                setTimeout(() => {
+                    resolve("timeout");
                 }, 1000)
             })
 
             // Use race to timeout the reset.
             let ret = await Promise.race([p, timeout])
-            .then(() => {
-                // Cancel reset timeout
-                clearTimeout(resetTimeout);
+            .then((result) => {
+                if(result === "timeout") {
+                    PartialFlashingUtils.log("Resetting micro:bit timed out");
+                    PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
+                    // Send event
+                    var details = {
+                            "flash-type": "partial-flash",
+                            "event-type": "error",
+                            "message": "flash-failed" + "/" + "attempting-full-flash"
+                    };
 
-                // Start flashing
-                PartialFlashingUtils.log("Begin Flashing");
-                return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                    document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+                    return this.fullFlashAsync(dapwrapper, image);
+                } else {
+                    // Start flashing
+                    PartialFlashingUtils.log("Begin Flashing");
+                    return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                }
             })
             .finally(() => {
                 return dapwrapper.disconnectAsync();
             });
             return ret;
         } catch (err) {
-            // Fall back to full flash if attempting to reset times out.
-            if (err === "Timeout") {
-                PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
-                // Send event
-                var details = {
-                        "flash-type": "partial-flash",
-                        "event-type": "error",
-                        "message": "flash-failed" + "/" + "attempting-full-flash"
-                };
-
-                document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                return this.fullFlashAsync(dapwrapper, image);
-            }
             return Promise.reject(err);
         }
     }
