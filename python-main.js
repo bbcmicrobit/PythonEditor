@@ -1483,7 +1483,7 @@ function web_editor(config) {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
-        })
+        });
     }
 
     function doSerial() {
