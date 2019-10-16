@@ -1484,11 +1484,6 @@ function web_editor(config) {
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
         })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
-        });
     }
 
     function doSerial() {
