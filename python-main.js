@@ -1483,11 +1483,6 @@ function web_editor(config) {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
-        })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
