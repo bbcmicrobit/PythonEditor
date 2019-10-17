@@ -699,35 +699,36 @@ let PartialFlashing = {
 
             let timeout = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    PartialFlashingUtils.log("Resetting micro:bit timed out");
-                    reject('Timeout')
+                    resolve("timeout");
                 }, 1000)
             })
 
             // Use race to timeout the reset.
             let ret = await Promise.race([p, timeout])
-            .then(() => {
-                PartialFlashingUtils.log("Begin Flashing");
-                return this.partialFlashAsync(dapwrapper, image, updateProgress);
+            .then((result) => {
+                if(result === "timeout") {
+                    PartialFlashingUtils.log("Resetting micro:bit timed out");
+                    PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
+                    // Send event
+                    var details = {
+                            "flash-type": "partial-flash",
+                            "event-type": "error",
+                            "message": "flash-failed" + "/" + "attempting-full-flash"
+                    };
+
+                    document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+                    return this.fullFlashAsync(dapwrapper, image);
+                } else {
+                    // Start flashing
+                    PartialFlashingUtils.log("Begin Flashing");
+                    return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                }
             })
             .finally(() => {
                 return dapwrapper.disconnectAsync();
             });
             return ret;
         } catch (err) {
-            // Fall back to full flash if attempting to reset times out.
-            if (err === "Timeout") {
-                PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
-                // Send event
-                var details = {
-                        "flash-type": "partial-flash",
-                        "event-type": "error",
-                        "message": "flash-failed" + "/" + "attempting-full-flash"
-                };
-
-                document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                return this.fullFlashAsync(dapwrapper, image);
-            }
             return Promise.reject(err);
         }
     }

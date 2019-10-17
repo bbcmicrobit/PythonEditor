@@ -1315,7 +1315,7 @@ function web_editor(config) {
                             : '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["download"] + 
                               '</a> | ' +
-                              '<a href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                              '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
                               config["translate"]["webusb"]["troubleshoot"] + 
                               '</a> | ') +
                     '<a href="#" onclick="flashErrorClose()">' +
@@ -1483,11 +1483,6 @@ function web_editor(config) {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
             
-        })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
         });
     }
 
