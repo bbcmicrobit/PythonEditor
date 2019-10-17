@@ -52,6 +52,10 @@ var EDITOR_IFRAME_MESSAGING = Object.freeze({
   }
 })
 
+//Allows for different CSS styling in IE10
+var doc = document.documentElement;
+doc.setAttribute('data-useragent', navigator.userAgent);
+
 /*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
