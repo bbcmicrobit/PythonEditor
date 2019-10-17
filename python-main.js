@@ -1334,6 +1334,7 @@ function web_editor(config) {
                 if (usePartialFlashing) {
                     errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
                 } 
+                break;
             default:
                 // Unexpected error type
                 console.log("Unexpected error type: " + typeof(err) );
