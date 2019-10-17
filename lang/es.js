@@ -49,15 +49,15 @@ var language = {
   "help": {
     "docs-link": {
       "title": "Ver la documentación de MicroPython",
-      "label": "Documentación"
+      "label": "Documentation"
     },
     "support-link": {
       "title": "Obtenga apoyo para su micro:bit en una nueva pestaña",
-      "label": "Soporte"
+      "label": "Ayuda Técnica"
     },
     "help-link": {
       "title": "Abra la ayuda para este editor en una pestaña nueva",
-      "label": "Ayuda"
+      "label": "Help"
     },
     "issues-link": {
       "title": "Ver problemas abiertos para el editor de Python en GitHub",
@@ -106,7 +106,7 @@ var language = {
     "save-title": "Guardar",
     "save-hex": "Descargar Proyecto Hex",
     "save-py": "Descargar Script de Python",
-    "fs-title": "Archivos",
+    "fs-title": "Files",
     "toggle-file": "O busque un archivo.",
     "fs-add-file": "Agregar archivo",
     "hide-files": "Ocultar Archivos",
@@ -160,7 +160,7 @@ var language = {
       },
       "command-connect": {
         "title": "Conéctea al micro:bit",
-        "label": "Conectar"
+        "label": "Connect"
       },
       "command-options": {
         "title": "Cambie la configuración del editor",
@@ -176,7 +176,7 @@ var language = {
       },
       "command-help": {
         "title": "Descubre recursos útiles",
-        "label": "Ayuda"
+        "label": "Help"
       },
       "command-language": {
         "title": "Seleccionar Idioma",
@@ -184,7 +184,7 @@ var language = {
       },
       "command-share": {
         "title": "Crear un enlace para compartir tu script",
-        "label": "Compartir"
+        "label": "Share"
       },
       "command-zoom-in": {
         "title": "Aumentar zoom"
@@ -200,7 +200,8 @@ var language = {
       "autocomplete": "Autocompletar",
       "on-enter": "Al presionar Intro",
       "partial-flashing": "Flasheo Rapido",
-      "lang-select": "Seleccionar Idioma:"
+      "lang-select": "Seleccionar Idioma:",
+      "add-language-link": "Add a language"
     },
     "text-editor": {
       "aria-label": "editor de texto"

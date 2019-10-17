@@ -49,7 +49,7 @@ var language = {
   "help": {
     "docs-link": {
       "title": "Zobacz dokumentację MicroPythona",
-      "label": "Dokumentacja"
+      "label": "Documentation"
     },
     "support-link": {
       "title": "Znajć pomoc dla twojego micro:bit w nowym oknie",
@@ -91,7 +91,7 @@ var language = {
       "unavailable": "Za pomocą WebUSB możesz zaprogramować swój micro:bit i połączyć się z konsolą szeregową bezpośrednio z edytora online.<br/> Niestety, WebUSB nie jest obsługiwany w tej przeglądarce. Do korzystania z WebUSB zalecamy Chrome lub inną przeglądarkę opartą na Chrome.",
       "find-more": "Dowiedz się więcej"
     },
-    "troubleshoot": "Troubleshoot",
+    "troubleshoot": "Rozwiązywanie problemów",
     "close": "Zamknij",
     "request-repl": "Wyślij CTRL-C aby wystartować REPL",
     "request-serial": "Wyślij CTRL-D aby zresetować",
@@ -102,11 +102,11 @@ var language = {
     "show-files": "Pokaż pliki",
     "load-title": "Załaduj/Zapisz",
     "instructions": "Przeciągnij i upuść plik .hex lub .py tutaj, aby go otworzyć.",
-    "submit": "Załaduj",
+    "submit": "Załaduj/Zapisz",
     "save-title": "Zapisz",
     "save-hex": "Pobierz hex",
     "save-py": "Pobierz Scrypt Python",
-    "fs-title": "Pliki",
+    "fs-title": "Files",
     "toggle-file": "Lub wyszukaj plik.",
     "fs-add-file": "Dodaj Plik",
     "hide-files": "Ukryj pliki",
@@ -184,7 +184,7 @@ var language = {
       },
       "command-share": {
         "title": "Utwórz link, aby udostępnić swój kod",
-        "label": "Udostępnić"
+        "label": "Udostępnij"
       },
       "command-zoom-in": {
         "title": "Powiększ"
@@ -200,7 +200,8 @@ var language = {
       "autocomplete": "Autouzupełnianie",
       "on-enter": "Na Enter:",
       "partial-flashing": "Quick Flash",
-      "lang-select": "Wybierz Język:"
+      "lang-select": "Wybierz Język:",
+      "add-language-link": "Add a language"
     },
     "text-editor": {
       "aria-label": "Edytor tekstu"
