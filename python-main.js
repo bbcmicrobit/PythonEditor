@@ -307,7 +307,7 @@ function translations() {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    var validLangs = ['en', 'es', 'pl'];
+    var validLangs = ['en', 'es', 'pl', 'lol'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
@@ -1781,7 +1781,7 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
-    setLanguage(qs.l || 'en');
+    setLanguage(qs.l || 'lol');
     document.addEventListener('DOMContentLoaded', function() {
         // Firmware at the end of the HTML file has to be loaded first
         setupFilesystem();
