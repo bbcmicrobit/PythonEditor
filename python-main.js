@@ -1425,8 +1425,6 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
-        
-
         if (usePartialFlashing) {
             // Push binary to board
             p = dapwrapper.disconnectAsync()
