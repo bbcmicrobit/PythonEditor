@@ -1425,9 +1425,14 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
+        
+
         if (usePartialFlashing) {
             // Push binary to board
-            p = PartialFlashing.connectDapAsync()
+            p = dapwrapper.disconnectAsync()
+                .then(() => {
+                        return PartialFlashing.connectDapAsync();
+                })
                 .then(function() {
                     var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
