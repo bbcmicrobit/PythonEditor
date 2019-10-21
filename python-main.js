@@ -1427,9 +1427,9 @@ function web_editor(config) {
 
         if (usePartialFlashing) {
             // Push binary to board
-            p = dapwrapper.disconnectAsync()
+            p = doDisconnect()
                 .then(() => {
-                        return PartialFlashing.connectDapAsync();
+                        return doConnect();
                 })
                 .then(function() {
                     var output = generateFullHex("bytes");
