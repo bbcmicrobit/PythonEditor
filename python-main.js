@@ -1428,7 +1428,7 @@ function web_editor(config) {
         if (usePartialFlashing) {
             // Push binary to board
             p = doDisconnect()
-                .then(() => {
+                .then(function() {
                         return doConnect();
                 })
                 .then(function() {
