@@ -1269,7 +1269,7 @@ function web_editor(config) {
         console.log("An error occured whilst attempting to use WebUSB.");
         console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
-        console.trace()
+        console.trace();
 
         // If there was an error and quick flash is in use, then clear dapwrapper
         if(usePartialFlashing) {
@@ -1367,7 +1367,8 @@ function web_editor(config) {
                     '<div>' + 
                         '<strong>' + errorTitle + '</strong>' +
                         '<br >' + 
-                            errorDescription + 
+                        errorDescription + 
+                        (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
                     '</div>' + 
                     '<div class="flashing-overlay-buttons">' + 
                         '<hr />' +
@@ -1387,11 +1388,12 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
+        var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase() : "");
         // Append error message, replace all special chars with '-', if last char is '-' remove it
         var details = {
                 "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
                 "event-type": ((err.name == "device-disconnected") ? "info" : "error"), 
-                "message": errorType + "/" + errorTitle.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()
+                "message": errorType + "/" + errorMessage
         };
 
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
