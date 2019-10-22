@@ -1359,6 +1359,7 @@ function web_editor(config) {
             $("#request-repl").hide();
             $("#request-serial").hide();
             $("#editor-container").show();
+            clearInterval(serialWriteLoop);
         }
         $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
         $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
@@ -1418,6 +1419,8 @@ function web_editor(config) {
             else {
                 window.daplink.stopSerialRead();
             }
+
+            clearInterval(serialWriteLoop);
         }
 
         var p = Promise.resolve();
@@ -1537,7 +1540,22 @@ function web_editor(config) {
         }
     }
 
+    var stringBuffer = "";
+    var serialWriteLoop;
+
     function setupHterm() {
+
+        serialWriteLoop = 
+            setInterval(function(){
+                if(stringBuffer != "") {
+                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+                    daplink.stopSerialRead();
+                    daplink.serialWrite(stringBuffer);
+                    daplink.startSerialRead(1);
+                    stringBuffer = "";
+                    } 
+            }, 20);
+
         if (REPL == null) {
             hterm.defaultStorage = new lib.Storage.Memory();
 
@@ -1547,12 +1565,10 @@ function web_editor(config) {
             REPL.onTerminalReady = function() {
                 var io = REPL.io.push();
                 io.onVTKeystroke = function(str) {
-                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    stringBuffer = stringBuffer + str;
                 };
                 io.sendString = function(str) {
-                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    stringBuffer = stringBuffer + str;
                 };
                 io.onTerminalResize = function(columns, rows) {
                 };
@@ -1663,12 +1679,10 @@ function web_editor(config) {
             });
         }
         $("#request-repl").click(function () {
-            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-            daplink.serialWrite("\x03");
+            stringBuffer = stringBuffer + "\x03";
         });
         $("#request-serial").click(function () {
-            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-            daplink.serialWrite("\x04");
+            stringBuffer = stringBuffer + "\x04";
         });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
