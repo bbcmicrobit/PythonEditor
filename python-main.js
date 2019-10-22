@@ -1321,7 +1321,7 @@ function web_editor(config) {
                     errorType = "reconnect-microbit";
                     errorTitle = "WebUSB Error";
                     errorDescription = config["translate"]["webusb"]["err"][errorType];
-                    if (usePartialFlashing) {
+                    if (usePartialFlashing && config.flags.experimental) {
                         errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
                     } 
                 }

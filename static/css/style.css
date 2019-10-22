@@ -714,10 +714,12 @@ input:checked + .menu-switch-slider:before {
 }
 
 .modal-overlay code {
+  margin: 16px 0px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fafafa;
   display: block;
   text-align: left;
-  background: #eee;
-  padding: .5em;
 }
 
 #modal-msg-title{
