@@ -317,6 +317,31 @@ html[data-useragent*='MSIE 10.0'] .roundsymbol {
   background: #FFFFFF;
 }
 
+.svg1 {
+  position: relative;
+  z-index: 101;
+}
+
+.loader {
+  width: 4rem;
+  height: 4rem;
+  border: 6px solid #CCCCCC;
+  position: absolute; 
+  z-index: 100;
+  border-radius: 50%;
+  border-top: 6px solid #FFCC33db;
+  margin: 0.2rem;
+  text-align: center;
+  line-height: 4.4rem;
+  padding: .1em;
+  font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
+  color: #336699;
+  background: #FFFFFF;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  font-size: 2.6rem;
+}
+
 .roundbutton:focus, .roundbutton:active {
   background-image: url("../img/triangle2.svg");
 }
@@ -1017,6 +1042,10 @@ ul.tree li:last-child:before {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#command-connecting {
+  display: none;
 }
 
 #webusb-flashing-complete {
