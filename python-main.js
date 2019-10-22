@@ -1265,6 +1265,10 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
+        // Display error handler modal
+        $("#flashing-overlay-container").css("display", "flex");
+        $("#flashing-info").addClass('hidden');
+
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
         console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
@@ -1348,10 +1352,6 @@ function web_editor(config) {
                 } 
         }
 
-        // Display error handler modal
-        $("#flashing-overlay-container").css("display", "flex");
-        $("#flashing-info").addClass('hidden');
-
         // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
         var showOverlayButtons = "";
         if(err.name !== 'device-disconnected' || $("#flashing-overlay-error").html() !== "") {
@@ -1388,7 +1388,7 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
-        var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase() : "");
+        var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
         // Append error message, replace all special chars with '-', if last char is '-' remove it
         var details = {
                 "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
