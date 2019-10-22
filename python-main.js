@@ -1211,6 +1211,11 @@ function web_editor(config) {
     }
 
     function doConnect(serial) {
+        // Change button to connecting
+        $("#command-connect").hide();
+        $("#command-connecting").show();
+        $("#command-disconnect").hide();
+        
         // Device disconnect listener
         // Clears dapwrapper
         navigator.usb.addEventListener('disconnect', clearDapWrapper);
@@ -1223,7 +1228,7 @@ function web_editor(config) {
             console.log("Connecting: Using Quick Flash");
             p = PartialFlashing.connectDapAsync();
         }
-        else {
+        else {         
             console.log("Connecting: Using Full Flash");
             p = navigator.usb.requestDevice({
                 filters: [{vendorId: 0x0d28, productId: 0x0204}]
@@ -1255,6 +1260,7 @@ function web_editor(config) {
 
             // Change button to disconnect
             $("#command-connect").hide();
+            $("#command-connecting").hide();
             $("#command-disconnect").show();
 
             // Change download to flash
@@ -1272,6 +1278,10 @@ function web_editor(config) {
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
+
+        // Change button to connecting
+        $("#command-connect").show();
+        $("#command-connecting").hide();
 
         // If there was an error clear dapwrapper
         if(usePartialFlashing) {
