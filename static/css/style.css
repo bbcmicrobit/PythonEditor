@@ -292,15 +292,16 @@ html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
 }
 
 @-moz-document url-prefix() { 
-  .roundsymbol {
+  .windowsroundsymbol{
     line-height: 3.7rem;
-  }
-  #small-icons .status-icon {
-    line-height: 2.15rem;
   }
 }
 
 html[data-useragent*='MSIE 10.0'] .roundsymbol {
+  line-height: 3.7rem;
+}
+
+html[data-useragent*='rv:11.0'] .roundsymbol {
   line-height: 3.7rem;
 }
 
