@@ -1279,9 +1279,10 @@ function web_editor(config) {
         console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
 
-        // Change button to connecting
+        // Revert button back to 'connect' state
         $("#command-connect").show();
         $("#command-connecting").hide();
+        $("#command-disconnecting").hide();
 
         // If there was an error clear dapwrapper
         if(usePartialFlashing) {
