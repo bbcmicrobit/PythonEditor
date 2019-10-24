@@ -156,6 +156,9 @@ h2 {
   color: #336699;
   background: #FFFFFF;
 }
+html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
+  line-height: 2.15rem;
+}
 
 #small-icons .holder {
   width: 56px;
@@ -286,6 +289,45 @@ h2 {
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
   color: #336699;
   background: #FFFFFF;
+}
+
+@-moz-document url-prefix() { 
+  .roundsymbol {
+    line-height: 3.7rem;
+  }
+  #small-icons .status-icon {
+    line-height: 2.15rem;
+  }
+}
+
+html[data-useragent*='MSIE 10.0'] .roundsymbol {
+  line-height: 3.7rem;
+}
+
+.svg-connecting {
+  position: relative;
+  z-index: 101;
+}
+
+/*
+ * There is a Chrome bug that clips the circular border when animated.
+ * To overcome it we keep an identical stationary div for background colours
+ * and configure the animated div to have transparent border and background.
+ */
+.loader-background {
+  border: 6px solid #CCCCCC;
+  z-index: 99;
+}
+.loader {
+  border-color: transparent;
+  background-color: transparent;
+  border-top: 6px solid #FFCC33db;
+  position: absolute;
+  top: 1px;
+  z-index: 100;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  -webkit-transform: translate3D(0, 0, 0); /* Somehow this helps with the Chrome bug */
 }
 
 .roundbutton:focus, .roundbutton:active {
@@ -713,6 +755,15 @@ input:checked + .menu-switch-slider:before {
   margin-bottom: 16px;
 }
 
+.modal-overlay code {
+  margin: 16px 0px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  display: block;
+  text-align: left;
+}
+
 #modal-msg-title{
   color:#336699;
   font-weight: bold;
@@ -944,6 +995,7 @@ ul.tree, ul.tree ul {
     margin: 0;
     padding: 0;
     margin-left: 6px;
+    margin-bottom: 6px;
 }
 ul.tree ul {
     margin-left: 16px;
@@ -987,6 +1039,10 @@ ul.tree li:last-child:before {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#command-connecting {
+  display: none;
 }
 
 #webusb-flashing-complete {
