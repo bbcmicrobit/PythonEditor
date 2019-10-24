@@ -156,8 +156,13 @@ h2 {
   color: #336699;
   background: #FFFFFF;
 }
+
 html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   line-height: 2.15rem;
+}
+
+#small-icons .win-status-icon{
+  line-height: 2.2rem;
 }
 
 #small-icons .holder {
@@ -289,6 +294,10 @@ html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
   color: #336699;
   background: #FFFFFF;
+}
+
+.winroundsymbol {
+  line-height: 3.7rem;
 }
 
 .svg-connecting {

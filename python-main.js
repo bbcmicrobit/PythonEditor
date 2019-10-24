@@ -1630,8 +1630,8 @@ function web_editor(config) {
     // handling what to do when they're clicked.
     function setupButtons() {
         if(navigator.platform.match('Win') !== null){
-            $(".roundsymbol").css("line-height","3.7rem");
-            $("#small-icons .status-icon").css("line-height","2.2rem");
+            $(".roundsymbol").addClass("winroundsymbol");
+            $("#small-icons .status-icon").addClass("win-status-icon");
         }
         $("#command-download").click(function () {
             doDownload();
