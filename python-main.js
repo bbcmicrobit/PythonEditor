@@ -934,7 +934,16 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
-
+    // Pass focus to first actionable element in modal
+    function focusModal() {
+        var dialog = document.querySelector('.vex-content', '.modal-overlay');
+        var focusableEls = dialog.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
+        $(focusableEls).each(function(){
+            $(this).attr('tabindex', '0'); 
+        });
+        focusableEls[0].focus();
+    }
+    
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -944,6 +953,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
+                focusModal();
                 $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
                 document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
@@ -1125,6 +1135,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
+                focusModal();
                 $(vexContent).find('.snippet-selection').click(function(e){
                     var snippet_name = $(this).find('.snippet-name').text();
                     EDITOR.triggerSnippet(snippet_name);
@@ -1646,7 +1657,7 @@ function web_editor(config) {
         var overlayContainer = "#modal-msg-overlay-container";
         $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
-        $("#modal-msg-content").html(content); 
+        $("#modal-msg-content").html(content);
         var modalLinks = [];
         if (links) {
             Object.keys(links).forEach(function(key) {
