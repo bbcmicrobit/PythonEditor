@@ -1275,69 +1275,118 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
-        // Log error to console for feedback
-        console.log("An error occured whilst attempting to use WebUSB. Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
-        console.log(err);
-
-        // Revert button back to 'connect' state
-        $("#command-connect").show();
-        $("#command-connecting").hide();
-        $("#command-disconnecting").hide();
-
-        // If there was an error clear dapwrapper
-        if(usePartialFlashing) {
-            window.dapwrapper = null;
-            window.previousDapWrapper = null;
-        }
-
-        // Disconnect
-        doDisconnect();
-
-        // Error handler
+        // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
 
-        // We might get Error objects as Promise rejection arguments
-        if (!err.message && err.promise && err.reason) {
-            err = err.reason;
+        // Log error to console for feedback
+        console.log("An error occured whilst attempting to use WebUSB.");
+        console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
+        console.log(err);
+        console.trace();
+
+        // If there was an error and quick flash is in use, then clear dapwrapper
+        if(usePartialFlashing) {
+            if(window.dapwrapper) {
+                window.dapwrapper = null;
+            }
+
+            if(window.previousDapWrapper) {
+                window.previousDapWrapper = null;
+            }
         }
 
-        // If micro:bit does not support dapjs
+        // Disconnect from the microbit
+        doDisconnect();
+       
         var errorType;
+        var errorTitle;
         var errorDescription;
-        if (err.message === "No valid interfaces found.") {
-            errorType = "update-req";
-            errorDescription = config["translate"]["webusb"]["err"][errorType];
-        } else if (err.message === "Unable to claim interface.") {
-            errorType = "clear-connect";
-            errorDescription = config["translate"]["webusb"]["err"][errorType];
-        } else if (err.name === "device-disconnected") {
-            errorType = "device-disconnected";
-            // No additional message provided here, err.message is enough
-            errorDescription = "";
-        } else {
-            errorType = "reconnect-microbit";
-            errorDescription = config["translate"]["webusb"]["err"][errorType];
-            if (usePartialFlashing) {
-                errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
-            } 
+
+        // Determine type of error
+        switch(typeof err) {
+            case "object":
+                console.log("Caught in Promise or Error object");
+                // We might get Error objects as Promise rejection arguments
+                if (!err.message && err.promise && err.reason) {
+                    err = err.reason;
+                }
+                
+                // Determine error type
+                if (err.message === "No valid interfaces found.") {
+                    errorType = "update-req";
+                    errorTitle = err.message;
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                } else if (err.message === "Unable to claim interface.") {
+                    errorType = "clear-connect";
+                    errorTitle = err.message;
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                } else if (err.name === "device-disconnected") {
+                    errorType = "device-disconnected";
+                    errorTitle = err.message;
+                    // No additional message provided here, err.message is enough
+                    errorDescription = "";
+                } else {
+                    // Unhandled error. User will need to reconnect their micro:bit
+                    errorType = "reconnect-microbit";
+                    errorTitle = "WebUSB Error";
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                    if (usePartialFlashing && config.flags.experimental) {
+                        errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                    }
+                }
+
+                break;
+            case "string":
+                // Caught a string. Example case: "Flash error" from DAPjs
+                console.log("Caught a string");
+                
+                // Unhandled error. User will need to reconnect their micro:bit
+                errorType = "reconnect-microbit";
+                errorTitle = "WebUSB Error";
+                errorDescription = config["translate"]["webusb"]["err"][errorType];
+                if (usePartialFlashing && config.flags.experimental) {
+                    errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                }
+                break;
+            default:
+                // Unexpected error type
+                console.log("Unexpected error type: " + typeof(err) );
+                
+                // Unhandled error. User will need to reconnect their micro:bit
+                errorType = "reconnect-microbit";
+                errorTitle = "WebUSB Error";
+                errorDescription = config["translate"]["webusb"]["err"][errorType];
+                if (usePartialFlashing && config.flags.experimental) {
+                    errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                }
         }
 
-        var errorHTML = '<div><strong>' + ((err.message === undefined) ? "WebUSB Error" : err.message) + '</strong><br >' + 
-                    errorDescription + '</div>' + '<div class="flashing-overlay-buttons"><hr />' +
-                    ((err.name === 'device-disconnected' && $("#flashing-overlay-error").html() === "")
-                            ?  ""
-                            : '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
-                              config["translate"]["webusb"]["download"] + 
-                              '</a> | ' +
-                              '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
-                              config["translate"]["webusb"]["troubleshoot"] + 
-                              '</a> | ') +
-                    '<a href="#" onclick="flashErrorClose()">' +
-                    config["translate"]["webusb"]["close"] +
-                    '</a></div>';
+        // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
+        var showOverlayButtons = "";
+        if(err.name !== 'device-disconnected' || $("#flashing-overlay-error").html() !== "") {
+            showOverlayButtons = '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
+                                    config["translate"]["webusb"]["download"] + 
+                                 '</a> | ' +
+                                 '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                                    config["translate"]["webusb"]["troubleshoot"] + 
+                                '</a> | ';
+        }
 
-        // Show error message
+        var errorHTML = 
+                    '<div>' + 
+                        '<strong>' + errorTitle + '</strong>' +
+                        '<br >' + 
+                        errorDescription + 
+                        (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
+                    '</div>' + 
+                    '<div class="flashing-overlay-buttons">' + 
+                        '<hr />' +
+                        showOverlayButtons + 
+                        '<a href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>' + 
+                    '</div>';
+
+        // Show error message, or append to existing errors
         if($("#flashing-overlay-error").html() == "") {
             $("#flashing-overlay-error").html(errorHTML);
         } else {
@@ -1349,11 +1398,12 @@ function web_editor(config) {
         $("#flashing-overlay-download").click(doDownload);
 
         // Send event
+        var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
         // Append error message, replace all special chars with '-', if last char is '-' remove it
         var details = {
                 "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
                 "event-type": ((err.name == "device-disconnected") ? "info" : "error"), 
-                "message": errorType + "/" + err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()
+                "message": errorType + "/" + errorMessage
         };
 
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
@@ -1379,6 +1429,7 @@ function web_editor(config) {
 
         // Change button to connect
         $("#command-disconnect").hide();
+        $("#command-connecting").hide();
         $("#command-connect").show();
 
         // Change flash to download

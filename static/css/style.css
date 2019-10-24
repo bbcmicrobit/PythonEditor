@@ -755,6 +755,15 @@ input:checked + .menu-switch-slider:before {
   margin-bottom: 16px;
 }
 
+.modal-overlay code {
+  margin: 16px 0px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  display: block;
+  text-align: left;
+}
+
 #modal-msg-title{
   color:#336699;
   font-weight: bold;
