@@ -1683,6 +1683,10 @@ function web_editor(config) {
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
     function setupButtons() {
+        if(navigator.platform.match('Win') !== null){
+            $(".roundsymbol").addClass("winroundsymbol");
+            $("#small-icons .status-icon").addClass("win-status-icon");
+        }
         $("#command-download").click(function () {
             doDownload();
         });

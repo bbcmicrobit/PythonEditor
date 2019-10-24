@@ -156,8 +156,13 @@ h2 {
   color: #336699;
   background: #FFFFFF;
 }
+
 html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   line-height: 2.15rem;
+}
+
+#small-icons .win-status-icon{
+  line-height: 2.2rem;
 }
 
 #small-icons .holder {
@@ -291,16 +296,7 @@ html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   background: #FFFFFF;
 }
 
-@-moz-document url-prefix() { 
-  .roundsymbol {
-    line-height: 3.7rem;
-  }
-  #small-icons .status-icon {
-    line-height: 2.15rem;
-  }
-}
-
-html[data-useragent*='MSIE 10.0'] .roundsymbol {
+.winroundsymbol {
   line-height: 3.7rem;
 }
 
