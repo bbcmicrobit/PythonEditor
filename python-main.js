@@ -521,7 +521,7 @@ function web_editor(config) {
 
         if (navigator.usb) {
             script('static/js/dap.umd.js');
-            script('static/js/hterm_all.js');
+            script('static/js/hterm_all.min.js');
             script('partial-flashing.js');
         }
     }
