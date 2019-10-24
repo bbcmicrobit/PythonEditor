@@ -304,7 +304,7 @@ html[data-useragent*='MSIE 10.0'] .roundsymbol {
   line-height: 3.7rem;
 }
 
-.svg1 {
+.svg-connecting {
   position: relative;
   z-index: 101;
 }
