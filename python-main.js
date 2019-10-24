@@ -1228,7 +1228,7 @@ function web_editor(config) {
             console.log("Connecting: Using Quick Flash");
             p = PartialFlashing.connectDapAsync();
         }
-        else {         
+        else {
             console.log("Connecting: Using Full Flash");
             p = navigator.usb.requestDevice({
                 filters: [{vendorId: 0x0d28, productId: 0x0204}]
