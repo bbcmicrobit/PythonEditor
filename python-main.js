@@ -1493,7 +1493,10 @@ function web_editor(config) {
 
         if (usePartialFlashing) {
             // Push binary to board
-            p = PartialFlashing.connectDapAsync()
+            p = doDisconnect()
+                .then(function() {
+                        return doConnect();
+                })
                 .then(function() {
                     var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
