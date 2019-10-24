@@ -167,6 +167,10 @@ var language = {
         'title': 'Connect to the micro:bit',
         'label': 'Connect'
       },
+      'command-connecting': {
+        'title': 'Connecting to the micro:bit',
+        'label': 'Connecting'
+      },
       'command-options': {
         'title': 'Change the editor settings',
         'label': 'Beta Options'
@@ -205,7 +209,8 @@ var language = {
       'autocomplete': 'Autocomplete',
       'on-enter': 'On Enter',
       'partial-flashing': 'Quick Flash',
-      'lang-select': 'Select Language:'
+      'lang-select': 'Select Language:',
+      'add-language-link':'Add a language'
     },
     'text-editor': {
       'aria-label': 'text editor'

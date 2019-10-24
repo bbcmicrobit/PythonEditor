@@ -52,6 +52,10 @@ var EDITOR_IFRAME_MESSAGING = Object.freeze({
   }
 })
 
+//Allows for different CSS styling in IE10
+var doc = document.documentElement;
+doc.setAttribute('data-useragent', navigator.userAgent);
+
 /*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
@@ -1207,6 +1211,11 @@ function web_editor(config) {
     }
 
     function doConnect(serial) {
+        // Change button to connecting
+        $("#command-connect").hide();
+        $("#command-connecting").show();
+        $("#command-disconnect").hide();
+        
         // Device disconnect listener
         // Clears dapwrapper
         navigator.usb.addEventListener('disconnect', clearDapWrapper);
@@ -1251,6 +1260,7 @@ function web_editor(config) {
 
             // Change button to disconnect
             $("#command-connect").hide();
+            $("#command-connecting").hide();
             $("#command-disconnect").show();
 
             // Change download to flash
@@ -1419,6 +1429,7 @@ function web_editor(config) {
 
         // Change button to connect
         $("#command-disconnect").hide();
+        $("#command-connecting").hide();
         $("#command-connect").show();
 
         // Change flash to download

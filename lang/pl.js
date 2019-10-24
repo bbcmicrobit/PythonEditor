@@ -91,7 +91,7 @@ var language = {
       "unavailable": "Za pomocą WebUSB możesz zaprogramować swój micro:bit i połączyć się z konsolą szeregową bezpośrednio z edytora online.<br/> Niestety, WebUSB nie jest obsługiwany w tej przeglądarce. Do korzystania z WebUSB zalecamy Chrome lub inną przeglądarkę opartą na Chrome.",
       "find-more": "Dowiedz się więcej"
     },
-    "troubleshoot": "Troubleshoot",
+    "troubleshoot": "Rozwiązywanie problemów",
     "close": "Zamknij",
     "request-repl": "Wyślij CTRL-C aby wystartować REPL",
     "request-serial": "Wyślij CTRL-D aby zresetować",
@@ -162,6 +162,10 @@ var language = {
         "title": "Podłącz do swojego micro: bit",
         "label": "Podłącz"
       },
+      'command-connecting': {
+        'title': 'Connecting to the micro:bit',
+        'label': 'Connecting'
+      },
       "command-options": {
         "title": "Zmień opcje editora",
         "label": "Opcje"
@@ -200,7 +204,8 @@ var language = {
       "autocomplete": "Autouzupełnianie",
       "on-enter": "Na Enter:",
       "partial-flashing": "Quick Flash",
-      "lang-select": "Wybierz Język:"
+      "lang-select": "Wybierz Język:",
+      "add-language-link": "Add a language"
     },
     "text-editor": {
       "aria-label": "Edytor tekstu"
