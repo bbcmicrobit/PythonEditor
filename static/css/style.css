@@ -305,6 +305,32 @@ html[data-useragent*='rv:11.0'] .roundsymbol {
   line-height: 3.7rem;
 }
 
+.svg-connecting {
+  position: relative;
+  z-index: 101;
+}
+
+/*
+ * There is a Chrome bug that clips the circular border when animated.
+ * To overcome it we keep an identical stationary div for background colours
+ * and configure the animated div to have transparent border and background.
+ */
+.loader-background {
+  border: 6px solid #CCCCCC;
+  z-index: 99;
+}
+.loader {
+  border-color: transparent;
+  background-color: transparent;
+  border-top: 6px solid #FFCC33db;
+  position: absolute;
+  top: 1px;
+  z-index: 100;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  -webkit-transform: translate3D(0, 0, 0); /* Somehow this helps with the Chrome bug */
+}
+
 .roundbutton:focus, .roundbutton:active {
   background-image: url("../img/triangle2.svg");
 }
@@ -1005,6 +1031,10 @@ ul.tree li:last-child:before {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#command-connecting {
+  display: none;
 }
 
 #webusb-flashing-complete {

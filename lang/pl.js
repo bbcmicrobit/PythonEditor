@@ -162,6 +162,10 @@ var language = {
         "title": "Podłącz do swojego micro: bit",
         "label": "Podłącz"
       },
+      'command-connecting': {
+        'title': 'Connecting to the micro:bit',
+        'label': 'Connecting'
+      },
       "command-options": {
         "title": "Zmień opcje editora",
         "label": "Opcje"
