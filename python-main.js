@@ -1323,7 +1323,7 @@ function web_editor(config) {
                     errorDescription = config["translate"]["webusb"]["err"][errorType];
                     if (usePartialFlashing && config.flags.experimental) {
                         errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
-                    } 
+                    }
                 }
 
                 break;
@@ -1335,9 +1335,9 @@ function web_editor(config) {
                 errorType = "reconnect-microbit";
                 errorTitle = "WebUSB Error";
                 errorDescription = config["translate"]["webusb"]["err"][errorType];
-                if (usePartialFlashing) {
+                if (usePartialFlashing && config.flags.experimental) {
                     errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
-                } 
+                }
                 break;
             default:
                 // Unexpected error type
@@ -1347,9 +1347,9 @@ function web_editor(config) {
                 errorType = "reconnect-microbit";
                 errorTitle = "WebUSB Error";
                 errorDescription = config["translate"]["webusb"]["err"][errorType];
-                if (usePartialFlashing) {
+                if (usePartialFlashing && config.flags.experimental) {
                     errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
-                } 
+                }
         }
 
         // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
