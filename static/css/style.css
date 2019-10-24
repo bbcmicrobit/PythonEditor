@@ -291,20 +291,6 @@ html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   background: #FFFFFF;
 }
 
-@-moz-document url-prefix() { 
-  .windowsroundsymbol{
-    line-height: 3.7rem;
-  }
-}
-
-html[data-useragent*='MSIE 10.0'] .roundsymbol {
-  line-height: 3.7rem;
-}
-
-html[data-useragent*='rv:11.0'] .roundsymbol {
-  line-height: 3.7rem;
-}
-
 .svg-connecting {
   position: relative;
   z-index: 101;
