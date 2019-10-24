@@ -957,7 +957,7 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#expandHelpPara").click(function(){
+                $("#files-expand-help").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
                         $("#addFile").css("margin-bottom","10px");

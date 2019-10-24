@@ -97,9 +97,9 @@ Nicholas and Damien.
               <div id="addFileHeader">
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
-              <div id="addFileHelp"><a id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
+              <div id="addFileHelp"><a class="action" id="files-expand-help"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
             </div>
-            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank">{{ help-link }}</a>.</div>
+            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.</div>
             <div class="expandable">
                 <div class="expandable-always-visible">
                     <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
@@ -363,9 +363,9 @@ Nicholas and Damien.
                         <div class="buttons_menu_item">
                             <span id="lang-select">Select Language:</span>
                             <ul class="tree">
-                                <li><span title="English"><a  href="#" class="lang-choice" id="en" tabindex="121">English</a></span></li>
-                                <li><span title="Spanish"><a lang="es" href="#" class="lang-choice" id="es" tabindex="122">Español</a></span></li>
-                                <li><span title="Polish"><a lang="pl" href="#" class="lang-choice" id="pl" tabindex="123">Polski</a></span></li>
+                                <li><span title="English"><a  href="#" class="action lang-choice" id="en" tabindex="121">English</a></span></li>
+                                <li><span title="Spanish"><a lang="es" href="#" class="action lang-choice" id="es" tabindex="122">Español</a></span></li>
+                                <li><span title="Polish"><a lang="pl" href="#" class="action lang-choice" id="pl" tabindex="123">Polski</a></span></li>
                             </ul>
                             <div><a id="add-language-link" class="action" title="Add a language translation to the Editor" href="https://support.microbit.org/solutions/articles/19000106022-translating-the-micro-bit-python-editor" target="_blank" tabindex="124">Add a language</a></div>
                         </div>
