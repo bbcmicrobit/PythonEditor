@@ -1492,10 +1492,12 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
 
         if (usePartialFlashing) {
-            // Push binary to board
-            p = doDisconnect()
+            REPL = null;
+            $("#repl").empty();
+
+            p = window.dapwrapper.disconnectAsync()
                 .then(function() {
-                        return doConnect();
+                    return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
                     var output = generateFullHex("bytes");
