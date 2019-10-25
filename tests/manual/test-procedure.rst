@@ -99,10 +99,14 @@ You will need
 Tests Execution
 ---------------
 
+The test cases listed below always need to be run in a chrome-based browser:
+
+- Connect and Flash over WebUSB and use REPL.
+- WebUSB error modal links are working.
+
 For a Primary Editor release run all the tests in all browsers. For a Beta
 Editor release, run all tests in Internet Explorer 10, except for the
-"Connect and Flash over WebUSB and use REPL" test case, which has to be run
-in a Chrome-based browser.
+test cases listed above that need to be run in a chrome-based browser.
 
 Start each test case in a new instance of the Python Editor.
 
@@ -388,7 +392,7 @@ Test Case: Zoom changes the Text Editor font size
 
 Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
-Carry out this test in Chrome or a Chrome-powered browser:
+Carry out this test in Chrome or a chrome-based browser:
 - [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
 - [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
 - [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
@@ -399,13 +403,27 @@ Carry out this test in Chrome or a Chrome-powered browser:
 Test Case: WebUSB not supported message is working
 ''''''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in non-Chrome-based browsers 
-- Click the 'Connect' button .
+- Click the 'Connect' button.
 - [ ] Confirm the WebUSB not supported message box is displayed.
 - Click the 'Open Serial' button.
 - [ ] Confirm the WebUSB not supported message box is displayed.
 - Click the 'Find Out More' link.
 - [ ] Confirm the help.html page is opened on the WebUSB section.
 - Click outside the modal.
+- [ ] Confirm the modal closes.
+
+
+Test Case: WebUSB error modal links are working
+'''''''''''''''''''''''''''''''''''''''''''''''
+Carry out this test in Chrome or a chrome-based browser:
+- Click the 'Connect' button.
+- Click 'Cancel' button in the WebUSB device selection window that opens.
+- Click the 'Download Hex' link in the modal that opens.
+- [ ] Confirm a hex file with the name 'microbit_program.hex' is downloaded.
+- Click the 'Troubleshoot' link.
+- [ ] Confirm that https://support.microbit.org/support/solutions/articles/19000105428-webusb-troubleshooting is opened in a new tab.
+- Close the troubleshooting tab.
+- Click the 'Close' link.
 - [ ] Confirm the modal closes.
 
 
