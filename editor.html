@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
     <!--
                                                                              .:://++++++//:-.
                                                                            .++/::++++++++++++/`
@@ -81,7 +81,6 @@ Nicholas and Damien.
             EDITOR_VERSION = "2.0.0-beta.5";
             UPY_VERSION = "1.0.1";
         </script>
-        <html data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)"></html>
         <script id="files-template" type="x-tmpl-mustache">
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
@@ -97,9 +96,9 @@ Nicholas and Damien.
               <div id="addFileHeader">
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
-              <div id="addFileHelp"><a id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
+              <div id="addFileHelp"><a class="action" id="files-expand-help"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
             </div>
-            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank">{{ help-link }}</a>.</div>
+            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.</div>
             <div class="expandable">
                 <div class="expandable-always-visible">
                     <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
@@ -363,11 +362,11 @@ Nicholas and Damien.
                         <div class="buttons_menu_item">
                             <span id="lang-select">Select Language:</span>
                             <ul class="tree">
-                                <li><span title="English"><a  href="#" class="lang-choice" id="en" tabindex="121">English</a></span></li>
-                                <li><span title="Spanish"><a lang="es" href="#" class="lang-choice" id="es" tabindex="122">Español</a></span></li>
-                                <li><span title="Polish"><a lang="pl" href="#" class="lang-choice" id="pl" tabindex="123">Polski</a></span></li>
+                                <li><span title="English"><a  href="#" class="action lang-choice" id="en" tabindex="121">English</a></span></li>
+                                <li><span title="Spanish"><a lang="es" href="#" class="action lang-choice" id="es" tabindex="122">Español</a></span></li>
+                                <li><span title="Polish"><a lang="pl" href="#" class="action lang-choice" id="pl" tabindex="123">Polski</a></span></li>
                             </ul>
-                            <div><a id="add-language-link" class="action" title="Add a language translation to the Editor" href="https://support.microbit.org/solutions/articles/19000106022-translating-the-micro-bit-python-editor" target="_blank" tabindex="124">Add a language</a></div>
+                            <div><a id="add-language-link" class="action" title="Add a language translation to the Editor" href="https://support.microbit.org/support/solutions/articles/19000106022-translating-the-micro-bit-python-editor" target="_blank" tabindex="124">Add a language</a></div>
                         </div>
                     </div>
                 </div>
@@ -419,15 +418,15 @@ Nicholas and Damien.
         <script src="static/js/FileSaver.min.js" type="application/javascript"></script>
         <script src="static/js/vex.combined.min.js"
             type="application/javascript"></script>
-        <script src="static/js/encoding.js" type="application/javascript"></script>
+        <script src="static/js/encoding.min.js" type="application/javascript"></script>
         <script src="static/js/mustache.min.js"
             type="application/javascript"></script>
         <script src="static/js/ResizeSensor.js"></script>
-        <script src="static/js/ElementQueries.js"></script>
+        <script src="static/js/ElementQueries.min.js"></script>
         <script src="static/js/custom-event-polyfill.js"></script>
-        <script src="static/js/lzma-d.js"></script>
+        <script src="static/js/lzma-d.min.js"></script>
         <script src="static/js/base64.js"></script>
-        <script src="static/js/microbit-fs.umd.js"></script>
+        <script src="static/js/microbit-fs.umd.min.js"></script>
         <script src="lang/en.js" id="lang"></script>
         <script src="micropythonapi.js"></script>
         <script src="python-main.js"></script>
@@ -442,7 +441,7 @@ Nicholas and Damien.
                     blocks: false,
                     snippets: true,
                     share: false,
-                    experimental: true,
+                    experimental: false,
                 },
             };
             web_editor(config);

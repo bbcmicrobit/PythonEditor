@@ -712,7 +712,7 @@ let PartialFlashing = {
                     // Send event
                     var details = {
                             "flash-type": "partial-flash",
-                            "event-type": "error",
+                            "event-type": "info",
                             "message": "flash-failed" + "/" + "attempting-full-flash"
                     };
 

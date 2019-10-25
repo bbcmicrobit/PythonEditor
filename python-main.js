@@ -521,7 +521,7 @@ function web_editor(config) {
 
         if (navigator.usb) {
             script('static/js/dap.umd.js');
-            script('static/js/hterm_all.js');
+            script('static/js/hterm_all.min.js');
             script('partial-flashing.js');
         }
     }
@@ -957,7 +957,7 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#expandHelpPara").click(function(){
+                $("#files-expand-help").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
                         $("#addFile").css("margin-bottom","10px");
