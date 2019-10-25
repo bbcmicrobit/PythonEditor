@@ -100,7 +100,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(codeName).toEqual("0.9");
     });
 
-    it("Shows an error when trying to download a Hex file if the Python code us too large", async function() {
+    it("Shows an error when trying to download a Hex file if the Python code is too large", async function() {
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
@@ -128,10 +128,10 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         const codeName = await page.evaluate("document.getElementById('script-name').value");
         // TODO: WHY is this wait necessary??
         await page.waitFor(1000);
-        // But when we try to downlod the hex, we get an expected error
+        // But when we try to download the hex, we get an expected error
         page.removeListener("dialog", fileRejected);
         page.on("dialog", async (dialog) => {
-            if (dialog.message().includes("Not enough space")) {
+            if (dialog.message().includes("There is no storage space left.")) {
                 rejectedLargeHexDownload = true;
             }
             await dialog.accept();

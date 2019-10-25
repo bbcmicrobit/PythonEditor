@@ -661,7 +661,10 @@ function web_editor(config) {
     // Sets up the file system and adds the initial main.py
     function setupFilesystem() {
         micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
-        micropythonFs.write('main.py', EDITOR.getCode());    // Add main.py
+        // Limit filesystem size to 20K
+        micropythonFs.setStorageSize(20 * 1024);
+        // The the current main.py
+        micropythonFs.write('main.py', EDITOR.getCode());
     }
 
     // Based on the Python code magic comment it detects a module
