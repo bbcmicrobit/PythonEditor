@@ -1,3 +1,15 @@
+
+2.0.0-rc.1
+----------
+* RC.1 ships with the experimental features turned off and the same configuration as it would be deployed as with v2.0.0 release
+* Reduce the amount of filesystem available to 20KBs
+* Add new animation button for WebUSB state change between disconnected and connected (#281)
+* Add link to in language menu to add translations (#266) (#285)
+* Fixes several WebUSB issues (#268) (#267) (#269) (#278) (#284) (#285)
+* Fixes issues with button icons rendering differently depending on browser (#271) (#272) (#275) (#282)
+* Accessibility fixes (#277)
+* Update microbit-fs to v0.8.0
+
 2.0.0-beta.5
 ------------
 * Added new icons for the Download, Flash, Connect and Disconnect buttons (#262) (#264) 
