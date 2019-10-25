@@ -427,7 +427,6 @@ Carry out this test in Chrome or a chrome-based browser:
 - [ ] Confirm the modal closes.
 
 
-
 Test Case: Autocomplete
 '''''''''''''''''''''''
 - [ ] Start typing in the editor and confirm that autocomplete offers suggestions
