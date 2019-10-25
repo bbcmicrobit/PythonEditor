@@ -417,7 +417,7 @@ Test Case: WebUSB error modal links are working
 '''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in Chrome or a chrome-based browser:
 - Click the 'Connect' button.
-- Click 'Cancel' button in the modal that opens.
+- Click 'Cancel' button in the WebUSB device selection window that opens.
 - Click the 'Download Hex' link in the modal that opens.
 - [ ] Confirm a hex file with the name 'microbit_program.hex' is downloaded.
 - Click the 'Troubleshoot' link.
