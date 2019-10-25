@@ -1455,6 +1455,11 @@ function web_editor(config) {
 
         p.finally(function() {
             console.log('Disconnection Complete');
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'disconnected'
+            }}));
         });
 
         return p;
