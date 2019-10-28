@@ -844,6 +844,10 @@ input:checked + .menu-switch-slider:before {
     color: #ffffff !important;
 }
 
+.save-button:focus {
+  box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 .save-buttons-container {
     display: inline-block;
     width: 100%;
@@ -871,6 +875,11 @@ input:checked + .menu-switch-slider:before {
     color: black !important;
     border: none;
 }
+
+.save-button.hex:focus {
+  box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 .save-button.py {
     width: 49%;
     min-width: 250px;
@@ -885,6 +894,11 @@ input:checked + .menu-switch-slider:before {
     background-color: #eee;
     color: black;
 }
+
+.save-button.py:focus {
+  box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 @media (max-width: 480px) {
     .save-button.py,
     .save-button.hex {
