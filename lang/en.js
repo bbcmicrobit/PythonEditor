@@ -79,12 +79,7 @@ var language = {
     'download_py_multiple': 'This project contains multiple files that will not be saved using this format.\nWe recommend downloading the Hex file, which contains your entire project and can be loaded back into the editor.\n\n Are you sure you want to download the {{file_name}} file only?'
   },
   'code': {
-    'start': "# Add your Python code here. E.g.\n" +
-            "from microbit import *\n\n\n" +
-            "while True:\n" +
-            "    display.scroll('Hello, World!')\n" +
-            "    display.show(Image.HEART)\n" +
-            "    sleep(2000)\n"
+    'start': "Add your Python code here. E.g."
   },
   'webusb': {
     'err': {
