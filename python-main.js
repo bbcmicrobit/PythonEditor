@@ -1337,7 +1337,7 @@ function web_editor(config) {
                 } else if (err.name === "timeout-error") {
                     errorType = "timeout-error";
                     errorTitle = "Connection Timed Out";
-                    config["translate"]["webusb"]["err"][errorType];
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
                 } else {
                     // Unhandled error. User will need to reconnect their micro:bit
                     errorType = "reconnect-microbit";
