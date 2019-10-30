@@ -938,7 +938,7 @@ function web_editor(config) {
                     }
                 }
             }
-        }
+        };
     }
 
     // This function describes what to do when the download button is clicked.
