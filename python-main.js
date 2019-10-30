@@ -914,7 +914,7 @@ function web_editor(config) {
         var dialog = document.querySelector('.vex-content', '.modal-overlay');
         var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
         $(focusableEls).each(function(){
-            $(this).attr('tabindex', '0'); 
+            $(this).attr('tabindex', '0');
         });
         focusableEls[0].focus();
         dialog.onkeydown = function(event) {
