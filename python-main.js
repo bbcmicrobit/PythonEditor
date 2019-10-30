@@ -989,12 +989,14 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#expandHelpPara").click(function(){
+                $("#expandHelpPara").on('keydown click', function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
+                        $(this).attr("aria-expanded","true");
                         $("#addFile").css("margin-bottom","10px");
                     }else{
                         $("#fileHelpPara").hide();
+                        $(this).attr("aria-expanded","false");
                         $("#addFile").css("margin-bottom","22px");
                     }
                 });
@@ -1158,12 +1160,15 @@ function web_editor(config) {
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
                 focusModal();
-                $(vexContent).find('.snippet-selection').click(function(e){
-                    var snippet_name = $(this).find('.snippet-name').text();
-                    EDITOR.triggerSnippet(snippet_name);
-                    vex.close();
-                    EDITOR.focus();
-                });
+                $(vexContent).find('.snippet-selection').on('click keydown', (function(e){
+                    if(e.type == 'click' || e.type=='keydown' && e.which == 32 || e.which == 13) {
+                        e.preventDefault();
+                        var snippet_name = $(this).find('.snippet-name').text();
+                        EDITOR.triggerSnippet(snippet_name);
+                        vex.close();
+                        EDITOR.focus();
+                    }
+                }));
             }
         });
     }
@@ -1425,6 +1430,7 @@ function web_editor(config) {
         } else {
             $(".flashing-overlay-buttons").hide(); // Hide previous buttons
             $("#flashing-overlay-error").append("<hr />" + errorHTML);
+            focusModal();
         }
 
         // Attach download handler

@@ -83,7 +83,7 @@ Nicholas and Damien.
         </script>
         <html data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)"></html>
         <script id="files-template" type="x-tmpl-mustache">
-          <div tabindex="-1" role="dialog" aria-labelledby="loadSave-modal" aria-modal=true">
+          <div tabindex="-1" role="dialog" aria-labelledby="loadSave-modal" aria-modal="true">
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
@@ -98,7 +98,7 @@ Nicholas and Damien.
               <div id="addFileHeader">
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
-              <div id="addFileHelp" role="button"><a id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
+              <div id="addFileHelp" role="button" aria-expanded="false"><a id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
             </div>
             <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank">{{ help-link }}</a>.</div>
             <div class="expandable">
