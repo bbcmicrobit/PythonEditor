@@ -1334,7 +1334,7 @@ function web_editor(config) {
                     errorTitle = err.message;
                     // No additional message provided here, err.message is enough
                     errorDescription = "";
-                } else if (err.name ==== "timeout-error") {
+                } else if (err.name === "timeout-error") {
                     errorType = "timeout-error";
                     errorTitle = "Connection Timed Out";
                     config["translate"]["webusb"]["err"][errorType];
