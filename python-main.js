@@ -1548,7 +1548,13 @@ function web_editor(config) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
-                     var output = generateFullHex("string");
+                    // Check if script is too big
+                    try {
+                        var output = generateFullHex("string");
+                    } catch(e) {
+                        alert(config.translate.alerts.error + e.message);
+                        throw new Error('editor-handled');
+                    }
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
