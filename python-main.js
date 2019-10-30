@@ -1508,11 +1508,20 @@ function web_editor(config) {
             REPL = null;
             $("#repl").empty();
 
+            var connectTimeout = setTimeout(function() {
+                var error = {"name": "Connection Error", "message": config["translate"]["webusb"]["err"]["reconnect-microbit"]};
+                webusbErrorHandler(error);
+            }, 5000);
+
             p = window.dapwrapper.disconnectAsync()
                 .then(function() {
                     return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
+                    // Begin flashing
                     var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
