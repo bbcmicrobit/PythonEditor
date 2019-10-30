@@ -934,14 +934,36 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
-    // Pass focus to first actionable element in modal
+    // Trap focus in modal and pass focus to first actionable element
     function focusModal() {
+        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true)
         var dialog = document.querySelector('.vex-content', '.modal-overlay');
         var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
         $(focusableEls).each(function(){
             $(this).attr('tabindex', '0'); 
         });
         focusableEls[0].focus();
+        dialog.onkeydown = function(event) {
+        if (event.which == 9) {
+            var focusedEl = document.activeElement;
+            var numberOfFocusableEls = focusableEls.length;
+            var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
+
+            if (event.shiftKey) {
+                // if focused on first item and user tabs back, go to the last focusable item
+                if (focusedElIndex == 0) {
+                    focuseableEls.item(numberOfFocusableEls - 1).focus();
+                    event.preventDefault();
+                }
+            } else {
+                // if focused on the last item and user tabs forward, go to the first focusable item
+                if (focusedElIndex == numberOfFocusableEls - 1) {
+                    focusableEls[0].focus();
+                    event.preventDefault();
+                }
+            }
+        }
+    }
     }
     
     // Describes what to do when the save/load button is clicked.
