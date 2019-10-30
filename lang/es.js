@@ -79,7 +79,7 @@ var language = {
     "download_py_multiple": "Este proyecto contiene varios archivos que no se guardarán con este formato.\nRecomendamos descargar el archivo Hex, que contiene todo el proyecto y puede volver a cargarse en el editor.\n\n¿Estas seguro que quieres descargar el {{file_name}} archivo solo?"
   },
   "code": {
-    "start": "Añade tu código Python aquí. Por ejemplo."
+    "start": "Añade tu código Python aquí. Por ejemplo,"
   },
   "webusb": {
     "err": {
