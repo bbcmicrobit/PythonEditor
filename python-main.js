@@ -1163,8 +1163,14 @@ function web_editor(config) {
             afterOpen: function(vexContent) {
                 focusModal();
                 $(vexContent).find('.snippet-selection').on('click keydown', (function(e){
-                    if(e.type == 'click' || (e.type=='keydown' && (e.which == 13 || e.which == 32))) {
-                        // if mouse is clicked or space bar or enter key is pressed
+                    if(e.type == 'click') {
+                        // if mouse is clicked
+                        var snippet_name = $(this).find('.snippet-name').text();
+                        EDITOR.triggerSnippet(snippet_name);
+                        vex.close();
+                        EDITOR.focus();
+                    } else if(e.type=='keydown' && (e.which == 13 || e.which == 32)) {
+                        // else if space bar or enter key is pressed
                         e.preventDefault();
                         var snippet_name = $(this).find('.snippet-name').text();
                         EDITOR.triggerSnippet(snippet_name);
