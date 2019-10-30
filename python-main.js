@@ -908,6 +908,39 @@ function web_editor(config) {
         return fullHex;
     }
 
+    // Trap focus in modal and pass focus to first actionable element
+    function focusModal() {
+        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true)
+        var dialog = document.querySelector('.vex-content', '.modal-overlay');
+        var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
+        $(focusableEls).each(function(){
+            $(this).attr('tabindex', '0'); 
+        });
+        focusableEls[0].focus();
+        dialog.onkeydown = function(event) {
+            if (event.which == 9) {
+                // if tab key is pressed
+                var focusedEl = document.activeElement;
+                var numberOfFocusableEls = focusableEls.length;
+                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
+
+                if (event.shiftKey) {
+                    // if focused on first item and user tabs back, go to the last focusable item
+                    if (focusedElIndex == 0) {
+                        focuseableEls.item(numberOfFocusableEls - 1).focus();
+                        event.preventDefault();
+                    }
+                } else {
+                    // if focused on the last item and user tabs forward, go to the first focusable item
+                    if (focusedElIndex == numberOfFocusableEls - 1) {
+                        focusableEls[0].focus();
+                        event.preventDefault();
+                    }
+                }
+            }
+        }
+    }
+
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         try {
@@ -933,37 +966,6 @@ function web_editor(config) {
         }else{
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
-    }
-    // Trap focus in modal and pass focus to first actionable element
-    function focusModal() {
-        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true)
-        var dialog = document.querySelector('.vex-content', '.modal-overlay');
-        var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
-        $(focusableEls).each(function(){
-            $(this).attr('tabindex', '0'); 
-        });
-        focusableEls[0].focus();
-        dialog.onkeydown = function(event) {
-        if (event.which == 9) {
-            var focusedEl = document.activeElement;
-            var numberOfFocusableEls = focusableEls.length;
-            var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
-
-            if (event.shiftKey) {
-                // if focused on first item and user tabs back, go to the last focusable item
-                if (focusedElIndex == 0) {
-                    focuseableEls.item(numberOfFocusableEls - 1).focus();
-                    event.preventDefault();
-                }
-            } else {
-                // if focused on the last item and user tabs forward, go to the first focusable item
-                if (focusedElIndex == numberOfFocusableEls - 1) {
-                    focusableEls[0].focus();
-                    event.preventDefault();
-                }
-            }
-        }
-    }
     }
     
     // Describes what to do when the save/load button is clicked.
@@ -1161,7 +1163,8 @@ function web_editor(config) {
             afterOpen: function(vexContent) {
                 focusModal();
                 $(vexContent).find('.snippet-selection').on('click keydown', (function(e){
-                    if(e.type == 'click' || e.type=='keydown' && e.which == 32 || e.which == 13) {
+                    if(e.type == 'click' || (e.type=='keydown' && (e.which == 32 || e.which == 13))) {
+                        // if mouse is clicked or space bar or enter key is pressed
                         e.preventDefault();
                         var snippet_name = $(this).find('.snippet-name').text();
                         EDITOR.triggerSnippet(snippet_name);
@@ -1430,7 +1433,6 @@ function web_editor(config) {
         } else {
             $(".flashing-overlay-buttons").hide(); // Hide previous buttons
             $("#flashing-overlay-error").append("<hr />" + errorHTML);
-            focusModal();
         }
 
         // Attach download handler
