@@ -88,6 +88,7 @@ var language = {
       "reconnect-microbit": "Podłącz jeszcze raz swój micro:bit i spróbuj ponownie.",
       "partial-flashing-disable": "Jeśli error się powtarza, spróbuj wyłączyć Quick Flash w opcjach beta.",
       "device-disconnected": "Urządzenie odłączone.",
+      "timeout-error": "Unable to connect to the micro:bit",
       "unavailable": "Za pomocą WebUSB możesz zaprogramować swój micro:bit i połączyć się z konsolą szeregową bezpośrednio z edytora online.<br/> Niestety, WebUSB nie jest obsługiwany w tej przeglądarce. Do korzystania z WebUSB zalecamy Chrome lub inną przeglądarkę opartą na Chrome.",
       "find-more": "Dowiedz się więcej"
     },

@@ -88,6 +88,7 @@ var language = {
       'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
       'partial-flashing-disable': 'If the errors persist, try disabling Quick Flash in the beta options.',
       'device-disconnected': 'Device disconnected.',
+      'timeout-error': 'Unable to connect to the micro:bit',
       'unavailable': 'With WebUSB you can program your micro:bit and connect to the serial console directly from the online editor.<br/>Unfortunately, WebUSB is not supported in this browser. We recommend Chrome, or a Chrome-based browser to use WebUSB.',
       'find-more': 'Find Out More'
     },

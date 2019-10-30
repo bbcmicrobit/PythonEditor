@@ -1334,6 +1334,10 @@ function web_editor(config) {
                     errorTitle = err.message;
                     // No additional message provided here, err.message is enough
                     errorDescription = "";
+                } else if (err.name ==== "timeout-error") {
+                    errorType = "timeout-error";
+                    errorTitle = "Connection Timed Out";
+                    config["translate"]["webusb"]["err"][errorType];
                 } else {
                     // Unhandled error. User will need to reconnect their micro:bit
                     errorType = "reconnect-microbit";
@@ -1505,7 +1509,7 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
 
         var connectTimeout = setTimeout(function() {
-                var error = {"name": "Connection Error", "message": config["translate"]["webusb"]["err"]["reconnect-microbit"]};
+                var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["connection-error"]};
                 webusbErrorHandler(error);
             }, 5000);
 
