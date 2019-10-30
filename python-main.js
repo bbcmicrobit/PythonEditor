@@ -910,11 +910,11 @@ function web_editor(config) {
 
     // Trap focus in modal and pass focus to first actionable element
     function focusModal() {
-        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true)
+        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
         var dialog = document.querySelector('.vex-content', '.modal-overlay');
         var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]');
         $(focusableEls).each(function() {
-            $(this).attr('tabindex', '0'); 
+            $(this).attr('tabindex', '0');
         });
         focusableEls[0].focus();
         dialog.onkeydown = function(event) {
@@ -938,7 +938,7 @@ function web_editor(config) {
                     }
                 }
             }
-        }
+        };
     }
 
     // This function describes what to do when the download button is clicked.
@@ -967,7 +967,6 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
-    
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -1163,8 +1162,14 @@ function web_editor(config) {
             afterOpen: function(vexContent) {
                 focusModal();
                 $(vexContent).find('.snippet-selection').on('click keydown', (function(e){
-                    if(e.type == 'click' || (e.type=='keydown' && (e.which == 13 || e.which == 32))) {
-                        // if mouse is clicked or space bar or enter key is pressed
+                    if(e.type == 'click') {
+                        // if mouse is clicked
+                        var snippet_name = $(this).find('.snippet-name').text();
+                        EDITOR.triggerSnippet(snippet_name);
+                        vex.close();
+                        EDITOR.focus();
+                    } else if(e.type=='keydown' && (e.which == 13 || e.which == 32)) {
+                        // else if space bar or enter key is pressed
                         e.preventDefault();
                         var snippet_name = $(this).find('.snippet-name').text();
                         EDITOR.triggerSnippet(snippet_name);
