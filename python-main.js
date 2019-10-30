@@ -910,7 +910,7 @@ function web_editor(config) {
 
     // Trap focus in modal and pass focus to first actionable element
     function focusModal() {
-        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true)
+        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
         var dialog = document.querySelector('.vex-content', '.modal-overlay');
         var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
         $(focusableEls).each(function(){
