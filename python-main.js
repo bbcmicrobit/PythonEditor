@@ -1504,14 +1504,14 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
-        if (usePartialFlashing) {
-            REPL = null;
-            $("#repl").empty();
-
-            var connectTimeout = setTimeout(function() {
+        var connectTimeout = setTimeout(function() {
                 var error = {"name": "Connection Error", "message": config["translate"]["webusb"]["err"]["reconnect-microbit"]};
                 webusbErrorHandler(error);
             }, 5000);
+
+        if (usePartialFlashing) {
+            REPL = null;
+            $("#repl").empty();
 
             p = window.dapwrapper.disconnectAsync()
                 .then(function() {
@@ -1537,6 +1537,9 @@ function web_editor(config) {
             console.log("Starting Full Flash");
             p = window.daplink.connect()
                 .then(function() {
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
                     // Event to monitor flashing progress
                     window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
