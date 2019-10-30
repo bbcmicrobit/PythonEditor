@@ -967,7 +967,6 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
-    
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
