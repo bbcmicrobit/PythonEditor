@@ -1283,9 +1283,17 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
+        // Hide flashing modal
+        $("#flashing-info").addClass('hidden');
+
+        // If error has already been handled return
+        if(err.message === "editor-handled") {
+            $('#flashing-overlay-container').hide();
+            return;
+        }
+
         // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
-        $("#flashing-info").addClass('hidden');
 
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
@@ -1513,7 +1521,14 @@ function web_editor(config) {
                     return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
-                    var output = generateFullHex("bytes");
+                    // Check if script is too big
+                    try {
+                        var output = generateFullHex("bytes");
+                    } catch(e) {
+                        alert(config.translate.alerts.error + e.message);
+                        throw new Error('editor-handled');
+                    }
+
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
