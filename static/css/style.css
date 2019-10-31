@@ -704,6 +704,9 @@ input:checked + .menu-switch-slider:before {
 }
 
 /* Modals */
+.modal-div:focus {
+  outline: 0;
+}
 .modal-title {
     margin: 28px 0px 22px 0px;
     text-transform: capitalize;
