@@ -1319,7 +1319,7 @@ function web_editor(config) {
                 if (!err.message && err.promise && err.reason) {
                     err = err.reason;
                 }
-                
+
                 // Determine error type
                 if (err.message === "No valid interfaces found.") {
                     errorType = "update-req";
@@ -1334,6 +1334,10 @@ function web_editor(config) {
                     errorTitle = err.message;
                     // No additional message provided here, err.message is enough
                     errorDescription = "";
+                } else if (err.name === "timeout-error") {
+                    errorType = "timeout-error";
+                    errorTitle = "Connection Timed Out";
+                    errorDescription = config["translate"]["webusb"]["err"]["reconnect-microbit"];
                 } else {
                     // Unhandled error. User will need to reconnect their micro:bit
                     errorType = "reconnect-microbit";
@@ -1509,6 +1513,15 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
+        var connectTimeout = setTimeout(function() {
+            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["timeout-error"]};
+            webusbErrorHandler(error);
+        }, 10000);
+
+        var updateProgress = function(progress) {
+            $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
+        };
+
         var p = Promise.resolve();
         if (usePartialFlashing) {
             REPL = null;
@@ -1519,9 +1532,10 @@ function web_editor(config) {
                     return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
-                    var updateProgress = function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    }
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
+                    // Begin flashing
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
@@ -1532,10 +1546,11 @@ function web_editor(config) {
             console.log("Starting Full Flash");
             p = window.daplink.connect()
                 .then(function() {
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
                     // Event to monitor flashing progress
-                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    });
+                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
