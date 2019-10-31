@@ -1479,7 +1479,7 @@ function web_editor(config) {
 
     function doFlash() {
         var startTime = new Date().getTime();
-        
+
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
             $("#repl").hide();
@@ -1499,7 +1499,12 @@ function web_editor(config) {
             }
         }
 
-        var p = Promise.resolve();
+        // Get the hex to flash in bytes format, exit if there is an error
+        try {
+            var output = generateFullHex('bytes');
+        } catch(e) {
+            return alert(config.translate.alerts.error + e.message);
+        }
 
         $("#webusb-flashing-progress").val(0).hide();
         $("#webusb-flashing-complete").hide();
@@ -1513,6 +1518,7 @@ function web_editor(config) {
                 webusbErrorHandler(error);
             }, 5000);
 
+        var p = Promise.resolve();
         if (usePartialFlashing) {
             REPL = null;
             $("#repl").empty();
@@ -1526,15 +1532,13 @@ function web_editor(config) {
                     clearTimeout(connectTimeout);
 
                     // Begin flashing
-                    var output = generateFullHex("bytes");
                     var updateProgress = function(progress) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     }
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
-                })
-
+                });
         }
         else {
             // Push binary to board
@@ -1549,12 +1553,10 @@ function web_editor(config) {
                         $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
                     });
 
-                     var output = generateFullHex("string");
-
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
                     var image = enc.encode(output).buffer;
-                        
+
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return window.daplink.flash(image);
@@ -1582,7 +1584,6 @@ function web_editor(config) {
         .finally(function() {
             // Remove event listener
             window.removeEventListener("unhandledrejection", webusbErrorHandler);
-            
         });
     }
 
