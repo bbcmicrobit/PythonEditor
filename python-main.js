@@ -990,7 +990,7 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#expandHelpPara").on('keydown click', function(){
+                $("#expandHelpPara").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
                         $(this).attr("aria-expanded","true");
@@ -1161,22 +1161,12 @@ function web_editor(config) {
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
                 focusModal();
-                $(vexContent).find('.snippet-selection').on('click keydown', (function(e){
-                    if(e.type == 'click') {
-                        // if mouse is clicked
+                $(vexContent).find('.snippet-selection').click(function(e){
                         var snippet_name = $(this).find('.snippet-name').text();
                         EDITOR.triggerSnippet(snippet_name);
                         vex.close();
                         EDITOR.focus();
-                    } else if(e.type=='keydown' && (e.which == 13 || e.which == 32)) {
-                        // else if space bar or enter key is pressed
-                        e.preventDefault();
-                        var snippet_name = $(this).find('.snippet-name').text();
-                        EDITOR.triggerSnippet(snippet_name);
-                        vex.close();
-                        EDITOR.focus();
-                    }
-                }));
+                });
             }
         });
     }
