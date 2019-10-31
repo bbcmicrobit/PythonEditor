@@ -1319,7 +1319,7 @@ function web_editor(config) {
                 if (!err.message && err.promise && err.reason) {
                     err = err.reason;
                 }
-                
+
                 // Determine error type
                 if (err.message === "No valid interfaces found.") {
                     errorType = "update-req";
@@ -1337,7 +1337,7 @@ function web_editor(config) {
                 } else if (err.name === "timeout-error") {
                     errorType = "timeout-error";
                     errorTitle = "Connection Timed Out";
-                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                    errorDescription = config["translate"]["webusb"]["err"]["reconnect-microbit"];
                 } else {
                     // Unhandled error. User will need to reconnect their micro:bit
                     errorType = "reconnect-microbit";
@@ -1514,7 +1514,7 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
 
         var connectTimeout = setTimeout(function() {
-            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["connection-error"]};
+            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["timeout-error"]};
             webusbErrorHandler(error);
         }, 10000);
 
