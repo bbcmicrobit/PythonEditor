@@ -521,7 +521,7 @@ function web_editor(config) {
 
         if (navigator.usb) {
             script('static/js/dap.umd.js');
-            script('static/js/hterm_all.js');
+            script('static/js/hterm_all.min.js');
             script('partial-flashing.js');
         }
     }
@@ -560,9 +560,14 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit program");
+            setName('microbit program');
             // A sane default starting point for a new script.
-            EDITOR.setCode(config.translate.code.start);
+            EDITOR.setCode('# ' + config.translate.code.start + '\n' +
+                'from microbit import *\n\n\n' +
+                'while True:\n' +
+                '    display.scroll(\'Hello, World!\')\n' +
+                '    display.show(Image.HEART)\n' +
+                '    sleep(2000)\n');
         }
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
@@ -661,7 +666,10 @@ function web_editor(config) {
     // Sets up the file system and adds the initial main.py
     function setupFilesystem() {
         micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
-        micropythonFs.write('main.py', EDITOR.getCode());    // Add main.py
+        // Limit filesystem size to 20K
+        micropythonFs.setStorageSize(20 * 1024);
+        // The the current main.py
+        micropythonFs.write('main.py', EDITOR.getCode());
     }
 
     // Based on the Python code magic comment it detects a module
@@ -990,7 +998,7 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#expandHelpPara").click(function(){
+                $("#files-expand-help").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
                         $(this).attr("aria-expanded","true");
@@ -1491,6 +1499,11 @@ function web_editor(config) {
 
         p.finally(function() {
             console.log('Disconnection Complete');
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'disconnected'
+            }}));
         });
 
         return p;
@@ -1528,10 +1541,12 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
 
         if (usePartialFlashing) {
-            // Push binary to board
-            p = doDisconnect()
+            REPL = null;
+            $("#repl").empty();
+
+            p = window.dapwrapper.disconnectAsync()
                 .then(function() {
-                        return doConnect();
+                    return PartialFlashing.connectDapAsync();
                 })
                 .then(function() {
                     var output = generateFullHex("bytes");

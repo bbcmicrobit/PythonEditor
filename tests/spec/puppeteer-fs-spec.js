@@ -23,14 +23,14 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     it("Can store the correct number of small files in the filesystem", async function() {
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
-        // We expect to be able to add 214 small files to the fs.
-        const expectedFileLimit = 215;
+        // We expect to be able to add 160 small files to the fs (ignoring main.py)
+        const expectedFileLimit = 159;
         let fileNameList = [];
         let fileCleanUps = [];
 
         await page.click("#command-files");
         const fileInput = await page.$("#fs-file-upload-input");
-        // Create small1.py -> small215.py (215 small files)
+        // Create small1.py -> small159.py (160 small files)
         for (let i = 1; i <= expectedFileLimit; i++) {
             var tmpFile = tmp.fileSync({ prefix: 'small' + i + '-', postfix: '.py' });
             fs.writeFileSync(tmpFile.fd, `# Empty Python file < 128 bytes small${i}.py`);
@@ -69,7 +69,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
 
         await page.click("#command-files");
         const fileInput = await page.$("#file-upload-input");
-        await fileInput.uploadFile("./spec/test-files/large.py");
+        await fileInput.uploadFile("./spec/test-files/large-20k.py");
         for (let ms = 0; ms < 1000; ms += msStep) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
@@ -87,9 +87,9 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
 
         // Max filesize = ([27 * 1024] * [126 / 128])
         // We use a slightly smaller file (as this doesn't fully compensate for headers)
-        expect(codeContent).toHaveLength(27204);
+        expect(codeContent).toHaveLength(20141);
         expect(codeContent).toContain("import love");
-        expect(codeName).toEqual("large");
+        expect(codeName).toEqual("large-20k");
         expect(noErrorOnDownload).toEqual(true);
     });
 
@@ -102,7 +102,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         let rejectedLargeFileLoad = false;
 
         page.on("dialog", async (dialog) => {
-            if (dialog.message().includes("Not enough space")) {
+            if (dialog.message().includes("There is no storage space left.")) {
                 rejectedLargeFileLoad = true;
             }
             await dialog.accept();

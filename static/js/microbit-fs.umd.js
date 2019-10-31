@@ -5334,14 +5334,19 @@
 	   *
 	   * @param intelHex - MicroPython Intel Hex string.
 	   */
-	  function MicropythonFsHex(intelHex) {
+	  function MicropythonFsHex(intelHex, _a) {
+	    var _b = (_a === void 0 ? {} : _a).maxFsSize,
+	        maxFsSize = _b === void 0 ? 0 : _b;
 	    this._files = {};
+	    this._storageSize = 0;
 	    this._intelHex = intelHex;
 	    this.importFilesFromIntelHex(this._intelHex);
 
 	    if (this.ls().length) {
 	      throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
 	    }
+
+	    this.setStorageSize(maxFsSize);
 	  }
 	  /**
 	   * Create a new file and add it to the file system.
@@ -5501,14 +5506,30 @@
 	    return files;
 	  };
 	  /**
+	   * Sets a storage size limit. Must be smaller than available space in
+	   * MicroPython.
+	   *
+	   * @param {number} size - Size in bytes for the filesystem.
+	   */
+
+
+	  MicropythonFsHex.prototype.setStorageSize = function (size) {
+	    if (size > getIntelHexFsSize(this._intelHex)) {
+	      throw new Error('Storage size limit provided is larger than size available in the MicroPython hex.');
+	    }
+
+	    this._storageSize = size;
+	  };
+	  /**
 	   * Calculate the MicroPython filesystem total size.
+	   * If an max storage size limit has been set, it returns this number.
 	   *
 	   * @returns Size of the filesystem in bytes.
 	   */
 
 
 	  MicropythonFsHex.prototype.getStorageSize = function () {
-	    return getIntelHexFsSize(this._intelHex);
+	    return this._storageSize ? this._storageSize : getIntelHexFsSize(this._intelHex);
 	  };
 	  /**
 	   * @returns The total number of bytes currently used by files in the file system.
@@ -5601,6 +5622,10 @@
 
 
 	  MicropythonFsHex.prototype.getIntelHex = function (intelHex) {
+	    if (this.getStorageRemaining() < 0) {
+	      throw new Error('There is no storage space left.');
+	    }
+
 	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {
@@ -5622,6 +5647,10 @@
 
 
 	  MicropythonFsHex.prototype.getIntelHexBytes = function (intelHex) {
+	    if (this.getStorageRemaining() < 0) {
+	      throw new Error('There is no storage space left.');
+	    }
+
 	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {

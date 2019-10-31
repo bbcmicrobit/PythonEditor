@@ -79,7 +79,7 @@ var language = {
     "download_py_multiple": "Ten projekt zawiera wiele plików, które nie zostaną zapisane w tym formacie. \nZalecamy pobranie pliku Hex zawierającego cały projekt i załadowanie go z powrotem do edytora. \n\n Czy na pewno chcesz pobrać {{file_name}}?"
   },
   "code": {
-    "start": "# Dodaj twój python kod tutaj.from microbit import *\n\n\nwhile True:\n    display.scroll('Hello, World!')\n    display.show(Image.HEART)\n    sleep(2000)\n"
+    "start": "Dodaj twój python kod tutaj."
   },
   "webusb": {
     "err": {
@@ -162,9 +162,9 @@ var language = {
         "title": "Podłącz do swojego micro: bit",
         "label": "Podłącz"
       },
-      'command-connecting': {
-        'title': 'Connecting to the micro:bit',
-        'label': 'Connecting'
+      "command-connecting": {
+        "title": "Łączenie z micro:bit",
+        "label": "Łączenie"
       },
       "command-options": {
         "title": "Zmień opcje editora",
@@ -205,7 +205,7 @@ var language = {
       "on-enter": "Na Enter:",
       "partial-flashing": "Quick Flash",
       "lang-select": "Wybierz Język:",
-      "add-language-link": "Add a language"
+      "add-language-link": "Dodaj język"
     },
     "text-editor": {
       "aria-label": "Edytor tekstu"
