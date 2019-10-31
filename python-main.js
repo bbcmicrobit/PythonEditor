@@ -1514,9 +1514,13 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
 
         var connectTimeout = setTimeout(function() {
-                var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["connection-error"]};
-                webusbErrorHandler(error);
-            }, 5000);
+            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["connection-error"]};
+            webusbErrorHandler(error);
+        }, 10000);
+
+        var updateProgress = function(progress) {
+            $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
+        };
 
         var p = Promise.resolve();
         if (usePartialFlashing) {
@@ -1532,9 +1536,6 @@ function web_editor(config) {
                     clearTimeout(connectTimeout);
 
                     // Begin flashing
-                    var updateProgress = function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    }
                     $("#webusb-flashing-loader").hide();
                     $("#webusb-flashing-progress").val(0).css("display", "inline-block");
                     return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
@@ -1549,9 +1550,7 @@ function web_editor(config) {
                     clearTimeout(connectTimeout);
 
                     // Event to monitor flashing progress
-                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-                        $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-                    });
+                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
 
                     // Encode firmware for flashing
                     var enc = new TextEncoder();
