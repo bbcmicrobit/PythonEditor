@@ -1285,6 +1285,7 @@ function web_editor(config) {
     function webusbErrorHandler(err) {
         // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
+        $("#flashing-info").addClass('hidden');
 
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
@@ -1496,7 +1497,7 @@ function web_editor(config) {
 
         // Get the hex to flash in bytes format, exit if there is an error
         try {
-            var output = generateFullHex("bytes");
+            var output = generateFullHex('bytes');
         } catch(e) {
             return alert(config.translate.alerts.error + e.message);
         }
