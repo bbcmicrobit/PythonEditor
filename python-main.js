@@ -866,7 +866,7 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] +'><i class="fa fa-trash"></i></button>' +
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] + ' ' + disabled + '><i class="fa fa-trash"></i></button>' +
                 '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
@@ -912,8 +912,8 @@ function web_editor(config) {
     function focusModal() {
         document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
         var dialog = document.querySelector('.vex-content', '.modal-overlay');
-        var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]),td:not([disabled])');
-        $(focusableEls).each(function(){
+        var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]');
+        $(focusableEls).each(function() {
             $(this).attr('tabindex', '0');
         });
         focusableEls[0].focus();
