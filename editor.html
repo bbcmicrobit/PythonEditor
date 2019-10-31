@@ -83,7 +83,7 @@ Nicholas and Damien.
         </script>
         <html data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)"></html>
         <script id="files-template" type="x-tmpl-mustache">
-          <div tabindex="-1" role="dialog" aria-labelledby="loadSave-modal" aria-modal="true">
+          <div tabindex="-1" onfocus="this.blur();" role="dialog" aria-labelledby="loadSave-modal" aria-modal="true">
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
@@ -138,7 +138,7 @@ Nicholas and Damien.
           </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
-          <div tabindex="-1" role="dialog" aria-labelledby="snippets-modal" aria-modal="true">
+          <div tabindex="-1" onfocus="this.blur();" role="dialog" aria-labelledby="snippets-modal" aria-modal="true">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
             <p>{{ description }}</p>
             <p>{{ instructions }}</p>
