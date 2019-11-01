@@ -26,18 +26,18 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             var dom_editor = $('#editor');
             expect(dom_editor.children().length).toBeGreaterThan(0);
             // It references the expected classes.
-            var expected_classes = ' ace_editor ace-kr-theme ace_dark';
+            var expected_classes = ' ace_editor ace_hidpi ace-kr-theme ace_dark';
             expect(dom_editor.attr('class')).toEqual(expected_classes);
         });
 
         it("The expected theme is kr_theme.", function() {
             var editor = pythonEditor('editor');
-            expect(editor.ACE.getTheme()).toEqual('ace/theme/kr_theme');
+            expect(editor.ACE.getTheme()).toEqual('ace/theme/kr_theme_legacy');
         });
 
         it("The editor mode is set to 'Python'.", function() {
             var editor = pythonEditor('editor');
-            expect(editor.ACE.getOption('mode')).toEqual('ace/mode/python');
+            expect(editor.ACE.getOption('mode')).toEqual('ace/mode/python_microbit');
         });
 
         it("Snippets are enabled.", function() {
@@ -170,21 +170,21 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             var hex_fail = function() {
                 // Keep in mind the 4 Bytes header
                 var codeLen = (8 * 1024) - 4 + 1;
-                var result = upyhex.injectPyStrIntoIntelHex(template_hex, new Array(codeLen + 1).join('a'));
+                var result = microbitFs.addIntelHexAppendedScript(template_hex, new Array(codeLen + 1).join('a'));
             };
             expect(hex_fail).toThrowError(RangeError, 'Too long');
         });
 
         it("The editor is fine if the Python script is 8k in length.", function() {
             var codeLen = (8 * 1024) - 4;
-            var hexified = upyhex.injectPyStrIntoIntelHex(template_hex, new Array(codeLen + 1).join('a'));
+            var hexified = microbitFs.addIntelHexAppendedScript(template_hex, new Array(codeLen + 1).join('a'));
             expect(hexified).not.toBe(null);
         });
 
         it("A hex file is generated from the script and template firmware.",
            function() {
             editor.setCode('display.scroll("Hello")');
-            var result = editor.getHexFile(template_hex);
+            var result = microbitFs.addIntelHexAppendedScript(template_hex, editor.getCode());
             var expected = ":020000040000FA\n" +
                 ":1000000000400020ED530100295401002B54010051\n" +
                 ":020000040003F7\n" +
@@ -213,7 +213,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
                 ":10E000004D501700646973706C61792E7363726F81\n" +
                 ":10E010006C6C282248656C6C6F222900000000009F\n" +
                 ":00000001FF\n";
-            var result = upyhex.extractPyStrFromIntelHex(raw_hex);
+            var result = microbitFs.getIntelHexAppendedScript(raw_hex);
             var expected = 'display.scroll("Hello")';
             expect(result).toEqual(expected);
         });
@@ -228,7 +228,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
                 ":10E010006C6C282248656C6C6F222900000000009F\n" +
                 ":04000005000153EDB6\n" +
                 ":00000001FF";
-            var result = upyhex.extractPyStrFromIntelHex(raw_hex);
+            var result = microbitFs.getIntelHexAppendedScript(raw_hex);
             var expected = 'display.scroll("Hello")';
             expect(result).toEqual(expected);
         });
@@ -239,7 +239,7 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
                 ":04B2D0000D0100006C\n" +
                 ":04000005000153EDB6\n" +
                 ":00000001FF";
-            var result = upyhex.extractPyStrFromIntelHex(raw_hex);
+            var result = microbitFs.getIntelHexAppendedScript(raw_hex);
             var expected = '';
             expect(result).toEqual(expected);
         });

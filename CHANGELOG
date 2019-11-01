@@ -1,3 +1,72 @@
+
+2.0.0-rc.1
+----------
+* RC.1 ships with the experimental features turned off and the same configuration as it would be deployed as with v2.0.0 release
+* Reduce the amount of filesystem available to 20KBs
+* Add new animation button for WebUSB state change between disconnected and connected (#281)
+* Add link to in language menu to add translations (#266) (#285)
+* Fixes several WebUSB issues (#268) (#267) (#269) (#278) (#284) (#285)
+* Fixes issues with button icons rendering differently depending on browser (#271) (#272) (#275) (#282)
+* Accessibility fixes (#277)
+* Update microbit-fs to v0.8.0
+
+2.0.0-beta.5
+------------
+* Added new icons for the Download, Flash, Connect and Disconnect buttons (#262) (#264) 
+* Added a warning if the user tries to load incompatible files (#245)
+* Enable WebUSB logging into the console for better error reports (#250)
+* WebUSB now keeps device details between connections (#255)
+* Added troubleshooting links to WebUSB docs and WebUSB error modal. (#251)
+* Added translation documentation, including translation strategy (#234) (#255) (#260)
+* Added initial steps to integrate with Crowdin translations (#247) (#257)
+* Set language links wording to their native language (#249)
+* Updated the manual test procedure to sync with the latest editor updates (#258)
+* Fix USB drag and drop flashing while WebUSB is connected (#255)
+* Improve the style of separators in the WebUSB error modal (#259)
+
+2.0.0-beta.4
+------------
+* Term "Partial Flashing" renamed to "Quick Flashing" (#233)
+* Add support for an iframe messaging protocol (#246)
+* Edit Snippets modal wording and translate table header (#236)
+* Disable autocomplete on enter by default (#235) (current default is tab key)
+* Update files and modules user docs (#243)
+* Highlight the current language in the language menu (#242)
+* Add more info about the filesystem in the Load/Save modal (#241)
+* WebUSB flashing fixes (#239) (#237) (#248)
+* Top buttons are now scrollable on small (mobile) resolutions (#232)
+* Fix rendering of the WebUSB modal in IE10 (#238)
+
+2.0.0-beta.3
+------------
+* Added WebUSB 'Quick Flash' using partial flashing (#217) (#222) (#224) (#225) (#227) (#228) (#229)
+* Improved WebUSB error handling (#211)
+* WebUSB buttons are always displayed (#226)
+* Help page updated with the new features (#199)
+* Added Polish translation and updated Spanish translation (#206) (#210) (#230)
+* Language can now be set via URL (#212)
+* Accessibility improvements (#215) (#219)
+* General UI improvements (#213)
+
+2.0.0-beta.2
+------------
+* Updated the Load/Save modal UI (#203) (#204)
+* Added language selection functionality (#151) (#198) (#205)
+* Added feedback link to the Help menu (#200)
+* Moved snippets and Language to be small buttons. (#202)
+* Moved Options and Autocomplete to always be part of the experimental flag (#201) (#192)
+* Added a global way to process URL parameters (#184)
+* Release checklist updated (#195)
+* Automated and manual tests updated (#196) (#194)
+* Fix: Set the correct Script Name when a Python file is loaded (#193)
+* Fix: Save main.py with the Script Name as the file name (#191)
+
+2.0.0-beta.1
+------------
+* Added WebUSB functionality (#99)
+* Added MicroPython file system functionality (#88)
+* Added autocompletion to the code editor (#185)
+
 1.1.5
 -----
 * Add floating help panel (#115)

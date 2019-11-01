@@ -1,0 +1,13 @@
+# push the USR button on the pyboard to flash the LEDs!
+# try using the reset button on the pyboard to quit this script!
+# switch callback not yet supported.
+
+import time
+import pyb
+
+while True:
+    if pyb.Switch().value():
+        pyb.LED(1).on()
+    else:
+        pyb.LED(1).off()
+    time.sleep_ms(50)

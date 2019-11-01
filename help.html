@@ -21,19 +21,22 @@
 
     <!-- JS for contextual help -->
     <script src="static/js/jquery-2.1.4.min.js"></script>
-    <script src="python-main.js"></script>
-
-    <script>
+    <script src="python-main.js"></script> 
+    <script src="urlparser.js"></script>
+    
+     <script>
         $(document).ready(function() {
-            window.location.search.substring(1).split("&").map(function(param) {
-                return param.split("=");
-            }).filter(function(pair) {
-                return pair[1] == "true";
-            }).forEach(function(pair) {
-                var enabledFlag = decodeURIComponent(pair[0]);
-                var hiddenFeatureClass = 'hide-' + enabledFlag;
-                $("." + hiddenFeatureClass).removeClass(hiddenFeatureClass);
-            });
+            var paramsToCheck = ["snippets","blocks","share","experimental"];
+            paramsToCheck.forEach(function(key){
+                var urlFlag = urlparse(key) || "false";
+                if( urlFlag === "true"){
+                    $("#nav-" + key).removeClass('hidden');
+                    $("#btn-" + key).removeClass('hidden');
+                    $("#" + key).removeClass('hidden');
+                    $("." + key).removeClass('hidden');
+                    
+                };
+            })
         });
     </script>
   </head>
@@ -55,8 +58,10 @@
           <ul class="nav navbar-nav">
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
-            <li class="hide-blocks"><a href="#blockly">Blockly</a></li>
-            <li class="hide-snippets"><a href="#snippets">Snippets</a></li>
+            <li ><a href="#fs">Files and Modules</a></li>
+            <li id="nav-blocks" class="hidden"><a href="#blockly">Blockly</a></li>
+            <li id="nav-snippets" class="hidden"><a href="#snippets">Snippets</a></li>
+            <li><a href="#REPL">REPL</a></li>
             <li><a href="#bugs">Bugs</a></li>
             <li><a href="#more">Further Information</a></li>
           </ul>
@@ -81,7 +86,9 @@
     <img src="static/img/comic1.png" class="img-responsive center-block"
             alt="http://goo.gl/SrIrIE"/>
     <h2 id="Editor"> The Editor</h2>
-      <p>The Python editor is perfect for those who want to push their coding skills further. A selection of snippets and a range of pre-made images and music give you a helping hand with your code. The editor is powered by the global <a href="http://python.org/community/microbit/">Python Community</a>.</p>
+      <p>The Python editor is perfect for those who want to push their coding skills further. 
+      A selection of snippets and a range of pre-made images and music give you a helping hand with your code. 
+      The editor is powered by the global <a href="http://python.org/community/microbit/">Python Community</a>.</p>
     
     <h3 id="Menu">Menu</h3>
     <p>The main menu of the editor contains various buttons that allow you to interact with the editor and the micro:bit device.
@@ -98,52 +105,64 @@
         <tr>
             <td>
                 <div id="command-download" class="roundsymbol" title="Download a hex file to flash onto  micro:bit" style="font-size: 0rem;">
-                    <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="touchdevelop,white">
-                        <path d="m 185.96612,110.36806 41.029,41.029 0,-72.834699 27.352,0 0.001,72.834699 41.029,-41.029 0,31.911 -54.706,54.706 -54.705,-54.706 0,-31.911 z m 98.203,181.9 c 0,-9.128 7.406,-16.539 16.541,-16.539 9.146,0 16.535,7.411 16.535,16.539 0,9.131 -7.389,16.548 -16.535,16.548 -9.135,0 -16.541,-7.417 -16.541,-16.548 z m -121.494,0.003 c 0,-9.129 7.413,-16.542 16.548,-16.542 9.129,0 16.537,7.413 16.537,16.542 0,9.131 -7.408,16.547 -16.537,16.547 -9.135,0 -16.548,-7.416 -16.548,-16.547 z m 16.544,-81.93 122.554,0.202 c 45.667,0 82.285,36.553 82.285,81.732 0,45.179 -36.757,81.934 -81.937,81.934 l -122.902,0 c -45.177,0 -81.934395,-36.755 -81.934395,-81.934 0,-45.179 36.757395,-81.934 81.934395,-81.934 z m -49.164,81.934 c 0,27.105 22.059,49.164 49.164,49.164 l 122.902,0 c 27.107,0 49.159,-22.059 49.159,-49.164 0,-27.112 -22.052,-49.164 -49.159,-49.164 l -122.902,0 c -27.105,0 -49.164,22.052 -49.164,49.164 z" id="path3341" inkscape:connector-curvature="0" style="fill:currentColor"></path>
-                    </svg>
+                    <svg class="svg svg-icon-touchdevelop" viewBox="-65 -195 600 560" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="download">
+                        <path style="fill:currentColor" d="M 263.56055 85.527344 C 260.33084 85.527344 257.52094 86.703234 255.17188 89.052734 C 252.82703 91.402114 251.64648 94.171095 251.64648 97.443359 L 251.64648 196.47852 L 204.15625 196.47852 C 198.91034 196.47852 195.26214 198.91285 193.24805 203.86328 C 191.15075 208.64601 191.98831 212.96744 195.76367 216.78516 L 279 300.02148 C 281.26585 302.37055 284.03557 303.54492 287.39062 303.54492 C 290.74779 303.54492 293.55753 302.37097 295.78125 300.02148 L 379.01758 216.78516 C 382.83508 212.96744 383.67264 208.64601 381.5332 203.86328 C 379.43589 198.91285 375.78648 196.47852 370.62695 196.47852 L 322.9668 196.47852 L 322.9668 97.443359 C 322.9668 94.171095 321.79138 91.402114 319.44336 89.052734 C 317.09324 86.703664 314.36825 85.527344 311.2207 85.527344 L 263.56055 85.527344 z M 147.00977 325.93359 C 122.43373 325.93359 102.01367 346.35343 102.01367 370.92969 L 102.01367 485.02539 L 102.01367 533.8418 C 106.67645 537.02937 111.53648 540.0315 117.85352 543.27539 C 125.69502 547.30212 133.72502 550.98418 141.88672 554.375 L 141.88672 503.26758 C 142.13384 503.31793 142.37748 503.37863 142.625 503.42773 L 142.625 370.92969 C 142.625 368.15042 144.22954 366.54492 147.00977 366.54492 L 338.31836 366.54492 L 338.31836 440.40039 A 17.32053 17.32053 0 0 0 355.63672 457.71875 L 434.35742 457.71875 L 434.35742 505.38281 L 434.35742 544.47266 C 434.94611 544.50003 435.5454 544.55897 436.16016 544.67188 C 444.60421 539.7568 453.0889 534.87849 462.3457 532.17578 C 464.59305 528.90954 467.69044 525.85752 469.02148 526.13477 C 469.12344 526.03495 469.21763 525.92727 469.32227 525.83008 C 470.61587 524.62853 472.14616 523.71166 473.55859 522.65234 C 473.78412 522.4832 474.00802 522.32975 474.23047 522.18164 L 474.23047 488.62891 C 474.47633 488.42723 474.72448 488.22936 474.96875 488.02539 L 474.96875 411.05664 L 385.41016 325.93359 L 147.00977 325.93359 z M 372.95508 370.125 L 428.67188 423.08203 L 372.95508 423.08203 L 372.95508 370.125 z M 464.20898 531.06836 C 464.08361 531.17564 463.9982 531.24416 463.86523 531.35742 C 463.87243 531.37979 463.87759 531.39952 463.88477 531.42188 C 463.99369 531.30471 464.09943 531.18494 464.20898 531.06836 z M 102.01367 581.28906 L 102.01367 581.64648 C 102.4696 581.78262 102.92471 581.92257 103.38477 582.04492 C 102.90568 581.80305 102.45056 581.54997 102.01367 581.28906 z M 434.35742 645.00586 L 434.35742 645.67969 C 434.47063 645.45594 434.52799 645.338 434.63867 645.11914 C 434.54924 645.08804 434.44879 645.03984 434.35742 645.00586 z M 437.19922 689.88672 C 436.89094 690.57316 436.53127 691.63258 436.33203 692.27539 C 436.36068 692.24412 436.38938 692.21296 436.41797 692.18164 C 436.56296 691.77761 436.86786 690.87363 437.19922 689.88672 z " transform="translate(-47,-192)" id="path4173"></path>                    </svg>
                 </div>                
             </td>
             <td>
-            Click on the "Download" button to save a special "hex" file on
+            Click on the <strong>Download</strong> button to save a special "hex" file on
              computer. Plug in  BBC micro:bit (it'll show up as USB
             storage) and drag the newly saved file onto the device. Code
             will run (or you'll see an error message scroll past on the
             device's display). See below for how to extract  code from a
-            hex file back into the editor.
+            hex file back into the editor.<br><br>
+        
+            <strong>Download becomes 'Flash' when connected over <a href="#command-connect">WebUSB</a></strong>
+            </td>
+        </tr>
+         <tr>
+            <td>
+                <div id="command-connect" class="roundsymbol" title="Connect to the micro:bit via WebUSB" style="font-size: 0rem;">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="15 10 425 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="connect">
+                        <path inkscape:connector-curvature="0" style="fill:currentColor;stroke-width:1.07401729" d="m 187.65309,132.62841 -31.28112,0.3802 c -3.8332,0.0465 -7.1749,0.0895 -10.21946,0.13627 l -11.11447,-0.0198 c -1.42513,0 -2.83655,0.063 -4.24078,0.15604 l -5.5282,0.0116 -4.94954,1.45925 c -2.80706,0.60748 -5.19426,1.45514 -8.36941,2.66578 -2.32842,0.88784 -4.62781,1.95092 -6.88372,3.16248 -0.11094,0.0582 -0.22177,0.11687 -0.33238,0.17581 -0.13877,0.0756 -0.27603,0.15619 -0.41446,0.23296 -9.13166,4.94904 -17.13592,12.02897 -23.47636,20.64943 -0.0718,0.0963 -0.13885,0.19771 -0.21023,0.29449 -0.50299,0.69068 -1.00428,1.38231 -1.48567,2.09216 -0.74563,1.08409 -1.4751,2.18488 -2.17244,3.31633 -0.0891,0.1445 -0.19831,0.35455 -0.29232,0.51426 -2.84035,4.63841 -5.14027,9.52363 -6.7676,14.50031 -0.66167,1.70414 -1.16408,3.15921 -1.37754,4.10086 l -0.42248,1.85926 -1.83206,0.022 -16.20619,0 -18.63692,0 -0.022,0.19999 -0.22025,0 -0.012,0.20218 -0.0721,0 -0.63271,10.97963 c -0.77803,12.45734 -2.06434,35.64582 -2.06432,38.0287 0,0.0301 0.0133,0.0562 0.018,0.0858 l -0.0541,0.95161 0.1782,0 -0.004,0.35161 21.32795,0 c 0.0599,1e-5 0.0899,0 0.15017,0 l 20.58511,0 0.83093,1.81749 c 0.27033,0.9415 0.82287,2.19499 1.59779,3.70529 0.44151,0.86049 0.95081,1.79685 1.50769,2.77349 7.22081,13.85804 18.27084,25.0018 31.56143,31.69277 0.27134,0.13781 0.54389,0.27286 0.81693,0.40657 0.54535,0.26525 1.09125,0.52781 1.64383,0.77798 0.51228,0.23276 1.02963,0.4537 1.54774,0.67249 0.41901,0.1769 0.83457,0.36147 1.25741,0.52965 0.60102,0.23853 1.21122,0.45672 1.82004,0.67688 1.01225,0.36803 2.03537,0.70867 3.06744,1.02631 0.17059,0.0519 0.3394,0.10767 0.51058,0.15825 0.82531,0.24649 1.65772,0.47206 2.49479,0.68568 0.0441,0.0116 0.088,0.022 0.13215,0.0328 0.88009,0.22257 1.76461,0.42989 2.657,0.61535 l 0,0.0241 0.29632,0.0592 c 0.14957,0.0301 0.38093,0.0546 0.55263,0.0835 3.94142,0.76342 7.98808,1.18456 12.1256,1.18456 l 52.8153,0 0,-0.0946 0.37842,0.002 0,-15.00577 0,-15.00358 -0.37842,-0.004 0,-0.46372 -36.60109,0 c -17.34264,-0.26173 -23.4371,-0.58864 -26.31949,-1.40428 l -2.39268,-0.87471 c -1.40684,-0.51365 -2.76808,-1.10487 -4.09261,-1.75154 -8.05881,-4.06878 -14.7738,-10.64599 -19.21958,-18.71545 -2.67457,-5.01534 -4.4802,-10.62574 -5.26591,-16.6123 -0.41539,-4.81978 -0.31962,-10.84003 0.27631,-15.27389 0.94869,-5.44342 2.8095,-10.6083 5.44211,-15.2673 4.33108,-7.51157 10.7036,-13.69025 18.31856,-17.6298 0.48158,-0.24927 0.96795,-0.50305 1.42762,-0.72305 0.72847,-0.34284 1.46558,-0.66777 2.21447,-0.96918 2.19469,-0.84796 4.52239,-1.41372 7.87885,-1.78892 1.65513,-0.185 3.6709,-0.31373 5.92465,-0.41755 l 21.65833,-0.178 17.77395,-0.14504 13.39103,-0.006 -0.20222,-15.28489 -0.20023,-15.27387 -0.21225,0 0,-0.54503 z m 91.61084,0.0109 0,0.14066 -0.63871,0 0,0.44613 -0.0441,0 0,30.50382 0.0441,0 0,0.004 0.63871,0 0,0.73401 31.19103,0.0505 c 17.17497,0.028 27.58316,0.64033 34.96524,2.9207 7.38208,2.28041 11.81964,6.15685 17.37751,13.10479 15.94699,19.9354 12.16293,51.1656 -8.10511,66.59856 -3.97222,3.02463 -5.90929,4.42397 -11.08643,5.28543 -5.17716,0.86147 -13.58044,1.08462 -29.9196,1.4329 l -34.42264,0.73403 0,0.89663 -0.68276,0 0,30.56979 0.0441,0 0,0.002 0.21224,-0.002 0.42648,0 0,0.0329 1.49369,-0.0329 50.64684,0 c 3.98608,0 7.89003,-0.38919 11.69512,-1.09884 2.33741,-0.27722 3.88369,-0.66016 5.76649,-1.23291 0.44174,-0.13439 0.91254,-0.3055 1.36953,-0.45931 4.15299,-0.91293 7.09783,-2.37103 10.99233,-4.58877 4.4308,-2.31485 8.60032,-5.13348 12.45799,-8.37974 0.44166,-0.37096 0.88135,-0.75043 1.31948,-1.14061 5.66508,-5.00818 10.60121,-10.96472 14.6104,-17.65399 1.14593,-1.82326 2.19018,-3.65379 3.08346,-5.47441 l 3.38181,-6.89414 15.29716,0 c 4.36063,0 8.32427,-0.0212 11.19858,-0.0573 1.43715,-0.0181 2.60205,-0.04 3.40985,-0.0636 0.4038,-0.0119 0.7166,-0.024 0.935,-0.0375 0.1092,-0.006 0.1928,-0.0139 0.2603,-0.022 0.034,-0.004 0.063,-0.007 0.1021,-0.0175 0.02,-0.004 0.039,-0.007 0.084,-0.0306 0.011,-0.005 0.026,-0.0133 0.042,-0.0242 0.016,-0.0116 0.058,-0.0479 0.058,-0.0484 4e-4,-4.3e-4 0.076,-0.10966 0.076,-0.10998 2e-4,-4.4e-4 0.039,-0.19331 0.04,-0.19782 l 0,-0.002 c 0,-0.0536 0,-0.0653 -0.01,-0.15386 0,-0.09 -0.012,-0.22052 -0.022,-0.38898 -0.02,-0.3369 -0.047,-0.82829 -0.084,-1.45487 -0.074,-1.25314 -0.1799,-3.05153 -0.3103,-5.26343 -0.1798,-3.04728 -0.4463,-7.55245 -0.6988,-11.81695 -0.1106,-7.61653 -0.5854,-16.13394 -1.2074,-20.53955 -0.034,-0.58362 -0.091,-1.53135 -0.1221,-2.0702 -0.1305,-2.24775 -0.2368,-4.09079 -0.3104,-5.39094 -0.037,-0.65004 -0.067,-1.16549 -0.086,-1.52737 -0.02,-0.36056 -0.03,-0.60672 -0.03,-0.59337 l 0,-0.002 c -2e-4,-0.015 -0.01,-0.0234 -0.011,-0.0376 l -0.042,-0.74943 -3.77218,0 c -0.14247,-0.006 -0.20667,-0.0173 -0.35641,-0.0241 -2.37212,-0.10823 -5.63647,-0.1758 -9.22637,-0.1758 -5.88308,0 -9.15676,-0.035 -10.97031,-0.22198 -0.60784,-0.0627 -1.00291,-0.14858 -1.31548,-0.24175 l -2.55087,-5.54695 c -0.0149,-0.0395 -0.0293,-0.0793 -0.0441,-0.11868 -6.30304,-17.97513 -18.61069,-32.69358 -34.21841,-41.17796 -1.13398,-0.67931 -2.26873,-1.32586 -3.40182,-1.8988 -3.06956,-1.55215 -5.85705,-2.65493 -9.5487,-3.45037 -5.69816,-1.65972 -11.67745,-2.5559 -17.84404,-2.5559 l -1.76399,0.004 c -0.94602,-0.0306 -1.64806,-0.0696 -2.687,-0.0966 -6.01845,-0.1573 -13.46726,-0.25217 -21.02962,-0.25273 l -20.34083,-0.002 -6.31909,-0.14066 z m 27.02835,60.54833 c -5.49405,-0.003 -11.88477,0.0181 -19.22959,0.0614 l -19.3457,0.11428 -18.45473,0 c -0.65297,0 -1.29546,0.0474 -1.93218,0.12088 l -2.679,0.0153 -2.87322,1.6263 c -5.47283,2.70129 -9.34449,8.26436 -9.34449,14.91346 0,5.02638 2.22205,9.42194 5.66436,12.44108 0.0106,0.0109 0.0213,0.0189 0.0319,0.0287 0.25166,0.2196 0.50448,0.43725 0.76887,0.64173 0.96184,0.75893 2.02936,1.43093 3.20759,1.99109 0.15874,0.0755 0.34019,0.1431 0.54262,0.20877 2.04575,0.86847 4.28319,1.35378 6.61342,1.35378 l 79.99579,0 c 2.74235,0 5.35773,-0.67122 7.68063,-1.85264 0.72783,-0.25324 1.36463,-0.53572 1.89011,-0.88349 0.71896,-0.47577 1.29141,-1.05531 1.8521,-1.70979 1.94031,-1.77046 3.46034,-3.98856 4.38892,-6.51612 0.0767,-0.19169 0.15232,-0.38623 0.21825,-0.5802 0.0266,-0.082 0.0488,-0.16575 0.0741,-0.24835 0.11734,-0.37231 0.21852,-0.75492 0.30035,-1.14497 0.27446,-1.19545 0.43248,-2.43972 0.43248,-3.72947 0,-9.41441 -7.74953,-16.67602 -16.8369,-16.67602 l -4.31685,0 c -1.42137,-0.0365 -2.99979,-0.0672 -4.79539,-0.0922 -3.76209,-0.0522 -8.35948,-0.0803 -13.85353,-0.0836 z" id="path4724"></path></svg>
+                </div>                
+            </td>
+            <td>
+            The <strong>Connect</strong> button allows you to connect to your micro:bit in your browser, using a tool called <a href="#WebUSB">WebUSB</a>.
+            When you choose to connect, a window will pop up in your browser asking you to choose the micro:bit, you want to connect to.
+            If you see the message 'no compatible devices found', you may need to <a href="https://microbit.org/guide/firmware">update the micro:bit firmware.</a>
+            When you are connected you will see this menu item change to 'Disconnect'.
             </td>
         </tr>
         <tr>
             <td>
-                <div id="command-save" class="roundsymbol" title="Save  Python code to  computer">
-                        <i class="fa fa-download"></i>
+                <div id="command-files" class="roundsymbol" title="Load or Save files on your computer">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="143 28 100 100" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="load/save">
+                        <path style="fill:currentColor" d="m 181.30794,34.934753 c -0.59072,0 -1.08574,0.206465 -1.47711,0.619967 l -14.64977,14.649777 c -0.67193,0.67193 -0.81942,1.432431 -0.44284,2.274205 0.3692,0.871311 1.01173,1.299969 1.91994,1.299969 l 8.38769,0 0,18.515211 c 0,0.575954 0.24439,1.0976 0.62056,1.476508 0.36978,0.372475 0.8936,0.620564 1.44738,0.620564 l 8.3877,0 c 0.56858,0 1.06359,-0.207058 1.4771,-0.620564 0.4135,-0.413502 0.61997,-0.900557 0.61997,-1.476508 l 0,-18.515211 8.35915,0 c 0.8741,-0.296512 1.56492,-0.428658 1.91935,-1.299969 0.36919,-0.841774 0.22173,-1.602263 -0.44284,-2.274205 L 182.78445,35.55472 c -0.39873,-0.413502 -0.8858,-0.619967 -1.47651,-0.619967 z m 20.68658,1.906861 c -0.51046,0 -0.95271,0.190685 -1.33385,0.571819 -0.38112,0.381133 -0.57182,0.837136 -0.57182,1.361195 l 0,17.490451 -7.73147,0 c -0.83713,0 -1.42924,0.395105 -1.76955,1.170984 -0.34709,0.837136 -0.21098,1.544717 0.40836,2.123224 l 13.50257,13.503164 c 0.36073,0.381133 0.81671,0.571821 1.36119,0.571821 0.54447,0 0.99367,-0.190688 1.3612,-0.571821 l 13.50316,-13.503164 c 0.61253,-0.578507 0.74865,-1.286088 0.40836,-2.123224 -0.3267,-0.775879 -0.91881,-1.170984 -1.76955,-1.170984 l -7.70412,0 0,-17.490451 c 0,-0.524059 -0.1907,-0.980062 -0.57182,-1.361195 -0.38114,-0.381134 -0.83713,-0.571819 -1.3612,-0.571819 l -7.73146,0 z m -33.41702,36.51923 c -0.87131,0 -1.60926,0.309903 -2.21476,0.915387 -0.61285,0.612871 -0.91598,1.351436 -0.91598,2.21536 l 0,10.455634 c 0,0.886077 0.30313,1.632208 0.91598,2.245078 0.6055,0.605487 1.34345,0.915387 2.21476,0.915387 l 48.14348,0 c 0.86392,3e-6 1.6025,-0.3099 2.21535,-0.915387 0.6055,-0.61287 0.91599,-1.359001 0.91599,-2.245078 l 0,-10.455634 c 0,-0.863924 -0.31049,-1.602489 -0.91599,-2.21536 -0.61285,-0.605484 -1.35143,-0.915387 -2.21535,-0.915387 l -2.62848,0 c -2.72996,2.403543 -3.20538,4.20851 -5.90722,4.194142 l -31.07149,0 c -1.32171,0 -2.52582,-0.391596 -3.60389,-1.181682 -1.08543,-0.782703 -1.85289,-1.786719 -2.30333,-3.01246 l -2.62907,0 z m 36.62504,8.358562 c 0.56856,0 1.063,0.207062 1.47651,0.620565 0.4135,0.413502 0.61996,0.907943 0.61996,1.476508 0,0.575948 -0.20646,1.063599 -0.61996,1.477105 -0.41351,0.413502 -0.90795,0.619967 -1.47651,0.619967 -0.5538,0 -1.04884,-0.206465 -1.4771,-0.619967 -0.41351,-0.413506 -0.61997,-0.901157 -0.61997,-1.477105 0,-0.568565 0.20646,-1.063006 0.61997,-1.476508 0.42826,-0.413503 0.9233,-0.620565 1.4771,-0.620565 z m 8.38769,0 c 0.56856,0 1.0636,0.207062 1.4771,0.620565 0.4135,0.413502 0.61997,0.907943 0.61997,1.476508 0,0.575948 -0.20647,1.063599 -0.61997,1.477105 -0.4135,0.413502 -0.90854,0.619967 -1.4771,0.619967 -0.57596,0 -1.06301,-0.206465 -1.47651,-0.619967 -0.4135,-0.413506 -0.62056,-0.901157 -0.62056,-1.477105 0,-0.568565 0.20706,-1.063006 0.62056,-1.476508 0.4135,-0.413503 0.90055,-0.620565 1.47651,-0.620565 z"></path></svg>
                 </div>
             </td>
             <td>
-            Click on the "Save" button to save the code onto your computer.
-            Because you're downloading Python code  computer might check
-            you want to save the file. It's trying to protect you from
-            downloading random software from the internet. But since this is
-             own code you're safe to proceed. See below for how to load
-            code back into the editor.
+            As well as being able to drag&drop a .Hex file or .py script into the editor to load it, 
+            the <strong>Load/Save</strong> button will open a file window that let's you inspect the files
+            on the micro:bit. You can drag&drop files into the grey "drop" area or use the file
+            picker to browse for a file on your computer. You can also download your .hex or .py files from here too.<br><br>
+            The <a href="#fs">file system</a> adds functionality to add or remove python modules, 
+            data logs and other file types from the micro:bit.
             </td>
         </tr>
-        <tr>
+   <tr>
             <td>
-                <div id="command-save" class="roundsymbol" title="Load Python code or .hex file into the editor">
-                    <i class="fa fa-upload"></i>
-                 </div>
+                <div id="command-serial" class="roundsymbol" title="Connect to your micro:bit via serial" style="font-size: 0rem;">
+                    <svg class="svg svg-icon-touchdevelop" viewBox="50 50 380 380" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="connect">
+                        <path d="m 123.7051,148.34921 c -2.89667,0.7124 -3.12083,4.34726 -2.52182,6.73621 0.0802,14.71098 -0.21958,29.42698 0.27409,44.13341 3.32459,3.91031 8.88495,4.22528 13.02744,6.89911 18.98534,8.63879 37.97074,17.27741 56.95602,25.91632 -23.08661,10.54025 -46.23337,20.9492 -69.22578,31.69428 -2.4063,3.98087 -0.37642,8.72319 -1.01647,13.03636 0.0189,12.59711 -0.24199,25.20185 0.31304,37.79166 1.42704,2.21788 4.745,1.58443 6.32834,-0.10552 39.47152,-19.90837 78.95331,-39.79626 118.38368,-59.78576 2.45594,-3.86876 0.45217,-8.56637 1.06388,-12.79766 -9.2e-4,-10.44221 0.23596,-20.89313 -0.30258,-31.32695 -3.92629,-4.28756 -10.10353,-5.0331 -14.76392,-8.27141 -35.9248,-18.0005 -71.81395,-36.07349 -107.83418,-53.88207 -0.22666,-0.0159 -0.45378,-0.0542 -0.68174,-0.038 z m 233.85267,151.79873 c -41.10937,0.16168 -82.21926,0.0656 -123.32866,0.21518 -2.79907,1.273 -2.46862,4.90246 -2.05358,7.38358 0.0849,9.39989 -0.47292,18.82688 0.44779,28.20219 2.56216,2.59475 6.51332,1.10343 9.70184,1.34537 39.23126,-0.019 78.46295,0.0642 117.69372,-0.17539 2.70897,-1.44807 2.26294,-5.04936 1.90027,-7.59696 -0.0601,-9.31199 0.42409,-18.64747 -0.41926,-27.93817 -0.81939,-1.31659 -2.54446,-1.46994 -3.94212,-1.4358 z" id="rect12318" inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss"></path>
+                    </svg>
+                </div>                
             </td>
             <td>
-            It's very easy to load files from  computer into the editor:
-            click the load button then drag the file from  computer onto
-            the grey "drop" area. Alternatively, you could use the file
-            picker (just click on the link at the bottom to toggle between the
-            two options). The editor knows how to read Python files (whose name
-            ends with ".py") and extract Python code from hex files (whose name
-            ends with ".hex").
+            The <strong>Open/Close Serial</strong> button allows you to dynamically interact with MicroPython on the micro:bit using the <a href="#REPL">REPL</a>
             </td>
         </tr>
-        <tr class="hide-blocks">
+        <tr id="btn-blocks" class="hidden">
             <td>
                 <div id="command-blockly" class="roundsymbol" title="Go to the blockly editor">
                     <i class="fa fa-puzzle-piece"></i>
@@ -151,7 +170,7 @@
             </td>
             <td>
             <strong>This is an experimental feature. It may change in the future
-            and could contain bugs.</strong> Clicking the "Blockly" button
+            and could contain bugs.</strong> Clicking the <strong>Blockly</strong> button
             displays a set of drag-and-drop
             blocks that can be used to quickly create Python code. Move the
             blocks, watch Python code appear and change. <strong>Moving such
@@ -160,19 +179,36 @@
             just the resulting Python code.</strong>
             </td>
         </tr>
-        <tr class="hide-snippets">
+        <tr id="btn-snippets" class="hidden">
             <td>
                 <div id="command-snippet" class="roundsymbol" title="Load Python code or .hex file into the editor">
                     <i class="fa fa-cogs"></i>
                 </div>
             </td>
             <td>
-            Clicking on the "Snippets" button brings up a menu of Python
+            Clicking on the <strong>Snippets</strong> button brings up a menu of Python
             short-cuts (snippets). Code snippets are short blocks of code to
             re-use in your own programs. There are snippets for most common
             things you'll want to do with Python. Select the one you want and
             fill in the gaps in the code editor to make it do what you want.
             <strong class="hide-blocks">Snippets are disabled when blockly is enabled.</strong>
+            </td>
+        </tr>
+        <tr id="btn-options" class="experimental hidden">
+            <td>
+                <div id="command-options" class="roundsymbol" title="Change the editor settings">
+                    <i class="fa fa-wrench"></i>
+                </div>
+            </td>
+            <td>
+            The <strong>Options</strong> menu allows users to change settings within the editor.
+            Clicking on the menu item will open a dropdown with the various options.
+
+            The <a href="#autocomplete">autocomplete</a> option can be switched on or off here.
+            When it is on you also have the option to complete code on pressing <kbd>Enter</kbd>
+            as well as <kbd>Tab</kbd>.   
+
+            You can also switch the <a href="#partial-flashing">Quick Flash</a> service on or off.
             </td>
         </tr>
         <tr>
@@ -182,14 +218,14 @@
                  </div>
             </td>
             <td>
-            Clicking on the "Help" button gets you here. But you knew that
-            already, right..? :-) Notice that  editor is still available
-            but in a separate tab in  browser.
+            Clicking on the <strong>Help</strong> button opens a range of support options. From here
+            you can navigate to the MicroPython language reference documentation, this help page :),
+            the micro:bit support knowledgebase, the feedback form and the Python Editor issue tracker.
             </td>
         </tr>
-        <tr class="hide-share">
+        <tr id="btn-share" class="hidden">
             <td>
-                <div id="command-help" class="roundsymbol" title="Share  project">
+                <div id="command-share" class="roundsymbol" title="Share  project">
                     <i class="fa fa-share-alt"></i>
                 </div>
             </td>
@@ -238,6 +274,24 @@
     strings of characters to display. All the lines are numbered with the
     current line highlighted.</p>
 
+    <div id="autocomplete" class="experimental hidden">
+    <h4>Autocomplete</h4>
+
+    <p>Autocomplete gives you suggestions for your Python code as you type, giving you more of an understanding of what features are available to you and helping you to create working programs.</p>
+
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/autocomplete-1.mp4" type="video/mp4">
+    </video>
+
+    <p>Press the <kbd>TAB</kbd> key on your keyboard to automatically complete the current line:</p>
+
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/autocomplete-2.mp4" type="video/mp4">
+    </video>
+
+    <p>It's important to note that autocomplete isn't aware of your import statements, so you'll still need to check that your code is correct before flashing it to your device. Remember that typing <code>import microbit</code> means you should then use <code>microbit.display.scroll</code>, whereas <code>from microbit import display</code> allows you to write <code>display.scroll</code>. You can learn more about what this means <a href="https://support.microbit.org/support/solutions/articles/19000080153-what-is-the-difference-between-import-microbit-and-from-microbit-import-">by reading this support article</a>.</p>
+    </div>
+
     <h2 id="hello">Hello, World!</h2>
     <p>A 'Hello, World!' program is traditionally used as a quick test to see if we've got 
     our software or hardware configured correctly.</p>
@@ -247,8 +301,6 @@
     <p>Here's how we do this in the Python editor:</p>
 
     <pre><code class="python">from microbit import *
-
-
 display.scroll("Hello, World!")</code></pre>
 
     <p>The first line (<code>from microbit import *</code>) tells <a href="#micropython">MicroPython</a>
@@ -259,51 +311,80 @@ display.scroll("Hello, World!")</code></pre>
     module) to scroll the text, <kbd>"Hello, World!"</kbd> across the physical
     display on the front of the device.</p>
 
-    <p><img src="static/img/scroll-hello.gif" class="image img-responsive center-block img-rounded"
-        alt="An animation of 'hello world' scrolling over the display."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/scroll-hello.mp4" type="video/mp4">
+    </video>
 
     <p>When you load the Python editor in your browser, this is the default script you will see,
         asking the micro:bit to scroll the words across the LED screen and then display an image of a heart.</p>
     <p>Why not try making the micro:bit scroll your name?</p>
    
-    <div class="hide-blocks">
-    <h2 id="blockly">Blockly</h2>
+    <div >
+    <h2 id="fs">Files and Modules</h2>
 
-    <p>Use blockly to make new Python code from easy to assemble blocks of
-    code.</p>
+    <p>When the micro:bit is flashed with MicroPython, it enables a simple file system to store files on the device. 
+        You can use the file system to <a href="https://support.microbit.org/solution/articles/19000098018-python-editor-files-and-modules/#emoji">include external python modules in your program</a>, 
+        similarly to using <a href="https://microbit-micropython.readthedocs.io/en/latest/py-modindex.html">MicroPython's built-in-modules</a>.</p>
+    
+    <p>Selecting the <strong>Load/Save</strong> button in the menu will bring up the files modal window.</p>
 
-    <p><img src="static/img/blocks.png"
-        class="image img-responsive center-block img-rounded"
-        alt="An animation demonstrating how to use snippets."/></p>
+    <p><img src="static/img/file-system.png"
+        class="image img-responsive center-block img-rounded" style="max-width: 75%;"
+        alt="modal dialogue for the file system interface"/></p>
 
-    <p>Blockly updates Python in the code editor as you move blocks around.
-    There are lots of different blocks to cover all the features of the
-    micro:bit. You can make more advanced code by combining blocks together
-    (such as in the example above).</p>
+    <p>You can drag and drop files into the Load area or use the <strong>Add file</strong> button to open the file dialogue.</p>
+    
+    <p>A status bar shows you the file types you have uploaded and how much free space you still have available.
+        The status bar is colour coded to indicate file types; main.py is purple and the external emoji.py shown in the example is green.
+        The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status bar and cannot be removed. 
+        If you try to upload another main.py file this will replace your code in the text window. The emoji.py is a python module, that we can now reference in main.py.</p>    
 
-    <p>You should use Blockly to create <em>new code</em> since moving blocks
-    around will overwrite any existing code you have in the editor (and you may
-    lose work as a result). The arrangement of blocks isn't (currently)
-    saved, so Blockly makes a great way to make simple Python code without
-    lots of typing. In the end, you'll learn that simply typing Python is by
-    far the quickest and easiest way to write code.</p>
-
-    <p>Not all the features of the micro:bit or MicroPython are available via
-    Blockly. We've done this on purpose. Some of the more advanced and
-    interesting stuff is only available in pure Python.</p>
-
-    <p>However, by using Blockly you'll very quickly get the hang of how Python
-    code works and fits together.</p>
+    <p>As you add files, they will appear in a list underneath the status bar. The list indicates
+        the filename, the file type, the size of the file and the options to download or to trash/delete the file if you have added it by accident.</p>
+    
+    <p>The file size shown is the space it consumes inside of the micro:bit file system, 
+        not the MICROBIT drive as this is <a href="https://support.microbit.org/en/support/solutions/articles/19000067847-where-does-the-hex-file-go-when-i-transfer-it-to-the-micro-bit-">emulated storage</a>.</p>
     </div>
-    <div class="hide-snippets">
-    <h2 id="snippets">Snippets</h2>
+
+    <div id="blocks" class="hidden">
+        <h2 id="blockly">Blockly</h2>
+    
+        <p>Use blockly to make new Python code from easy to assemble blocks of
+        code.</p>
+    
+        <p><img src="static/img/blocks.png"
+            class="image img-responsive center-block img-rounded"
+            alt="An animation demonstrating how to use snippets."/></p>
+    
+        <p>Blockly updates Python in the code editor as you move blocks around.
+        There are lots of different blocks to cover all the features of the
+        micro:bit. You can make more advanced code by combining blocks together
+        (such as in the example above).</p>
+    
+        <p>You should use Blockly to create <em>new code</em> since moving blocks
+        around will overwrite any existing code you have in the editor (and you may
+        lose work as a result). The arrangement of blocks isn't (currently)
+        saved, so Blockly makes a great way to make simple Python code without
+        lots of typing. In the end, you'll learn that simply typing Python is by
+        far the quickest and easiest way to write code.</p>
+    
+        <p>Not all the features of the micro:bit or MicroPython are available via
+        Blockly. We've done this on purpose. Some of the more advanced and
+        interesting stuff is only available in pure Python.</p>
+    
+        <p>However, by using Blockly you'll very quickly get the hang of how Python
+        code works and fits together.</p>
+    </div>
+
+    <div id=snippets class="hidden">
+    <h2>Snippets</h2>
 
     <p>Snippets are a cool way to avoid typing. The animation below shows you
     how to use them:</p>
 
-    <p><img src="static/img/snippet_example.gif"
-        class="img-responsive center-block img-rounded"
-        alt="An animation demonstrating how to use snippets."/></p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/snippet_example.mp4" type="video/mp4">
+    </video>
 
     <p>You can access snippets from the "Snippets" button (see above), but
     it's a lot quicker and easier to learn the <em>triggers</em> for the
@@ -311,12 +392,73 @@ display.scroll("Hello, World!")</code></pre>
     snippet and then fill in the remaining blocks of code so it does what you
     want.</p>
 
-    <p class="hide-blocks">When blockly is enabled the "Snippets" button is disabled. This avoids
+    <p>When blockly is enabled the "Snippets" button is disabled. This avoids
     snippets from interfering with code that blockly may be generating.</p>
     
 
     <p><img src="static/img/comic4.png" class="img-responsive center-block"
         alt="http://goo.gl/bT8a8M"/></p>
+    </div>
+    
+    <div>
+    <h2 id="WebUSB">WebUSB</h2>
+    
+    <p><a href="https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web">WebUSB</a>
+    provides a simple way to connect to and control USB devices from the web. At present it is only available in
+    <a href="https://caniuse.com/#feat=webusb"> browsers that are based on Google Chrome</a>.</p>
+
+    <p>In the Python Editor, webUSB means that we can connect to the micro:bit, flash a .Hex file 
+    to it and communicate with it using the <a href="#REPL">REPL</a>.</p>
+
+    <p>If you see the message 'no compatible devices found' when you try to connect, 
+    you may need to <a href="https://microbit.org/guide/firmware">update the micro:bit firmware.</a></p>
+
+    <p>For any issues using these features, please read our guide on <a href="https://support.microbit.org/a/solutions/articles/19000105428-webusb-troubleshooting/">
+        WebUSB troubleshooting</a>.</p>
+  
+    <h3>Flash</h3>
+    <p>To flash the micro:bit from the browser, use the <strong>Connect</strong> button to pair the device
+        and then choose <strong>Flash</strong>. Your program will then be transferred to the micro:bit.</p>
+    <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+        <source src="static/img/flash.mp4" type="video/mp4">
+    </video>
+
+    <h3 id="REPL">REPL</h3>
+        <p>The Read, Evaluate, Print Loop (REPL) is a way of dynamically interacting with the micro:bit using MicroPython.
+        To do this, the micro:bit does four things:</p>
+    
+            <ol>
+                <li>Read the user input</li>
+                <li>Evaluate your code</li>
+                <li>Print the response</li>
+                <li>Loop back to step 1</li>
+            </ol>
+        
+        <p>To interact with the REPL on the micro:bit, when you <strong>Open Serial</strong> you will be asked to
+        <strong>Click here or press CTRL-C to enter the REPL</strong>. Once you have done so, try typing something
+        in MicroPython.</p>
+
+        <video class="img-responsive center-block" style="max-width: 75%;" autoplay playsinline muted loop>
+            <source src="static/img/repl.mp4" type="video/mp4">
+        </video>
+
+        <p>Try these things in the REPL:</p>
+        <pre><code class="python">>>> from microbit import *
+>>> display.scroll("Hello from the REPL")
+>>> import this
+>>> import love
+>>> import antigravity</code></pre>
+        <div class="alert alert-info">
+            <p>Due to a technical limitation in the software you may 
+                experience data loss if you are sending data over serial at a high rate.</p>
+        </div>
+    </div>
+    <div id="partial-flashing" class="experimental hidden">
+    <h2>Quick Flash</h2>
+    <p>The Quick Flash feature allows for super fast updates to be sent to the micro:bit 
+        when edits are made to a program.</p>
+    <p>To do this, we use a process called 'partial flashing' where only the section of the .Hex file that represents the python script is updated.</p>
+    <p>With this feature turned on, once you have flashed the initial MicroPython program to the micro:bit, all subsequent flash attempts will be much quicker.</p>
     </div>
 
     <h2 id="bugs">Bug Fixes</h2>

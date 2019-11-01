@@ -8,8 +8,11 @@ everything does.)
 /*
 Lazy load JS script files.
 */
-function script(url) {
+function script(url, id) {
     var s = document.createElement('script');
+    if(id){
+        s.id = id;
+    }
     s.type = 'text/javascript';
     s.async = false;
     s.defer = true;
@@ -18,11 +21,46 @@ function script(url) {
     x.appendChild(s);
 }
 
+/**
+ * JS debounce 
+ * TODO: could be moved to some helper/util file
+ */
+function debounce(callback, wait) {
+  var timeout = null;
+
+  return function () {
+    var args = arguments;
+    var next = function () {
+      return callback.apply(this, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(next, wait);
+  }
+}
+
+// Constants used for iframe messaging
+var EDITOR_IFRAME_MESSAGING = Object.freeze({
+  // Embed editor host type
+  host: "pyeditor",
+  // Embed editor messaging actions
+  actions: {
+    workspacesync: "workspacesync",
+    workspacesave: "workspacesave",
+    workspaceloaded: "workspaceloaded",
+    importproject: "importproject"
+  }
+})
+
+//Allows for different CSS styling in IE10
+var doc = document.documentElement;
+doc.setAttribute('data-useragent', navigator.userAgent);
+
 /*
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
-function pythonEditor(id) {
+function pythonEditor(id, autocompleteApi) {
     'use strict';
 
     // An object that encapsulates the behaviour of the editor.
@@ -30,17 +68,75 @@ function pythonEditor(id) {
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
+    // Generates an expanded list of words for the ACE autocomplete to digest.
+    var fullWordList = function(apiObj) {
+        var wordsHorizontal = [];
+        Object.keys(apiObj).forEach(function(module) {
+            wordsHorizontal.push(module);
+            if (Array.isArray(apiObj[module])){
+                apiObj[module].forEach(function(func) {
+                    wordsHorizontal.push(module + "." + func);
+                });
+            } else {
+                Object.keys(apiObj[module]).forEach(function(sub) {
+                    wordsHorizontal.push(module + "." + sub);
+                    if (Array.isArray(apiObj[module][sub])) {
+                        apiObj[module][sub].forEach(function(func) {
+                            wordsHorizontal.push(module + "." + sub + "." + func);
+                            wordsHorizontal.push(sub + "." + func);
+                        });
+                    }
+                });
+            }
+        });
+        return (wordsHorizontal);
+    };
+
     // Represents the ACE based editor.
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
-        enableSnippets: true  // Enable code snippets.
+        enableSnippets: true,  // Enable code snippets.
     });
-    ACE.setTheme("ace/theme/kr_theme");  // Make it look nice.
-    ACE.getSession().setMode("ace/mode/python");  // We're editing Python.
+    ACE.$blockScrolling = Infinity; // Silences the 'blockScrolling' warning
+    ACE.setTheme("ace/theme/kr_theme_legacy"); // Make it look nice.
+    ACE.getSession().setMode("ace/mode/python_microbit"); // We're editing Python.
     ACE.getSession().setTabSize(4); // Tab=4 spaces.
     ACE.getSession().setUseSoftTabs(true); // Tabs are really spaces.
     ACE.setFontSize(editor.initialFontSize);
     editor.ACE = ACE;
+
+    // Configure Autocomplete
+    var langTools = ace.require("ace/ext/language_tools");
+    var extraCompletions = fullWordList(autocompleteApi || []).map(function(word) {
+        return { "caption": word, "value": word, "meta": "static" };
+    });
+    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
+        "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
+        "getCompletions": function(editor, session, pos, prefix, callback) {
+            callback(null, extraCompletions);
+        }
+    }]);
+
+    editor.enableAutocomplete = function(enable) {
+        ACE.setOption('enableBasicAutocompletion', enable);
+        ACE.setOption('enableLiveAutocompletion', enable);
+        editor.triggerAutocompleteWithEnter(false); 
+    };
+
+    editor.triggerAutocompleteWithEnter = function(enable) {
+        if (!ACE.completer) {
+            // Completer not yet initialise, force it by opening and closing it
+            ACE.execCommand('startAutocomplete');
+            ACE.completer.detach();
+        }
+        if (enable) {
+            ACE.completer.keyboardHandler.bindKey('Return', function(editor) {
+                return editor.completer.insertMatch();
+            });
+        } else {
+            ACE.completer.keyboardHandler.removeCommand('Return');
+        }
+    };
 
     // Gets the textual content of the editor (i.e. what the user has written).
     editor.getCode = function() {
@@ -50,6 +146,7 @@ function pythonEditor(id) {
     // Sets the textual content of the editor (i.e. the Python script).
     editor.setCode = function(code) {
         ACE.setValue(code);
+        ACE.gotoLine(ACE.session.getLength());
     };
 
     // Give the editor user input focus.
@@ -65,21 +162,16 @@ function pythonEditor(id) {
     // Return details of all the snippets this editor knows about.
     editor.getSnippets = function() {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        return snippetManager.snippetMap.python;
+        return snippetManager.snippetMap.python_microbit;
     };
 
     // Triggers a snippet by name in the editor.
     editor.triggerSnippet = function(snippet) {
         var snippetManager = ace.require("ace/snippets").snippetManager;
-        snippet = snippetManager.snippetNameMap.python[snippet];
+        snippet = snippetManager.snippetNameMap.python_microbit[snippet];
         if (snippet) {
             snippetManager.insertSnippet(ACE, snippet.content);
         }
-    };
-
-    // Generates a hex file containing the user's Python from the firmware.
-    editor.getHexFile = function(firmware) {
-        return upyhex.injectPyStrIntoIntelHex(firmware, this.getCode());
     };
 
     // Given a password and some plaintext, will return an encrypted version.
@@ -136,7 +228,7 @@ function blocks() {
 
     var blocklyWrapper = {};
     var resizeSensorInstance = null;
-    // Stores the Blockly workspace created during injection 
+    // Stores the Blockly workspace created during injection
     var workspace = null;
 
     blocklyWrapper.init = function() {
@@ -208,6 +300,88 @@ function blocks() {
 }
 
 /*
+ * Allows the Python Editor to display in multiple languages by manipulating
+ * strings with correct JS language objects.
+ */
+function translations() {
+    'use strict';
+    // These values must be valid language codes
+    // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
+    var validLangs = ['en', 'es', 'pl'];
+
+    /* Replaces DOM script element with the new language js file. */
+    function updateLang(newLang, callback) {
+        var elementId = 'lang';
+        var newLangURL = 'lang/' + newLang + '.js';
+        var endsWithURL = new RegExp(newLangURL + "$");
+        var runCallback = function() {
+            translateEmbedStrings(language);
+            callback(language);
+        };
+        if (endsWithURL.test(document.getElementById(elementId).src)) {
+            // The request newLang is the current one, don't reload js file
+            return runCallback(language);
+        }
+        // Check for a valid language
+        if (validLangs.indexOf(newLang) >- 1) {
+            document.getElementById(elementId).remove();
+            script(newLangURL, elementId);
+            document.getElementById(elementId).onload = runCallback;
+        } else {
+            // Don't throw an error, but inform the console
+            runCallback();
+            console.error('Requested language not available: ' + newLang);
+        }
+    }
+
+    /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
+    function translateEmbedStrings(language) {
+        var buttons = language['static-strings']['buttons'];
+        $('.roundbutton').each(function(object, value) {
+            var button_id = $(value).attr('id');
+            $(value).attr('title', buttons[button_id]['title']);
+            $(value).attr('aria-label', buttons[button_id]['title']);
+            $(value).children('.roundlabel').text(buttons[button_id]['label']);
+            if ((button_id === 'command-serial') && ($('#repl').css('display') !== 'none')) {
+                // Serial button strings depend on the REPL being visible
+                $(value).attr('title', buttons[button_id]['title-close']);
+                $(value).children(':last').text(buttons[button_id]['label-close']);
+            }
+        });
+        $('.ace_text-input').attr('aria-label',language['static-strings']['text-editor']['aria-label']);
+        $('#script-name-label').text(language['static-strings']['script-name']['label']);
+        $('#request-repl').text(language['webusb']['request-repl']);
+        $('#request-serial').text(language['webusb']['request-serial']);
+        $('#flashing-text').text(language['webusb']['flashing-text']);
+        var optionsStrings = language['static-strings']['options-dropdown'];
+        for (var object in optionsStrings) {
+            $("#" + object).text(optionsStrings[object]);
+        }
+        var helpStrings = language['help'];
+        for (var object in helpStrings) {
+            if (helpStrings.hasOwnProperty(object)) {
+                if (object.match(/ver/)) {
+                    $('#' + object).text(helpStrings[object]);
+                    continue;
+                }
+                $('#' + object).text(helpStrings[object]['label']);
+                $('#' + object).attr('title',helpStrings[object]['title']);
+            }
+        }
+        var languages = language['languages'];
+        for (var object in languages) {
+            if (languages.hasOwnProperty(object)) {
+                $('#' + object).attr('title',languages[object]['title']);
+            }
+        }
+    }
+
+    return {
+        'updateLang': updateLang
+    };
+}
+
+/*
 The following code contains the various functions that connect the behaviour of
 the editor to the DOM (web-page).
 
@@ -217,12 +391,26 @@ function web_editor(config) {
     'use strict';
 
     // Global (useful for testing) instance of the ACE wrapper object
-    window.EDITOR = pythonEditor('editor');
+    window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
+    var TRANSLATIONS = translations();
+
+    // Represents the REPL terminal
+    var REPL = null;
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
+
+    var inIframe = window !== window.parent;
+
+    // Indicate if editor can listen and respond to messages
+    var controllerMode = inIframe && urlparse("controller") === "1";
+
+    var usePartialFlashing = true;
+
+    // MicroPython filesystem to be initialised on page load.
+    window.micropythonFs = undefined;
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
@@ -234,6 +422,11 @@ function web_editor(config) {
         return $("#script-name").val();
     }
 
+    // Gets filename and replaces spaces with underscores
+    function getSafeName(){
+        return getName().replace(" ", "_");
+    }
+
     // Get the font size of the text currently displayed in the editor.
     function getFontSize() {
         return EDITOR.ACE.getFontSize();
@@ -242,6 +435,13 @@ function web_editor(config) {
     // Set the font size of the text currently displayed in the editor.
     function setFontSize(size) {
         EDITOR.ACE.setFontSize(size);
+        $("#request-repl")[0].style.fontSize = "" + size + "px";
+        $("#request-serial")[0].style.fontSize = "" + size + "px";
+
+        // Only update font size if REPL is open
+        if ($("#repl").css('display') != 'none') {
+             REPL.prefs_.set('font-size', size);
+        }
     }
 
     // Sets up the zoom-in functionality.
@@ -280,6 +480,15 @@ function web_editor(config) {
         }
     }
 
+    function setLanguage(lang) {
+        TRANSLATIONS.updateLang(lang, function(translations) {
+            config.translate = translations;
+            document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
+            $('ul.tree > li > span > a').removeClass('is-selected');
+            $('#'+lang).addClass('is-selected'); 
+        });
+    }
+
     // Checks for feature flags in the config object and shows/hides UI
     // elements as required.
     function setupFeatureFlags() {
@@ -294,12 +503,13 @@ function web_editor(config) {
             $("#command-share").removeClass('hidden');
         }
         if(config.flags.experimental) {
-            $("#known-issues").removeClass('hidden');
+            $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            EDITOR.enableAutocomplete(true);
+            $('#menu-switch-autocomplete').prop("checked", true);
+            $('#menu-switch-autocomplete-enter').prop("checked", false);
         }
-        if(config.flags.options) {
-            $("#command-options").removeClass('hidden');
-        }
+
         // Update the help link to pass feature flag information.
         var helpAnchor = $("#help-link");
         var featureQueryString = Object.keys(config.flags).filter(function(f) {
@@ -308,6 +518,12 @@ function web_editor(config) {
             return encodeURIComponent(f) + "=true";
         }).join("&");
         helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
+
+        if (navigator.usb) {
+            script('static/js/dap.umd.js');
+            script('static/js/hterm_all.min.js');
+            script('partial-flashing.js');
+        }
     }
 
     // Update the docs link to append MicroPython version
@@ -344,11 +560,15 @@ function web_editor(config) {
             EDITOR.focus();
         } else {
             // If there's no name, default to something sensible.
-            setName("microbit");
+            setName('microbit program');
             // A sane default starting point for a new script.
-            EDITOR.setCode(config.translate.code.start);
+            EDITOR.setCode('# ' + config.translate.code.start + '\n' +
+                'from microbit import *\n\n\n' +
+                'while True:\n' +
+                '    display.scroll(\'Hello, World!\')\n' +
+                '    display.show(Image.HEART)\n' +
+                '    sleep(2000)\n');
         }
-        EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         window.setTimeout(function () {
             // What to do if the user changes the content of the editor.
             EDITOR.on_change(function () {
@@ -357,10 +577,6 @@ function web_editor(config) {
         }, 1);
         // Handles what to do if the name is changed.
         $("#script-name").on("input keyup blur", function () {
-            dirty = true;
-        });
-        // Handles what to do if the description is changed.
-        $("#script-description").on("input keyup blur", function () {
             dirty = true;
         });
         // Describes what to do if the user attempts to close the editor without first saving their work.
@@ -374,7 +590,7 @@ function web_editor(config) {
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#link-log').focus();
+                $('#command-download').focus();
             }
         });
         // Bind drag and drop into editor.
@@ -391,25 +607,321 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
-    // Generates the text for a hex file with MicroPython and the user code
-    function generateFullHexStr() {
-        var firmware = $("#firmware").text();
-        var fullHexStr = '';
+    function initializeIframeMessaging() {
+      window.addEventListener("load", function () {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
+      });
+
+      window.addEventListener(
+        "message",
+        function (event) {
+          if (event.data) {
+            var type = event.data.type;
+
+            if (type === EDITOR_IFRAME_MESSAGING.host) {
+              var action = event.data.action;
+              
+              switch (action) {
+                // Parent is sending code to update editor
+                case EDITOR_IFRAME_MESSAGING.actions.importproject:
+                  if (!event.data.project || typeof event.data.project !== "string") {
+                    throw new Error("Invalid 'project' data type. String should be provided.");
+                  }
+                  EDITOR.setCode(event.data.project);
+                  break;
+
+                // Parent is sending initial code for editor
+                // Also here we can sync parent data with editor's data
+                case EDITOR_IFRAME_MESSAGING.actions.workspacesync:
+                  if (!event.data.projects || !Array.isArray(event.data.projects)) {
+                    throw new Error("Invalid 'projects' data type. Array should be provided.");
+                  }
+                  if (event.data.projects.length < 1) {
+                    throw new Error("'projects' array should contain at least one item.");
+                  }
+                  EDITOR.setCode(event.data.projects[0]);
+                  // Notify parent about editor successfully configured
+                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
+                  break;
+
+                default:
+                  throw new Error("Unsupported action.")
+              }
+            }
+          }
+        },
+        false
+      );
+
+      var debounceCodeChange = debounce(function (code) {
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
+      }, 1000);
+
+      EDITOR.setCode(" ");
+      EDITOR.on_change(function () {
+        debounceCodeChange(EDITOR.getCode());
+      });
+    }
+
+    // Sets up the file system and adds the initial main.py
+    function setupFilesystem() {
+        micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
+        // Limit filesystem size to 20K
+        micropythonFs.setStorageSize(20 * 1024);
+        // The the current main.py
+        micropythonFs.write('main.py', EDITOR.getCode());
+    }
+
+    // Based on the Python code magic comment it detects a module
+    function isPyModule(codeStr) {
+        var isModule = false;
+        if (codeStr.length) {
+            var codeLines = codeStr.split(/\r?\n/);
+            // Only look at the first three lines
+            var loopEnd = Math.min(3, codeLines.length);
+            for (var i = 0; i < loopEnd; i++) {
+                if (codeLines[i].indexOf('# microbit-module:') == 0) {
+                    isModule = true;
+                }
+            }
+        }
+        return isModule;
+    }
+
+    // Loads Python code into the editor and/or filesystem
+    function loadPy(filename, codeStr) {
+        var isModule = isPyModule(codeStr);
+        var moduleName = filename.replace('.py', '');
+        filename = isModule ? filename : 'main.py';
+        var showModuleLoadedAlert = true;
+        if (isModule && micropythonFs.exists(filename)) {
+            if (!confirm(config.translate.confirms.replace_module.replace('{{module_name}}', moduleName))) {
+                return;
+            }
+            // A confirmation box to replace the module has already been accepted
+            showModuleLoadedAlert = false;
+        }
+        if (codeStr) {
+            try {
+                micropythonFs.write(filename, codeStr);
+            } catch(e) {
+                alert(config.translate.alerts.load_code + '\n' + e.message);
+            }
+        } else {
+            return alert(config.translate.alerts.empty);
+        }
+        if (isModule) {
+            if (micropythonFs.getStorageRemaining() < 0){
+                micropythonFs.remove(filename);
+                return alert(config.translate.alerts.module_out_of_space);
+            }
+            if (showModuleLoadedAlert) {
+                alert(config.translate.alerts.module_added.replace('{{module_name}}', moduleName));
+            }
+        } else {
+            setName(moduleName);
+            EDITOR.setCode(codeStr);
+        }
+    }
+
+    // Reset the filesystem and load the files from this hex file to the fs and editor
+    function loadHex(filename, hexStr) {
+        var errorMsg = '';
+        var code = '';
+        var importedFiles = [];
+        var tryOldMethod = false;
         try {
-            fullHexStr = EDITOR.getHexFile(firmware);
+            // If hexStr is parsed correctly it formats the file system before adding the new files
+            importedFiles = micropythonFs.importFilesFromIntelHex(hexStr, {
+                overwrite: true,
+                formatFirst:true
+            });
+            // Check if imported files includes a main.py file
+            if (importedFiles.indexOf('main.py') > -1) {
+                code = micropythonFs.read('main.py');
+            } else {
+                // There is no main.py file, but there could be appended code
+                tryOldMethod = true;
+                errorMsg += config.translate.alerts.no_main + '\n';
+            }
+        } catch(e) {
+           tryOldMethod = true;
+           errorMsg += e.message + '\n';
+        }
+        if (tryOldMethod) {
+            try {
+                code = microbitFs.getIntelHexAppendedScript(hexStr);
+                micropythonFs.write('main.py', code);
+            } catch(e) {
+                // Only display an error if there were no files added to the filesystem
+                if (!importedFiles.length) {
+                    errorMsg += config.translate.alerts.no_script + '\n';
+                    errorMsg += e.message;
+                    return alert(config.translate.alerts.no_python + '\n\n' +
+                            config.translate.alerts.error + errorMsg);
+                }
+            }
+        }
+        setName(filename.replace('.hex', ''));
+        EDITOR.setCode(code);
+    }
+
+    // Function for adding file to filesystem
+    function loadFileToFilesystem(filename, fileBytes) {
+        // Check if file already exists and confirm overwrite
+        if (filename !== 'main.py' && micropythonFs.exists(filename)) {
+            if (!confirm(config.translate.confirms.replace_file.replace('{{file_name}}', filename))) {
+                return;
+            }
+        }
+        // For main.py confirm if the user wants to replace the editor content
+        if (filename === 'main.py' && !confirm(config.translate.confirms.replace_main)) {
+            return;
+        }
+        try {
+            micropythonFs.write(filename, fileBytes);
+            // Check if the filesystem has run out of space
+            var _ = micropythonFs.getIntelHex();
+        } catch(e) {
+            if (micropythonFs.exists(filename)) {
+                micropythonFs.remove(filename);
+            }
+            return alert(config.translate.alerts.cant_add_file + filename + '\n' + e.message);
+        }
+        if (filename == 'main.py') {
+            // TODO: This will probably break in IE10
+            var utf8 = new TextDecoder('utf-8').decode(fileBytes);
+            EDITOR.setCode(utf8);
+        }
+    }
+
+    // Downloads a file from the filesystem, main.py is renamed to the script name
+    function downloadFileFromFilesystem(filename) {
+        var output = micropythonFs.readBytes(filename);
+        var ua = navigator.userAgent.toLowerCase();
+        if ((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+            alert(config.translate.alerts.save);
+            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
+        } else {
+            var blob = new Blob([output], {type: 'text/plain'});
+            if (filename === 'main.py'){
+                filename = getSafeName() + '.py';
+            }
+            saveAs(blob, filename);
+        }
+    }
+
+    // Update the widget that shows how much space is used in the filesystem
+    function updateStorageBar() {
+        var modulesSize = 0;
+        var otherSize = 0;
+        var mainSize = 0;
+        var totalSpace = micropythonFs.getStorageSize();
+        try {
+            micropythonFs.write('main.py', EDITOR.getCode());
+            mainSize = micropythonFs.size('main.py');
+        } catch(e) {
+            // No need to do any action with an error, just keep the size 0
+        }
+        micropythonFs.ls().forEach(function(filename) {
+            var extension = filename.split('.').pop();
+            if (extension === 'py') {
+                if (filename !== 'main.py') {
+                    modulesSize += micropythonFs.size(filename);
+                }
+            } else {
+                otherSize += micropythonFs.size(filename);
+            }
+        });
+        var firstTrFound = false;
+        var setTrEl = function(trEl, sizePercentage) {
+            if (sizePercentage > 0) {
+                trEl.css('display','');
+                trEl.css('width', Math.ceil(sizePercentage) + '%');
+                if (!firstTrFound) {
+                    trEl.attr('class', 'fs-space-table-first');
+                    firstTrFound = true;
+                } else {
+                    trEl.attr('class', '');
+                }
+            } else {
+                trEl.css('display', 'none');
+            }
+        };
+        setTrEl($('#fs-space-modules'), modulesSize * 100 / totalSpace);
+        setTrEl($('#fs-space-main'), mainSize * 100 / totalSpace);
+        setTrEl($('#fs-space-other'), otherSize * 100 / totalSpace);
+        // If we are out of free space hide the "free" box
+        if ((modulesSize  + mainSize + otherSize) > (totalSpace * 0.98)) {
+            $('#fs-space-free').css('display', 'none');
+        } else {
+            $('#fs-space-free').css('display', '');
+        }
+    }
+
+    // Regenerate the table showing the file list and call for the storage bar to be updated
+    function updateFileTables(loadStrings) {
+        // Delete the current table body content and add rows file by file
+        $('.fs-file-list table tbody').empty();
+        micropythonFs.ls().forEach(function(filename) {
+            var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
+            var name = filename;
+            var disabled = '';
+            if (filename === 'main.py') {
+              name = getName() + ' (' + filename + ')';
+              disabled = 'disabled';
+            }
+            $('.fs-file-list table tbody').append(
+                '<tr><td>' + name + '</td>' +
+                '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] +'><i class="fa fa-trash"></i></button>' +
+                '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
+            );
+            $('#' + pseudoUniqueId + '_save').click(function(e) {
+                downloadFileFromFilesystem(filename);
+            });
+            $('#' + pseudoUniqueId + '_remove').click(function(e) {
+                micropythonFs.remove(filename);
+                updateFileTables(loadStrings);
+                var content = $('.expandable-content')[0];
+                content.style.maxHeight = content.scrollHeight + "px";
+            });
+        });
+        updateStorageBar();
+    }
+
+    // Generates the text for a hex file with MicroPython and the user code
+    function generateFullHex(format) {
+        var fullHex;
+        try {
+            // Remove main.py if editor content is empty to download a hex file
+            // that includes the filesystem but doesn't try to run any code
+            if (!EDITOR.getCode()) {
+                if (micropythonFs.exists('main.py')) {
+                    micropythonFs.remove('main.py');
+                }
+            } else {
+                micropythonFs.write('main.py', EDITOR.getCode());
+            }
+            // Generate hex file
+            if(format == "bytes") {
+                fullHex = micropythonFs.getIntelHexBytes();
+            } else {
+                fullHex = micropythonFs.getIntelHex();
+            }
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
-            throw new Error(config.translate.alerts.length);
+            throw new Error(config.translate.alerts.load_code + '\n' + e.message);
         }
-        return fullHexStr;
+        return fullHex;
     }
 
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         try {
-            var output = generateFullHexStr();
+            var output = generateFullHex("string");
         } catch(e) {
-            alert('Error:\n' + e.message);
+            alert(config.translate.alerts.error + e.message);
             return;
         }
         var ua = navigator.userAgent.toLowerCase();
@@ -417,34 +929,65 @@ function web_editor(config) {
             alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
         } else {
-            var filename = getName().replace(" ", "_");
+            var filename = getSafeName();
             var blob = new Blob([output], {type: "application/octet-stream"});
             saveAs(blob, filename + ".hex");
         }
     }
 
-    // This function describes what to do when the save button is clicked.
-    function doSave() {
-        var output = EDITOR.getCode();
-        var ua = navigator.userAgent.toLowerCase();
-        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
-            alert(config.translate.alerts.save);
-            window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var filename = getName().replace(" ", "_");
-            var blob = new Blob([output], {type: "text/plain"});
-            saveAs(blob, filename + ".py");
+    function invalidFileWarning(fileType){
+        if(fileType=="mpy"){
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
+        }else{
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
-        dirty = false;
     }
 
-    // Describes what to do when the load button is clicked.
-    function doLoad() {
-        var template = $('#load-template').html();
+    // Describes what to do when the save/load button is clicked.
+    function doFiles() {
+        var template = $('#files-template').html();
         Mustache.parse(template);
+        config.translate.load["program-title"] = $("#script-name").val();
+        var loadStrings = config.translate.load;
         vex.open({
-            content: Mustache.render(template, config.translate.load),
+            content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
+                $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
+                document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $('#save-hex').click(function() {
+                    doDownload();
+                });
+                $('#save-py').click(function() {
+                    if (micropythonFs.ls().length > 1) {
+                        if (!confirm(config.translate.confirms.download_py_multiple.replace('{{file_name}}', getSafeName() + '.py'))) {
+                            return;
+                        }
+                    }
+                    downloadFileFromFilesystem('main.py');
+                });
+                $("#files-expand-help").click(function(){
+                    if ($("#fileHelpPara").css("display")=="none"){
+                        $("#fileHelpPara").show();
+                        $("#addFile").css("margin-bottom","10px");
+                    }else{
+                        $("#fileHelpPara").hide();
+                        $("#addFile").css("margin-bottom","22px");
+                    }
+                });
+                $('#show-files').click(function() {
+                  var content = $('.expandable-content')[0];
+                  if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                    $("#hide-files").attr("id", "show-files");
+                    $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
+                    document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                  } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    $("#show-files").attr("id", "hide-files");
+                    $("#hide-files").attr("title", loadStrings["hide-files"]);
+                    document.getElementById("hide-files").innerHTML =loadStrings["hide-files"] + " <i class='fa fa-caret-up'>";
+                  }
+                });
                 $(vexContent).find('#load-drag-target').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -463,50 +1006,61 @@ function web_editor(config) {
                     vex.close();
                     EDITOR.focus();
                 });
-                $(vexContent).find('#load-form-form').on('submit', function(e){
+                $('#file-upload-link').click(function() {
+                    $('#file-upload-input').trigger('click');
+                });
+                $('#file-upload-input').on('change', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if(e.target[0].files.length === 1) {
-                        var f = e.target[0].files[0];
+
+                    var inputFile = this;
+                    document.dispatchEvent(new CustomEvent('file-upload', { detail: inputFile.files }));
+                    if (inputFile.files.length === 1) {
+                        var f = inputFile.files[0];
                         var ext = (/[.]/.exec(f.name)) ? /[^.]+$/.exec(f.name) : null;
                         var reader = new FileReader();
                         if (ext == 'py') {
-                            setName(f.name.replace('.py', ''));
                             reader.onload = function(e) {
-                                EDITOR.setCode(e.target.result);
+                                loadPy(f.name, e.target.result);
                             };
                             reader.readAsText(f);
-                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
                         } else if (ext == 'hex') {
-                            setName(f.name.replace('.hex', ''));
                             reader.onload = function(e) {
-                                var code = '';
-                                var showAlert = false;
-                                try {
-                                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
-                                } catch(e) {
-                                    showAlert = true;
-                                }
-                                if (showAlert || code.length === 0) {
-                                    return alert(config.translate.alerts.unrecognised_hex);
-                                } else {
-                                    EDITOR.setCode(code);
-                                }
+                                loadHex(f.name, e.target.result);
                             };
                             reader.readAsText(f);
-                            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+                        } else{
+                            invalidFileWarning(ext);
                         }
                     }
+                    inputFile.value = '';
                     vex.close();
                     EDITOR.focus();
                     return false;
                 });
+                $('#fs-file-upload-button').click(function() {
+                    $('#fs-file-upload-input').trigger('click');
+                });
+                $('#fs-file-upload-input').on('change', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var inputFile = this;
+                    Array.from(inputFile.files).forEach(function(file) {
+                        var fileReader = new FileReader();
+                        fileReader.onload = function(e) {
+                            loadFileToFilesystem(file.name, new Uint8Array(e.target.result));
+                            updateFileTables(loadStrings);
+                            var content = $('.expandable-content')[0];
+                            content.style.maxHeight = content.scrollHeight + "px";
+                        };
+                        fileReader.readAsArrayBuffer(file);
+                    });
+                    inputFile.value = '';
+                });
             }
         });
-        $('.load-toggle').on('click', function(e) {
-            $('.load-drag-target').toggle();
-            $('.load-form').toggle();
-        });
+        updateFileTables(loadStrings);
     }
 
     // Triggered when a user clicks the blockly button. Toggles blocks on/off.
@@ -559,7 +1113,6 @@ function web_editor(config) {
     function doSnippets() {
         // Snippets are triggered by typing a keyword followed by pressing TAB.
         // For example, type "wh" followed by TAB.
-        var snippetManager = ace.require("ace/snippets").snippetManager;
         var template = $('#snippet-template').html();
         Mustache.parse(template);
         var context = {
@@ -568,7 +1121,7 @@ function web_editor(config) {
             'instructions': config.translate.code_snippets.instructions,
             'trigger_heading': config.translate.code_snippets.trigger_heading,
             'description_heading': config.translate.code_snippets.description_heading,
-            'snippets': snippetManager.snippetMap.python,
+            'snippets': EDITOR.getSnippets(),
             'describe': function() {
                 return function(text, render) {
                     var name = render(text);
@@ -638,32 +1191,504 @@ function web_editor(config) {
         var ext = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : null;
         var reader = new FileReader();
         if (ext == 'py') {
-            setName(file.name.replace('.py', ''));
             reader.onload = function(e) {
-                EDITOR.setCode(e.target.result);
+                loadPy(file.name, e.target.result);
             };
             reader.readAsText(file);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
         } else if (ext == 'hex') {
-            setName(file.name.replace('.hex', ''));
             reader.onload = function(e) {
-                var code = '';
-                var showAlert = false;
-                try {
-                    code = upyhex.extractPyStrFromIntelHex(e.target.result);
-                } catch(e) {
-                    showAlert = true;
-                }
-                if (showAlert || code.length === 0) {
-                    return alert(config.translate.alerts.unrecognised_hex);
-                } else {
-                    EDITOR.setCode(code);
-                }
+                loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
-            EDITOR.ACE.gotoLine(EDITOR.ACE.session.getLength());
+        }else{
+            invalidFileWarning(ext);
         }
         $('#editor').focus();
+    }
+
+    function showDisconnectError(event) {
+        var error = {"name": "device-disconnected", "message": config["translate"]["webusb"]["err"]["device-disconnected"]};
+        webusbErrorHandler(error);
+    }
+
+    function clearDapWrapper(event) {
+        if(window.dapwrapper || window.previousDapWrapper) {
+            window.dapwrapper = null;
+            window.previousDapWrapper = null;
+        }
+    }
+
+    function doConnect(serial) {
+        // Change button to connecting
+        $("#command-connect").hide();
+        $("#command-connecting").show();
+        $("#command-disconnect").hide();
+        
+        // Device disconnect listener
+        // Clears dapwrapper
+        navigator.usb.addEventListener('disconnect', clearDapWrapper);
+
+        // Show error on WebUSB Disconnect Events
+        navigator.usb.addEventListener('disconnect', showDisconnectError);
+
+        var p = Promise.resolve();
+        if (usePartialFlashing) {
+            console.log("Connecting: Using Quick Flash");
+            p = PartialFlashing.connectDapAsync();
+        }
+        else {
+            console.log("Connecting: Using Full Flash");
+            p = navigator.usb.requestDevice({
+                filters: [{vendorId: 0x0d28, productId: 0x0204}]
+            }).then(function(device) {
+                // Connect to device
+                window.transport = new DAPjs.WebUSB(device);
+                window.daplink = new DAPjs.DAPLink(window.transport);
+
+                // Ensure disconnected
+                window.daplink.disconnect().catch(function(e) {
+                    // Do nothing if already disconnected
+                });
+
+                // Connect to board
+                return window.daplink.connect();
+            })
+            .then(function() {
+                console.log('Connection Complete');
+            });
+        }
+
+        return p.then(function() {
+            // Dispatch event for listeners
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'connected'
+            }}));
+
+            // Change button to disconnect
+            $("#command-connect").hide();
+            $("#command-connecting").hide();
+            $("#command-disconnect").show();
+
+            // Change download to flash
+            $("#command-download").hide();
+            $("#command-flash").show();
+
+            if (serial) {
+                doSerial();
+            }
+        })
+        .catch(webusbErrorHandler);
+    }
+
+    function webusbErrorHandler(err) {
+        // Display error handler modal
+        $("#flashing-overlay-container").css("display", "flex");
+        $("#flashing-info").addClass('hidden');
+
+        // Log error to console for feedback
+        console.log("An error occured whilst attempting to use WebUSB.");
+        console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
+        console.log(err);
+        console.trace();
+
+        // If there was an error and quick flash is in use, then clear dapwrapper
+        if(usePartialFlashing) {
+            if(window.dapwrapper) {
+                window.dapwrapper = null;
+            }
+
+            if(window.previousDapWrapper) {
+                window.previousDapWrapper = null;
+            }
+        }
+
+        // Disconnect from the microbit
+        doDisconnect();
+       
+        var errorType;
+        var errorTitle;
+        var errorDescription;
+
+        // Determine type of error
+        switch(typeof err) {
+            case "object":
+                console.log("Caught in Promise or Error object");
+                // We might get Error objects as Promise rejection arguments
+                if (!err.message && err.promise && err.reason) {
+                    err = err.reason;
+                }
+
+                // Determine error type
+                if (err.message === "No valid interfaces found.") {
+                    errorType = "update-req";
+                    errorTitle = err.message;
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                } else if (err.message === "Unable to claim interface.") {
+                    errorType = "clear-connect";
+                    errorTitle = err.message;
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                } else if (err.name === "device-disconnected") {
+                    errorType = "device-disconnected";
+                    errorTitle = err.message;
+                    // No additional message provided here, err.message is enough
+                    errorDescription = "";
+                } else if (err.name === "timeout-error") {
+                    errorType = "timeout-error";
+                    errorTitle = "Connection Timed Out";
+                    errorDescription = config["translate"]["webusb"]["err"]["reconnect-microbit"];
+                } else {
+                    // Unhandled error. User will need to reconnect their micro:bit
+                    errorType = "reconnect-microbit";
+                    errorTitle = "WebUSB Error";
+                    errorDescription = config["translate"]["webusb"]["err"][errorType];
+                    if (usePartialFlashing && config.flags.experimental) {
+                        errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                    }
+                }
+
+                break;
+            case "string":
+                // Caught a string. Example case: "Flash error" from DAPjs
+                console.log("Caught a string");
+                
+                // Unhandled error. User will need to reconnect their micro:bit
+                errorType = "reconnect-microbit";
+                errorTitle = "WebUSB Error";
+                errorDescription = config["translate"]["webusb"]["err"][errorType];
+                if (usePartialFlashing && config.flags.experimental) {
+                    errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                }
+                break;
+            default:
+                // Unexpected error type
+                console.log("Unexpected error type: " + typeof(err) );
+                
+                // Unhandled error. User will need to reconnect their micro:bit
+                errorType = "reconnect-microbit";
+                errorTitle = "WebUSB Error";
+                errorDescription = config["translate"]["webusb"]["err"][errorType];
+                if (usePartialFlashing && config.flags.experimental) {
+                    errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
+                }
+        }
+
+        // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
+        var showOverlayButtons = "";
+        if(err.name !== 'device-disconnected' || $("#flashing-overlay-error").html() !== "") {
+            showOverlayButtons = '<a href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
+                                    config["translate"]["webusb"]["download"] + 
+                                 '</a> | ' +
+                                 '<a target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                                    config["translate"]["webusb"]["troubleshoot"] + 
+                                '</a> | ';
+        }
+
+        var errorHTML = 
+                    '<div>' + 
+                        '<strong>' + errorTitle + '</strong>' +
+                        '<br >' + 
+                        errorDescription + 
+                        (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
+                    '</div>' + 
+                    '<div class="flashing-overlay-buttons">' + 
+                        '<hr />' +
+                        showOverlayButtons + 
+                        '<a href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>' + 
+                    '</div>';
+
+        // Show error message, or append to existing errors
+        if($("#flashing-overlay-error").html() == "") {
+            $("#flashing-overlay-error").html(errorHTML);
+        } else {
+            $(".flashing-overlay-buttons").hide(); // Hide previous buttons
+            $("#flashing-overlay-error").append("<hr />" + errorHTML);
+        }
+
+        // Attach download handler
+        $("#flashing-overlay-download").click(doDownload);
+
+        // Send event
+        var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
+        // Append error message, replace all special chars with '-', if last char is '-' remove it
+        var details = {
+                "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
+                "event-type": ((err.name == "device-disconnected") ? "info" : "error"), 
+                "message": errorType + "/" + errorMessage
+        };
+
+        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+    }
+
+    function doDisconnect() {
+
+        // Remove disconnect listenr
+        navigator.usb.removeEventListener('disconnect', showDisconnectError);
+
+        // Hide serial and disconnect if open
+        if ($("#repl").css('display') != 'none') {
+            $("#repl").hide();
+            $("#request-repl").hide();
+            $("#request-serial").hide();
+            $("#editor-container").show();
+        }
+        $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+        $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
+
+        $("#repl").empty();
+        REPL = null;
+
+        // Change button to connect
+        $("#command-disconnect").hide();
+        $("#command-connecting").hide();
+        $("#command-connect").show();
+
+        // Change flash to download
+        $("#command-flash").hide();
+        $("#command-download").show();
+
+        var p = Promise.resolve();
+
+        if (usePartialFlashing) {
+            if (window.dapwrapper) {
+                console.log("Disconnecting: Using Quick Flash");
+                p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
+                    .then(function() { window.dapwrapper.disconnectAsync() } );
+            }
+        }
+        else {
+            if (window.daplink) {
+                console.log("Disconnecting: Using Full Flash");
+                p = p.then(function() { window.daplink.stopSerialRead() } )
+                    .then(function() { window.daplink.disconnect() } );
+            }
+        }
+
+        p.finally(function() {
+            console.log('Disconnection Complete');
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'disconnected'
+            }}));
+        });
+
+        return p;
+    }
+
+    function doFlash() {
+        var startTime = new Date().getTime();
+
+        // Hide serial and disconnect if open
+        if ($("#repl").css('display') != 'none') {
+            $("#repl").hide();
+            $("#request-repl").hide();
+            $("#request-serial").hide();
+            $("#editor-container").show();
+            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
+            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
+
+            if (usePartialFlashing) {
+                if (window.dapwrapper) {
+                    window.dapwrapper.daplink.stopSerialRead();
+                }
+            }
+            else {
+                window.daplink.stopSerialRead();
+            }
+        }
+
+        // Get the hex to flash in bytes format, exit if there is an error
+        try {
+            var output = generateFullHex('bytes');
+        } catch(e) {
+            return alert(config.translate.alerts.error + e.message);
+        }
+
+        $("#webusb-flashing-progress").val(0).hide();
+        $("#webusb-flashing-complete").hide();
+        $("#webusb-flashing-loader").show();
+        $('#flashing-overlay-error').html("");
+        $("#flashing-info").removeClass('hidden');
+        $("#flashing-overlay-container").css("display", "flex");
+
+        var connectTimeout = setTimeout(function() {
+            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["timeout-error"]};
+            webusbErrorHandler(error);
+        }, 10000);
+
+        var updateProgress = function(progress) {
+            $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
+        };
+
+        var p = Promise.resolve();
+        if (usePartialFlashing) {
+            REPL = null;
+            $("#repl").empty();
+
+            p = window.dapwrapper.disconnectAsync()
+                .then(function() {
+                    return PartialFlashing.connectDapAsync();
+                })
+                .then(function() {
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
+                    // Begin flashing
+                    $("#webusb-flashing-loader").hide();
+                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
+                    return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
+                });
+        }
+        else {
+            // Push binary to board
+            console.log("Starting Full Flash");
+            p = window.daplink.connect()
+                .then(function() {
+                    // Clear connecting timeout
+                    clearTimeout(connectTimeout);
+
+                    // Event to monitor flashing progress
+                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
+
+                    // Encode firmware for flashing
+                    var enc = new TextEncoder();
+                    var image = enc.encode(output).buffer;
+
+                    $("#webusb-flashing-loader").hide();
+                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
+                    return window.daplink.flash(image);
+                });
+        }
+
+        return p.then(function() {
+            // Show tick
+            $("#webusb-flashing-progress").hide();
+            $("#webusb-flashing-complete").show();
+
+            // Send flash timing event
+            var timeTaken = (new Date().getTime() - startTime);
+            var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
+            document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+
+            console.log("Flash complete");
+            
+            // Close overview
+            setTimeout(function(){
+                $("#flashing-overlay-container").hide();
+            }, 500);
+        })
+        .catch(webusbErrorHandler)
+        .finally(function() {
+            // Remove event listener
+            window.removeEventListener("unhandledrejection", webusbErrorHandler);
+        });
+    }
+
+    function doSerial() {
+        console.log("Setting Up Serial Terminal");
+        // Hide terminal
+        var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
+        if ($("#repl").css('display') != 'none') {
+            $("#repl").hide();
+            $("#request-repl").hide();
+            $("#request-serial").hide();
+            $("#editor-container").show();
+            $("#command-serial").attr("title", serialButton["label"]);
+            $("#command-serial > .roundlabel").text(serialButton["label"]);
+            if (usePartialFlashing) {
+                if (window.dapwrapper) {
+                    window.dapwrapper.daplink.stopSerialRead();
+                }
+            }
+            else {
+                window.daplink.stopSerialRead();
+            }
+            return;
+        }
+
+        // Check if we need to connect
+        if ($("#command-connect").is(":visible")){
+            doConnect(true);
+        } else {
+            // Change Serial button to close
+            $("#command-serial").attr("title", serialButton["title-close"]);
+            $("#command-serial > .roundlabel").text(serialButton["label-close"]);
+
+            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+
+            daplink.connect()
+            .then( function() {
+                return daplink.setSerialBaudrate(115200);
+            })
+            .then( function() {
+                return daplink.getSerialBaudrate();
+            })
+            .then(function(baud) {
+                daplink.startSerialRead(1);
+                lib.init(setupHterm);
+            })
+            .catch(webusbErrorHandler);
+        }
+    }
+
+    function setupHterm() {
+        if (REPL == null) {
+            hterm.defaultStorage = new lib.Storage.Memory();
+
+            REPL = new hterm.Terminal("opt_profileName");
+            REPL.options_.cursorVisible = true;
+            REPL.prefs_.set('font-size', 22);
+            REPL.onTerminalReady = function() {
+                var io = REPL.io.push();
+                io.onVTKeystroke = function(str) {
+                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+                    daplink.serialWrite(str);
+                };
+                io.sendString = function(str) {
+                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+                    daplink.serialWrite(str);
+                };
+                io.onTerminalResize = function(columns, rows) {
+                };
+            };
+            REPL.decorate(document.querySelector('#repl'));
+            REPL.installKeyboard();
+
+            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+            daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+                REPL.io.print(data); // first byte of data is length
+            });
+        }
+
+        $("#editor-container").hide();
+        $("#repl").show();
+        $("#request-repl").show();
+        $("#request-serial").show();
+
+        // Recalculate terminal height
+        $("#repl > iframe").css("position", "relative");
+        $("#repl").attr("class", "hbox flex1");
+        REPL.prefs_.set('font-size', getFontSize());
+    }
+
+    function modalMsg(title, content, links){
+        var overlayContainer = "#modal-msg-overlay-container";
+        $(overlayContainer).css("display","block");
+        $("#modal-msg-title").text(title);
+        $("#modal-msg-content").html(content); 
+        var modalLinks = [];
+        if (links) {
+            Object.keys(links).forEach(function(key) {
+                if (links[key] === "close") {
+                    modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
+                } else {
+                    modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
+                }
+            });
+        }
+        $("#modal-msg-links").html((modalLinks).join(' | '));
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
@@ -689,14 +1714,18 @@ function web_editor(config) {
     // Join up the buttons in the user interface with some functions for
     // handling what to do when they're clicked.
     function setupButtons() {
+        if(navigator.platform.match('Win') !== null){
+            $(".roundsymbol").addClass("winroundsymbol");
+            $("#small-icons .status-icon").addClass("win-status-icon");
+        }
         $("#command-download").click(function () {
             doDownload();
         });
-        $("#command-save").click(function () {
-            doSave();
+        $("#command-flash").click(function () {
+            doFlash();
         });
-        $("#command-load").click(function () {
-            doLoad();
+        $("#command-files").click(function () {
+            doFiles();
         });
         $("#command-blockly").click(function () {
             doBlockly();
@@ -707,37 +1736,112 @@ function web_editor(config) {
         $("#command-share").click(function () {
             doShare();
         });
+        if (navigator.usb) {
+            $("#command-connect").click(function () {
+                doConnect();
+            });
+            $("#command-disconnect").click(function () {
+                doDisconnect();
+            }); 
+            $("#command-serial").click(function () {
+                doSerial();
+            });  
+        } else {
+            var WebUSBUnavailable = function() {
+                var links = {};
+                links[config['translate']['webusb']['err']['find-more']] = 'help.html#WebUSB';
+                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links);
+            };
+            $("#command-connect").click(WebUSBUnavailable);
+            $("#command-serial").click(WebUSBUnavailable);
+
+            $("#modal-msg-overlay-container").click(function(){
+                $("#modal-msg-overlay-container").hide()
+            });
+            $("#modal-msg-overlay").click(function(e){
+                e.stopPropagation();
+            });
+        }
+        $("#request-repl").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+            daplink.serialWrite("\x03");
+        });
+        $("#request-serial").click(function () {
+            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+            daplink.serialWrite("\x04");
+        });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
             $('#helpsupport_container').addClass('hidden');
+            $('#language_container').addClass('hidden');
             $('#options_container').toggleClass('hidden');
             formatMenuContainer('command-options', 'options_container');
-            // Stop immediate closure
-            e.stopImmediatePropagation();
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
         });
         $("#command-help").click(function (e) {
             // Hide any other open menus and show/hide help menu
             $('#options_container').addClass('hidden');
+            $('#language_container').addClass('hidden');
             $('#helpsupport_container').toggleClass('hidden');
             formatMenuContainer('command-help', 'helpsupport_container');
-            // Stop immediate closure
-            e.stopImmediatePropagation();
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
         });
-        $("#zoom-in").click(function (e) {
+        $("#command-zoom-in").click(function (e) {
             zoomIn();
-            e.stopPropagation();
         });
-        $("#zoom-out").click(function (e) {
+        $("#command-zoom-out").click(function (e) {
             zoomOut();
-            e.stopPropagation();
+        });
+        $("#command-language").click(function (e) {
+            // Hide any other open menus and show/hide help menu
+            $('#options_container').addClass('hidden');
+            $('#helpsupport_container').addClass('hidden');
+            $('#language_container').toggleClass('hidden');
+            formatMenuContainer('command-language', 'language_container');
+            // Stop closure of the menu in other local event handlers
+            e.originalEvent.keepMenuOpen = true;
+        });
+
+        $(".lang-choice").on("click", function() {
+            $("#language_container").addClass('hidden');
+            setLanguage($(this).attr('id'));
+        });
+
+        $('#menu-switch-autocomplete').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            if (setEnable) {
+                $('#autocomplete-enter').removeClass('hidden');
+            } else {
+                $('#autocomplete-enter').addClass('hidden');
+            }
+            EDITOR.enableAutocomplete(setEnable);
+            var setEnterEnable = $('#menu-switch-autocomplete-enter').is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnterEnable);
+        });
+        $('#menu-switch-autocomplete-enter').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            EDITOR.triggerAutocompleteWithEnter(setEnable);
+        });
+        $('#menu-switch-partial-flashing').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            return doDisconnect()
+                .catch(function(err) {
+                    // Assume an error means that it is already disconnected.
+                    // console.log("Error disconnecting when " + (setEnable ? "not " : "") + "using partial flashing: \r\n" + err);
+                })
+                .then(function() { usePartialFlashing = setEnable } ) 
         });
 
         window.addEventListener('resize', function() {
             formatMenuContainer('command-options', 'options_container');
             formatMenuContainer('command-help', 'helpsupport_container');
+            formatMenuContainer('command-language', 'language_container');
         });
 
         document.body.addEventListener('click', function(event) {
+            if (event.keepMenuOpen) return;
             // Close any button menu on a click is outside menu or a link within
             if ($(event.target).closest('.buttons_menu_container').length == 0 ||
                     $(event.target).prop('tagName').toLowerCase() === 'a') {
@@ -777,4 +1881,22 @@ function web_editor(config) {
     setupFeatureFlags();
     setupEditor(qs, migration);
     setupButtons();
+    setLanguage(qs.l || 'en');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Firmware at the end of the HTML file has to be loaded first
+        setupFilesystem();
+    });
+
+    // If iframe messaging allowed, initialize it
+    if (controllerMode) {
+      initializeIframeMessaging();
+    }
+}
+
+/*
+ * Function to close flash error box
+ */
+function flashErrorClose() {
+    $('#flashing-overlay-error').html("");
+    $('#flashing-overlay-container').hide();
 }

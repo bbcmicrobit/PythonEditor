@@ -45,6 +45,9 @@ Nomenclature and Definitions
 
 - **Test Case**: A set of test steps to verify a related set of conditions.
 
+- **Program by any method**: Write a file onto the micro:bit. This can be done by dragging the
+  file into the MICROBIT drive or through the connect button.
+
 
 Preparation
 -----------
@@ -58,13 +61,14 @@ the "Test Cases" opening paragraphs carefully.
 You will need
 '''''''''''''
 
-- Internet Explorer 10
+- Internet Explorer 10: non-Chrome-based.
 
-- A modern version of Edge
+- A modern version of Edge: Edge v44 or lower: non-Chrome-based.
+                            Edge v77 or higher: Chrome-based.
 
-- A modern version of Chrome
+- A modern version of Chrome: Chrome-based.
 
-- A modern version of Firefox
+- A modern version of Firefox: non-Chrome-based.
 
 - A text editor (the one included in most operating systems is fine).
 
@@ -95,17 +99,14 @@ You will need
 Tests Execution
 ---------------
 
-All Test Cases have to be run in one of the browsers listed in the
-"Preparation" section, and AT LEAST the following Test Cases have to be run
-in all of the other browsers as well:
+The test cases listed below always need to be run in a chrome-based browser:
 
-- Hex file can be generated
-- Generated hex file can be loaded to the editor
-- Python file can be saved
-- Saved Python file can be loaded to the editor
-- Snippets inject code into the Text Editor
-- Help menu expands and links work
-- Zoom changes the Text Editor font size
+- Connect and Flash over WebUSB and use REPL.
+- WebUSB error modal links are working.
+
+For a Primary Editor release run all the tests in all browsers. For a Beta
+Editor release, run all tests in Internet Explorer 10, except for the
+test cases listed above that need to be run in a chrome-based browser.
 
 Start each test case in a new instance of the Python Editor.
 
@@ -120,8 +121,8 @@ and that different Test Cases will use different methods.
 Test Case: Hex file can be generated
 ''''''''''''''''''''''''''''''''''''
 - Click the "Download" button.
-- [ ] Confirm the file downloaded is named "microbit.hex".
-- Flash the downloaded hex file into a micro:bit.
+- [ ] Confirm the file downloaded is named "microbit_program.hex".
+- Program by any method the downloaded hex file into a micro:bit.
 - [ ] Confirm the micro:bit displays "Hello, World!" followed by a heart.
 - Save this hex file for the following test case.
 
@@ -180,7 +181,7 @@ Code block 1::
 Test Case: Python file can be saved
 '''''''''''''''''''''''''''''''''''
 - Click the "Save" button.
-- [ ] Confirm the file downloaded is named "microbit.py".
+- [ ] Confirm the file downloaded is named "microbit_program.py".
 - Open the contents in a text editor from your operating system.
 - [ ] Confirm the file contains the exact contents defined in the "Code block
   1" at the bottom of this Test Case.
@@ -249,11 +250,101 @@ Code block 1::
     display.show(Image.PACMAN)
 
 
+Test Case: module.py file can be loaded by file picker and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by Load/Save > Add file the file ``emoji.py``
+- [ ] Confirm the file shows up in the files list with the same title.
+- Return to the editor and replace the current script with the following::
+
+    from microbit import *
+    from emoji import *
+
+    while True:
+        display.show(😃)
+        if accelerometer.was_gesture('shake'):
+            display.show(😡)
+            sleep(2000)
+        if button_a.was_pressed():
+            display.show(💖)
+            sleep(2000)
+        elif button_b.was_pressed():
+            display.show(🏠)
+            sleep(2000)
+        sleep(100)
+
+- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
+  showing emojis for the appropriate gestures and buttons.
+
+
+Test Case: module.py file can be 'magically' loaded into the editor by drag&drop and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by drag&drop into the editor the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- Return to the editor and replace the current script with the following::
+
+
+    from microbit import *
+    from emoji import *
+
+    while True:
+        display.show(😃)
+        if accelerometer.was_gesture('shake'):
+            display.show(😡)
+            sleep(2000)
+        if button_a.was_pressed():
+            display.show(💖)
+            sleep(2000)
+        elif button_b.was_pressed():
+            display.show(🏠)
+            sleep(2000)
+        sleep(100)
+
+- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
+  showing emojis for the appropriate gestures and buttons.
+
+
+Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by Load/Save drop area drag&drop the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- Return to the editor and replace the current script with the following::
+
+
+    from microbit import *
+    from emoji import *
+
+    while True:
+        display.show(😃)
+        if accelerometer.was_gesture('shake'):
+            display.show(😡)
+            sleep(2000)
+        if button_a.was_pressed():
+            display.show(💖)
+            sleep(2000)
+        elif button_b.was_pressed():
+            display.show(🏠)
+            sleep(2000)
+        sleep(100)
+
+- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
+  showing emojis for the appropriate gestures and buttons.
+
+
+Test Case: Hex file containing module can be loaded in the editor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load the file ``emoji-example.hex`` into the editor using drag&drop
+- [ ] In the Load/Save modal, confirm the editor has loaded the 
+    ``emoji-example.py (main.py)`` and ``emoji.py`` files.
+- [ ] Confirm that each .py file can be downloaded individually.
+- [ ] Confirm that the emoji.py file can be deleted, then program the file by any method.
+  to the micro:bit and confirm that an exception is thrown.
+
+
 Test Case: Empty script downloads MicroPython interpreter only
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Remove all the content from the Text Editor.
 - Click the "Download" button.
-- Flash the downloaded hex file into a micro:bit.
+- Program by any method the downloaded hex file into a micro:bit.
 - Connect to the REPL.
 - With the serial connection opened, press the micro:bit reset button.
 - [ ] Confirm the micro:bit restarted and that it went straight to the REPL.
@@ -298,6 +389,55 @@ Test Case: Zoom changes the Text Editor font size
 - Click the button with a magnifying lens and a ``-`` sign.
 - [ ] Confirm the font in the Text Editor has been decreased.
 
+Test Case: Language options work
+''''''''''''''''''''''''''''''''
+- Confirm that selecting each language option changes it to the corresponding language
+- [ ] English
+- [ ] Spanish
+- [ ] Polish
+
+Test Case: Connect and Flash over WebUSB and use REPL
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+Carry out this test in Chrome or a chrome-based browser:
+- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
+- [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
+- [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
+- [ ] Type ``help()`` and confirm that you see a result. 
+- [ ] Disconnect and confirm that menu returns to "Download" and "Connect".
+
+
+Test Case: WebUSB not supported message is working
+''''''''''''''''''''''''''''''''''''''''''''''''''
+Carry out this test in non-Chrome-based browsers 
+- Click the 'Connect' button.
+- [ ] Confirm the WebUSB not supported message box is displayed.
+- Click the 'Open Serial' button.
+- [ ] Confirm the WebUSB not supported message box is displayed.
+- Click the 'Find Out More' link.
+- [ ] Confirm the help.html page is opened on the WebUSB section.
+- Click outside the modal.
+- [ ] Confirm the modal closes.
+
+
+Test Case: WebUSB error modal links are working
+'''''''''''''''''''''''''''''''''''''''''''''''
+Carry out this test in Chrome or a chrome-based browser:
+- Click the 'Connect' button.
+- Click 'Cancel' button in the WebUSB device selection window that opens.
+- Click the 'Download Hex' link in the modal that opens.
+- [ ] Confirm a hex file with the name 'microbit_program.hex' is downloaded.
+- Click the 'Troubleshoot' link.
+- [ ] Confirm that https://support.microbit.org/support/solutions/articles/19000105428-webusb-troubleshooting is opened in a new tab.
+- Close the troubleshooting tab.
+- Click the 'Close' link.
+- [ ] Confirm the modal closes.
+
+
+Test Case: Autocomplete
+'''''''''''''''''''''''
+- [ ] Start typing in the editor and confirm that autocomplete offers suggestions
+  eg type 'di' and be offered 'display'.
+- [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
 Test results
 ------------
