@@ -133,6 +133,9 @@ var language = {
     },
     "pl": {
       "title": "Polski"
+    },
+    "hr": {
+      "title": "Chorwacki"
     }
   },
   "static-strings": {
