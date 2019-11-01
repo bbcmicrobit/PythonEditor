@@ -920,7 +920,7 @@ function web_editor(config) {
     function focusModal() {
         document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
         var dialog = document.querySelector('.modal-div');
-        var focusableEls = dialog.querySelectorAll('a:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]');
+        var focusableEls = dialog.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
         $(focusableEls).each(function() {
             $(this).attr('tabindex', '0');
         });
