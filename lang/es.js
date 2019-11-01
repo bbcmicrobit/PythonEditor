@@ -88,7 +88,7 @@ var language = {
       "reconnect-microbit": "Por favor reconecta el micro:bit e intentalo de nuevo.",
       "partial-flashing-disable": "Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.",
       "device-disconnected": "Dispositivo desconectado.",
-      "timeout-error":":Unable to connect to the micro:bit",
+      "timeout-error": "Unable to connect to the micro:bit",
       "unavailable": "Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.",
       "find-more": "Saber más"
     },
@@ -135,7 +135,7 @@ var language = {
       "title": "Polaco"
     },
     "hr": {
-      "title": "Croata"
+      "title": "Croatian"
     }
   },
   "static-strings": {
