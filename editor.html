@@ -97,12 +97,15 @@ Nicholas and Damien.
               <div id="addFileHeader">
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
-              <div id="addFileHelp" aria-expanded="false"><button class="snippet-button" id="expandHelpPara"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></button></div>
+              <div id="addFileHelp">
+                <button aria-labelledby="add-files" aria-expanded="false" type="button" class="snippet-button" id="expandHelpPara"><i class="fa fa-info-circle"><span>{{ help-button }}</span></i></button>
+              </div>
             </div>
-            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.</div>
+            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.
+            </div>
             <div class="expandable">
                 <div class="expandable-always-visible">
-                    <button aria-labelledby="show-files" role="button" type="button" class="action save-button show" id="show-files" tabindex="36" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
+                    <button aria-labelledby="show-files" aria-expanded="false" type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
                 </div>
                 <div class="expandable-content">
                     <div class="fs-file-list" id="fs-file-list">

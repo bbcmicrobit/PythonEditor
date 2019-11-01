@@ -998,14 +998,14 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#files-expand-help").click(function(){
+                $("#expandHelpPara").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
-                        $(this).attr("aria-expanded","true");
+                        $("#expandHelpPara").attr("aria-expanded","true");
                         $("#addFile").css("margin-bottom","10px");
                     }else{
                         $("#fileHelpPara").hide();
-                        $(this).attr("aria-expanded","false");
+                        $("#expandHelpPara").attr("aria-expanded","false");
                         $("#addFile").css("margin-bottom","22px");
                     }
                 });
@@ -1014,11 +1014,13 @@ function web_editor(config) {
                   if (content.style.maxHeight){
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
+                    $("#show-files").attr("aria-expanded","false");
                     $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
                     document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                   } else {
                     content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
+                    $("#hide-files").attr("aria-expanded","true");
                     $("#hide-files").attr("title", loadStrings["hide-files"]);
                     document.getElementById("hide-files").innerHTML =loadStrings["hide-files"] + " <i class='fa fa-caret-up'>";
                   }
@@ -1170,10 +1172,10 @@ function web_editor(config) {
             afterOpen: function(vexContent) {
                 focusModal();
                 $(vexContent).find('.snippet-selection').click(function(e){
-                        var snippet_name = $(this).find('.snippet-name').text();
-                        EDITOR.triggerSnippet(snippet_name);
-                        vex.close();
-                        EDITOR.focus();
+                    var snippet_name = $(this).find('.snippet-name').text();
+                    EDITOR.triggerSnippet(snippet_name);
+                    vex.close();
+                    EDITOR.focus();
                 });
             }
         });
