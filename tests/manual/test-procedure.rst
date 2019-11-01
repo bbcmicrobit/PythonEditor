@@ -389,6 +389,12 @@ Test Case: Zoom changes the Text Editor font size
 - Click the button with a magnifying lens and a ``-`` sign.
 - [ ] Confirm the font in the Text Editor has been decreased.
 
+Test Case: Language options work
+''''''''''''''''''''''''''''''''
+- Confirm that selecting each language option changes it to the corresponding language
+- [ ] English
+- [ ] Spanish
+- [ ] Polish
 
 Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
