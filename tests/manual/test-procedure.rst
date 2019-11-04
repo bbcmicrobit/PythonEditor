@@ -29,8 +29,8 @@ Nomenclature and Definitions
   open it".
 
 - **Load by file picker**: Load a file into the Python Editor by clicking on
-  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a file in the browser file picker, and
-  finally clicking on the "Open" button.
+  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a 
+  file in the browser file picker, and finally clicking on the "Open" button.
 
 - **Load by any method**: Load a file into the Python Editor using either
   of the three options: "Load by editor drag&drop", "Load by drop area
@@ -339,7 +339,7 @@ Test Case: Hex file containing module can be loaded in the editor
     ``emoji-example.py (main.py)`` and ``emoji.py`` files.
 - [ ] Confirm that each .py file can be downloaded individually.
 - [ ] Confirm that the emoji.py file can be deleted.
-- Program the file by any method to the micro:bit.
+- Program the project by any method to the micro:bit.
 - [ ] Confirm that an exception is thrown in the micro:bit.
 
 
@@ -444,46 +444,6 @@ Test Case: Autocomplete
 - [ ] Start typing in the editor and confirm that autocomplete offers suggestions
   eg type 'di' and be offered 'display'.
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
-
-
-Test Case: Metrics are working
-''''''''''''''''''''''''''''''
-This section only contains checks for the metrics not covered by CI testing.
-Check that the following actions send a metric ping:
-
-- [ ] Click WebUSB Connect button
-    - One ping indicating connect
-- [ ] Click WebUSB Connect button with micro:bit with non WebUSB DAPLink
-    - One ping indicating connect
-    - One ping indicating connection error: update-req
-- [ ] Click WebUSB Connect button with micro:bit connected to https://makecode.microbit.org/#
-    - One ping indicating connect
-    - One ping indicating connection error: clear-connect/unable-to-claim-interface
-- [ ] Click WebUSB Flash button
-    - One ping indicating flashing
-    - One ping indicating the script size in number of lines range
-    - One ping indicating the number of files in the file system
-    - One ping once the flashing ends indicating the time taken for flash in a seconds range.
-- [ ] Click WebUSB Flash button and half way-through disconnect the micro:bit
-    - One ping indicating flashing
-    - One ping indicating the script size in number of lines range
-    - One ping indicating the number of files in the file system
-    - One ping after disconnecting indicating an error
-- [ ] Click WebUSB Serial button
-- [ ] Click WebUSB Disconnect button
-- [ ] Unplug micro:bit without clicking WebUSB Disconnect button
-    - One ping indicating connection error: device-disconnected
-- [ ] Click Load/Save button
-- [ ] In the Load/Save modal, drag&drop a file into the grey area
-    - The ping identifies the file type, so repeat:
-        - Once for a Python file
-        - Once for a Hex file
-        - Once for a different file (metric reports .../error/invalid)
-- [ ] Drag&drop a file in the code editor area
-    - The ping identifies the file type, so repeat:
-        - Once for a Python file
-        - Once for a Hex file
-        - Once for a different file (metric reports .../error/invalid)
 
 
 Test results
