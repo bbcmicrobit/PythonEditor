@@ -24,14 +24,13 @@ Nomenclature and Definitions
   a file from the user OS, to the Text Editor area.
 
 - **Load by drop area drag&drop**: Load a file into the Python Editor by
-  clicking on the "Load button" and then dragging a file from the user OS to
+  clicking on the "Load/Save button" and then dragging a file from the user OS to
   the large grey box that says "Drag and drop a .hex or .py file in here to
   open it".
 
 - **Load by file picker**: Load a file into the Python Editor by clicking on
-  the "Load button", then clicking on the "Or pick a file" link, then clicking
-  on the "Browse" button, selecting a file in the browser file picker, and
-  finally clicking on the "Load" button.
+  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a 
+  file in the browser file picker, and finally clicking on the "Open" button.
 
 - **Load by any method**: Load a file into the Python Editor using either
   of the three options: "Load by editor drag&drop", "Load by drop area
@@ -180,7 +179,8 @@ Code block 1::
 
 Test Case: Python file can be saved
 '''''''''''''''''''''''''''''''''''
-- Click the "Save" button.
+- Click the "Load/Save" button.
+- Click the "Download Python Script" button.
 - [ ] Confirm the file downloaded is named "microbit_program.py".
 - Open the contents in a text editor from your operating system.
 - [ ] Confirm the file contains the exact contents defined in the "Code block
@@ -253,6 +253,7 @@ Code block 1::
 Test Case: module.py file can be loaded by file picker and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by Load/Save > Add file the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
 - [ ] Confirm the file shows up in the files list with the same title.
 - Return to the editor and replace the current script with the following::
 
@@ -280,6 +281,7 @@ Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by drag&drop into the editor the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- [ ] Confirm the file shows up in the files list with the same title.
 - Return to the editor and replace the current script with the following::
 
 
@@ -336,8 +338,9 @@ Test Case: Hex file containing module can be loaded in the editor
 - [ ] In the Load/Save modal, confirm the editor has loaded the 
     ``emoji-example.py (main.py)`` and ``emoji.py`` files.
 - [ ] Confirm that each .py file can be downloaded individually.
-- [ ] Confirm that the emoji.py file can be deleted, then program the file by any method.
-  to the micro:bit and confirm that an exception is thrown.
+- [ ] Confirm that the emoji.py file can be deleted.
+- Program the project by any method to the micro:bit.
+- [ ] Confirm that an exception is thrown in the micro:bit.
 
 
 Test Case: Empty script downloads MicroPython interpreter only
@@ -367,7 +370,7 @@ Code block 1::
 Test Case: Help menu expands and links work
 '''''''''''''''''''''''''''''''''''''''''''
 - Click the "Help" button.
-- [ ] Confirm additional info and links are shown on the Python Editor.
+- [ ] Confirm help drop down menu appears.
 - [ ] Confirm the correct "Editor Version" is displayed.
 - [ ] Confirm the correct "MicroPython Version" is displayed.
 - Click on the "Documentation" link.
@@ -389,12 +392,15 @@ Test Case: Zoom changes the Text Editor font size
 - Click the button with a magnifying lens and a ``-`` sign.
 - [ ] Confirm the font in the Text Editor has been decreased.
 
+
 Test Case: Language options work
 ''''''''''''''''''''''''''''''''
 - Confirm that selecting each language option changes it to the corresponding language
-- [ ] English
 - [ ] Spanish
 - [ ] Polish
+- [ ] Croatian
+- [ ] English
+
 
 Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -411,12 +417,12 @@ Test Case: WebUSB not supported message is working
 Carry out this test in non-Chrome-based browsers 
 - Click the 'Connect' button.
 - [ ] Confirm the WebUSB not supported message box is displayed.
+- Click outside the modal.
+- [ ] Confirm the modal closes.
 - Click the 'Open Serial' button.
 - [ ] Confirm the WebUSB not supported message box is displayed.
 - Click the 'Find Out More' link.
 - [ ] Confirm the help.html page is opened on the WebUSB section.
-- Click outside the modal.
-- [ ] Confirm the modal closes.
 
 
 Test Case: WebUSB error modal links are working
@@ -438,6 +444,7 @@ Test Case: Autocomplete
 - [ ] Start typing in the editor and confirm that autocomplete offers suggestions
   eg type 'di' and be offered 'display'.
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
+
 
 Test results
 ------------
