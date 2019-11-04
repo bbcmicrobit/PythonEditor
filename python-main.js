@@ -797,18 +797,20 @@ function web_editor(config) {
 
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
-        var output = micropythonFs.readBytes(filename);
-        var ua = navigator.userAgent.toLowerCase();
-        if ((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+        // Safari before v10 had issues downloading a file blob
+        if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.save);
+            var output = micropythonFs.read(filename);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var blob = new Blob([output], {type: 'text/plain'});
-            if (filename === 'main.py'){
-                filename = getSafeName() + '.py';
-            }
-            saveAs(blob, filename);
+            return;
         }
+        // This works in all other browsers
+        var output = micropythonFs.readBytes(filename);
+        var blob = new Blob([output], { 'type': 'text/plain' });
+        if (filename === 'main.py') {
+            filename = getSafeName() + '.py';
+        }
+        saveAs(blob, filename);
     }
 
     // Update the widget that shows how much space is used in the filesystem
@@ -924,15 +926,16 @@ function web_editor(config) {
             alert(config.translate.alerts.error + e.message);
             return;
         }
-        var ua = navigator.userAgent.toLowerCase();
-        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+        // Safari before v10 had issues downloading the file blob
+        if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var filename = getSafeName();
-            var blob = new Blob([output], {type: "application/octet-stream"});
-            saveAs(blob, filename + ".hex");
+            return;
         }
+        // This works in all other browser
+        var filename = getSafeName();
+        var blob = new Blob([output], { 'type': 'application/octet-stream' });
+        saveAs(blob, filename + '.hex');
     }
 
     function invalidFileWarning(fileType){
