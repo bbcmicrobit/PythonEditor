@@ -518,7 +518,7 @@ a.command:hover {
     outline: inherit;
 }
 .snippet-button:focus {
-  box-shadow: 0px 0px 5px 3px #FFCC33;
+    box-shadow: 0px 0px 5px 3px #FFCC33;
 }
 
 #share-link {
@@ -705,7 +705,7 @@ input:checked + .menu-switch-slider:before {
 
 /* Modals */
 .modal-div:focus {
-  outline: 0;
+    outline: 0;
 }
 .modal-title {
     margin: 28px 0px 22px 0px;
@@ -863,7 +863,7 @@ input:checked + .menu-switch-slider:before {
 }
 
 .save-button:focus {
-  box-shadow: 0px 0px 5px 3px #FFCC33;
+    box-shadow: 0px 0px 5px 3px #FFCC33;
 }
 
 .save-buttons-container {
@@ -895,7 +895,7 @@ input:checked + .menu-switch-slider:before {
 }
 
 .save-button.hex:focus {
-  box-shadow: 0px 0px 5px 3px #FFCC33;
+    box-shadow: 0px 0px 5px 3px #FFCC33;
 }
 
 .save-button.py {
@@ -914,7 +914,7 @@ input:checked + .menu-switch-slider:before {
 }
 
 .save-button.py:focus {
-  box-shadow: 0px 0px 5px 3px #FFCC33;
+    box-shadow: 0px 0px 5px 3px #FFCC33;
 }
 
 @media (max-width: 480px) {

@@ -932,10 +932,10 @@ function web_editor(config) {
                 var numberOfFocusableEls = focusableEls.length;
                 var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
 
-                if (event.shiftKey) {
+                if (event.which == 16) {
                     // if focused on first item and user tabs back, go to the last focusable item
                     if (focusedElIndex == 0) {
-                        focuseableEls.item(numberOfFocusableEls - 1).focus();
+                        focusableEls.item(numberOfFocusableEls - 1).focus();
                         event.preventDefault();
                     }
                 } else {
