@@ -933,7 +933,7 @@ function web_editor(config) {
                 var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
 
                 if (event.which == 16) {
-                    // if focused on first item and user tabs back, go to the last focusable item
+                    // if focused on first item and user shift-tabs back, go to the last focusable item
                     if (focusedElIndex == 0) {
                         focusableEls.item(numberOfFocusableEls - 1).focus();
                         event.preventDefault();
