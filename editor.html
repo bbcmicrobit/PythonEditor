@@ -82,6 +82,7 @@ Nicholas and Damien.
             UPY_VERSION = "1.0.1";
         </script>
         <script id="files-template" type="x-tmpl-mustache">
+          <div tabindex="-1" role="dialog" aria-labelledby="loadSave-modal" aria-modal="true" class="modal-div">
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
@@ -89,19 +90,22 @@ Nicholas and Damien.
             </div>
             <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-but }}</strong></h2>
             <div class="save-buttons-container">
-                <button type="button" class="action save-button py" id="save-py" title="{{ save-py }}"><i class="fa fa-download"></i> {{ save-py}}</button>
-                <button type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
+                <button aria-labelledby="save-py" type="button" class="action save-button py" id="save-py" title="{{ save-py }}"><i class="fa fa-download"></i> {{ save-py}}</button>
+                <button aria-labelledby="save-hex" type="button" class="action save-button hex" id="save-hex" title="{{ save-hex }}"><i class="fa fa-download"></i> {{ save-hex}}</button>
             </div>
             <div id="addFile">
               <div id="addFileHeader">
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
-              <div id="addFileHelp"><a class="action" id="files-expand-help"><i class="fa fa-info-circle" aria-hidden="true"> <span>{{ help-button }}</span></i></a></div>
+              <div id="addFileHelp">
+                <button aria-labelledby="add-files" aria-expanded="false" type="button" class="snippet-button" id="expandHelpPara"><i class="fa fa-info-circle"></i> {{ help-button }}</button>
+              </div>
             </div>
-            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.</div>
+            <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.
+            </div>
             <div class="expandable">
                 <div class="expandable-always-visible">
-                    <button type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
+                    <button aria-labelledby="show-files" aria-expanded="false" type="button" class="action save-button show" id="show-files" title="{{ show-files }}">{{ show-files }} &nbsp;<i class="fa fa-caret-down"></i></button>
                 </div>
                 <div class="expandable-content">
                     <div class="fs-file-list" id="fs-file-list">
@@ -128,13 +132,15 @@ Nicholas and Damien.
                         </tbody>
                     </table>
                     <div>
-                        <button type="button" class="action save-button add" id="fs-file-upload-button" tile="{{ fs-add-file }}"><i class="fa fa-plus-circle"></i> {{ fs-add-file }}</button>
+                        <button role=button type="button" class="action save-button add" id="fs-file-upload-button" tile="{{ fs-add-file }}"><i class="fa fa-plus-circle"></i> {{ fs-add-file }}</button>
                         <input type="file" style="display: none" name="fs-file-upload-input" id="fs-file-upload-input" multiple>
                     </div>
                 </div>
             </div>
+          </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
+          <div tabindex="-1" role="dialog" aria-labelledby="snippets-modal" aria-modal="true" class="modal-div">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
             <p>{{ description }}</p>
             <p>{{ instructions }}</p>
@@ -146,11 +152,12 @@ Nicholas and Damien.
                 </tr>
                 {{#snippets}}
                 <tr id="snippet-{{trigger}}" class="action snippet-selection">
-                    <td>{{trigger}}<span class="snippet-name">{{name}}</span></td>
+                    <td><button class="snippet-button">{{trigger}}</button> <span class="snippet-name">{{name}}</span></td>
                     <td>{{#describe}}{{name}}{{/describe}}</td>
                 </tr>
                 {{/snippets}}
             </table>
+          </div>
         </script>
         <script id="share-template" type="x-tmpl-mustache">
             <h2><i class="fa fa-share-alt"></i> <strong>{{ title }}</strong></h2>
@@ -388,7 +395,7 @@ Nicholas and Damien.
             <div id="editor" class="flex3" tabindex="-1"></div>
           </div>
         <div id="flashing-overlay-container" class="modal-overlay-container">
-          <div id="flashing-overlay" class="modal-overlay">
+          <div id="flashing-overlay" class="modal-overlay" tabindex="-1" role="dialog" aria-labelledby="flashing-overlay" aria-modal="true">
             <div id="flashing-info">
               <h2 id="flashing-text">Flashing micro:bit</h2>
               <div id="webusb-flashing-loader"></div>
@@ -400,7 +407,7 @@ Nicholas and Damien.
           </div>
         </div>
         <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
-          <div id="modal-msg-overlay" class="modal-overlay">
+          <div id="modal-msg-overlay" class="modal-overlay" tabindex="-1" role="dialog" aria-labelledby="flashing-overlay" aria-modal="true">
             <a class="vex-close modal-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
             <div id="modal-msg-text">
               <h2 id="modal-msg-title"></h2>
