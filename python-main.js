@@ -307,7 +307,7 @@ function translations() {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    var validLangs = ['en', 'es', 'pl'];
+    var validLangs = ['en', 'es', 'pl', 'hr'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
@@ -797,18 +797,20 @@ function web_editor(config) {
 
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
-        var output = micropythonFs.readBytes(filename);
-        var ua = navigator.userAgent.toLowerCase();
-        if ((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+        // Safari before v10 had issues downloading a file blob
+        if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.save);
+            var output = micropythonFs.read(filename);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var blob = new Blob([output], {type: 'text/plain'});
-            if (filename === 'main.py'){
-                filename = getSafeName() + '.py';
-            }
-            saveAs(blob, filename);
+            return;
         }
+        // This works in all other browsers
+        var output = micropythonFs.readBytes(filename);
+        var blob = new Blob([output], { 'type': 'text/plain' });
+        if (filename === 'main.py') {
+            filename = getSafeName() + '.py';
+        }
+        saveAs(blob, filename);
     }
 
     // Update the widget that shows how much space is used in the filesystem
@@ -874,7 +876,7 @@ function web_editor(config) {
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
                 '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
-                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] +'><i class="fa fa-trash"></i></button>' +
+                '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] + ' ' + disabled + '><i class="fa fa-trash"></i></button>' +
                 '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
             $('#' + pseudoUniqueId + '_save').click(function(e) {
@@ -916,6 +918,39 @@ function web_editor(config) {
         return fullHex;
     }
 
+    // Trap focus in modal and pass focus to first actionable element
+    function focusModal() {
+        document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
+        var dialog = document.querySelector('.modal-div');
+        var focusableEls = dialog.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        $(focusableEls).each(function() {
+            $(this).attr('tabindex', '0');
+        });
+        dialog.focus();
+        dialog.onkeydown = function(event) {
+            if (event.which == 9) {
+                // if tab key is pressed
+                var focusedEl = document.activeElement;
+                var numberOfFocusableEls = focusableEls.length;
+                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
+
+                if (event.which == 16) {
+                    // if focused on first item and user shift-tabs back, go to the last focusable item
+                    if (focusedElIndex == 0) {
+                        focusableEls.item(numberOfFocusableEls - 1).focus();
+                        event.preventDefault();
+                    }
+                } else {
+                    // if focused on the last item and user tabs forward, go to the first focusable item
+                    if (focusedElIndex == numberOfFocusableEls - 1) {
+                        focusableEls[0].focus();
+                        event.preventDefault();
+                    }
+                }
+            }
+        };
+    }
+
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         try {
@@ -924,15 +959,16 @@ function web_editor(config) {
             alert(config.translate.alerts.error + e.message);
             return;
         }
-        var ua = navigator.userAgent.toLowerCase();
-        if((ua.indexOf('safari/') > -1) && (ua.indexOf('chrome') == -1)) {
+        // Safari before v10 had issues downloading the file blob
+        if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.download);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
-        } else {
-            var filename = getSafeName();
-            var blob = new Blob([output], {type: "application/octet-stream"});
-            saveAs(blob, filename + ".hex");
+            return;
         }
+        // This works in all other browser
+        var filename = getSafeName();
+        var blob = new Blob([output], { 'type': 'application/octet-stream' });
+        saveAs(blob, filename + '.hex');
     }
 
     function invalidFileWarning(fileType){
@@ -942,7 +978,6 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
-
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -952,6 +987,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
+                focusModal();
                 $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
                 document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
@@ -965,12 +1001,14 @@ function web_editor(config) {
                     }
                     downloadFileFromFilesystem('main.py');
                 });
-                $("#files-expand-help").click(function(){
+                $("#expandHelpPara").click(function(){
                     if ($("#fileHelpPara").css("display")=="none"){
                         $("#fileHelpPara").show();
+                        $("#expandHelpPara").attr("aria-expanded","true");
                         $("#addFile").css("margin-bottom","10px");
                     }else{
                         $("#fileHelpPara").hide();
+                        $("#expandHelpPara").attr("aria-expanded","false");
                         $("#addFile").css("margin-bottom","22px");
                     }
                 });
@@ -979,11 +1017,13 @@ function web_editor(config) {
                   if (content.style.maxHeight){
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
+                    $("#show-files").attr("aria-expanded","false");
                     $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
                     document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                   } else {
                     content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
+                    $("#hide-files").attr("aria-expanded","true");
                     $("#hide-files").attr("title", loadStrings["hide-files"]);
                     document.getElementById("hide-files").innerHTML =loadStrings["hide-files"] + " <i class='fa fa-caret-up'>";
                   }
@@ -1133,6 +1173,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
+                focusModal();
                 $(vexContent).find('.snippet-selection').click(function(e){
                     var snippet_name = $(this).find('.snippet-name').text();
                     EDITOR.triggerSnippet(snippet_name);
@@ -1677,7 +1718,7 @@ function web_editor(config) {
         var overlayContainer = "#modal-msg-overlay-container";
         $(overlayContainer).css("display","block");
         $("#modal-msg-title").text(title);
-        $("#modal-msg-content").html(content); 
+        $("#modal-msg-content").html(content);
         var modalLinks = [];
         if (links) {
             Object.keys(links).forEach(function(key) {

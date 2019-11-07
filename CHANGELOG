@@ -1,3 +1,9 @@
+2.0.0
+-----
+* Added Croatian language 🇭🇷 (#294)
+* Update help file with latest v2 UI changes (#292)
+* Internationalisation internal improvements (#287) (#293)
+* WebUSB internal improvements and fixes (#289) (#291)
 
 2.0.0-rc.1
 ----------

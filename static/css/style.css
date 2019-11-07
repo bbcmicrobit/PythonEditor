@@ -506,6 +506,21 @@ a.command:hover {
     width: 200px;
 }
 
+.snippet-button {
+    text-decoration: none;
+    background: none;
+    color: inherit;
+    border: none;
+    border-radius: 5px;
+    padding: 2px;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+.snippet-button:focus {
+    box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 #share-link {
     display: none;
 }
@@ -689,6 +704,9 @@ input:checked + .menu-switch-slider:before {
 }
 
 /* Modals */
+.modal-div:focus {
+    outline: 0;
+}
 .modal-title {
     margin: 28px 0px 22px 0px;
     text-transform: capitalize;
@@ -844,6 +862,10 @@ input:checked + .menu-switch-slider:before {
     color: #ffffff !important;
 }
 
+.save-button:focus {
+    box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 .save-buttons-container {
     display: inline-block;
     width: 100%;
@@ -871,6 +893,11 @@ input:checked + .menu-switch-slider:before {
     color: black !important;
     border: none;
 }
+
+.save-button.hex:focus {
+    box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 .save-button.py {
     width: 49%;
     min-width: 250px;
@@ -885,6 +912,11 @@ input:checked + .menu-switch-slider:before {
     background-color: #eee;
     color: black;
 }
+
+.save-button.py:focus {
+    box-shadow: 0px 0px 5px 3px #FFCC33;
+}
+
 @media (max-width: 480px) {
     .save-button.py,
     .save-button.hex {
