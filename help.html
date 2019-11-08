@@ -43,7 +43,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -52,13 +52,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="https://python.microbit.org">Python on the micro:bit</a>
+          <a class="navbar-brand" href="https://python.microbit.org" aria-label="python editor">Python on the micro:bit</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
-            <li ><a href="#fs">Files and Modules</a></li>
+            <li><a href="#fs">Files and Modules</a></li>
             <li id="nav-blocks" class="hidden"><a href="#blockly">Blockly</a></li>
             <li id="nav-snippets" class="hidden"><a href="#snippets">Snippets</a></li>
             <li><a href="#REPL">REPL</a></li>
@@ -69,14 +69,14 @@
       </div>
     </nav>
 
-    <div class="container">
+    <main role="main" class="container">
 
       <div class="starter-template">
         <div class="row" id="home">
             <div class="col-md-8 col-md-offset-2">
-                <a href="http://microbit.org/"><img src="static/img/microbit.png"/></a>
-                <a href="http://micropython.org/"><img src="static/img/micropython.jpeg"/></a>
-                <a href="http://python.org/community/microbit/"><img src="static/img/python.png"/></a>
+                <a href="http://microbit.org/" role="button" aria-label="microbit.org website"><img src="static/img/microbit.png" alt="micro:bit logo"/></a>
+                <a href="http://micropython.org/" role="button" aria-label="micropython.org website"><img src="static/img/micropython.jpeg" alt="micropython logo"/></a>
+                <a href="http://python.org/community/microbit/" role="button" aria-label="python.org micro:bit community"><img src="static/img/python.png" alt="python logo"/></a>
                 <br/></br/>
             </div>
         </div>
@@ -84,7 +84,7 @@
     </div> 
     <div class="container">
     <img src="static/img/comic1.png" class="img-responsive center-block"
-            alt="http://goo.gl/SrIrIE"/>
+            alt="first steps with python"/>
     <h2 id="Editor"> The Editor</h2>
       <p>The Python editor is perfect for those who want to push their coding skills further. 
       A selection of snippets and a range of pre-made images and music give you a helping hand with your code. 
@@ -534,7 +534,7 @@ while True:
         <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a> This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://python.org/community/microbit/" property="cc:attributionName" rel="cc:attributionURL">The Python Software Foundation</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
         </p>
     </footer>
-    </div><!-- /.container -->
+</main><!-- /.container -->
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
