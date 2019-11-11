@@ -400,6 +400,10 @@ a.command:hover {
         display: inline;
         min-width: 48px;
     }
+    
+    .loader {
+      top: 7px;
+    }
 
     #commands a {
         padding: .4em;
