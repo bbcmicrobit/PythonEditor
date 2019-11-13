@@ -24,9 +24,37 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
     test( 'Checks the editor.html page with Axe', async () => {
         // First, run some code which loads the content of the page.
         const page = await browser.newPage();
+        await page.goto(editorURL);
         await new AxePuppeteer(page).analyze();
         await expect(page).toPassAxeTests({
-            disabledRules: [ 'document-title', 'page-has-heading-one', 'html-has-lang', 'landmark-one-main' ],
+            disabledRules: [ 'tabindex', 'page-has-heading-one' ],
         });
-    } );
+        await page.close();
+    });
+
+    test( 'Checks the Load/Save modal with Axe', async () => {
+        const page = await browser.newPage();
+        await page.goto(editorURL);
+        await page.waitForSelector("#command-files");
+        await page.click("#command-files");
+        await new AxePuppeteer(page).analyze();
+        await expect(page).toPassAxeTests({
+            exclude: '.main',
+            disabledRules: [ 'page-has-heading-one' ],
+        });
+        await page.close();
+    });
+
+    test( 'Checks the Load/Save modal with Axe', async () => {
+        const page = await browser.newPage();
+        await page.goto(editorURL);
+        await page.waitForSelector("#command-snippet");
+        await page.click("#command-snippet");
+        await new AxePuppeteer(page).analyze();
+        await expect(page).toPassAxeTests({
+            exclude: '.main',
+            disabledRules: [ 'page-has-heading-one' ],
+        });
+        await page.close();
+    });
 });
