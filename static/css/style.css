@@ -575,7 +575,7 @@ div.expandable-content {
 
 div.load-drag-target {
     height: 160px;
-    background: #ddd;
+    background: #e0e0e0;
     border: 1px solid #aaa;
     border-radius: 9px;
     position: relative;
@@ -832,7 +832,7 @@ input:checked + .menu-switch-slider:before {
     width: 100%;
     width: -moz-available;
     width: -webkit-fill-available;
-    background: #ddd;
+    background: #e0e0e0;
     border: 1px solid #aaa;
     margin: 5px 2px 5px 1px;
     border-radius: 5px;
