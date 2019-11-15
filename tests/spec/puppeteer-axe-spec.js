@@ -6,6 +6,7 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
     'use strict';
 
     const editorURL = 'http://localhost:5000/editor.html';
+    const helpURL = 'http://localhost:5000/help.html';
     let browser = null;
 
     beforeAll(async () => {
@@ -27,6 +28,8 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.goto(editorURL);
         await new AxePuppeteer(page).analyze();
         await expect(page).toPassAxeTests({
+            // disable tab-index as we have values greater than 0
+            // and h1 as we aren't using this heading
             disabledRules: [ 'tabindex', 'page-has-heading-one' ],
         });
         await page.close();
@@ -39,7 +42,9 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.click("#command-files");
         await new AxePuppeteer(page).analyze();
         await expect(page).toPassAxeTests({
+            // exclude everything else in main
             exclude: '.main',
+            // disable checking for h1 as we aren't using this heading
             disabledRules: [ 'page-has-heading-one' ],
         });
         await page.close();
@@ -52,7 +57,22 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.click("#command-snippet");
         await new AxePuppeteer(page).analyze();
         await expect(page).toPassAxeTests({
+            // exclude everything else in main
             exclude: '.main',
+            // disable checking for h1 as we aren't using this heading
+            disabledRules: [ 'page-has-heading-one' ],
+        });
+        await page.close();
+    });
+
+    test( 'Checks the help.html page with Axe', async () => {
+        const page = await browser.newPage();
+        await page.goto(helpURL);
+        await new AxePuppeteer(page).analyze();
+        await expect(page).toPassAxeTests({    
+            // exclude code highlighter        
+            exclude: '.hljs-comment',
+            // disable checking for h1 as we aren't using this heading
             disabledRules: [ 'page-has-heading-one' ],
         });
         await page.close();
