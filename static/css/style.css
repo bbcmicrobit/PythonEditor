@@ -121,7 +121,8 @@ h2 {
   border-radius: 0.5rem;
 }
 
-#small-icons > *:not(:first-child) {
+#small-icons-left > *:not(:first-child),
+#small-icons-right > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
 }
@@ -131,7 +132,8 @@ h2 {
   cursor: pointer !important;
 }
 
-#small-icons {
+#small-icons-left,
+#small-icons-right {
     width: 54px;
     min-width: 54px;
     display: -webkit-flex;
@@ -142,7 +144,8 @@ h2 {
     flex-direction: column;
 }
 
-#small-icons .status-icon {
+#small-icons-left .status-icon,
+#small-icons-right .status-icon{
   width: 37px;
   height: 37px;
   border: 6px solid #FFCC33;
@@ -157,15 +160,20 @@ h2 {
   background: #FFFFFF;
 }
 
-html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
+html[data-useragent*='MSIE 10.0'] #small-icons-left .status-icon {
+  line-height: 2.15rem;
+}
+html[data-useragent*='MSIE 10.0'] #small-icons-right .status-icon {
   line-height: 2.15rem;
 }
 
-#small-icons .win-status-icon{
+#small-icons-left .win-status-icon,
+#small-icons-right .win-status-icon {
   line-height: 2.2rem;
 }
 
-#small-icons .holder {
+#small-icons-left .holder,
+#small-icons-right .holder {
   width: 56px;
   min-width: 56px;
   color: #336699;
@@ -409,7 +417,8 @@ a.command:hover {
         padding: .4em;
     }
 
-    #small-icons {
+    #small-icons-left,
+    #small-icons-right {
         min-width: 120px;
         display: -ms-flexbox;
         display: flex;
@@ -418,7 +427,8 @@ a.command:hover {
         flex-direction: row;
     }
 
-    #small-icons .holder {
+    #small-icons-left .holder,
+    #small-icons-right .holder {
         padding: 0.2em;
     }
 
