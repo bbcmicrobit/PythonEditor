@@ -446,6 +446,23 @@ Test Case: Autocomplete
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
 
+Test Case A11y: Keyboard focus follows a logical order
+''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- [ ] Using your keyboard, navigate through the menu and any submenus using the `tab` and `enter` or `space` keys.
+- [ ] Using your keyboard, navigate through the modal windows using the `tab` and `enter` or `space` keys.
+
+
+Test Case A11y: Esc key returns focus to menu
+'''''''''''''''''''''''''''''''''''''''''''''
+- [ ] Type something un the text window, then confirm the `Esc` key returns the focus to the menu from the text window.
+- [ ] Enter a modal window and confirm the `Esc` key closes an open modal.
+
+
+Test Case A11y: Using a screenreader
+''''''''''''''''''''''''''''''''''''
+- [ ] If you are using a Mac, enable the Voiceover tool and repeat the A11y tests using Voiceover.
+
+
 Test results
 ------------
 
