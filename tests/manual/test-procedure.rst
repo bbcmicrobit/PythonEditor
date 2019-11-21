@@ -446,6 +446,31 @@ Test Case: Autocomplete
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
 
 
+Test Case A11y: Keyboard focus order follows the visual layout
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- [ ] Using your keyboard, navigate through the menu and any submenus using the
+ `tab` and `enter` or `space` keysand confirm  they follow natural order of the
+ page elements eg.left to right and top top bottom.
+- [ ] Using your keyboard, navigate through the modal windows using the `tab`
+ and `enter` or `space` keys and confirm  they follow natural order of the 
+ page elements eg.left to right and top top bottom.
+
+
+Test Case A11y: Esc key returns focus to menu
+'''''''''''''''''''''''''''''''''''''''''''''
+- [ ] Type something in the text editor, then confirm the `Esc` key returns the
+ focus to the menu from the text editor.
+- [ ] Enter the Load/Save modal window and confirm the `Esc` key closes the 
+ open modal.
+
+
+Test Case A11y: Using a screenreader
+''''''''''''''''''''''''''''''''''''
+- [ ] If you are using a Mac, enable the Voiceover tool
+ https://support.apple.com/en-gb/guide/voiceover-guide/vo2682/web and 
+ repeat the A11y tests using Voiceover.
+
+
 Test results
 ------------
 

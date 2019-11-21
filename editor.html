@@ -82,7 +82,7 @@ Nicholas and Damien.
             UPY_VERSION = "1.0.1";
         </script>
         <script id="files-template" type="x-tmpl-mustache">
-          <div tabindex="-1" role="dialog" aria-labelledby="loadSave-modal" aria-modal="true" class="modal-div">
+          <div tabindex="-1" role="dialog" aria-label="load/save modal" aria-modal="true" class="modal-div">
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
@@ -98,7 +98,7 @@ Nicholas and Damien.
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ files-title }}</strong></h2>
               </div>
               <div id="addFileHelp">
-                <button aria-labelledby="add-files" aria-expanded="false" type="button" class="snippet-button" id="expandHelpPara"><i class="fa fa-info-circle"></i> {{ help-button }}</button>
+                <button aria-label="add files" aria-expanded="false" type="button" class="snippet-button" id="expandHelpPara"><i class="fa fa-info-circle"></i> {{ help-button }}</button>
               </div>
             </div>
             <div id="fileHelpPara">{{ file-help-text }}<a href="help.html#fs" target="_blank" class="action" id="files-help-link">{{ help-link }}</a>.
@@ -140,7 +140,7 @@ Nicholas and Damien.
           </div>
         </script>
         <script id="snippet-template" type="x-tmpl-mustache">
-          <div tabindex="-1" role="dialog" aria-labelledby="snippets-modal" aria-modal="true" class="modal-div">
+          <div tabindex="-1" role="dialog" aria-label="snippets modal" aria-modal="true" class="modal-div">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
             <p>{{ description }}</p>
             <p>{{ instructions }}</p>
@@ -348,7 +348,7 @@ Nicholas and Damien.
                         <div class="buttons_menu_item"><span id="mp-ver">MicroPython Version:</span> <script>document.write(UPY_VERSION);</script></div>
                     </div>
                 </div>
-                <div id="small-icons" class="vbox">
+                <div id="small-icons-left" class="vbox small-icons">
                     <a aria-label="Zoom in" class="roundbutton holder zoomer action" tabindex="90" id="command-zoom-in" href="#" title="Zoom in">
                         <div class="status-icon"><i class="fa fa-search-plus"></i></div>
                     </a>
@@ -356,7 +356,7 @@ Nicholas and Damien.
                         <div class="status-icon"><i class="fa fa-search-minus"></i></div>
                     </a>
                 </div>
-                <div id="small-icons" class="vbox">
+                <div id="small-icons-right" class="vbox small-icons">
                     <a aria-label="Show snippets (code shortcuts)" class="roundbutton holder zoomer action" tabindex="110" id="command-snippet" href="#" title="Show snippets (code shortcuts)">
                         <div class="status-icon"><i class="fa fa-cogs"></i></div>
                     </a>
