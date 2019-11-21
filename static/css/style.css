@@ -151,7 +151,7 @@ h2 {
   text-align: center;
   font-size: 1.4rem;
   line-height: 2.4rem;
-  padding: 0;
+  padding: 0 !important;
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
   color: #336699;
   background: #FFFFFF;
@@ -172,7 +172,7 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   color: #336699;
   text-decoration: none;
   text-align: center;
-  padding: 0px;
+  padding: 0px !important;
 }
 
 /* Popups */
@@ -420,7 +420,7 @@ a.command:hover {
     }
 
     .small-icons .holder {
-        padding: 0.2em;
+        padding: 0.2em !important;
     }
 
   .roundsymbol {
