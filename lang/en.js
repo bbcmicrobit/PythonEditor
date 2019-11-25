@@ -136,6 +136,9 @@ var language = {
     },
     'hr': {
       'title': 'Croatian'
+    },
+    'hk': {
+      'title': 'Chinese (simplified)'
     }
   },
   'static-strings': {

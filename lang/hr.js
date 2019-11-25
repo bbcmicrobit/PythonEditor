@@ -88,7 +88,7 @@ var language = {
       "reconnect-microbit": "Nanovo uključi svoj micro:bit i pokušaj opet.",
       "partial-flashing-disable": "Ako se greške ponavljaju, pokušaj u beta opcijama isključiti opciju Quick Flash.",
       "device-disconnected": "Uređaj je isključen.",
-      "timeout-error": "Unable to connect to the micro:bit",
+      "timeout-error": "Nije se moguće spojiti na micro:bit",
       "unavailable": "Pomoću WebUSB-a možeš programirati svoj micro:bit i izravno iz uređivača povezati ga na serijsku konzolu.<br/>Nažalost, ovaj pretraživač ne podržava WebUSB. Preporučujemo WebUSB koristiti u pretraživaču Chrome ili u nekom iz njega izvedenom.",
       "find-more": "Saznaj više"
     },
@@ -135,7 +135,10 @@ var language = {
       "title": "Poljski"
     },
     "hr": {
-      "title": "Croatian"
+      "title": "Hrvatski"
+    },
+    "hk": {
+      "title": "Chinese (simplified)"
     }
   },
   "static-strings": {
@@ -150,7 +153,7 @@ var language = {
       },
       "command-flash": {
         "title": "Učitaj (\"flash\") projekt izravno u micro:bit",
-        "label": "Flash"
+        "label": "\"Flashaj\""
       },
       "command-files": {
         "title": "Učitaj/spremi datoteke",
