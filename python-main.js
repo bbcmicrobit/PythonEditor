@@ -561,6 +561,12 @@ function web_editor(config) {
         } else {
             // If there's no name, default to something sensible.
             setName('microbit program');
+            //fix for bug in Edge
+            if (/Edge/.test(navigator.userAgent)) {
+                window.onload = function() {
+                    setName("microbit program");
+                    }
+            }
             // A sane default starting point for a new script.
             EDITOR.setCode('# ' + config.translate.code.start + '\n' +
                 'from microbit import *\n\n\n' +
