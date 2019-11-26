@@ -1757,7 +1757,8 @@ function web_editor(config) {
     function setupButtons() {
         if(navigator.platform.match('Win') !== null){
             $(".roundsymbol").addClass("winroundsymbol");
-            $("#small-icons .status-icon").addClass("win-status-icon");
+            $("#small-icons-left .status-icon").addClass("win-status-icon");
+            $("#small-icons-right .status-icon").addClass("win-status-icon");
         }
         $("#command-download").click(function () {
             doDownload();
