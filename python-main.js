@@ -561,7 +561,7 @@ function web_editor(config) {
         } else {
             // If there's no name, default to something sensible.
             setName('microbit program');
-            //fix for bug in Edge
+            //Fix bug in Edge
             if (/Edge/.test(navigator.userAgent)) {
                 window.onload = function() {
                     setName("microbit program");
