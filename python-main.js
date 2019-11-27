@@ -973,9 +973,9 @@ function web_editor(config) {
 
     function invalidFileWarning(fileType){
         if(fileType=="mpy"){
-            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"").focusModal();
         }else{
-            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"").focusModal();
         }
     }
     // Describes what to do when the save/load button is clicked.
@@ -1327,6 +1327,7 @@ function web_editor(config) {
         // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
+        focusModal();
 
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
@@ -1460,6 +1461,12 @@ function web_editor(config) {
         };
 
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+        // If escape key is pressed close modal
+        $(document).keydown(function(e) {
+            if (e.which == 27) {
+                flashErrorClose();
+           }
+       });
     }
 
     function doDisconnect() {
@@ -1730,6 +1737,11 @@ function web_editor(config) {
             });
         }
         $("#modal-msg-links").html((modalLinks).join(' | '));
+        $(document).keydown(function(e) {
+            if (e.which == 27) {
+                modalMsgClose();
+           }
+       });
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
@@ -1792,7 +1804,7 @@ function web_editor(config) {
             var WebUSBUnavailable = function() {
                 var links = {};
                 links[config['translate']['webusb']['err']['find-more']] = 'help.html#WebUSB';
-                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links);
+                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links).focusModal();
             };
             $("#command-connect").click(WebUSBUnavailable);
             $("#command-serial").click(WebUSBUnavailable);
@@ -1936,9 +1948,12 @@ function web_editor(config) {
 }
 
 /*
- * Function to close flash error box
+ * Functions to close error modals
  */
 function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
+}
+function modalMsgClose() {
+    $('#modal-msg-overlay-container').hide()
 }
