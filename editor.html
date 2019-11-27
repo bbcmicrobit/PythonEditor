@@ -395,7 +395,7 @@ Nicholas and Damien.
             <div id="editor" class="flex3" tabindex="-1"></div>
           </div>
         <div id="flashing-overlay-container" class="modal-overlay-container">
-          <div id="flashing-overlay" class="modal-overlay" tabindex="-1" role="dialog" aria-labelledby="flashing-overlay" aria-modal="true">
+          <div id="flashing-overlay" class="modal-overlay modal-div" tabindex="-1" role="dialog" aria-labelledby="flashing-overlay" aria-modal="true">
             <div id="flashing-info">
               <h2 id="flashing-text">Flashing micro:bit</h2>
               <div id="webusb-flashing-loader"></div>
@@ -407,8 +407,8 @@ Nicholas and Damien.
           </div>
         </div>
         <div id="modal-msg-overlay-container" class="modal-overlay-container modal-msg-overlay-container">
-          <div id="modal-msg-overlay" class="modal-overlay" tabindex="-1" role="dialog" aria-labelledby="flashing-overlay" aria-modal="true">
-            <a class="vex-close modal-close" onclick="$('#modal-msg-overlay-container').hide()"></a>
+          <div id="modal-msg-overlay" class="modal-overlay modal-div" tabindex="-1" role="dialog" aria-labelledby="modal-msg-overlay" aria-modal="true">
+            <a class="vex-close modal-close" onclick="modalMsgClose()"></a>
             <div id="modal-msg-text">
               <h2 id="modal-msg-title"></h2>
               <div id="modal-msg-content"></div>
