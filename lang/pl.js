@@ -137,8 +137,11 @@ var language = {
     "hr": {
       "title": "Chorwacki"
     },
-    "hk": {
+    "zh": {
       "title": "Chinese (simplified)"
+    },
+    "hk": {
+      "title": "Chinese (traditional)"
     }
   },
   "static-strings": {

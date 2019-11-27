@@ -1,144 +1,147 @@
 var language = {
   "code_snippets": {
-    "title": "程式碼片段",
-    "description": "程式碼片段是在您自己的程式中可重複使用的短程式碼區塊。對於大多數一般的程式碼片段, 您需要用 MicroPython 來做。",
-    "instructions": "選擇下面的一個程式碼片段, 或者鍵入程式碼片段的觸發器, 然後點選 TAB 鍵",
-    "trigger_heading": "觸發器",
-    "description_heading": "描述",
-    "docs": "建立一個註解來描述你的程式碼",
-    "wh": "當某些條件為真時, 在某些程式碼上保持迴圈",
-    "with": "給做某些事的內容分配一個名字",
-    "cl": "建立一個新類, 用於定義新類型物件的行為",
-    "def": "定義一個已命名的函數, 它需要一些參數並選擇性地添加描述",
-    "if": "如果某種條件是真的, 做點什麼",
-    "ei": "否則, 如果其他條件是真的, 做一些事",
-    "el": "否則做一些其他的事",
-    "for": "對於項目集合中的每個項目都執行某項操作",
-    "try": "嘗試做某事並處理異常 (錯誤)"
+    "title": "代碼段",
+    "description": "程式碼片段是在您自己的程序中重複使用的短代碼塊，這是使用MicroPython時最常見的一些程式碼片段。",
+    "instructions": "選擇下面的程式碼片段之一插入到代碼。",
+    "trigger_heading": "觸發",
+    "description_heading": "説明",
+    "docs": "創建一個註釋來描述您的代碼",
+    "wh": "當某些條件為真時，繼續循環某些代碼",
+    "with": "完成一些與名字有關的功能",
+    "cl": "創建定義對象行為的新類",
+    "def": "定義一個帶有參數的命名函數，並可選添加描述",
+    "if": "如果某些條件為真，執行功能",
+    "ei": "否則如果其他條件為真，就執行功能",
+    "el": "否則就執行功能",
+    "for": "使用集合中的每個項目執行某些操作",
+    "try": "嘗試執行某些操作並處理異常（錯誤）"
   },
   "share": {
-    "title": "共用程式碼",
-    "instructions": "使用密碼和選擇性提示 (説明您記住密碼), 以安全地建立一個連結, 與他人共享您的程式碼",
-    "passphrase": "密碼: ",
-    "hint": "密碼提示: ",
-    "button": "建立連結",
-    "description": "此 URL 指向您的程式碼:",
-    "shortener": "這是連結的簡短版本:"
+    "title": "分享代碼",
+    "instructions": "使用密碼和可選提示（幫助您記憶密碼）創建安全鏈接分享您的程序。",
+    "passphrase": "密碼：",
+    "hint": "密碼提示：",
+    "button": "創建鏈接",
+    "description": "這個網址指向您的程序：",
+    "shortener": "這是短鏈接版本："
   },
   "decrypt": {
-    "title": "解密原始程式碼",
-    "instructions": "輸入密碼以解密原始程式碼",
-    "passphrase": "密碼: ",
+    "title": "解密代碼",
+    "instructions": "輸入密碼解密源代碼。",
+    "passphrase": "密碼：",
     "button": "解密"
   },
   "alerts": {
-    "download": "Safari 有一個錯誤, 這意味著您的工作將被下載成為一個未命名的檔案, 請將其重命名為以.hex結尾的檔案。另一個方法是使用 Firefox 或 Chrome 瀏覽器, 它們不會遭遇這個錯誤。",
-    "save": "Safari 有一個錯誤, 這意味著您的工作將被下載成為一個未命名的檔案, 請將其重命名成為以 .py結尾的檔案。另一個方法是使用 Firefox 或 Chrome 瀏覽器, 它們不會遭遇這個錯誤",
+    "download": "Safari存在一個錯誤，這意味着您的程序將作為一個未命名的檔案下載，請將其重命名為以.py結尾的檔案，或者使用Firefox或Chrome等瀏覽器，它們沒有這個錯誤。",
+    "save": "Safari存在一個錯誤，這意味着您的程序將作為一個未命名的檔案下載，請將其重命名為以.hex結尾的檔案，或者使用Firefox或Chrome等瀏覽器，它們沒有這個錯誤。",
     "load_code": "哎呀！ 無法將代碼載入到十六進位檔案中。",
     "unrecognised_hex": "抱歉，我們無法識別這個檔案",
-    "snippets": "啟用blockly時禁用程式碼片段.",
-    "error": "錯誤:\n",
-    "empty": "Python 檔案沒有任何內容.",
-    "no_python": "在hex檔中找不到有效的Python程式碼.",
-    "no_script": "Hex 檔不包含 Python 腳本.",
-    "no_main": "Hex 檔沒有包含 main.py 檔案.",
-    "cant_add_file": "不能新增檔案到檔案系統:",
-    "module_added": "\"{{module_name}}\" 模組已新增到檔案系統.",
-    "module_out_of_space": "無法將檔案新增到系統，因為沒有剩餘的存儲空間."
+    "snippets": "啟用blockly時將禁用程式碼片段。",
+    "error": "錯誤：",
+    "empty": "Python 檔案沒有任何內容。",
+    "no_python": "在hex檔案中找不到有效的Python代碼。",
+    "no_script": "Hex 檔案不包含 Python 腳本。",
+    "no_main": "Hex 檔案沒有包含 main.py 檔案。",
+    "cant_add_file": "不能添加檔案到檔案系統：",
+    "module_added": "\"{{module_name}}\" 模塊已添加到檔案系統。",
+    "module_out_of_space": "無法將檔案添加到系統，因為沒有剩餘的存儲空間。"
   },
   "help": {
     "docs-link": {
-      "title": "檢視 MicroPython 文件",
-      "label": "文件"
+      "title": "查看 MicroPython 文檔",
+      "label": "文檔"
     },
     "support-link": {
-      "title": "在新標籤中取得你的 micro:bit 支援",
-      "label": "支援"
+      "title": "在新標籤中得到 micro:bit 技術支持",
+      "label": "技術支持"
     },
     "help-link": {
-      "title": "在新標籤中打開編輯器的説明",
-      "label": "説明"
+      "title": "在新標籤中打開編輯器的幫助",
+      "label": "幫助"
     },
     "issues-link": {
-      "title": "在GitHub中檢視 Python Editor 的未解決問題",
-      "label": "問題追蹤"
+      "title": "在GitHub中查看 Python Editor 的未解決問題",
+      "label": "問題跟蹤"
     },
     "feedback-link": {
-      "title": "向我們發送關於 Python Editor 的回饋",
-      "label": "傳送意見反應"
+      "title": "給我們發送關於 Python Editor 的反饋",
+      "label": "發送反饋"
     },
-    "editor-ver": "編輯器版本:",
-    "mp-ver": "MicroPython 版本:"
+    "editor-ver": "編輯器版本：",
+    "mp-ver": "MicroPython 版本："
   },
   "confirms": {
-    "quit": "某些更改尚未保存。 仍然結束嗎?",
-    "blocks": "您有未保存的程式碼。 使用積木將更改你的程式碼，您可能會丟失你的改變，你想繼續嗎?",
-    "replace_main": "新增main.py檔案將取代編輯器中的程式碼!",
-    "replace_file": "取代 \"{{file_name}}\" 檔案嗎?",
-    "replace_module": "取代 \"{{module_name}}\" 模組嗎?",
-    "download_py_multiple": "此專案包含多個不使用此格式保存的檔案.\n\n推薦下載 Hex 檔, 它將包含整個專案並能夠重新載入到編輯器中.\n\n 是否確認只下載檔案 {{file_name}} ?"
+    "quit": "某些更改尚未保存。仍然退出嗎?",
+    "blocks": "您有未保存的代碼。使用積木編程將更改代碼。您可能會丟失更改。你想繼續嗎?",
+    "replace_main": "添加main.py檔案將替換編輯器中的代碼！",
+    "replace_file": "替換 \"{{file_name}}\" 檔案嗎？",
+    "replace_module": "替換 \"{{module_name}}\" 模塊嗎？",
+    "download_py_multiple": "此項目包含多個將不使用此格式保存的檔案。\n\n推薦下載 Hex 檔案, 它將包含整個項目並能夠重新載入到編輯器中。\n\n 是否確認只下載檔案 {{file_name}} ？"
   },
   "code": {
-    "start": "在此處新增 Python 程式碼。例如."
+    "start": "在此處添加 Python 代碼。例如："
   },
   "webusb": {
     "err": {
-      "update-req": "你需要 <a target=\"_blank\" href=\"https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit\"> 更新 micro:bit 固件</a> 以使用這個功能.",
-      "clear-connect": "另一個程序正在連線到這個設備. <br>關閉其它任何可能使用 WebUSB 的標籤 (如 MakeCode, Python Editor), 或者拔掉 micro:bit 插頭再重新插上.",
-      "reconnect-microbit": "請重新連線 micro:bit 然後再次嘗試.",
-      "partial-flashing-disable": "如果錯誤仍然存在，請嘗試禁用Beta選項中的快速下載.",
-      "device-disconnected": "設備已斷開.",
-      "timeout-error": "不能連線到 micro:bit",
-      "unavailable": "使用 WebUSB 可以從編輯器中直接給 micro:bit 設計程式並連線到序列埠主控台.<br/> 不幸的是, 這個瀏覽器不支援 WebUSB. 推薦使用 Chrome, 或 Chrome 內核的瀏覽器.",
-      "find-more": "了解更多"
+      "update-req": "需要 <a target=\"_blank\" href=\"https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit\"> 更新 micro:bit 固件</a> 以使用這個功能.",
+      "clear-connect": "另一個進程已連接到這個設備。<br>關閉其它可能使用 WebUSB 的標籤（如 MakeCode、Python Editor），或者拔掉 micro:bit 插頭再重新插上。",
+      "reconnect-microbit": "請重新連接 micro:bit 然後再次嘗試。",
+      "partial-flashing-disable": "如果錯誤仍然存在，請嘗試禁用beta選項中的快速下載。",
+      "device-disconnected": "設備已斷開。",
+      "timeout-error": "不能連接到 micro:bit",
+      "unavailable": "使用 WebUSB 可以從編輯器中直接給 micro:bit 編程並連接到串口控制枱。<br/>不幸的是，這個瀏覽器不支持 WebUSB。推薦使用 Chrome, 或 Chrome 內核的瀏覽器。",
+      "find-more": "瞭解更多"
     },
-    "troubleshoot": "疑難排解",
+    "troubleshoot": "故障排除",
     "close": "關閉",
     "request-repl": "發送 CTRL-C 到 REPL",
-    "request-serial": "發送 CTRL-D 以重設",
-    "flashing-text": "燒錄 micro:bit",
+    "request-serial": "發送 CTRL-D 以復位",
+    "flashing-text": "編程 micro:bit",
     "download": "下載 Hex"
   },
   "load": {
     "show-files": "顯示檔案",
     "load-title": "載入",
-    "instructions": "拖放一個 .hex 或 .py 檔案在此開啓它.",
+    "instructions": "拖放一個 .hex 或 .py 檔案到這裏載入它。",
     "submit": "載入",
-    "save-title": "儲存",
-    "save-hex": "下載專案 Hex",
+    "save-title": "保存",
+    "save-hex": "下載項目 Hex",
     "save-py": "下載 Python 腳本",
     "fs-title": "檔案",
-    "toggle-file": "或瀏覽檔案.",
-    "fs-add-file": "新增檔案",
+    "toggle-file": "或瀏覽檔案。",
+    "fs-add-file": "添加檔案",
     "hide-files": "隱藏檔案",
-    "td-filename": "檔案名稱",
+    "td-filename": "檔案名",
     "td-size": "大小",
     "fs-space-free": "剩餘",
     "remove-but": "刪除",
-    "save-but": "儲存",
-    "files-title": "專案檔案",
-    "help-button": "檔案説明",
-    "file-help-text": "專案檔案區域顯示程式中包含的檔案, 並允許您新增或刪除外部python模組和其他檔案. 了解更多在",
-    "help-link": "在Python Editor 説明文件中",
+    "save-but": "保存",
+    "files-title": "項目檔案",
+    "help-button": "檔案幫助",
+    "file-help-text": "項目檔案區域顯示程序中包含的檔案, 並允許您添加或刪除外部python模塊和其他檔案. 瞭解更多在 ",
+    "help-link": "在 Python Editor 幫助文檔中",
     "invalid-file-title": "無效的檔案類型",
-    "mpy-warning": "這個版本的 Python Editor 現在不支援新增 .mpy 檔案.",
-    "extension-warning": "Python Editor 只能載入副檔名 .hex 或 .py 檔案."
+    "mpy-warning": "這個版本的 Python Editor 不支持添加 .mpy 檔案。",
+    "extension-warning": "Python Editor 只能載入 .hex 或 .py 檔案。"
   },
   "languages": {
     "en": {
-      "title": "香港繁體"
+      "title": "英文"
     },
     "es": {
-      "title": "Spanish"
+      "title": "西班牙語"
     },
     "pl": {
-      "title": "Polish"
+      "title": "波蘭語"
     },
     "hr": {
-      "title": "Croatian"
+      "title": "克羅地亞語"
+    },
+    "zh": {
+      "title": "Chinese (simplified)"
     },
     "hk": {
-      "title": "Chinese (simplified)"
+      "title": "Chinese (traditional)"
     }
   },
   "static-strings": {
@@ -148,54 +151,54 @@ var language = {
         "label": "下載"
       },
       "command-disconnect": {
-        "title": "斷開 micro:bit 連線",
-        "label": "中斷連線"
+        "title": "斷開 micro:bit 連接",
+        "label": "斷開連接"
       },
       "command-flash": {
-        "title": "直接下載專案到 micro:bit",
+        "title": "直接下載項目到 micro:bit",
         "label": "下載"
       },
       "command-files": {
-        "title": "載入/儲存檔案",
-        "label": "載入/儲存"
+        "title": "載入/保存檔案",
+        "label": "載入/保存"
       },
       "command-serial": {
-        "title": "通過序列埠連線 micro:bit",
-        "label": "打開序列埠",
-        "title-close": "關閉序列埠連線並返回到編輯器",
-        "label-close": "關閉序列埠"
+        "title": "通過串口連接 micro:bit",
+        "label": "打開串口",
+        "title-close": "關閉串口連接並返回到編輯器",
+        "label-close": "關閉串口"
       },
       "command-connect": {
-        "title": "連線到 micro:bit",
-        "label": "連線"
+        "title": "連接到 micro:bit",
+        "label": "連接"
       },
       "command-connecting": {
-        "title": "正在連線到 micro:bit",
-        "label": "正在連線"
+        "title": "正在連接到 micro:bit",
+        "label": "正在連接"
       },
       "command-options": {
-        "title": "變更編輯器設定",
+        "title": "修改編輯器設置",
         "label": "Beta 選項"
       },
       "command-blockly": {
-        "title": "按一下用 blockly 建立程式碼",
-        "label": "Blockly"
+        "title": "單擊使用 blockly 創建程序",
+        "label": "程式碼片段"
       },
       "command-snippet": {
-        "title": "按一下以選擇程式碼片段（快捷代碼）",
+        "title": "單擊以選擇代碼段（代碼快捷方式）",
         "label": "片段"
       },
       "command-help": {
-        "title": "探索有用的資源",
-        "label": "説明"
+        "title": "發現有用的資源",
+        "label": "幫助"
       },
       "command-language": {
-        "title": "選取語言",
+        "title": "選擇一種語言",
         "label": "語言"
       },
       "command-share": {
-        "title": "建立一個連結共享你的腳本",
-        "label": "共用"
+        "title": "創建一個鏈接分享腳本",
+        "label": "分享"
       },
       "command-zoom-in": {
         "title": "放大"
@@ -205,17 +208,17 @@ var language = {
       }
     },
     "script-name": {
-      "label": "腳本名稱"
+      "label": "腳本名"
     },
     "options-dropdown": {
       "autocomplete": "自動完成",
-      "on-enter": "按 [Enter] 後",
+      "on-enter": "輸入 Enter",
       "partial-flashing": "快速下載",
       "lang-select": "選擇語言:",
-      "add-language-link": "新增語言"
+      "add-language-link": "添加一種語言"
     },
     "text-editor": {
-      "aria-label": "文字編輯器"
+      "aria-label": "文本編輯器"
     }
   }
 };
