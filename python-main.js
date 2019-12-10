@@ -919,9 +919,9 @@ function web_editor(config) {
     }
 
     // Trap focus in modal and pass focus to first actionable element
-    function focusModal() {
+    function focusModal(modalId) {
         document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
-        var dialog = document.querySelector('.modal-div');
+        var dialog = document.querySelector(modalId);
         var focusableEls = dialog.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
         $(focusableEls).each(function() {
             $(this).attr('tabindex', '0');
@@ -987,7 +987,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
-                focusModal();
+                focusModal("#files-modal");
                 $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
                 document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
@@ -1173,7 +1173,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
-                focusModal();
+                focusModal("#snippet-modal");
                 $(vexContent).find('.snippet-selection').click(function(e){
                     var snippet_name = $(this).find('.snippet-name').text();
                     EDITOR.triggerSnippet(snippet_name);
@@ -1327,6 +1327,7 @@ function web_editor(config) {
         // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
+        focusModal("#flashing-overlay");
 
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
@@ -1736,8 +1737,7 @@ function web_editor(config) {
             });
         }
         $("#modal-msg-links").html((modalLinks).join(' | '));
-        focusModal();
-        console.log(document.activeElement);
+        focusModal("#modal-msg-overlay");
         $(document).keydown(function(e) {
             if (e.which == 27) {
                 modalMsgClose();
