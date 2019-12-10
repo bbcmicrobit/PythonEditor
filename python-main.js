@@ -973,9 +973,9 @@ function web_editor(config) {
 
     function invalidFileWarning(fileType){
         if(fileType=="mpy"){
-            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"")
+            modalMsg(config['translate']['load']['invalid-file-title'],config['translate']['load']['mpy-warning'],"");
         }else{
-            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"")
+            modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
     // Describes what to do when the save/load button is clicked.
@@ -1805,7 +1805,7 @@ function web_editor(config) {
             var WebUSBUnavailable = function() {
                 var links = {};
                 links[config['translate']['webusb']['err']['find-more']] = 'help.html#WebUSB';
-                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links)
+                modalMsg('WebUSB', config['translate']['webusb']['err']['unavailable'], links);
             };
             $("#command-connect").click(WebUSBUnavailable);
             $("#command-serial").click(WebUSBUnavailable);
