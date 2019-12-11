@@ -1954,7 +1954,9 @@ function web_editor(config) {
 function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
+    $(document).off("keydown");
 }
 function modalMsgClose() {
     $('#modal-msg-overlay-container').hide()
+    $(document).off("keydown");
 }
