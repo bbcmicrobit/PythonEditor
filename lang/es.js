@@ -137,11 +137,11 @@ var language = {
     "hr": {
       "title": "Croatian"
     },
-    "zh": {
+    "zh-CN": {
       "title": "Chinese (simplified)"
     },
-    "hk": {
-      "title": "Chinese (traditional)"
+    "zh-HK": {
+      "title": "Chinese (traditional, Hong Kong)"
     }
   },
   "static-strings": {

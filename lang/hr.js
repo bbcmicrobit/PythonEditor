@@ -126,7 +126,7 @@ var language = {
   },
   "languages": {
     "en": {
-      "title": "Hrvatski"
+      "title": "Engleski"
     },
     "es": {
       "title": "Španjolski"
@@ -137,11 +137,11 @@ var language = {
     "hr": {
       "title": "Hrvatski"
     },
-    "zh": {
+    "zh-CN": {
       "title": "Chinese (simplified)"
     },
-    "hk": {
-      "title": "Chinese (traditional)"
+    "zh-HK": {
+      "title": "Chinese (traditional, Hong Kong)"
     }
   },
   "static-strings": {
@@ -156,7 +156,7 @@ var language = {
       },
       "command-flash": {
         "title": "Učitaj (\"flash\") projekt izravno u micro:bit",
-        "label": "\"Flashaj\""
+        "label": "Flash ('flashaj')"
       },
       "command-files": {
         "title": "Učitaj/spremi datoteke",
