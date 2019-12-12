@@ -333,9 +333,14 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
 
 .roundlabel {
   padding-top: .3rem;
+  padding-bottom: .3rem;
   font-size: 80%;
   text-align: center;
   color: #336699;
+}
+.roundlabel:lang(zh-CN), .roundlabel:lang(zh-HK) {
+  padding-top: .2rem;
+  padding-bottom: .2em;
 }
 
 body:not(.hasFota) .fota {
