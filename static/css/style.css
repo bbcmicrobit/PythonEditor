@@ -267,6 +267,8 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   background-size: 100%;
   background-repeat: no-repeat;
   min-width: 90px;
+  max-width: 90px;
+  max-height: 113px;
 }
 
 .disabled div.roundsymbol {
@@ -337,9 +339,6 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   font-size: 80%;
   text-align: center;
   color: #336699;
-}
-.roundlabel:lang(zh-CN), .roundlabel:lang(zh-HK) {
-  padding-bottom: .2em;
 }
 
 body:not(.hasFota) .fota {
