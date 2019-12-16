@@ -1462,7 +1462,7 @@ function web_editor(config) {
 
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
         // If escape key is pressed close modal
-        $(document).keydown(function(e) {
+        $('#flashing-overlay').keydown(function(e) {
             if (e.which == 27) {
                 flashErrorClose();
            }
@@ -1738,7 +1738,7 @@ function web_editor(config) {
         }
         $("#modal-msg-links").html((modalLinks).join(' | '));
         focusModal("#modal-msg-overlay");
-        $(document).keydown(function(e) {
+        $("#modal-msg-overlay").keydown(function(e) {
             if (e.which == 27) {
                 modalMsgClose();
            }
@@ -1954,9 +1954,9 @@ function web_editor(config) {
 function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
-    $(document).off("keydown");
+    $('#flashing-overlay').off("keydown");
 }
 function modalMsgClose() {
     $('#modal-msg-overlay-container').hide()
-    $(document).off("keydown");
+    $('#modal-msg-overlay').off("keydown");
 }
