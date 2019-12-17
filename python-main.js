@@ -1328,6 +1328,12 @@ function web_editor(config) {
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
         focusModal("#flashing-overlay");
+        // If escape key is pressed close modal
+        $('#flashing-overlay').keydown(function(e) {
+            if (e.which == 27) {
+                flashErrorClose();
+           }
+       });
 
         // Log error to console for feedback
         console.log("An error occured whilst attempting to use WebUSB.");
@@ -1461,12 +1467,6 @@ function web_editor(config) {
         };
 
         document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-        // If escape key is pressed close modal
-        $('#flashing-overlay').keydown(function(e) {
-            if (e.which == 27) {
-                flashErrorClose();
-           }
-       });
     }
 
     function doDisconnect() {
@@ -1621,11 +1621,9 @@ function web_editor(config) {
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
 
             console.log("Flash complete");
-            
+
             // Close overview
-            setTimeout(function(){
-                $("#flashing-overlay-container").hide();
-            }, 500);
+            setTimeout(flashErrorClose, 500);
         })
         .catch(webusbErrorHandler)
         .finally(function() {
