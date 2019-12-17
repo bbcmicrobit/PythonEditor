@@ -930,10 +930,15 @@ function web_editor(config) {
         dialog.onkeydown = function(event) {
             if (event.which == 9) {
                 // if tab key is pressed
-                var focusedEl = document.activeElement;
                 var numberOfFocusableEls = focusableEls.length;
-                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
+                if (!numberOfFocusableEls) {
+                    dialog.focus();
+                    event.preventDefault();
+                    return;
+                }
 
+                var focusedEl = document.activeElement;
+                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
                 if (event.which == 16) {
                     // if focused on first item and user shift-tabs back, go to the last focusable item
                     if (focusedElIndex == 0) {
