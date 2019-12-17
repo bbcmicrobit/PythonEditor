@@ -1236,15 +1236,16 @@ function web_editor(config) {
                 loadPy(file.name, e.target.result);
             };
             reader.readAsText(file);
+            $('#editor').focus();
         } else if (ext == 'hex') {
             reader.onload = function(e) {
                 loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
-        }else{
+            $('#editor').focus();
+        } else {
             invalidFileWarning(ext);
         }
-        $('#editor').focus();
     }
 
     function showDisconnectError(event) {
