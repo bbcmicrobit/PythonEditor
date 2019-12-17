@@ -1327,16 +1327,9 @@ function web_editor(config) {
         // Display error handler modal
         $("#flashing-overlay-container").css("display", "flex");
         $("#flashing-info").addClass('hidden');
-        focusModal("#flashing-overlay");
-        // If escape key is pressed close modal
-        $('#flashing-overlay').keydown(function(e) {
-            if (e.which == 27) {
-                flashErrorClose();
-           }
-       });
 
         // Log error to console for feedback
-        console.log("An error occured whilst attempting to use WebUSB.");
+        console.log("An error occurred whilst attempting to use WebUSB.");
         console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
         console.trace();
@@ -1354,7 +1347,7 @@ function web_editor(config) {
 
         // Disconnect from the microbit
         doDisconnect();
-       
+
         var errorType;
         var errorTitle;
         var errorDescription;
@@ -1456,6 +1449,15 @@ function web_editor(config) {
 
         // Attach download handler
         $("#flashing-overlay-download").click(doDownload);
+
+        // Make the modal accessible now that all the content is present
+        focusModal("#flashing-overlay");
+        // If escape key is pressed close modal
+        $('#flashing-overlay').keydown(function(e) {
+            if (e.which == 27) {
+                flashErrorClose();
+           }
+        });
 
         // Send event
         var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
