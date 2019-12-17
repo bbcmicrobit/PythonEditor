@@ -1727,10 +1727,12 @@ function web_editor(config) {
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content);
         var modalLinks = [];
+        var addCloseClickListener = false;
         if (links) {
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
-                    modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
+                    modalLinks.push('<a href="#" id="modal-msg-close-link">' + key + '</a>');
+                    addCloseClickListener = true;
                 } else {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
@@ -1738,7 +1740,15 @@ function web_editor(config) {
         }
         $("#modal-msg-links").html((modalLinks).join(' | '));
         focusModal("#modal-msg-overlay");
-        $("#modal-msg-overlay").keydown(function(e) {
+        var modalMsgClose = function() {
+            $(overlayContainer).hide()
+            $(overlayContainer).off("keydown");
+        };
+        $("#modal-msg-close-cross").click(modalMsgClose);
+        if (addCloseClickListener) {
+            $("#modal-msg-close-link").click(modalMsgClose);
+        }
+        $(overlayContainer).keydown(function(e) {
             if (e.which == 27) {
                 modalMsgClose();
            }
@@ -1949,14 +1959,10 @@ function web_editor(config) {
 }
 
 /*
- * Functions to close error modals
+ * Function to close flash error box
  */
 function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
     $('#flashing-overlay').off("keydown");
-}
-function modalMsgClose() {
-    $('#modal-msg-overlay-container').hide()
-    $('#modal-msg-overlay').off("keydown");
 }
