@@ -919,9 +919,9 @@ function web_editor(config) {
     }
 
     // Trap focus in modal and pass focus to first actionable element
-    function focusModal() {
+    function focusModal(modalId) {
         document.querySelector('body > :not(.vex)').setAttribute('aria-hidden', true);
-        var dialog = document.querySelector('.modal-div');
+        var dialog = document.querySelector(modalId);
         var focusableEls = dialog.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
         $(focusableEls).each(function() {
             $(this).attr('tabindex', '0');
@@ -930,10 +930,15 @@ function web_editor(config) {
         dialog.onkeydown = function(event) {
             if (event.which == 9) {
                 // if tab key is pressed
-                var focusedEl = document.activeElement;
                 var numberOfFocusableEls = focusableEls.length;
-                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
+                if (!numberOfFocusableEls) {
+                    dialog.focus();
+                    event.preventDefault();
+                    return;
+                }
 
+                var focusedEl = document.activeElement;
+                var focusedElIndex = Array.prototype.indexOf.call(focusableEls, focusedEl);
                 if (event.which == 16) {
                     // if focused on first item and user shift-tabs back, go to the last focusable item
                     if (focusedElIndex == 0) {
@@ -987,7 +992,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
-                focusModal();
+                focusModal("#files-modal");
                 $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
                 document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
                 $('#save-hex').click(function() {
@@ -1173,7 +1178,7 @@ function web_editor(config) {
         vex.open({
             content: Mustache.render(template, context),
             afterOpen: function(vexContent) {
-                focusModal();
+                focusModal("#snippet-modal");
                 $(vexContent).find('.snippet-selection').click(function(e){
                     var snippet_name = $(this).find('.snippet-name').text();
                     EDITOR.triggerSnippet(snippet_name);
@@ -1236,15 +1241,16 @@ function web_editor(config) {
                 loadPy(file.name, e.target.result);
             };
             reader.readAsText(file);
+            $('#editor').focus();
         } else if (ext == 'hex') {
             reader.onload = function(e) {
                 loadHex(file.name, e.target.result);
             };
             reader.readAsText(file);
-        }else{
+            $('#editor').focus();
+        } else {
             invalidFileWarning(ext);
         }
-        $('#editor').focus();
     }
 
     function showDisconnectError(event) {
@@ -1329,7 +1335,7 @@ function web_editor(config) {
         $("#flashing-info").addClass('hidden');
 
         // Log error to console for feedback
-        console.log("An error occured whilst attempting to use WebUSB.");
+        console.log("An error occurred whilst attempting to use WebUSB.");
         console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
         console.log(err);
         console.trace();
@@ -1347,7 +1353,7 @@ function web_editor(config) {
 
         // Disconnect from the microbit
         doDisconnect();
-       
+
         var errorType;
         var errorTitle;
         var errorDescription;
@@ -1449,6 +1455,15 @@ function web_editor(config) {
 
         // Attach download handler
         $("#flashing-overlay-download").click(doDownload);
+
+        // Make the modal accessible now that all the content is present
+        focusModal("#flashing-overlay");
+        // If escape key is pressed close modal
+        $('#flashing-overlay').keydown(function(e) {
+            if (e.which == 27) {
+                flashErrorClose();
+           }
+        });
 
         // Send event
         var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
@@ -1614,11 +1629,9 @@ function web_editor(config) {
             document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
 
             console.log("Flash complete");
-            
+
             // Close overview
-            setTimeout(function(){
-                $("#flashing-overlay-container").hide();
-            }, 500);
+            setTimeout(flashErrorClose, 500);
         })
         .catch(webusbErrorHandler)
         .finally(function() {
@@ -1720,16 +1733,32 @@ function web_editor(config) {
         $("#modal-msg-title").text(title);
         $("#modal-msg-content").html(content);
         var modalLinks = [];
+        var addCloseClickListener = false;
         if (links) {
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
-                    modalLinks.push('<a href="#" onclick = "$(\'' + overlayContainer + '\').hide()">Close</a>');
+                    modalLinks.push('<a href="#" id="modal-msg-close-link">' + key + '</a>');
+                    addCloseClickListener = true;
                 } else {
                     modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
                 }
             });
         }
         $("#modal-msg-links").html((modalLinks).join(' | '));
+        focusModal("#modal-msg-overlay");
+        var modalMsgClose = function() {
+            $(overlayContainer).hide()
+            $(overlayContainer).off("keydown");
+        };
+        $("#modal-msg-close-cross").click(modalMsgClose);
+        if (addCloseClickListener) {
+            $("#modal-msg-close-link").click(modalMsgClose);
+        }
+        $(overlayContainer).keydown(function(e) {
+            if (e.which == 27) {
+                modalMsgClose();
+           }
+       });
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
@@ -1941,4 +1970,5 @@ function web_editor(config) {
 function flashErrorClose() {
     $('#flashing-overlay-error').html("");
     $('#flashing-overlay-container').hide();
+    $('#flashing-overlay').off("keydown");
 }
