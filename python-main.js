@@ -1627,18 +1627,21 @@ function web_editor(config) {
 
         var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
         daplink.stopSerialRead();
+        daplink.removeAllListeners(DAPjs.DAPLink.EVENT_SERIAL_DATA);
+        REPL.uninstallKeyboard();
+        REPL.io.pop();
         REPL = null;
     }
 
     function doSerial() {
-        console.log("Setting Up Serial Terminal");
-        // Hide terminal
+        // Hide terminal if it is currently shown
         var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
             closeSerial();
             return;
         }
 
+        console.log("Setting Up Serial Terminal");
         // Check if we need to connect
         if ($("#command-connect").is(":visible")){
             doConnect(true);
