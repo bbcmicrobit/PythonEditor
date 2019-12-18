@@ -1484,16 +1484,8 @@ function web_editor(config) {
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
+            closeSerial();
         }
-        $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-        $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
-
-        $("#repl").empty();
-        REPL = null;
 
         // Change button to connect
         $("#command-disconnect").hide();
@@ -1509,15 +1501,13 @@ function web_editor(config) {
         if (usePartialFlashing) {
             if (window.dapwrapper) {
                 console.log("Disconnecting: Using Quick Flash");
-                p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
-                    .then(function() { window.dapwrapper.disconnectAsync() } );
+                p = p.then(function() { window.dapwrapper.disconnectAsync() } );
             }
         }
         else {
             if (window.daplink) {
                 console.log("Disconnecting: Using Full Flash");
-                p = p.then(function() { window.daplink.stopSerialRead() } )
-                    .then(function() { window.daplink.disconnect() } );
+                p = p.then(function() { window.daplink.disconnect() } );
             }
         }
 
@@ -1538,21 +1528,7 @@ function web_editor(config) {
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
-            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
-
-            if (usePartialFlashing) {
-                if (window.dapwrapper) {
-                    window.dapwrapper.daplink.stopSerialRead();
-                }
-            }
-            else {
-                window.daplink.stopSerialRead();
-            }
+            closeSerial();
         }
 
         // Get the hex to flash in bytes format, exit if there is an error
@@ -1580,9 +1556,6 @@ function web_editor(config) {
 
         var p = Promise.resolve();
         if (usePartialFlashing) {
-            REPL = null;
-            $("#repl").empty();
-
             p = window.dapwrapper.disconnectAsync()
                 .then(function() {
                     return PartialFlashing.connectDapAsync();
@@ -1640,25 +1613,29 @@ function web_editor(config) {
         });
     }
 
+    function closeSerial(keepSession) {
+        console.log("Closing Serial Terminal");
+        $("#repl").empty();
+        $("#repl").hide();
+        $("#request-repl").hide();
+        $("#request-serial").hide();
+        $("#editor-container").show();
+
+        var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
+        $("#command-serial").attr("title", serialButton["title"]);
+        $("#command-serial > .roundlabel").text(serialButton["label"]);
+
+        var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+        daplink.stopSerialRead();
+        REPL = null;
+    }
+
     function doSerial() {
         console.log("Setting Up Serial Terminal");
         // Hide terminal
         var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
-            $("#command-serial").attr("title", serialButton["label"]);
-            $("#command-serial > .roundlabel").text(serialButton["label"]);
-            if (usePartialFlashing) {
-                if (window.dapwrapper) {
-                    window.dapwrapper.daplink.stopSerialRead();
-                }
-            }
-            else {
-                window.daplink.stopSerialRead();
-            }
+            closeSerial();
             return;
         }
 
