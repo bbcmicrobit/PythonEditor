@@ -1462,7 +1462,7 @@ function web_editor(config) {
         $('#flashing-overlay').keydown(function(e) {
             if (e.which == 27) {
                 flashErrorClose();
-           }
+            }
         });
 
         // Send event
@@ -1498,17 +1498,13 @@ function web_editor(config) {
 
         var p = Promise.resolve();
 
-        if (usePartialFlashing) {
-            if (window.dapwrapper) {
-                console.log("Disconnecting: Using Quick Flash");
-                p = p.then(function() { window.dapwrapper.disconnectAsync() } );
-            }
+        if (usePartialFlashing && window.dapwrapper) {
+            console.log('Disconnecting: Using Quick Flash');
+            p = p.then(function() { return window.dapwrapper.disconnectAsync() });
         }
-        else {
-            if (window.daplink) {
-                console.log("Disconnecting: Using Full Flash");
-                p = p.then(function() { window.daplink.disconnect() } );
-            }
+        else if (window.daplink) {
+            console.log('Disconnecting: Using Full Flash');
+            p = p.then(function() { return window.daplink.disconnect() });
         }
 
         p.finally(function() {
@@ -1615,15 +1611,15 @@ function web_editor(config) {
 
     function closeSerial(keepSession) {
         console.log("Closing Serial Terminal");
-        $("#repl").empty();
-        $("#repl").hide();
-        $("#request-repl").hide();
-        $("#request-serial").hide();
-        $("#editor-container").show();
+        $('#repl').empty();
+        $('#repl').hide();
+        $('#request-repl').hide();
+        $('#request-serial').hide();
+        $('#editor-container').show();
 
-        var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
-        $("#command-serial").attr("title", serialButton["title"]);
-        $("#command-serial > .roundlabel").text(serialButton["label"]);
+        var serialButton = config['translate']['static-strings']['buttons']['command-serial'];
+        $('#command-serial').attr('title', serialButton['title']);
+        $('#command-serial > .roundlabel').text(serialButton['label']);
 
         var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
         daplink.stopSerialRead();
@@ -1737,8 +1733,8 @@ function web_editor(config) {
         $(overlayContainer).keydown(function(e) {
             if (e.which == 27) {
                 modalMsgClose();
-           }
-       });
+            }
+        });
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
