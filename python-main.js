@@ -1695,14 +1695,27 @@ function web_editor(config) {
             REPL.options_.cursorVisible = true;
             REPL.prefs_.set('font-size', 22);
             REPL.onTerminalReady = function() {
-                var io = REPL.io.push();
-                io.onVTKeystroke = function(str) {
+                var sendJsStrEncodedUtf8 = function(str) {
+                    var strByteArray = new TextEncoder("utf-8").encode(str);
+                    var dataWithLength = new Uint8Array(strByteArray.byteLength + 1);
+                    // TODO: I don't think the DAPLink buffer is larger than 255 bytes
+                    // but we might want to check and do multiple sends if array > 255
+                    dataWithLength[0] = strByteArray.byteLength;
+                    dataWithLength.set(new Uint8Array(strByteArray), 1);
+                    var WRITE = 0x84;
                     var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    daplink.send(WRITE, dataWithLength.buffer);
+                }
+                var io = REPL.io.push();
+                // TODO: I can confirm here that the data is correctly sent
+                // encoded in UTF-8, but not sure why characters longer than
+                // a byte are ignored by MicroPython, they aren't echo back
+                // and aren't included in the internal buffer to execute
+                io.onVTKeystroke = function(str) {
+                    sendJsStrEncodedUtf8(str);
                 };
                 io.sendString = function(str) {
-                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    sendJsStrEncodedUtf8(str);
                 };
                 io.onTerminalResize = function(columns, rows) {
                 };
@@ -1711,8 +1724,12 @@ function web_editor(config) {
             REPL.installKeyboard();
 
             var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+            var decoder = new TextDecoder();
+            var encoder = new TextEncoder();
             daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
-                REPL.io.print(data); // first byte of data is length
+                // TODO: At this point we get a string from DAPJs directly and
+                // has been decoded as UTF-16, so the characters are not correct
+                REPL.io.print(data);
             });
         }
 
