@@ -1258,22 +1258,11 @@ function web_editor(config) {
         webusbErrorHandler(error);
     }
 
-    function clearDapWrapper(event) {
-        if(window.dapwrapper || window.previousDapWrapper) {
-            window.dapwrapper = null;
-            window.previousDapWrapper = null;
-        }
-    }
-
     function doConnect(serial) {
         // Change button to connecting
         $("#command-connect").hide();
         $("#command-connecting").show();
         $("#command-disconnect").hide();
-        
-        // Device disconnect listener
-        // Clears dapwrapper
-        navigator.usb.addEventListener('disconnect', clearDapWrapper);
 
         // Show error on WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', showDisconnectError);
@@ -1340,19 +1329,16 @@ function web_editor(config) {
         console.log(err);
         console.trace();
 
-        // If there was an error and quick flash is in use, then clear dapwrapper
-        if(usePartialFlashing) {
-            if(window.dapwrapper) {
+        // Disconnect from the microbit
+        doDisconnect().then(function() {
+            // As there has been an error clear the partial flashing DAPWrapper
+            if (window.dapwrapper) {
                 window.dapwrapper = null;
             }
-
-            if(window.previousDapWrapper) {
+            if (window.previousDapWrapper) {
                 window.previousDapWrapper = null;
             }
-        }
-
-        // Disconnect from the microbit
-        doDisconnect();
+        });
 
         var errorType;
         var errorTitle;
@@ -1478,8 +1464,7 @@ function web_editor(config) {
     }
 
     function doDisconnect() {
-
-        // Remove disconnect listenr
+        // Remove disconnect listener
         navigator.usb.removeEventListener('disconnect', showDisconnectError);
 
         // Hide serial and disconnect if open
@@ -1507,7 +1492,14 @@ function web_editor(config) {
             p = p.then(function() { return window.daplink.disconnect() });
         }
 
-        p.finally(function() {
+        p = p.catch(function() {
+            console.log('Error during disconnection');
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'error',
+                'message': 'error-disconnecting'
+            }}));
+        }).finally(function() {
             console.log('Disconnection Complete');
             document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
                 'flash-type': 'webusb',
