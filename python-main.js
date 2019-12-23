@@ -1258,22 +1258,11 @@ function web_editor(config) {
         webusbErrorHandler(error);
     }
 
-    function clearDapWrapper(event) {
-        if(window.dapwrapper || window.previousDapWrapper) {
-            window.dapwrapper = null;
-            window.previousDapWrapper = null;
-        }
-    }
-
     function doConnect(serial) {
         // Change button to connecting
         $("#command-connect").hide();
         $("#command-connecting").show();
         $("#command-disconnect").hide();
-        
-        // Device disconnect listener
-        // Clears dapwrapper
-        navigator.usb.addEventListener('disconnect', clearDapWrapper);
 
         // Show error on WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', showDisconnectError);
@@ -1340,19 +1329,16 @@ function web_editor(config) {
         console.log(err);
         console.trace();
 
-        // If there was an error and quick flash is in use, then clear dapwrapper
-        if(usePartialFlashing) {
-            if(window.dapwrapper) {
+        // Disconnect from the microbit
+        doDisconnect().then(function() {
+            // As there has been an error clear the partial flashing DAPWrapper
+            if (window.dapwrapper) {
                 window.dapwrapper = null;
             }
-
-            if(window.previousDapWrapper) {
+            if (window.previousDapWrapper) {
                 window.previousDapWrapper = null;
             }
-        }
-
-        // Disconnect from the microbit
-        doDisconnect();
+        });
 
         var errorType;
         var errorTitle;
@@ -1462,7 +1448,7 @@ function web_editor(config) {
         $('#flashing-overlay').keydown(function(e) {
             if (e.which == 27) {
                 flashErrorClose();
-           }
+            }
         });
 
         // Send event
@@ -1478,22 +1464,13 @@ function web_editor(config) {
     }
 
     function doDisconnect() {
-
-        // Remove disconnect listenr
+        // Remove disconnect listener
         navigator.usb.removeEventListener('disconnect', showDisconnectError);
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
+            closeSerial();
         }
-        $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-        $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
-
-        $("#repl").empty();
-        REPL = null;
 
         // Change button to connect
         $("#command-disconnect").hide();
@@ -1506,22 +1483,23 @@ function web_editor(config) {
 
         var p = Promise.resolve();
 
-        if (usePartialFlashing) {
-            if (window.dapwrapper) {
-                console.log("Disconnecting: Using Quick Flash");
-                p = p.then(function() { window.dapwrapper.daplink.stopSerialRead() } )
-                    .then(function() { window.dapwrapper.disconnectAsync() } );
-            }
+        if (usePartialFlashing && window.dapwrapper) {
+            console.log('Disconnecting: Using Quick Flash');
+            p = p.then(function() { return window.dapwrapper.disconnectAsync() });
         }
-        else {
-            if (window.daplink) {
-                console.log("Disconnecting: Using Full Flash");
-                p = p.then(function() { window.daplink.stopSerialRead() } )
-                    .then(function() { window.daplink.disconnect() } );
-            }
+        else if (window.daplink) {
+            console.log('Disconnecting: Using Full Flash');
+            p = p.then(function() { return window.daplink.disconnect() });
         }
 
-        p.finally(function() {
+        p = p.catch(function() {
+            console.log('Error during disconnection');
+            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                'flash-type': 'webusb',
+                'event-type': 'error',
+                'message': 'error-disconnecting'
+            }}));
+        }).finally(function() {
             console.log('Disconnection Complete');
             document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
                 'flash-type': 'webusb',
@@ -1538,21 +1516,7 @@ function web_editor(config) {
 
         // Hide serial and disconnect if open
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
-            $("#command-serial").attr("title", config["translate"]["static-strings"]["buttons"]["command-serial"]["title"]);
-            $("#command-serial > .roundlabel").text(config["translate"]["static-strings"]["buttons"]["command-serial"]["label"]);
-
-            if (usePartialFlashing) {
-                if (window.dapwrapper) {
-                    window.dapwrapper.daplink.stopSerialRead();
-                }
-            }
-            else {
-                window.daplink.stopSerialRead();
-            }
+            closeSerial();
         }
 
         // Get the hex to flash in bytes format, exit if there is an error
@@ -1580,9 +1544,6 @@ function web_editor(config) {
 
         var p = Promise.resolve();
         if (usePartialFlashing) {
-            REPL = null;
-            $("#repl").empty();
-
             p = window.dapwrapper.disconnectAsync()
                 .then(function() {
                     return PartialFlashing.connectDapAsync();
@@ -1640,28 +1601,35 @@ function web_editor(config) {
         });
     }
 
+    function closeSerial(keepSession) {
+        console.log("Closing Serial Terminal");
+        $('#repl').empty();
+        $('#repl').hide();
+        $('#request-repl').hide();
+        $('#request-serial').hide();
+        $('#editor-container').show();
+
+        var serialButton = config['translate']['static-strings']['buttons']['command-serial'];
+        $('#command-serial').attr('title', serialButton['title']);
+        $('#command-serial > .roundlabel').text(serialButton['label']);
+
+        var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
+        daplink.stopSerialRead();
+        daplink.removeAllListeners(DAPjs.DAPLink.EVENT_SERIAL_DATA);
+        REPL.uninstallKeyboard();
+        REPL.io.pop();
+        REPL = null;
+    }
+
     function doSerial() {
-        console.log("Setting Up Serial Terminal");
-        // Hide terminal
+        // Hide terminal if it is currently shown
         var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
         if ($("#repl").css('display') != 'none') {
-            $("#repl").hide();
-            $("#request-repl").hide();
-            $("#request-serial").hide();
-            $("#editor-container").show();
-            $("#command-serial").attr("title", serialButton["label"]);
-            $("#command-serial > .roundlabel").text(serialButton["label"]);
-            if (usePartialFlashing) {
-                if (window.dapwrapper) {
-                    window.dapwrapper.daplink.stopSerialRead();
-                }
-            }
-            else {
-                window.daplink.stopSerialRead();
-            }
+            closeSerial();
             return;
         }
 
+        console.log("Setting Up Serial Terminal");
         // Check if we need to connect
         if ($("#command-connect").is(":visible")){
             doConnect(true);
@@ -1757,8 +1725,8 @@ function web_editor(config) {
         $(overlayContainer).keydown(function(e) {
             if (e.which == 27) {
                 modalMsgClose();
-           }
-       });
+            }
+        });
     }
 
     function formatMenuContainer(parentButtonId, containerId) {
