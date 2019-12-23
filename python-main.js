@@ -1813,10 +1813,19 @@ function web_editor(config) {
             });
             $("#command-disconnect").click(function () {
                 doDisconnect();
-            }); 
+            });
             $("#command-serial").click(function () {
                 doSerial();
-            });  
+            });
+            $("#request-repl").click(function () {
+                var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+                daplink.serialWrite('\x03');
+                REPL.focus();
+            });
+            $("#request-serial").click(function () {
+                var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
+                daplink.serialWrite('\x04');
+            });
         } else {
             var WebUSBUnavailable = function() {
                 var links = {};
@@ -1833,14 +1842,6 @@ function web_editor(config) {
                 e.stopPropagation();
             });
         }
-        $("#request-repl").click(function () {
-            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-            daplink.serialWrite("\x03");
-        });
-        $("#request-serial").click(function () {
-            var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-            daplink.serialWrite("\x04");
-        });
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
             $('#helpsupport_container').addClass('hidden');
