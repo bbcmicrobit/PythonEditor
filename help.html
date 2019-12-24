@@ -43,7 +43,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -52,13 +52,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="https://python.microbit.org">Python on the micro:bit</a>
+          <a class="navbar-brand" href="https://python.microbit.org" aria-label="python editor">Python on the micro:bit</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="#Editor">Editor</a></li>
             <li><a href="#hello">Hello, World!</a></li>
-            <li ><a href="#fs">Files and Modules</a></li>
+            <li><a href="#fs">Files and Modules</a></li>
             <li id="nav-blocks" class="hidden"><a href="#blockly">Blockly</a></li>
             <li id="nav-snippets" class="hidden"><a href="#snippets">Snippets</a></li>
             <li><a href="#REPL">REPL</a></li>
@@ -69,14 +69,14 @@
       </div>
     </nav>
 
-    <div class="container">
+    <main role="main" class="container">
 
       <div class="starter-template">
         <div class="row" id="home">
             <div class="col-md-8 col-md-offset-2">
-                <a href="http://microbit.org/"><img src="static/img/microbit.png"/></a>
-                <a href="http://micropython.org/"><img src="static/img/micropython.jpeg"/></a>
-                <a href="http://python.org/community/microbit/"><img src="static/img/python.png"/></a>
+                <a href="http://microbit.org/" role="button" aria-label="microbit.org website"><img src="static/img/microbit.png" alt="micro:bit logo"/></a>
+                <a href="http://micropython.org/" role="button" aria-label="micropython.org website"><img src="static/img/micropython.jpeg" alt="micropython logo"/></a>
+                <a href="http://python.org/community/microbit/" role="button" aria-label="python.org micro:bit community"><img src="static/img/python.png" alt="python logo"/></a>
                 <br/></br/>
             </div>
         </div>
@@ -84,7 +84,7 @@
     </div> 
     <div class="container">
     <img src="static/img/comic1.png" class="img-responsive center-block"
-            alt="http://goo.gl/SrIrIE"/>
+            alt="first steps with python"/>
     <h2 id="Editor"> The Editor</h2>
       <p>The Python editor is perfect for those who want to push their coding skills further. 
       A selection of snippets and a range of pre-made images and music give you a helping hand with your code. 
@@ -98,7 +98,7 @@
     <p><img src="static/img/header.png" class="image img-responsive center-block"
         alt="A picture of the buttons along the top of the editor."/></p>
 
-    <p>As well as using a mouse, you can use the <kbd>TAB</kbd> key to navigate through the options and <kbd>Enter</kbd> to activate them. If you're in the text window, The <kbd>ESC</kbd> key will re-focus on the menu.
+    <p>As well as using a mouse, you can use the <kbd>TAB</kbd> key to navigate through the options and <kbd>Enter</kbd> to activate them. If you're in the text editor, The <kbd>ESC</kbd> key will re-focus on the menu.
     </p>
 
     <table class="table">
@@ -259,14 +259,14 @@
     <p>The name and description for your script is shown on the top
     right hand side. Click them to edit them.</p>
 
-    <h3 id="text-window">Text window</h3>
-    <p>The other part of the editor is the text window, where we edit our scripts.</p>
+    <h3 id="text-editor">Text Editor</h3>
+    <p>The Text Editor is where we write and edit our scripts.</p>
 
     <p><img src="static/img/editor_text.png"
         class="image img-responsive center-block img-rounded"
         alt="A picture of the text area in the code editor."/></p>
 
-    <p>The editor tries to help out by colouring the text to show what
+    <p>The text editor tries to help out by colouring the text to show what
     all the different parts of  program are. For example, Python keywords
     (words built into the Python language) are grey. The brighter coloured
     words are bits of the program <em>you</em> have created. Brown words
@@ -336,8 +336,8 @@ display.scroll("Hello, World!")</code></pre>
     
     <p>A status bar shows you the file types you have uploaded and how much free space you still have available.
         The status bar is colour coded to indicate file types; main.py is purple and the external emoji.py shown in the example is green.
-        The <strong>main.py</strong> file is your program, the python script from the <a href="#text-window">text window</a>. It is pre-set in the status bar and cannot be removed. 
-        If you try to upload another main.py file this will replace your code in the text window. The emoji.py is a python module, that we can now reference in main.py.</p>    
+        The <strong>main.py</strong> file is your program, the python script from the <a href="#text-editor">text editor</a>. It is pre-set in the status bar and cannot be removed. 
+        If you try to upload another main.py file this will replace your code in the text editor. The emoji.py is a python module, that we can now reference in main.py.</p>    
 
     <p>As you add files, they will appear in a list underneath the status bar. The list indicates
         the filename, the file type, the size of the file and the options to download or to trash/delete the file if you have added it by accident.</p>
@@ -534,7 +534,7 @@ while True:
         <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a> This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://python.org/community/microbit/" property="cc:attributionName" rel="cc:attributionURL">The Python Software Foundation</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
         </p>
     </footer>
-    </div><!-- /.container -->
+</main><!-- /.container -->
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

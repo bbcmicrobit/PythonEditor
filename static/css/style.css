@@ -121,7 +121,7 @@ h2 {
   border-radius: 0.5rem;
 }
 
-#small-icons > *:not(:first-child) {
+.small-icons > *:not(:first-child) {
   display: inline-block;
   cursor: pointer;
 }
@@ -131,7 +131,7 @@ h2 {
   cursor: pointer !important;
 }
 
-#small-icons {
+.small-icons {
     width: 54px;
     min-width: 54px;
     display: -webkit-flex;
@@ -142,7 +142,7 @@ h2 {
     flex-direction: column;
 }
 
-#small-icons .status-icon {
+.small-icons .status-icon{
   width: 37px;
   height: 37px;
   border: 6px solid #FFCC33;
@@ -151,27 +151,28 @@ h2 {
   text-align: center;
   font-size: 1.4rem;
   line-height: 2.4rem;
-  padding: 0;
+  padding: 0 !important;
   font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
   color: #336699;
   background: #FFFFFF;
 }
 
-html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
+html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   line-height: 2.15rem;
 }
 
-#small-icons .win-status-icon{
+
+.small-icons .win-status-icon {
   line-height: 2.2rem;
 }
 
-#small-icons .holder {
+.small-icons .holder {
   width: 56px;
   min-width: 56px;
   color: #336699;
   text-decoration: none;
   text-align: center;
-  padding: 0px;
+  padding: 0px !important;
 }
 
 /* Popups */
@@ -336,6 +337,7 @@ html[data-useragent*='MSIE 10.0'] #small-icons .status-icon  {
   font-size: 80%;
   text-align: center;
   color: #336699;
+  text-shadow:   -1px -1px #f2f2f2, 1px -1px #f2f2f2, -1px 1px #f2f2f2, 1px 1px #f2f2f2;
 }
 
 body:not(.hasFota) .fota {
@@ -400,12 +402,16 @@ a.command:hover {
         display: inline;
         min-width: 48px;
     }
+    
+    .loader {
+      top: 7px;
+    }
 
     #commands a {
         padding: .4em;
     }
 
-    #small-icons {
+    .small-icons {
         min-width: 120px;
         display: -ms-flexbox;
         display: flex;
@@ -414,8 +420,8 @@ a.command:hover {
         flex-direction: row;
     }
 
-    #small-icons .holder {
-        padding: 0.2em;
+    .small-icons .holder {
+        padding: 0.2em !important;
     }
 
   .roundsymbol {
@@ -571,7 +577,7 @@ div.expandable-content {
 
 div.load-drag-target {
     height: 160px;
-    background: #ddd;
+    background: #e0e0e0;
     border: 1px solid #aaa;
     border-radius: 9px;
     position: relative;
@@ -828,7 +834,7 @@ input:checked + .menu-switch-slider:before {
     width: 100%;
     width: -moz-available;
     width: -webkit-fill-available;
-    background: #ddd;
+    background: #e0e0e0;
     border: 1px solid #aaa;
     margin: 5px 2px 5px 1px;
     border-radius: 5px;
