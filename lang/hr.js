@@ -138,10 +138,10 @@ var language = {
       "title": "Hrvatski"
     },
     "zh-CN": {
-      "title": "Chinese (simplified)"
+      "title": "Kineski (pojednostavljeni)"
     },
     "zh-HK": {
-      "title": "Chinese (traditional, Hong Kong)"
+      "title": "Kineski (tradicionalni, Hong Kong)"
     }
   },
   "static-strings": {
@@ -164,7 +164,7 @@ var language = {
       },
       "command-serial": {
         "title": "Priključi micro:bit putem serijske veze",
-        "label": "Otvori serijsku vezu",
+        "label": "Otvori seriju",
         "title-close": "Zatvori serijsku vezu i vrati se u uređivač",
         "label-close": "Zatvori serijsku vezu"
       },
