@@ -267,6 +267,8 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   background-size: 100%;
   background-repeat: no-repeat;
   min-width: 90px;
+  max-width: 90px;
+  max-height: 113px;
 }
 
 .disabled div.roundsymbol {

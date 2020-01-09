@@ -3,11 +3,18 @@
 "base_path" : "./lang"
 "preserve_hierarchy": true
 
-files: [
- {
-  "source" : "en.js",
-  "dest" : "/apps/python-editor/en.json",
-  "type" : "json",
-  "translation" : "/%two_letters_code%.js"
- }
-] 
+"files" : [
+  {
+    "source" : "/en.js",
+    "dest" : "/apps/python-editor/en.json",
+    "type" : "json",
+    "translation" : "/%two_letters_code%.js",
+    "languages_mapping" : {
+      "two_letters_code" : {
+        "zh-CN" : "zh-CN",
+        "zh-TW" : "zh-TW",
+        "hk" : "zh-HK",
+      }
+    }
+  }
+]
