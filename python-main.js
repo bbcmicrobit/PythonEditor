@@ -1705,10 +1705,11 @@ function web_editor(config) {
         if (links) {
             Object.keys(links).forEach(function(key) {
                 if (links[key] === "close") {
-                    modalLinks.push('<a href="#" id="modal-msg-close-link">' + key + '</a>');
+                    modalLinks.push('<button type="button" area-labelledby="modal-msg-close-link" id="modal-msg-close-link">' + key + '</button>');
+
                     addCloseClickListener = true;
                 } else {
-                    modalLinks.push('<a href="' + links[key] + '" target="_blank">' + key + '</a>');
+                    modalLinks.push('<button type="button" aria-label="' + key + '" class="button-link" onclick="window.open(\' ' + links[key] + '\', \'_blank\')">' + key + '</button>');
                 }
             });
         }
