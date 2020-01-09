@@ -1709,7 +1709,7 @@ function web_editor(config) {
 
                     addCloseClickListener = true;
                 } else {
-                    modalLinks.push('<button type="button" aria-label="' + key + '"class="button-link" onclick="window.open(\' ' + links[key] + '\', \'_blank\')">' + key + '</button>');
+                    modalLinks.push('<button type="button" aria-label="' + key + '" class="button-link" onclick="window.open(\' ' + links[key] + '\', \'_blank\')">' + key + '</button>');
                 }
             });
         }
