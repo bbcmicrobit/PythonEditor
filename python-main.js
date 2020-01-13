@@ -588,10 +588,16 @@ function web_editor(config) {
             }
         });
         // Bind the ESCAPE key.
+        var button = $('#command-download');
+        var otherButton = $('#command-flash');
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#command-download').focus(); // Focus Download button or
-                $('#command-flash').focus(); // Focus Flash button in webUSB mode
+                if ( $('#command-download').is(':visible') ) {
+                    $('#command-download').focus();
+                }
+                else if ( $('#command-flash').is(':visible') ){
+                    $('#command-flash').focus();
+                }
             }
         });
         // Bind drag and drop into editor.
