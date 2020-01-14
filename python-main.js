@@ -590,7 +590,12 @@ function web_editor(config) {
         // Bind the ESCAPE key.
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
-                $('#command-download').focus();
+                if ( $('#command-download').is(':visible') ) {
+                    $('#command-download').focus();
+                }
+                else if ( $('#command-flash').is(':visible') ){
+                    $('#command-flash').focus();
+                }
             }
         });
         // Bind drag and drop into editor.
