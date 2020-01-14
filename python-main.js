@@ -588,8 +588,6 @@ function web_editor(config) {
             }
         });
         // Bind the ESCAPE key.
-        var button = $('#command-download');
-        var otherButton = $('#command-flash');
         $(document).keyup(function(e) {
             if (e.keyCode == 27) { // ESCAPE
                 if ( $('#command-download').is(':visible') ) {
