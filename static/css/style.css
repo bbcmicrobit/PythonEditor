@@ -142,7 +142,7 @@ h2 {
     flex-direction: column;
 }
 
-.small-icons .status-icon{
+.status-icon{
   width: 37px;
   height: 37px;
   border: 6px solid #FFCC33;
