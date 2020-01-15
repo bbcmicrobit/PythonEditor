@@ -138,10 +138,13 @@ var language = {
       "title": "Chorwacki"
     },
     "zh-CN": {
-      "title": "Chinese (simplified)"
+      "title": "Chiński (uproszczony)"
     },
     "zh-HK": {
       "title": "Chinese (traditional, Hong Kong)"
+    },
+    "zh-TW": {
+      "title": "Chinese (traditional, Taiwan)"
     }
   },
   "static-strings": {

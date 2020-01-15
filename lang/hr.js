@@ -142,6 +142,9 @@ var language = {
     },
     "zh-HK": {
       "title": "Kineski (tradicionalni, Hong Kong)"
+    },
+    "zh-TW": {
+      "title": "Chinese (traditional, Taiwan)"
     }
   },
   "static-strings": {

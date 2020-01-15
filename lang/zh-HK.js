@@ -141,7 +141,10 @@ var language = {
       "title": "Chinese (simplified)"
     },
     "zh-HK": {
-      "title": "Chinese (traditional, Hong Kong)"
+      "title": "中文 (繁體，香港)"
+    },
+    "zh-TW": {
+      "title": "Chinese (traditional, Taiwan)"
     }
   },
   "static-strings": {

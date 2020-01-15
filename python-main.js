@@ -307,7 +307,7 @@ function translations() {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    var validLangs = ['en', 'es', 'pl', 'hr', 'zh-HK', 'zh-CN'];
+    var validLangs = ['en', 'es', 'pl', 'hr', 'zh-HK', 'zh-CN', 'zh-TW'];
 
     /* Replaces DOM script element with the new language js file. */
     function updateLang(newLang, callback) {
