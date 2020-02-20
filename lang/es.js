@@ -136,6 +136,15 @@ var language = {
     },
     "hr": {
       "title": "Croatian"
+    },
+    "zh-CN": {
+      "title": "Chinese (simplified)"
+    },
+    "zh-HK": {
+      "title": "Chinese (traditional, Hong Kong)"
+    },
+    "zh-TW": {
+      "title": "Chinese (traditional, Taiwan)"
     }
   },
   "static-strings": {

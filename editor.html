@@ -86,7 +86,7 @@ Nicholas and Damien.
             <h2 class="modal-title"><i class="fa fa-upload"></i> <strong>{{ load-title }}</strong></h2>
             <div class="load-drag-target" id="load-drag-target">
                 <input type="file" style="display: none" name="load-form-file-upload" id="file-upload-input">
-                <p>{{ instructions }}<br><a href="#" id="file-upload-link" class="load-drag-target load-toggle action">{{ toggle-file }}</a></p>
+                <p>{{ instructions }}<br><button aria-labelledby="file-upload-link" type="button" id="file-upload-link" class="load-drag-target load-toggle button-link action">{{ toggle-file }}</button></p>
             </div>
             <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-but }}</strong></h2>
             <div class="save-buttons-container">
@@ -373,8 +373,11 @@ Nicholas and Damien.
                                 <li><span title="Spanish"><a lang="es" href="#" class="action lang-choice" id="es" tabindex="122">Español</a></span></li>
                                 <li><span title="Polish"><a lang="pl" href="#" class="action lang-choice" id="pl" tabindex="123">Polski</a></span></li>
                                 <li><span title="Croatian"><a lang="hr" href="#" class="action lang-choice" id="hr" tabindex="124">Hrvatski</a></span></li>
+                                <li><span title="Chinese (simplified)"><a lang="zh-CN" href="#" class="action lang-choice" id="zh-CN" tabindex="125">简体中文</a></span></li>
+                                <li><span title="Chinese (Hong Kong)"><a lang="zh-HK" href="#" class="action lang-choice" id="zh-HK" tabindex="126">中文 (繁體，香港)</a></span></li>
+                                <li><span title="Chinese (Taiwan)"><a lang="zh-TW" href="#" class="action lang-choice" id="zh-TW" tabindex="127">中文（繁體，臺灣)</a></span></li>
                             </ul>
-                            <div><a id="add-language-link" class="action" title="Add a language translation to the Editor" href="https://support.microbit.org/support/solutions/articles/19000106022-translating-the-micro-bit-python-editor" target="_blank" tabindex="124">Add a language</a></div>
+                            <div><a id="add-language-link" class="action" title="Add a language translation to the Editor" href="https://support.microbit.org/support/solutions/articles/19000106022-translating-the-micro-bit-python-editor" target="_blank" tabindex="129">Add a language</a></div>
                         </div>
                     </div>
                 </div>
