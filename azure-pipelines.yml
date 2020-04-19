@@ -4,7 +4,7 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '8.x'
+    versionSpec: '12.x'
 
 - task: Npm@1
   displayName: 'npm ci'
@@ -14,8 +14,22 @@ steps:
     customCommand: 'ci'
 
 - task: Npm@1
-  displayName: 'npm test'
+  displayName: 'npm test chrome'
   inputs:
     workingDir: ./tests/
     command: custom
     customCommand: 'run test:ci'
+
+- task: Bash@3
+  displayName: 'npm install puppeteer firefox'
+  inputs:
+    targetType: 'inline'
+    workingDirectory: ./tests/
+    script: PUPPETEER_PRODUCT=firefox npm install puppeteer@3.0.0
+
+- task: Bash@3
+  displayName: 'npm test firefox'
+  inputs:
+    targetType: 'inline'
+    workingDirectory: ./tests/
+    script: PUPPETEER_PRODUCT=firefox npm run test:ci
