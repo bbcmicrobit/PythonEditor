@@ -1,4 +1,5 @@
 const fs = require("fs");
+const os = require('os');
 const path = require("path");
 const puppeteer = require("puppeteer");
 
@@ -14,6 +15,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         // Flags allow Puppeteer to run within a container.
         browser = await puppeteer.launch({
             headless: true,
+            //product: "firefox",
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
         });
     });
@@ -160,11 +162,34 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         const filePath = path.join(downloadFolder, "program_test.py");
         if (!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        const page = await browser.newPage();
-        await page._client.send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadFolder
-        });
+
+        let page = null;
+        if (process.env.PUPPETEER_PRODUCT === "firefox") {
+            // Prepare a settings file to be able to download files to a known location
+            const userDataDir = path.join(os.tmpdir(), "puppeteer_firefox_profiles", "default");
+            if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
+            fs.writeFile(path.join(userDataDir, './prefs.js'), `
+                user_pref("browser.download.useDownloadDir", true);
+                user_pref("browser.download.folderList", 2);
+                user_pref("browser.download.forbid_open_with", true);
+                user_pref("browser.download.dir", "${downloadFolder}");
+                user_pref("browser.download.lastDir", "${downloadFolder}");
+                user_pref("browser.altClickSave", true);`,
+                () => {});
+            // Relaunch browser with correct configuration
+            browser.close();
+            browser = await puppeteer.launch({
+                userDataDir: userDataDir,
+                headless: false,
+            });
+            page = await browser.newPage();
+        } else {
+            page = await browser.newPage();
+            await page._client.send('Page.setDownloadBehavior', {
+                behavior: 'allow',
+                downloadPath: downloadFolder
+            });
+        }
         await page.goto("http://localhost:5000/editor.html");
 
         await page.evaluate(() => document.getElementById("script-name").value = "program test")
@@ -176,6 +201,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.click("#command-files");
         await page.click("#show-files");
         await page.waitFor(100);
+        //await page.keyboard.down("Alt");
         await page.click(".save-button.save");
         await page.waitFor(500);    //waiting to ensure file is saved
         const fileExists = fs.existsSync(filePath);
