@@ -10,6 +10,8 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 *.swp
+
+# Temp directory used for unit testing
 tests/spec/test-files/temp-test-files/
 
 # Node

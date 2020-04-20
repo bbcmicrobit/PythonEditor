@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const puppeteer = require("puppeteer");
 
 jest.setTimeout(20000);
@@ -11,7 +12,10 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     beforeAll(async() => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        browser = await puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
+        browser = await puppeteer.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+        });
     });
 
     afterAll(async() => {
@@ -151,26 +155,32 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(codeName).toEqual("too-large");
     });
 
-    it("Saves a python file with the correct filename", async function(){
-        if (fs.existsSync("./spec/test-files/temp-test-files/program_test.py")) {
-            fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
-        }
+    it("Saves a python file with the correct filename", async function() {
+        const downloadFolder = path.join(process.cwd(), "spec", "test-files", "temp-test-files");
+        const filePath = path.join(downloadFolder, "program_test.py");
+        if (!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         const page = await browser.newPage();
-        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './spec/test-files/temp-test-files'});
+        await page._client.send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadFolder
+        });
         await page.goto("http://localhost:5000/editor.html");
 
-        await page.evaluate( () => document.getElementById("script-name").value = "program test")
-        const scriptName = await page.evaluate("document.getElementById('script-name').value");
-        for (let ms=0; ms<100; ms++) {
+        await page.evaluate(() => document.getElementById("script-name").value = "program test")
+        for (let ms = 0; ms < 100; ms++) {
+            let scriptName = await page.evaluate("document.getElementById('script-name').value");
             if (scriptName === "program test") break;
             await page.waitFor(10);
         }
         await page.click("#command-files");
         await page.click("#show-files");
+        await page.waitFor(100);
         await page.click(".save-button.save");
-        await page.waitFor(1000); //waiting to ensure file is saved
-        const fileExists = fs.existsSync("./spec/test-files/temp-test-files/program_test.py");
-        fs.unlinkSync("./spec/test-files/temp-test-files/program_test.py");
+        await page.waitFor(500);    //waiting to ensure file is saved
+        const fileExists = fs.existsSync(filePath);
+        fs.unlinkSync(filePath);
+        fs.rmdirSync(downloadFolder);
 
         expect(fileExists).toBeTruthy();
     });
@@ -178,11 +188,13 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     it("Correctly handles an mpy file", async function(){
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
+
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplempyfile.mpy");
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+
         expect(modalContent).toContain("This version of the Python Editor doesn\'t currently support adding .mpy files.");
         expect(modalDisplay).toContain("block");
     });
@@ -190,11 +202,13 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     it("Correctly handles a file with an invalid extension", async function(){
         const page = await browser.newPage();
         await page.goto("http://localhost:5000/editor.html");
+
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+
         expect(modalContent).toContain("The Python Editor can only load files with the .hex or .py extensions.");
         expect(modalDisplay).toContain("block");
     });
