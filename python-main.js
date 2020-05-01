@@ -917,7 +917,10 @@ function web_editor(config) {
             if (format == 'bytes') {
                 fullHex = micropythonFs.getIntelHexBytes(micropythonHex);
             } else {
-                fullHex = micropythonFs.getIntelHex(micropythonHex);
+                fullHex = microbitFb.createFatBinary([
+                    { 'hex': micropythonFs.getIntelHex(micropythonHex), 'boardID': 0x9900 },
+                    { 'hex': micropythonFs.getIntelHex(micropythonHex), 'boardID': 0x9903 },
+                ]);
             }
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
