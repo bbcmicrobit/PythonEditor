@@ -668,13 +668,17 @@ function web_editor(config) {
       });
     }
 
-    // Sets up the file system and adds the initial main.py
+    // Fetches the MicroPython hex and sets up the file system with the initial main.py
     function setupFilesystem() {
-        micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
-        // Limit filesystem size to 20K
-        micropythonFs.setStorageSize(20 * 1024);
-        // The the current main.py
-        micropythonFs.write('main.py', EDITOR.getCode());
+        $.get('firmware.hex', function(hexStr) {
+            micropythonFs = new microbitFs.MicropythonFsHex(hexStr);
+            // Limit filesystem size to 20K
+            micropythonFs.setStorageSize(20 * 1024);
+            // The the current main.py
+            micropythonFs.write('main.py', EDITOR.getCode());
+        }).error(function() {
+            console.error('Could not load the MicroPython hex file.');
+        });
     }
 
     // Based on the Python code magic comment it detects a module
@@ -1928,10 +1932,7 @@ function web_editor(config) {
     setupEditor(qs, migration);
     setupButtons();
     setLanguage(qs.l || 'en');
-    document.addEventListener('DOMContentLoaded', function() {
-        // Firmware at the end of the HTML file has to be loaded first
-        setupFilesystem();
-    });
+    setupFilesystem();
 
     // If iframe messaging allowed, initialize it
     if (controllerMode) {
