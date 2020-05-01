@@ -409,8 +409,10 @@ function web_editor(config) {
 
     var usePartialFlashing = true;
 
-    // MicroPython filesystem to be initialised on page load.
-    window.micropythonFs = undefined;
+    // MicroPython filesystem with a limited size of 20 KBs
+    window.micropythonFs = new microbitFs.MicropythonFsHex({
+        'maxFsSize': 20 * 1024,
+    });
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
@@ -669,13 +671,10 @@ function web_editor(config) {
     }
 
     // Fetches the MicroPython hex and sets up the file system with the initial main.py
+    var micropythonHex = null;
     function setupFilesystem() {
-        $.get('firmware.hex', function(hexStr) {
-            micropythonFs = new microbitFs.MicropythonFsHex(hexStr);
-            // Limit filesystem size to 20K
-            micropythonFs.setStorageSize(20 * 1024);
-            // The the current main.py
-            micropythonFs.write('main.py', EDITOR.getCode());
+        $.get('firmware.hex', function(fileStr) {
+            micropythonHex = fileStr;
         }).error(function() {
             console.error('Could not load the MicroPython hex file.');
         });
@@ -790,7 +789,7 @@ function web_editor(config) {
         try {
             micropythonFs.write(filename, fileBytes);
             // Check if the filesystem has run out of space
-            var _ = micropythonFs.getIntelHex();
+            var _ = micropythonFs.getIntelHex(micropythonHex);
         } catch(e) {
             if (micropythonFs.exists(filename)) {
                 micropythonFs.remove(filename);
@@ -915,10 +914,10 @@ function web_editor(config) {
                 micropythonFs.write('main.py', EDITOR.getCode());
             }
             // Generate hex file
-            if(format == "bytes") {
-                fullHex = micropythonFs.getIntelHexBytes();
+            if (format == 'bytes') {
+                fullHex = micropythonFs.getIntelHexBytes(micropythonHex);
             } else {
-                fullHex = micropythonFs.getIntelHex();
+                fullHex = micropythonFs.getIntelHex(micropythonHex);
             }
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
