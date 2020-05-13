@@ -4370,22 +4370,6 @@
 	var textEncoderLite_2 = textEncoderLite.TextEncoderLite;
 
 	/**
-	 * Marker placed inside the MicroPython hex string to indicate where to
-	 * inject the user Python Code.
-	 */
-
-	var HEX_INSERTION_POINT = ':::::::::::::::::::::::::::::::::::::::::::\n';
-	/**
-	 * Removes the old insertion line the input Intel Hex string contains it.
-	 *
-	 * @param intelHex - String with the intel hex lines.
-	 * @returns The Intel Hex string without insertion line.
-	 */
-
-	function cleanseOldHexFormat(intelHex) {
-	  return intelHex.replace(HEX_INSERTION_POINT, '');
-	}
-	/**
 	 * Converts a string into a byte array of characters.
 	 * @param str - String to convert to bytes.
 	 * @returns A byte array with the encoded data.
@@ -4439,6 +4423,22 @@
 	/** How many bytes per Intel Hex record line. */
 
 	var HEX_RECORD_DATA_LEN = 16;
+	/**
+	 * Marker placed inside the MicroPython hex string to indicate where to
+	 * inject the user Python Code.
+	 */
+
+	var HEX_INSERTION_POINT = ':::::::::::::::::::::::::::::::::::::::::::\n';
+	/**
+	 * Removes the old insertion line the input Intel Hex string contains it.
+	 *
+	 * @param intelHex - String with the intel hex lines.
+	 * @returns The Intel Hex string without insertion line.
+	 */
+
+	function cleanseOldHexFormat(intelHex) {
+	  return intelHex.replace(HEX_INSERTION_POINT, '');
+	}
 	/**
 	 * Parses through an Intel Hex string to find the Python code at the
 	 * allocated address and extracts it.
@@ -4599,6 +4599,7 @@
 	var UPY_PAGES_USED_LEN = 2;
 	var UPY_DELIMITER_LEN = 4;
 	var UPY_VERSION_LEN = 4;
+	var UPY_REGIONS_TERMINATOR_LEN = 4;
 	/** UICR Customer area addresses for MicroPython specific data. */
 
 	var MicropythonUicrAddress;
@@ -4611,7 +4612,8 @@
 	  MicropythonUicrAddress[MicropythonUicrAddress["PagesUsed"] = MicropythonUicrAddress.StartPage + UPY_START_PAGE_LEN] = "PagesUsed";
 	  MicropythonUicrAddress[MicropythonUicrAddress["Delimiter"] = MicropythonUicrAddress.PagesUsed + UPY_PAGES_USED_LEN] = "Delimiter";
 	  MicropythonUicrAddress[MicropythonUicrAddress["VersionLocation"] = MicropythonUicrAddress.Delimiter + UPY_DELIMITER_LEN] = "VersionLocation";
-	  MicropythonUicrAddress[MicropythonUicrAddress["End"] = MicropythonUicrAddress.VersionLocation + UPY_VERSION_LEN] = "End";
+	  MicropythonUicrAddress[MicropythonUicrAddress["RegionsTerminator"] = MicropythonUicrAddress.VersionLocation + UPY_REGIONS_TERMINATOR_LEN] = "RegionsTerminator";
+	  MicropythonUicrAddress[MicropythonUicrAddress["End"] = MicropythonUicrAddress.RegionsTerminator + UPY_VERSION_LEN] = "End";
 	})(MicropythonUicrAddress || (MicropythonUicrAddress = {}));
 	/**
 	 * Reads a 32 bit little endian number from an Intel Hex memory map.
@@ -4708,12 +4710,11 @@
 	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.StartPage);
 	}
 	/**
-	 * Reads the UICR data that contains the address of the location in flash where
-	 * the MicroPython version is stored.
+	 * Reads the UICR data that contains the number of flash pages used by the
+	 * MicroPython runtime.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns The address of the location in flash where the MicroPython version
-	 * is stored.
+	 * @returns The number of pages used by the MicroPython runtime.
 	 */
 
 
@@ -4721,11 +4722,12 @@
 	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.PagesUsed);
 	}
 	/**
-	 * Reads the UICR data that contains the number of flash pages used by the
-	 * MicroPython runtime.
+	 * Reads the UICR data that contains the address of the location in flash where
+	 * the MicroPython version is stored.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns The number of pages used by the MicroPython runtime.
+	 * @returns The address of the location in flash where the MicroPython version
+	 * is stored.
 	 */
 
 
@@ -4760,6 +4762,8 @@
 	    runtimeStartAddress: startPage * pageSize,
 	    runtimeEndUsed: pagesUsed,
 	    runtimeEndAddress: pagesUsed * pageSize,
+	    uicrStartAddress: MicropythonUicrAddress.MagicValue,
+	    uicrEndAddress: MicropythonUicrAddress.End,
 	    versionAddress: versionAddress,
 	    version: version
 	  };
@@ -4796,12 +4800,38 @@
 
 	var CALIBRATION_PAGE_SIZE = FLASH_PAGE_SIZE;
 	/**
+	 * To speed up the Intel Hex string generation with MicroPython and the
+	 * filesystem we can cache some of the Intel Hex records and the parsed Memory
+	 * Map. This function creates an object with cached data that can then be sent
+	 * to other functions from this module.
+	 *
+	 * @param originalIntelHex Intel Hex string with MicroPython to cache.
+	 * @returns Cached MpFsBuilderCache object.
+	 */
+
+	function createMpFsBuilderCache(originalIntelHex) {
+	  var originalMemMap = MemoryMap.fromHex(originalIntelHex);
+	  var uicrData = getHexMapUicrData(originalMemMap); // slice() returns a new MemoryMap with only the MicroPython data, so it will
+	  // not include the UICR. The End Of File record is removed because this string
+	  // will be concatenated with the filesystem data any thing else in the MemMap
+
+	  var uPyIntelHex = originalMemMap.slice(uicrData.runtimeStartAddress, uicrData.runtimeEndAddress - uicrData.runtimeStartAddress).asHexString().replace(':00000001FF', '');
+	  return {
+	    originalIntelHex: originalIntelHex,
+	    originalMemMap: originalMemMap,
+	    uPyIntelHex: uPyIntelHex,
+	    uPyEndAddress: uicrData.runtimeEndAddress,
+	    fsSize: getMemMapFsSize(originalMemMap)
+	  };
+	}
+	/**
 	 * Scans the file system area inside the Intel Hex data a returns a list of
 	 * available chunks.
 	 *
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
 	 * @returns List of all unused chunks.
 	 */
+
 
 	function getFreeChunks(intelHexMap) {
 	  var freeChunks = [];
@@ -4883,7 +4913,7 @@
 	/**
 	 * If not present already, it sets the persistent page in flash.
 	 *
-	 * This page can be located right below right on top or below the filesystem
+	 * This page can be located right below or right on top of the filesystem
 	 * space.
 	 *
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
@@ -4891,8 +4921,9 @@
 
 
 	function setPersistentPage(intelHexMap) {
-	  // TODO: This could be the first or the last page. Check first if it exists,
-	  // if it doesn't then randomise its location.
+	  // At the moment we place this persistent page at the end of the filesystem
+	  // TODO: This could be set to the first or the last page. Check first if it
+	  //  exists, if it doesn't then randomise its location.
 	  intelHexMap.set(getLastPageAddress(intelHexMap), new Uint8Array([253
 	  /* PersistentData */
 	  ]));
@@ -5077,7 +5108,7 @@
 	  return file.getFsFileSize();
 	}
 	/**
-	 * Adds a byte array as a file to a MicroPython Memory Map.
+	 * Adds a byte array as a file into a MicroPython Memory Map.
 	 *
 	 * @throws {Error} When the invalid file name is given.
 	 * @throws {Error} When the the file doesn't have any data.
@@ -5087,7 +5118,6 @@
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
 	 * @param filename - Name for the file.
 	 * @param data - Byte array for the file data.
-	 * @returns MicroPython Memory map with the file in the filesystem.
 	 */
 
 
@@ -5106,21 +5136,20 @@
 	  var fileFsBytes = fsFile.getFsBytes(freeChunks);
 	  intelHexMap.set(chunksStartAddress, fileFsBytes);
 	  setPersistentPage(intelHexMap);
-	  return intelHexMap;
 	}
 	/**
 	 * Adds a hash table of filenames and byte arrays as files to the MicroPython
 	 * filesystem.
 	 *
 	 * @throws {Error} When the an invalid file name is given.
-	 * @throws {Error} When the a file doesn't have any data.
+	 * @throws {Error} When a file doesn't have any data.
 	 * @throws {Error} When there are issues calculating the file system boundaries.
 	 * @throws {Error} When there is no space left for a file.
 	 *
 	 * @param intelHex - MicroPython Intel Hex string.
 	 * @param files - Hash table with filenames as the key and byte arrays as the
 	 *     value.
-	 * @returns MicroPython Intel Hex string with the file in the filesystem.
+	 * @returns MicroPython Intel Hex string with the files in the filesystem.
 	 */
 
 
@@ -5129,12 +5158,31 @@
 	    returnBytes = false;
 	  }
 
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
+	  var intelHexMap = MemoryMap.fromHex(intelHex);
 	  Object.keys(files).forEach(function (filename) {
-	    intelHexMap = addMemMapFile(intelHexMap, filename, files[filename]);
+	    addMemMapFile(intelHexMap, filename, files[filename]);
 	  });
 	  return returnBytes ? intelHexMap.slicePad(0, FLASH_END) : intelHexMap.asHexString() + '\n';
+	}
+	/**
+	 * Generates an Intel Hex string with MicroPython and files in the filesystem.
+	 *
+	 * Uses pre-cached MicroPython memory map and Intel Hex string of record to
+	 * speed up the Intel Hex generation compared to addIntelHexFiles().
+	 *
+	 * @param cache - Object with cached data from createMpFsBuilderCache().
+	 * @param files - Hash table with filenames as the key and byte arrays as the
+	 *     value.
+	 * @returns MicroPython Intel Hex string with the files in the filesystem.
+	 */
+
+
+	function generateHexWithFiles(cache, files) {
+	  var memMapWithFiles = cache.originalMemMap.clone();
+	  Object.keys(files).forEach(function (filename) {
+	    addMemMapFile(memMapWithFiles, filename, files[filename]);
+	  });
+	  return cache.uPyIntelHex + memMapWithFiles.slice(cache.uPyEndAddress).asHexString() + '\n';
 	}
 	/**
 	 * Reads the filesystem included in a MicroPython Intel Hex string.
@@ -5151,15 +5199,14 @@
 
 
 	function getIntelHexFiles(intelHex) {
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var hexMap = MemoryMap.fromHex(intelHexClean);
+	  var hexMap = MemoryMap.fromHex(intelHex);
 	  var startAddress = getStartAddress(hexMap);
 	  var endAddress = getLastPageAddress(hexMap); // TODO: endAddress as the getLastPageAddress works now because this
 	  // library uses the last page as the "persistent" page, so the filesystem does
 	  // end there. In reality, the persistent page could be the first or the last
 	  // page, so we should get the end address as the magnetometer page and then
-	  // check if the persistent marker is present in the first of last page and take that
-	  // into account in the memory range calculation.
+	  // check if the persistent marker is present in the first of last page and
+	  // take that into account in the memory range calculation.
 	  // Note that the persistent marker is only present at the top of the page
 	  // Iterate through the filesystem to collect used chunks and file starts
 
@@ -5267,16 +5314,14 @@
 	/**
 	 * Calculate the MicroPython filesystem size.
 	 *
-	 * @param intelHex - The MicroPython Intel Hex string.
+	 * @param intelHexMap - The MicroPython Intel Hex Memory Map.
 	 * @returns Size of the filesystem in bytes.
 	 */
 
 
-	function getIntelHexFsSize(intelHex) {
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
+	function getMemMapFsSize(intelHexMap) {
 	  var startAddress = getStartAddress(intelHexMap);
-	  var endAddress = getEndAddress(intelHexMap); // Remember that one page is used as persistent page
+	  var endAddress = getEndAddress(intelHexMap); // One extra page is used as persistent page
 
 	  return endAddress - startAddress - FLASH_PAGE_SIZE;
 	}
@@ -5335,30 +5380,24 @@
 	   *
 	   * @param intelHex - MicroPython Intel Hex string.
 	   */
-	  function MicropythonFsHex(_a) {
-	    var _b = _a === void 0 ? {} : _a,
-	        _c = _b.uPyHex,
-	        uPyHex = _c === void 0 ? '' : _c,
-	        _d = _b.maxFsSize,
-	        maxFsSize = _d === void 0 ? 0 : _d;
-
+	  function MicropythonFsHex(intelHex, _a) {
+	    var _b = (_a === void 0 ? {} : _a).maxFsSize,
+	        maxFsSize = _b === void 0 ? 0 : _b;
 	    this._files = {};
 	    this._storageSize = 0;
-	    this._intelHex = uPyHex;
 
-	    if (this._intelHex) {
-	      this.importFilesFromIntelHex(this._intelHex);
-
-	      if (this.ls().length) {
-	        throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
-	      }
+	    if (!intelHex) {
+	      throw new Error('Invalid MicroPython hex invalid.');
 	    }
 
-	    if (!uPyHex && !maxFsSize) {
-	      throw new Error('A MicroPython Hex or a maximum filesystem size must be provided.');
+	    this._uPyFsBuilderCache = createMpFsBuilderCache(intelHex);
+	    this.importFilesFromIntelHex(this._uPyFsBuilderCache.originalIntelHex);
+
+	    if (this.ls().length) {
+	      throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
 	    }
 
-	    this.setStorageSize(maxFsSize || getIntelHexFsSize(this._intelHex));
+	    this.setStorageSize(maxFsSize || this._uPyFsBuilderCache.fsSize);
 	  }
 	  /**
 	   * Create a new file and add it to the file system.
@@ -5526,7 +5565,7 @@
 
 
 	  MicropythonFsHex.prototype.setStorageSize = function (size) {
-	    if (this._intelHex && size > getIntelHexFsSize(this._intelHex)) {
+	    if (size > this._uPyFsBuilderCache.fsSize) {
 	      throw new Error('Storage size limit provided is larger than size available in the MicroPython hex.');
 	    }
 
@@ -5627,23 +5666,20 @@
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
 	   *
-	   * @param intelHex - Optionally provide a different Intel Hex to include the
-	   *    filesystem into.
 	   * @returns A new string with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHex = function (intelHex) {
+	  MicropythonFsHex.prototype.getIntelHex = function () {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
 
-	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return addIntelHexFiles(finalHex, files);
+	    return generateHexWithFiles(this._uPyFsBuilderCache, files);
 	  };
 	  /**
 	   * Generate a byte array of the MicroPython and filesystem data.
@@ -5652,23 +5688,20 @@
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
 	   *
-	   * @param intelHex - Optionally provide a different Intel Hex to include the
-	   *    filesystem into.
 	   * @returns A Uint8Array with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHexBytes = function (intelHex) {
+	  MicropythonFsHex.prototype.getIntelHexBytes = function () {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
 
-	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return addIntelHexFiles(finalHex, files, true);
+	    return addIntelHexFiles(this._uPyFsBuilderCache.originalIntelHex, files, true);
 	  };
 
 	  return MicropythonFsHex;
@@ -5676,6 +5709,7 @@
 
 	exports.MicropythonFsHex = MicropythonFsHex;
 	exports.addIntelHexAppendedScript = addIntelHexAppendedScript;
+	exports.cleanseOldHexFormat = cleanseOldHexFormat;
 	exports.getHexMapUicrData = getHexMapUicrData;
 	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
 	exports.getIntelHexUicrData = getIntelHexUicrData;

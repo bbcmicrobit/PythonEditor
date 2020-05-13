@@ -410,9 +410,7 @@ function web_editor(config) {
     var usePartialFlashing = true;
 
     // MicroPython filesystem with a limited size of 20 KBs
-    window.micropythonFs = new microbitFs.MicropythonFsHex({
-        'maxFsSize': 20 * 1024,
-    });
+    window.micropythonFs = null;
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
@@ -671,10 +669,13 @@ function web_editor(config) {
     }
 
     // Fetches the MicroPython hex and sets up the file system with the initial main.py
-    var micropythonHex = null;
     function setupFilesystem() {
         $.get('firmware.hex', function(fileStr) {
-            micropythonHex = fileStr;
+            window.micropythonFs = new microbitFs.MicropythonFsHex(fileStr, {
+                'maxFsSize': 20 * 1024,
+            });
+            // The the current main.py
+            micropythonFs.write('main.py', EDITOR.getCode());
         }).error(function() {
             console.error('Could not load the MicroPython hex file.');
         });
@@ -789,7 +790,7 @@ function web_editor(config) {
         try {
             micropythonFs.write(filename, fileBytes);
             // Check if the filesystem has run out of space
-            var _ = micropythonFs.getIntelHex(micropythonHex);
+            var _ = micropythonFs.getIntelHex();
         } catch(e) {
             if (micropythonFs.exists(filename)) {
                 micropythonFs.remove(filename);
@@ -915,11 +916,11 @@ function web_editor(config) {
             }
             // Generate hex file
             if (format == 'bytes') {
-                fullHex = micropythonFs.getIntelHexBytes(micropythonHex);
+                fullHex = micropythonFs.getIntelHexBytes();
             } else {
                 fullHex = microbitFb.createFatBinary([
-                    { 'hex': micropythonFs.getIntelHex(micropythonHex), 'boardID': 0x9900 },
-                    { 'hex': micropythonFs.getIntelHex(micropythonHex), 'boardID': 0x9903 },
+                    { 'hex': micropythonFs.getIntelHex(), 'boardID': 0x9900 },
+                    { 'hex': micropythonFs.getIntelHex(), 'boardID': 0x9903 },
                 ]);
             }
         } catch(e) {
