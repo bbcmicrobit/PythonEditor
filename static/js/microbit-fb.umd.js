@@ -379,14 +379,10 @@
 
 	_addToUnscopables('includes');
 
-	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
+	// 7.1.13 ToObject(argument)
 
-
-	var SPECIES = _wks('species');
-	var _speciesConstructor = function (O, D) {
-	  var C = _anObject(O).constructor;
-	  var S;
-	  return C === undefined || (S = _anObject(C)[SPECIES]) == undefined ? D : _aFunction(S);
+	var _toObject = function (it) {
+	  return Object(_defined(it));
 	};
 
 	// true  -> String#at
@@ -532,7 +528,7 @@
 	  exec: _regexpExec
 	});
 
-	var SPECIES$1 = _wks('species');
+	var SPECIES = _wks('species');
 
 	var REPLACE_SUPPORTS_NAMED_GROUPS = !_fails(function () {
 	  // #replace needs built-in support for named groups.
@@ -575,7 +571,7 @@
 	      // RegExp[@@split] doesn't call the regex's exec method, but first creates
 	      // a new one. We need to return the patched regex when creating the new one.
 	      re.constructor = {};
-	      re.constructor[SPECIES$1] = function () { return re; };
+	      re.constructor[SPECIES] = function () { return re; };
 	    }
 	    re[SYMBOL]('');
 	    return !execCalled;
@@ -618,6 +614,127 @@
 	      : function (string) { return rxfn.call(string, this); }
 	    );
 	  }
+	};
+
+	var max$1 = Math.max;
+	var min$2 = Math.min;
+	var floor$1 = Math.floor;
+	var SUBSTITUTION_SYMBOLS = /\$([$&`']|\d\d?|<[^>]*>)/g;
+	var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&`']|\d\d?)/g;
+
+	var maybeToString = function (it) {
+	  return it === undefined ? it : String(it);
+	};
+
+	// @@replace logic
+	_fixReWks('replace', 2, function (defined, REPLACE, $replace, maybeCallNative) {
+	  return [
+	    // `String.prototype.replace` method
+	    // https://tc39.github.io/ecma262/#sec-string.prototype.replace
+	    function replace(searchValue, replaceValue) {
+	      var O = defined(this);
+	      var fn = searchValue == undefined ? undefined : searchValue[REPLACE];
+	      return fn !== undefined
+	        ? fn.call(searchValue, O, replaceValue)
+	        : $replace.call(String(O), searchValue, replaceValue);
+	    },
+	    // `RegExp.prototype[@@replace]` method
+	    // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@replace
+	    function (regexp, replaceValue) {
+	      var res = maybeCallNative($replace, regexp, this, replaceValue);
+	      if (res.done) return res.value;
+
+	      var rx = _anObject(regexp);
+	      var S = String(this);
+	      var functionalReplace = typeof replaceValue === 'function';
+	      if (!functionalReplace) replaceValue = String(replaceValue);
+	      var global = rx.global;
+	      if (global) {
+	        var fullUnicode = rx.unicode;
+	        rx.lastIndex = 0;
+	      }
+	      var results = [];
+	      while (true) {
+	        var result = _regexpExecAbstract(rx, S);
+	        if (result === null) break;
+	        results.push(result);
+	        if (!global) break;
+	        var matchStr = String(result[0]);
+	        if (matchStr === '') rx.lastIndex = _advanceStringIndex(S, _toLength(rx.lastIndex), fullUnicode);
+	      }
+	      var accumulatedResult = '';
+	      var nextSourcePosition = 0;
+	      for (var i = 0; i < results.length; i++) {
+	        result = results[i];
+	        var matched = String(result[0]);
+	        var position = max$1(min$2(_toInteger(result.index), S.length), 0);
+	        var captures = [];
+	        // NOTE: This is equivalent to
+	        //   captures = result.slice(1).map(maybeToString)
+	        // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
+	        // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
+	        // causes a crash (https://pastebin.com/N21QzeQA) when trying to debug it.
+	        for (var j = 1; j < result.length; j++) captures.push(maybeToString(result[j]));
+	        var namedCaptures = result.groups;
+	        if (functionalReplace) {
+	          var replacerArgs = [matched].concat(captures, position, S);
+	          if (namedCaptures !== undefined) replacerArgs.push(namedCaptures);
+	          var replacement = String(replaceValue.apply(undefined, replacerArgs));
+	        } else {
+	          replacement = getSubstitution(matched, S, position, captures, namedCaptures, replaceValue);
+	        }
+	        if (position >= nextSourcePosition) {
+	          accumulatedResult += S.slice(nextSourcePosition, position) + replacement;
+	          nextSourcePosition = position + matched.length;
+	        }
+	      }
+	      return accumulatedResult + S.slice(nextSourcePosition);
+	    }
+	  ];
+
+	    // https://tc39.github.io/ecma262/#sec-getsubstitution
+	  function getSubstitution(matched, str, position, captures, namedCaptures, replacement) {
+	    var tailPos = position + matched.length;
+	    var m = captures.length;
+	    var symbols = SUBSTITUTION_SYMBOLS_NO_NAMED;
+	    if (namedCaptures !== undefined) {
+	      namedCaptures = _toObject(namedCaptures);
+	      symbols = SUBSTITUTION_SYMBOLS;
+	    }
+	    return $replace.call(replacement, symbols, function (match, ch) {
+	      var capture;
+	      switch (ch.charAt(0)) {
+	        case '$': return '$';
+	        case '&': return matched;
+	        case '`': return str.slice(0, position);
+	        case "'": return str.slice(tailPos);
+	        case '<':
+	          capture = namedCaptures[ch.slice(1, -1)];
+	          break;
+	        default: // \d\d?
+	          var n = +ch;
+	          if (n === 0) return match;
+	          if (n > m) {
+	            var f = floor$1(n / 10);
+	            if (f === 0) return match;
+	            if (f <= m) return captures[f - 1] === undefined ? ch.charAt(1) : captures[f - 1] + ch.charAt(1);
+	            return match;
+	          }
+	          capture = captures[n - 1];
+	      }
+	      return capture === undefined ? '' : capture;
+	    });
+	  }
+	});
+
+	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
+
+
+	var SPECIES$1 = _wks('species');
+	var _speciesConstructor = function (O, D) {
+	  var C = _anObject(O).constructor;
+	  var S;
+	  return C === undefined || (S = _anObject(C)[SPECIES$1]) == undefined ? D : _aFunction(S);
 	};
 
 	var $min = Math.min;
@@ -744,12 +861,6 @@
 	    }
 	  ];
 	});
-
-	// 7.1.13 ToObject(argument)
-
-	var _toObject = function (it) {
-	  return Object(_defined(it));
-	};
 
 	var _arrayFill = function fill(value /* , start = 0, end = @length */) {
 	  var O = _toObject(this);
@@ -2061,9 +2172,9 @@
 
 	// 20.1.2.3 Number.isInteger(number)
 
-	var floor$1 = Math.floor;
+	var floor$2 = Math.floor;
 	var _isInteger = function isInteger(it) {
-	  return !_isObject(it) && isFinite(it) && floor$1(it) === it;
+	  return !_isObject(it) && isFinite(it) && floor$2(it) === it;
 	};
 
 	// 20.1.2.3 Number.isInteger(number)
@@ -2290,12 +2401,12 @@
 	  }, '');
 	} // TODO: Docstring
 
-	function concatUint8Arrays(arrayToConcat) {
-	  var fullLength = arrayToConcat.reduce(function (accumulator, currentValue) {
+	function concatUint8Arrays(arraysToConcat) {
+	  var fullLength = arraysToConcat.reduce(function (accumulator, currentValue) {
 	    return accumulator + currentValue.length;
 	  }, 0);
 	  var combined = new Uint8Array(fullLength);
-	  arrayToConcat.reduce(function (accumulator, currentArray) {
+	  arraysToConcat.reduce(function (accumulator, currentArray) {
 	    combined.set(currentArray, accumulator);
 	    return accumulator + currentArray.length;
 	  }, 0);
@@ -2397,7 +2508,7 @@
 	    throw new Error("Record type '" + recordType + "' is not valid.");
 	  }
 
-	  var recordContent = concatUint8Arrays([new Uint8Array([byteCount]), new Uint8Array([address >> 8, address & 0xff]), new Uint8Array([recordType]), dataBytes]);
+	  var recordContent = concatUint8Arrays([new Uint8Array([byteCount, address >> 8, address & 0xff, recordType]), dataBytes]);
 	  var recordContentStr = byteArrayToHexStr(recordContent);
 	  var checksumStr = byteToHexStrFast(calcChecksumByte(recordContent));
 	  return "" + START_CODE_STR + recordContentStr + checksumStr;
@@ -2474,13 +2585,13 @@
 	  var recordTypeIndex = addressIndex + ADDRESS_STR_LEN / 2;
 	  var recordType = recordBytes[recordTypeIndex];
 	  var dataIndex = recordTypeIndex + RECORD_TYPE_STR_LEN / 2;
-	  var data = recordBytes.subarray(dataIndex, -1);
 	  var checksumIndex = dataIndex + byteCount;
+	  var data = recordBytes.slice(dataIndex, checksumIndex);
 	  var checksum = recordBytes[checksumIndex];
 	  var totalLength = checksumIndex + CHECKSUM_STR_LEN / 2;
 
 	  if (recordBytes.length > totalLength) {
-	    throw new Error('Parsed record is larger than indicated by the byte count.' + ("\n\tExpected: " + totalLength + "; Length: " + recordBytes.length + "."));
+	    throw new Error("Parsed record \"" + iHexRecord + "\" is larger than indicated by the byte count." + ("\n\tExpected: " + totalLength + "; Length: " + recordBytes.length + "."));
 	  }
 
 	  return {
@@ -2543,9 +2654,23 @@
 
 
 	function blockEndRecord(padBytesLen) {
-	  // Input sanitation will be done in createRecord, no need to do it here too
-	  var recordData = new Uint8Array(padBytesLen).fill(0xff);
-	  return createRecord(0, RecordType.BlockEnd, recordData);
+	  // This function is called very often with the same arguments, so cache
+	  // those results for better performance
+	  switch (padBytesLen) {
+	    case 0x4:
+	      // Common for blocks that have full Data records with 0x10 bytes and a
+	      // single Extended Linear Address record
+	      return ':0400000BFFFFFFFFF5';
+
+	    case 0x0c:
+	      // The most common padding, when a block has 10 full (0x10) Data records
+	      return ':0C00000BFFFFFFFFFFFFFFFFFFFFFFFFF5';
+
+	    default:
+	      // Input sanitation will be done in createRecord, no need to do it here too
+	      var recordData = new Uint8Array(padBytesLen).fill(0xff);
+	      return createRecord(0, RecordType.BlockEnd, recordData);
+	  }
 	}
 	/**
 	 * The Block end record can add bytes to the data field to be generate 512 byte
@@ -2585,8 +2710,16 @@
 
 
 	function convertRecordToCustomData(iHexRecord) {
-	  var record = parseRecord(iHexRecord);
-	  return createRecord(record.address, RecordType.CustomData, record.data);
+	  var oRecord = parseRecord(iHexRecord);
+	  var recordContent = new Uint8Array(oRecord.data.length + 4);
+	  recordContent[0] = oRecord.data.length;
+	  recordContent[1] = oRecord.address >> 8;
+	  recordContent[2] = oRecord.address & 0xff;
+	  recordContent[3] = RecordType.CustomData;
+	  recordContent.set(oRecord.data, 4);
+	  var recordContentStr = byteArrayToHexStr(recordContent);
+	  var checksumStr = byteToHexStrFast(calcChecksumByte(recordContent));
+	  return "" + START_CODE_STR + recordContentStr + checksumStr;
 	}
 	/**
 	 * Separates an Intel Hex file (string) into an array of Record strings.
@@ -2597,7 +2730,9 @@
 
 
 	function iHexToRecordStrs(iHexStr) {
-	  var output = iHexStr.split(/\r?\n/); // Boolean filter removes all falsy values as some of these files contain
+	  // For some reason this is quicker than .split(/\r?\n/)
+	  // Up to x200 faster in Chrome (!) and x1.5 faster in Firefox
+	  var output = iHexStr.replace(/\r/g, '').split('\n'); // Boolean filter removes all falsy values as some of these files contain
 	  // multiple empty lines we want to remove
 
 	  return output.filter(Boolean);
@@ -2627,14 +2762,14 @@
 	  var replaceDataRecord = !V1_BOARD_IDS.includes(boardId); // Generate some constant records
 
 	  var startRecord = blockStartRecord(boardId);
-	  var hexRecords = iHexToRecordStrs(iHexStr);
 	  var currentExtAddr = extLinAddressRecord(0); // Pre-calculate known record lengths
 
 	  var extAddrRecordLen = currentExtAddr.length;
 	  var startRecordLen = startRecord.length;
 	  var endRecordBaseLen = blockEndRecord(0).length;
 	  var recordPaddingCapacity$1 = recordPaddingCapacity();
-	  var padRecordBaseLen = paddedDataRecord(0).length; // Each loop iteration corresponds to a 512-bytes block
+	  var padRecordBaseLen = paddedDataRecord(0).length;
+	  var hexRecords = iHexToRecordStrs(iHexStr); // Each loop iteration corresponds to a 512-bytes block
 
 	  var ih = 0;
 	  var blockLines = [];
@@ -2701,16 +2836,23 @@
 	}
 
 	function createFatBinary(hexes) {
-	  var endOfFileRecord$1 = endOfFileRecord() + '\n';
-	  var customHexes = []; // We remove the EoF record from all but the last hex file
+	  var eofRecord = endOfFileRecord();
+	  var eofNlRecord = eofRecord + '\n';
+	  var customHexes = []; // We remove the EoF record from all but the last hex file so that the last
+	  // blocks are padded and there is single EoF record
 
 	  for (var i = 0; i < hexes.length - 1; i++) {
-	    var customHex = iHexToCustomFormat(hexes[i].hex, hexes[i].boardID);
+	    var customHex = hexes[i].hex;
 
-	    if (customHex.endsWith(endOfFileRecord$1)) {
-	      customHex = customHex.slice(0, customHex.length - endOfFileRecord$1.length);
+	    if (customHex.endsWith(eofNlRecord)) {
+	      customHex = customHex.slice(0, customHex.length - eofNlRecord.length);
+	    } else if (customHex.endsWith(eofRecord)) {
+	      customHex = customHex.slice(0, customHex.length - eofRecord.length);
+	    } else {
+	      throw Error("Could not fine the End Of File record on hex with Board ID " + hexes[i].boardID);
 	    }
 
+	    customHex = iHexToCustomFormat(customHex, hexes[i].boardID);
 	    customHexes.push(customHex);
 	  } // Process the last hex file with a guarantee EoF record
 
@@ -2718,11 +2860,11 @@
 	  var lastCustomHex = iHexToCustomFormat(hexes[hexes.length - 1].hex, hexes[hexes.length - 1].boardID);
 	  customHexes.push(lastCustomHex);
 
-	  if (!lastCustomHex.endsWith(endOfFileRecord$1)) {
-	    customHexes.push(endOfFileRecord$1);
+	  if (!lastCustomHex.endsWith(eofNlRecord)) {
+	    customHexes.push(eofNlRecord);
 	  }
 
-	  return customHexes.join('\n');
+	  return customHexes.join('');
 	}
 
 	exports.createFatBinary = createFatBinary;
