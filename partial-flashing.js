@@ -495,8 +495,8 @@ let PartialFlashing = {
                 return Promise.resolve();
             })
             .then(() => {
-                if(window.previousDapWrapper) {
-                    if(window.previousDapWrapper.device) {
+                if (window.previousDapWrapper) {
+                    if (window.previousDapWrapper.device) {
                         return window.previousDapWrapper.device;
                     }
                 }
@@ -506,11 +506,8 @@ let PartialFlashing = {
             .then(device => {
                 let w = new DAPWrapper(device);
                 window.previousDapWrapper = w;
-                return w.reconnectAsync(true)
-                    .then(() => {
-                        return w
-                    })
-            })
+                return w.reconnectAsync(true).then(() => w)
+            });
     },
 
     // Runs the checksum algorithm on the micro:bit's whole flash memory, and returns the results.
@@ -601,7 +598,7 @@ let PartialFlashing = {
 
                 if (aligned.length > 100) {
                     try {
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image, updateProgress);
                     } catch {
                         PartialFlashingUtils.log(`Full flash failed, attempting partial flash.`);
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
@@ -612,7 +609,7 @@ let PartialFlashing = {
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
                     } catch {
                         PartialFlashingUtils.log(`Partial flash failed, attempting full flash.`);
-                        await this.fullFlashAsync(dapwrapper, image);
+                        await this.fullFlashAsync(dapwrapper, image, updateProgress);
                     }
                 }
 
@@ -628,24 +625,20 @@ let PartialFlashing = {
     },
 
     // Perform full flash of micro:bit's ROM using daplink.
-    fullFlashAsync: function(dapwrapper, image) {
+    fullFlashAsync: function(dapwrapper, image, updateProgress) {
         PartialFlashingUtils.log("Full flash");
         // Event to monitor flashing progress
-        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-            $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-        });
+        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
         return dapwrapper.transport.open()
-                    .then(() => { return dapwrapper.daplink.flash(image) } )
-                    .then(() => {
-                        // Send event
-                        var details = {
-                                "flash-type": "partial-flash",
-                                "event-type": "info",
-                                "message": "full-flash-successful"
-                        };
-
-                        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                    } );
+            .then(() => dapwrapper.daplink.flash(image))
+            .then(() => {
+                // Send event
+                document.dispatchEvent(new CustomEvent("webusb", { detail: {
+                    "flash-type": "full-flash",
+                    "event-type": "info",
+                    "message": "full-flash-successful"
+                }}));
+            });
     },
 
     // Connect to the micro:bit using WebUSB and setup DAPWrapper.
@@ -710,14 +703,12 @@ let PartialFlashing = {
                     PartialFlashingUtils.log("Resetting micro:bit timed out");
                     PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
                     // Send event
-                    var details = {
-                            "flash-type": "partial-flash",
-                            "event-type": "info",
-                            "message": "flash-failed" + "/" + "attempting-full-flash"
-                    };
-
-                    document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                    return this.fullFlashAsync(dapwrapper, image);
+                    document.dispatchEvent(new CustomEvent("webusb", { detail: {
+                        "flash-type": "partial-flash",
+                        "event-type": "info",
+                        "message": "flash-failed" + "/" + "attempting-full-flash"
+                    }}));
+                    return this.fullFlashAsync(dapwrapper, image, updateProgress);
                 } else {
                     // Start flashing
                     PartialFlashingUtils.log("Begin Flashing");
