@@ -18,6 +18,6 @@ global.forge = require('node-forge');
 
 // Import our source code under test
 global.microbitFs = require('../static/js/microbit-fs.umd.js');
-require('../micropythonapi.js');
+require('../js/micropythonapi.js');
+require('../js/urlparser.js');
 require('../python-main.js');
-require('../urlparser.js');
