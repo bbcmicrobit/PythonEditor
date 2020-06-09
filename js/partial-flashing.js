@@ -172,7 +172,22 @@ class DAPWrapper {
         this.reconnected = false;
         this.flashing = true;
         this.device = device;
-        this.allocDAP(device);
+        this.allocBoardID();
+        this.allocDAP();
+    }
+
+    allocBoardID() {
+        // The micro:bit board ID is the serial number first 4 hex digits
+        if (!(this.device && this.device.serialNumber)) {
+            throw new Error('Could not detected ID from connected board.');
+        }
+        this.boardId = this.device.serialNumber.substring(0,4);
+        PartialFlashingUtils.log("Detected board ID " + this.boardId);
+        document.dispatchEvent(new CustomEvent("webusb", { detail: {
+            "flash-type": "partial-flash",
+            "event-type": "board-id",
+            "message": this.boardId
+        }}));
     }
 
     allocDAP() {
