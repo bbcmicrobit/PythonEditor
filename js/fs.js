@@ -30,6 +30,7 @@ var fs = function() {
                     fsWrapper[key] = function() {
                         var return1 = fs1[key].apply(fs1, arguments);
                         var return2 =  fs2[key].apply(fs2, arguments);
+                        // FIXME: Keep this during general testing, probably remove on final release for speed
                         if (JSON.stringify(return1) !== JSON.stringify(return2)) {
                             console.error('Return from call to ' + key + ' differs:\n\t' + return1 + '\n\t'+ return2 );
                         }
@@ -57,7 +58,7 @@ var fs = function() {
         }).error(function() {
             console.error('Could not load the MicroPython hex file.');
         });
-        $.get('firmware.hex', function(fileStr) {
+        $.get('firmware2.hex', function(fileStr) {
             fs2 = new microbitFs.MicropythonFsHex(fileStr, {
                 'maxFsSize': commonFsSize,
             });
@@ -87,10 +88,8 @@ var fs = function() {
      */
     fsWrapper.getBytesForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
-            console.log('generate v1 hex')
             return fs1.getIntelHexBytes();
         } else if (boardId == '9903' || boardId == '9904') {
-            console.log('generate v2 hex')
             return fs2.getIntelHexBytes();
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
