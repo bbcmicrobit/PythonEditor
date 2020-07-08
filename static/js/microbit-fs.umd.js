@@ -4594,7 +4594,7 @@
 	var UICR_CUSTOMER_OFFSET = 0x80;
 	var UICR_CUSTOMER_UPY_OFFSET = 0x40;
 	var UICR_UPY_START = UICR_START + UICR_CUSTOMER_OFFSET + UICR_CUSTOMER_UPY_OFFSET;
-	var UPY_MAGIC_HEADER = [0x17eeb07c];
+	var UPY_MAGIC_HEADER = [0x17eeb07c, 0x47eeb07c];
 	var UPY_MAGIC_LEN = 4;
 	var UPY_END_MARKER_LEN = 4;
 	var UPY_PAGE_SIZE_LEN = 4;
@@ -4710,8 +4710,14 @@
 
 
 	function getFlashSize(intelHexMap) {
-	  // This is the micro:bit flash size
-	  return 0x40000;
+	  var readMagicHeader = getMagicValue(intelHexMap);
+	  if (readMagicHeader === UPY_MAGIC_HEADER[0]) {
+	    return 0x40000;
+	  } else if (readMagicHeader === UPY_MAGIC_HEADER[1]) {
+	    return 0x80000;
+	  } else {
+	    throw new Error('Unknwon UICR Magic value');
+	  }
 	}
 	/**
 	 * Reads the UICR data that contains the flash page size.
@@ -4780,7 +4786,7 @@
 	  }
 
 	  var flashPageSize = getPageSize(uicrMap);
-	  var flashSize = getFlashSize();
+	  var flashSize = getFlashSize(uicrMap);
 	  var startPage = getStartPage(uicrMap);
 	  var pagesUsed = getPagesUsed(uicrMap);
 	  var versionAddress = getVersionLocation(uicrMap);
@@ -4903,7 +4909,8 @@
 	  var fsMaxSize = CHUNK_LEN * MAX_NUMBER_OF_CHUNKS; // We need to add the persistent data which is one page aligned after fs data
 
 	  fsMaxSize += uicrData.flashPageSize - fsMaxSize % uicrData.flashPageSize;
-	  fsMaxSize += uicrData.flashPageSize; // Fs is placed at the end of flash, the space available from the MicroPython
+	  // Removed as the current MicroPython implementation has persisten page inside the fs flash area
+	  // fsMaxSize += uicrData.flashPageSize; // Fs is placed at the end of flash, the space available from the MicroPython
 	  // end to the end of flash might be larger than the fs max possible size
 
 	  var fsMaxSizeStartAddress = getEndAddress(intelHexMap) - fsMaxSize;
@@ -4931,7 +4938,15 @@
 	  var uicrData = getHexMapUicrData(intelHexMap);
 	  var endAddress = isAppendedScriptPresent(intelHexMap) ? exports.AppendedBlock.StartAdd : uicrData.flashSize; // Magnetometer calibration data is one flash page
 
-	  return endAddress - uicrData.flashPageSize;
+	  
+	  if (uicrData.flashSize === 0x40000) {
+	    // Only account for magnetometer data for smaller flash size
+	    endAddress -= uicrData.flashPageSize;
+	  } else if (uicrData.flashSize === 0x80000) {
+	    // For the lager flash account for 56 KBs of bootloader
+	    endAddress -= 56 * 1024;
+	  }
+	  return endAddress;
 	}
 	/**
 	 * Calculates the address for the last page available to the filesystem.
