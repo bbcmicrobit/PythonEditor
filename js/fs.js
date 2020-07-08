@@ -76,9 +76,9 @@ var fs = function() {
      * @returns String with a fat hex.
      */
     fsWrapper.getFatHex = function() {
-        return microbitFb.createFatBinary([
-            { 'hex': fs1.getIntelHex(), 'boardID': 0x9900 },
-            { 'hex': fs2.getIntelHex(), 'boardID': 0x9903 },
+        return microbitUh.createUniversalHex([
+            { 'hex': fs1.getIntelHex(), 'boardId': 0x9900 },
+            { 'hex': fs2.getIntelHex(), 'boardId': 0x9903 },
         ]);
     };
 

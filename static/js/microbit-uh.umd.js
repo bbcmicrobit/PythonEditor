@@ -1,12 +1,18 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory(global.microbitFb = {}));
+	(global = global || self, factory(global.microbitUh = {}));
 }(this, (function (exports) { 'use strict';
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
+
+	var _core = createCommonjsModule(function (module) {
+	var core = module.exports = { version: '2.6.11' };
+	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+	});
+	var _core_1 = _core.version;
 
 	var _global = createCommonjsModule(function (module) {
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -17,11 +23,40 @@
 	if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 	});
 
-	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.11' };
-	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+	var _library = false;
+
+	var _shared = createCommonjsModule(function (module) {
+	var SHARED = '__core-js_shared__';
+	var store = _global[SHARED] || (_global[SHARED] = {});
+
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: _core.version,
+	  mode:  'global',
+	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 	});
-	var _core_1 = _core.version;
+	});
+
+	var id = 0;
+	var px = Math.random();
+	var _uid = function (key) {
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+	};
+
+	var _wks = createCommonjsModule(function (module) {
+	var store = _shared('wks');
+
+	var Symbol = _global.Symbol;
+	var USE_SYMBOL = typeof Symbol == 'function';
+
+	var $exports = module.exports = function (name) {
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+	};
+
+	$exports.store = store;
+	});
 
 	var _isObject = function (it) {
 	  return typeof it === 'object' ? it !== null : typeof it === 'function';
@@ -103,31 +138,50 @@
 	  return object;
 	};
 
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = _wks('unscopables');
+	var ArrayProto = Array.prototype;
+	if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
+	var _addToUnscopables = function (key) {
+	  ArrayProto[UNSCOPABLES][key] = true;
+	};
+
+	var _iterStep = function (done, value) {
+	  return { value: value, done: !!done };
+	};
+
+	var _iterators = {};
+
+	var toString = {}.toString;
+
+	var _cof = function (it) {
+	  return toString.call(it).slice(8, -1);
+	};
+
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
+
+	// eslint-disable-next-line no-prototype-builtins
+	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+	  return _cof(it) == 'String' ? it.split('') : Object(it);
+	};
+
+	// 7.2.1 RequireObjectCoercible(argument)
+	var _defined = function (it) {
+	  if (it == undefined) throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
+
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
+
+
+	var _toIobject = function (it) {
+	  return _iobject(_defined(it));
+	};
+
 	var hasOwnProperty = {}.hasOwnProperty;
 	var _has = function (it, key) {
 	  return hasOwnProperty.call(it, key);
 	};
-
-	var id = 0;
-	var px = Math.random();
-	var _uid = function (key) {
-	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-	};
-
-	var _library = false;
-
-	var _shared = createCommonjsModule(function (module) {
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-
-	(module.exports = function (key, value) {
-	  return store[key] || (store[key] = value !== undefined ? value : {});
-	})('versions', []).push({
-	  version: _core.version,
-	  mode:  'global',
-	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
-	});
-	});
 
 	var _functionToString = _shared('native-function-to-string', Function.toString);
 
@@ -241,93 +295,6 @@
 	  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 	};
 
-	var toString = {}.toString;
-
-	var _cof = function (it) {
-	  return toString.call(it).slice(8, -1);
-	};
-
-	var _wks = createCommonjsModule(function (module) {
-	var store = _shared('wks');
-
-	var Symbol = _global.Symbol;
-	var USE_SYMBOL = typeof Symbol == 'function';
-
-	var $exports = module.exports = function (name) {
-	  return store[name] || (store[name] =
-	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-	};
-
-	$exports.store = store;
-	});
-
-	// 7.2.8 IsRegExp(argument)
-
-
-	var MATCH = _wks('match');
-	var _isRegexp = function (it) {
-	  var isRegExp;
-	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
-	};
-
-	// 7.2.1 RequireObjectCoercible(argument)
-	var _defined = function (it) {
-	  if (it == undefined) throw TypeError("Can't call method on  " + it);
-	  return it;
-	};
-
-	// helper for String#{startsWith, endsWith, includes}
-
-
-
-	var _stringContext = function (that, searchString, NAME) {
-	  if (_isRegexp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
-	  return String(_defined(that));
-	};
-
-	var MATCH$1 = _wks('match');
-	var _failsIsRegexp = function (KEY) {
-	  var re = /./;
-	  try {
-	    '/./'[KEY](re);
-	  } catch (e) {
-	    try {
-	      re[MATCH$1] = false;
-	      return !'/./'[KEY](re);
-	    } catch (f) { /* empty */ }
-	  } return true;
-	};
-
-	var ENDS_WITH = 'endsWith';
-	var $endsWith = ''[ENDS_WITH];
-
-	_export(_export.P + _export.F * _failsIsRegexp(ENDS_WITH), 'String', {
-	  endsWith: function endsWith(searchString /* , endPosition = @length */) {
-	    var that = _stringContext(this, searchString, ENDS_WITH);
-	    var endPosition = arguments.length > 1 ? arguments[1] : undefined;
-	    var len = _toLength(that.length);
-	    var end = endPosition === undefined ? len : Math.min(_toLength(endPosition), len);
-	    var search = String(searchString);
-	    return $endsWith
-	      ? $endsWith.call(that, search, end)
-	      : that.slice(end - search.length, end) === search;
-	  }
-	});
-
-	// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-	// eslint-disable-next-line no-prototype-builtins
-	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-	  return _cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-	var _toIobject = function (it) {
-	  return _iobject(_defined(it));
-	};
-
 	var max = Math.max;
 	var min$1 = Math.min;
 	var _toAbsoluteIndex = function (index, length) {
@@ -359,13 +326,386 @@
 	  };
 	};
 
-	// 22.1.3.31 Array.prototype[@@unscopables]
-	var UNSCOPABLES = _wks('unscopables');
-	var ArrayProto = Array.prototype;
-	if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
-	var _addToUnscopables = function (key) {
-	  ArrayProto[UNSCOPABLES][key] = true;
+	var shared = _shared('keys');
+
+	var _sharedKey = function (key) {
+	  return shared[key] || (shared[key] = _uid(key));
 	};
+
+	var arrayIndexOf = _arrayIncludes(false);
+	var IE_PROTO = _sharedKey('IE_PROTO');
+
+	var _objectKeysInternal = function (object, names) {
+	  var O = _toIobject(object);
+	  var i = 0;
+	  var result = [];
+	  var key;
+	  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
+	  // Don't enum bug & hidden keys
+	  while (names.length > i) if (_has(O, key = names[i++])) {
+	    ~arrayIndexOf(result, key) || result.push(key);
+	  }
+	  return result;
+	};
+
+	// IE 8- don't enum bug keys
+	var _enumBugKeys = (
+	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+	).split(',');
+
+	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+
+
+
+	var _objectKeys = Object.keys || function keys(O) {
+	  return _objectKeysInternal(O, _enumBugKeys);
+	};
+
+	var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
+	  _anObject(O);
+	  var keys = _objectKeys(Properties);
+	  var length = keys.length;
+	  var i = 0;
+	  var P;
+	  while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
+	  return O;
+	};
+
+	var document$1 = _global.document;
+	var _html = document$1 && document$1.documentElement;
+
+	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+
+
+
+	var IE_PROTO$1 = _sharedKey('IE_PROTO');
+	var Empty = function () { /* empty */ };
+	var PROTOTYPE$1 = 'prototype';
+
+	// Create object with fake `null` prototype: use iframe Object with cleared prototype
+	var createDict = function () {
+	  // Thrash, waste and sodomy: IE GC bug
+	  var iframe = _domCreate('iframe');
+	  var i = _enumBugKeys.length;
+	  var lt = '<';
+	  var gt = '>';
+	  var iframeDocument;
+	  iframe.style.display = 'none';
+	  _html.appendChild(iframe);
+	  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+	  // createDict = iframe.contentWindow.Object;
+	  // html.removeChild(iframe);
+	  iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+	  iframeDocument.close();
+	  createDict = iframeDocument.F;
+	  while (i--) delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
+	  return createDict();
+	};
+
+	var _objectCreate = Object.create || function create(O, Properties) {
+	  var result;
+	  if (O !== null) {
+	    Empty[PROTOTYPE$1] = _anObject(O);
+	    result = new Empty();
+	    Empty[PROTOTYPE$1] = null;
+	    // add "__proto__" for Object.getPrototypeOf polyfill
+	    result[IE_PROTO$1] = O;
+	  } else result = createDict();
+	  return Properties === undefined ? result : _objectDps(result, Properties);
+	};
+
+	var def = _objectDp.f;
+
+	var TAG = _wks('toStringTag');
+
+	var _setToStringTag = function (it, tag, stat) {
+	  if (it && !_has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
+	};
+
+	var IteratorPrototype = {};
+
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
+
+	var _iterCreate = function (Constructor, NAME, next) {
+	  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
+	  _setToStringTag(Constructor, NAME + ' Iterator');
+	};
+
+	// 7.1.13 ToObject(argument)
+
+	var _toObject = function (it) {
+	  return Object(_defined(it));
+	};
+
+	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+
+
+	var IE_PROTO$2 = _sharedKey('IE_PROTO');
+	var ObjectProto = Object.prototype;
+
+	var _objectGpo = Object.getPrototypeOf || function (O) {
+	  O = _toObject(O);
+	  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
+	  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+	    return O.constructor.prototype;
+	  } return O instanceof Object ? ObjectProto : null;
+	};
+
+	var ITERATOR = _wks('iterator');
+	var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+	var FF_ITERATOR = '@@iterator';
+	var KEYS = 'keys';
+	var VALUES = 'values';
+
+	var returnThis = function () { return this; };
+
+	var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+	  _iterCreate(Constructor, NAME, next);
+	  var getMethod = function (kind) {
+	    if (!BUGGY && kind in proto) return proto[kind];
+	    switch (kind) {
+	      case KEYS: return function keys() { return new Constructor(this, kind); };
+	      case VALUES: return function values() { return new Constructor(this, kind); };
+	    } return function entries() { return new Constructor(this, kind); };
+	  };
+	  var TAG = NAME + ' Iterator';
+	  var DEF_VALUES = DEFAULT == VALUES;
+	  var VALUES_BUG = false;
+	  var proto = Base.prototype;
+	  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
+	  var $default = $native || getMethod(DEFAULT);
+	  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+	  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+	  var methods, key, IteratorPrototype;
+	  // Fix native
+	  if ($anyNative) {
+	    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
+	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+	      // Set @@toStringTag to native iterators
+	      _setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if ( typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	    }
+	  }
+	  // fix Array#{values, @@iterator}.name in V8 / FF
+	  if (DEF_VALUES && $native && $native.name !== VALUES) {
+	    VALUES_BUG = true;
+	    $default = function values() { return $native.call(this); };
+	  }
+	  // Define iterator
+	  if ( (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	    _hide(proto, ITERATOR, $default);
+	  }
+	  // Plug for library
+	  _iterators[NAME] = $default;
+	  _iterators[TAG] = returnThis;
+	  if (DEFAULT) {
+	    methods = {
+	      values: DEF_VALUES ? $default : getMethod(VALUES),
+	      keys: IS_SET ? $default : getMethod(KEYS),
+	      entries: $entries
+	    };
+	    if (FORCED) for (key in methods) {
+	      if (!(key in proto)) _redefine(proto, key, methods[key]);
+	    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
+	  }
+	  return methods;
+	};
+
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
+	  this._t = _toIobject(iterated); // target
+	  this._i = 0;                   // next index
+	  this._k = kind;                // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function () {
+	  var O = this._t;
+	  var kind = this._k;
+	  var index = this._i++;
+	  if (!O || index >= O.length) {
+	    this._t = undefined;
+	    return _iterStep(1);
+	  }
+	  if (kind == 'keys') return _iterStep(0, index);
+	  if (kind == 'values') return _iterStep(0, O[index]);
+	  return _iterStep(0, [index, O[index]]);
+	}, 'values');
+
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	_iterators.Arguments = _iterators.Array;
+
+	_addToUnscopables('keys');
+	_addToUnscopables('values');
+	_addToUnscopables('entries');
+
+	var ITERATOR$1 = _wks('iterator');
+	var TO_STRING_TAG = _wks('toStringTag');
+	var ArrayValues = _iterators.Array;
+
+	var DOMIterables = {
+	  CSSRuleList: true, // TODO: Not spec compliant, should be false.
+	  CSSStyleDeclaration: false,
+	  CSSValueList: false,
+	  ClientRectList: false,
+	  DOMRectList: false,
+	  DOMStringList: false,
+	  DOMTokenList: true,
+	  DataTransferItemList: false,
+	  FileList: false,
+	  HTMLAllCollection: false,
+	  HTMLCollection: false,
+	  HTMLFormElement: false,
+	  HTMLSelectElement: false,
+	  MediaList: true, // TODO: Not spec compliant, should be false.
+	  MimeTypeArray: false,
+	  NamedNodeMap: false,
+	  NodeList: true,
+	  PaintRequestList: false,
+	  Plugin: false,
+	  PluginArray: false,
+	  SVGLengthList: false,
+	  SVGNumberList: false,
+	  SVGPathSegList: false,
+	  SVGPointList: false,
+	  SVGStringList: false,
+	  SVGTransformList: false,
+	  SourceBufferList: false,
+	  StyleSheetList: true, // TODO: Not spec compliant, should be false.
+	  TextTrackCueList: false,
+	  TextTrackList: false,
+	  TouchList: false
+	};
+
+	for (var collections = _objectKeys(DOMIterables), i = 0; i < collections.length; i++) {
+	  var NAME = collections[i];
+	  var explicit = DOMIterables[NAME];
+	  var Collection = _global[NAME];
+	  var proto = Collection && Collection.prototype;
+	  var key;
+	  if (proto) {
+	    if (!proto[ITERATOR$1]) _hide(proto, ITERATOR$1, ArrayValues);
+	    if (!proto[TO_STRING_TAG]) _hide(proto, TO_STRING_TAG, NAME);
+	    _iterators[NAME] = ArrayValues;
+	    if (explicit) for (key in es6_array_iterator) if (!proto[key]) _redefine(proto, key, es6_array_iterator[key], true);
+	  }
+	}
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+
+	var TAG$1 = _wks('toStringTag');
+	// ES3 wrong here
+	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
+
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function (it, key) {
+	  try {
+	    return it[key];
+	  } catch (e) { /* empty */ }
+	};
+
+	var _classof = function (it) {
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? _cof(O)
+	    // ES3 arguments fallback
+	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+	// 19.1.3.6 Object.prototype.toString()
+
+	var test = {};
+	test[_wks('toStringTag')] = 'z';
+	if (test + '' != '[object z]') {
+	  _redefine(Object.prototype, 'toString', function toString() {
+	    return '[object ' + _classof(this) + ']';
+	  }, true);
+	}
+
+	// most Object methods by ES6 should accept primitives
+
+
+
+	var _objectSap = function (KEY, exec) {
+	  var fn = (_core.Object || {})[KEY] || Object[KEY];
+	  var exp = {};
+	  exp[KEY] = exec(fn);
+	  _export(_export.S + _export.F * _fails(function () { fn(1); }), 'Object', exp);
+	};
+
+	// 19.1.2.14 Object.keys(O)
+
+
+
+	_objectSap('keys', function () {
+	  return function keys(it) {
+	    return _objectKeys(_toObject(it));
+	  };
+	});
+
+	// 7.2.8 IsRegExp(argument)
+
+
+	var MATCH = _wks('match');
+	var _isRegexp = function (it) {
+	  var isRegExp;
+	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	};
+
+	// helper for String#{startsWith, endsWith, includes}
+
+
+
+	var _stringContext = function (that, searchString, NAME) {
+	  if (_isRegexp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
+	  return String(_defined(that));
+	};
+
+	var MATCH$1 = _wks('match');
+	var _failsIsRegexp = function (KEY) {
+	  var re = /./;
+	  try {
+	    '/./'[KEY](re);
+	  } catch (e) {
+	    try {
+	      re[MATCH$1] = false;
+	      return !'/./'[KEY](re);
+	    } catch (f) { /* empty */ }
+	  } return true;
+	};
+
+	var INCLUDES = 'includes';
+
+	_export(_export.P + _export.F * _failsIsRegexp(INCLUDES), 'String', {
+	  includes: function includes(searchString /* , position = 0 */) {
+	    return !!~_stringContext(this, searchString, INCLUDES)
+	      .indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var ENDS_WITH = 'endsWith';
+	var $endsWith = ''[ENDS_WITH];
+
+	_export(_export.P + _export.F * _failsIsRegexp(ENDS_WITH), 'String', {
+	  endsWith: function endsWith(searchString /* , endPosition = @length */) {
+	    var that = _stringContext(this, searchString, ENDS_WITH);
+	    var endPosition = arguments.length > 1 ? arguments[1] : undefined;
+	    var len = _toLength(that.length);
+	    var end = endPosition === undefined ? len : Math.min(_toLength(endPosition), len);
+	    var search = String(searchString);
+	    return $endsWith
+	      ? $endsWith.call(that, search, end)
+	      : that.slice(end - search.length, end) === search;
+	  }
+	});
 
 	// https://github.com/tc39/Array.prototype.includes
 
@@ -378,12 +718,6 @@
 	});
 
 	_addToUnscopables('includes');
-
-	// 7.1.13 ToObject(argument)
-
-	var _toObject = function (it) {
-	  return Object(_defined(it));
-	};
 
 	// true  -> String#at
 	// false -> String#codePointAt
@@ -407,30 +741,6 @@
 	// https://tc39.github.io/ecma262/#sec-advancestringindex
 	var _advanceStringIndex = function (S, index, unicode) {
 	  return index + (unicode ? at(S, index).length : 1);
-	};
-
-	// getting tag from 19.1.3.6 Object.prototype.toString()
-
-	var TAG = _wks('toStringTag');
-	// ES3 wrong here
-	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
-
-	// fallback for IE11 Script Access Denied error
-	var tryGet = function (it, key) {
-	  try {
-	    return it[key];
-	  } catch (e) { /* empty */ }
-	};
-
-	var _classof = function (it) {
-	  var O, T, B;
-	  return it === undefined ? 'Undefined' : it === null ? 'Null'
-	    // @@toStringTag case
-	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
-	    // builtinTag case
-	    : ARG ? _cof(O)
-	    // ES3 arguments fallback
-	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 	};
 
 	var builtinExec = RegExp.prototype.exec;
@@ -884,7 +1194,7 @@
 	var VIEW = _uid('view');
 	var ABV = !!(_global.ArrayBuffer && _global.DataView);
 	var CONSTR = ABV;
-	var i = 0;
+	var i$1 = 0;
 	var l = 9;
 	var Typed;
 
@@ -892,8 +1202,8 @@
 	  'Int8Array,Uint8Array,Uint8ClampedArray,Int16Array,Uint16Array,Int32Array,Uint32Array,Float32Array,Float64Array'
 	).split(',');
 
-	while (i < l) {
-	  if (Typed = _global[TypedArrayConstructors[i++]]) {
+	while (i$1 < l) {
+	  if (Typed = _global[TypedArrayConstructors[i$1++]]) {
 	    _hide(Typed.prototype, TYPED, true);
 	    _hide(Typed.prototype, VIEW, true);
 	  } else CONSTR = false;
@@ -928,33 +1238,6 @@
 	  return length;
 	};
 
-	var shared = _shared('keys');
-
-	var _sharedKey = function (key) {
-	  return shared[key] || (shared[key] = _uid(key));
-	};
-
-	var arrayIndexOf = _arrayIncludes(false);
-	var IE_PROTO = _sharedKey('IE_PROTO');
-
-	var _objectKeysInternal = function (object, names) {
-	  var O = _toIobject(object);
-	  var i = 0;
-	  var result = [];
-	  var key;
-	  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
-	  // Don't enum bug & hidden keys
-	  while (names.length > i) if (_has(O, key = names[i++])) {
-	    ~arrayIndexOf(result, key) || result.push(key);
-	  }
-	  return result;
-	};
-
-	// IE 8- don't enum bug keys
-	var _enumBugKeys = (
-	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-	).split(',');
-
 	// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 
 	var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
@@ -965,14 +1248,6 @@
 
 	var _objectGopn = {
 		f: f$1
-	};
-
-	var def = _objectDp.f;
-
-	var TAG$1 = _wks('toStringTag');
-
-	var _setToStringTag = function (it, tag, stat) {
-	  if (it && !_has(it = stat ? it : it.prototype, TAG$1)) def(it, TAG$1, { configurable: true, value: tag });
 	};
 
 	var _typedBuffer = createCommonjsModule(function (module, exports) {
@@ -1253,98 +1528,19 @@
 	exports[DATA_VIEW] = $DataView;
 	});
 
-	var _iterators = {};
-
 	// check on default Array iterator
 
-	var ITERATOR = _wks('iterator');
+	var ITERATOR$2 = _wks('iterator');
 	var ArrayProto$1 = Array.prototype;
 
 	var _isArrayIter = function (it) {
-	  return it !== undefined && (_iterators.Array === it || ArrayProto$1[ITERATOR] === it);
+	  return it !== undefined && (_iterators.Array === it || ArrayProto$1[ITERATOR$2] === it);
 	};
 
-	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-
-
-
-	var _objectKeys = Object.keys || function keys(O) {
-	  return _objectKeysInternal(O, _enumBugKeys);
-	};
-
-	var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
-	  _anObject(O);
-	  var keys = _objectKeys(Properties);
-	  var length = keys.length;
-	  var i = 0;
-	  var P;
-	  while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
-	  return O;
-	};
-
-	var document$1 = _global.document;
-	var _html = document$1 && document$1.documentElement;
-
-	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-
-
-
-	var IE_PROTO$1 = _sharedKey('IE_PROTO');
-	var Empty = function () { /* empty */ };
-	var PROTOTYPE$1 = 'prototype';
-
-	// Create object with fake `null` prototype: use iframe Object with cleared prototype
-	var createDict = function () {
-	  // Thrash, waste and sodomy: IE GC bug
-	  var iframe = _domCreate('iframe');
-	  var i = _enumBugKeys.length;
-	  var lt = '<';
-	  var gt = '>';
-	  var iframeDocument;
-	  iframe.style.display = 'none';
-	  _html.appendChild(iframe);
-	  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-	  // createDict = iframe.contentWindow.Object;
-	  // html.removeChild(iframe);
-	  iframeDocument = iframe.contentWindow.document;
-	  iframeDocument.open();
-	  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-	  iframeDocument.close();
-	  createDict = iframeDocument.F;
-	  while (i--) delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
-	  return createDict();
-	};
-
-	var _objectCreate = Object.create || function create(O, Properties) {
-	  var result;
-	  if (O !== null) {
-	    Empty[PROTOTYPE$1] = _anObject(O);
-	    result = new Empty();
-	    Empty[PROTOTYPE$1] = null;
-	    // add "__proto__" for Object.getPrototypeOf polyfill
-	    result[IE_PROTO$1] = O;
-	  } else result = createDict();
-	  return Properties === undefined ? result : _objectDps(result, Properties);
-	};
-
-	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-
-
-	var IE_PROTO$2 = _sharedKey('IE_PROTO');
-	var ObjectProto = Object.prototype;
-
-	var _objectGpo = Object.getPrototypeOf || function (O) {
-	  O = _toObject(O);
-	  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
-	  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
-	    return O.constructor.prototype;
-	  } return O instanceof Object ? ObjectProto : null;
-	};
-
-	var ITERATOR$1 = _wks('iterator');
+	var ITERATOR$3 = _wks('iterator');
 
 	var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
-	  if (it != undefined) return it[ITERATOR$1]
+	  if (it != undefined) return it[ITERATOR$3]
 	    || it['@@iterator']
 	    || _iterators[_classof(it)];
 	};
@@ -1422,115 +1618,11 @@
 	  };
 	};
 
-	var _iterStep = function (done, value) {
-	  return { value: value, done: !!done };
-	};
-
-	var IteratorPrototype = {};
-
-	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-	_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
-
-	var _iterCreate = function (Constructor, NAME, next) {
-	  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
-	  _setToStringTag(Constructor, NAME + ' Iterator');
-	};
-
-	var ITERATOR$2 = _wks('iterator');
-	var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-	var FF_ITERATOR = '@@iterator';
-	var KEYS = 'keys';
-	var VALUES = 'values';
-
-	var returnThis = function () { return this; };
-
-	var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
-	  _iterCreate(Constructor, NAME, next);
-	  var getMethod = function (kind) {
-	    if (!BUGGY && kind in proto) return proto[kind];
-	    switch (kind) {
-	      case KEYS: return function keys() { return new Constructor(this, kind); };
-	      case VALUES: return function values() { return new Constructor(this, kind); };
-	    } return function entries() { return new Constructor(this, kind); };
-	  };
-	  var TAG = NAME + ' Iterator';
-	  var DEF_VALUES = DEFAULT == VALUES;
-	  var VALUES_BUG = false;
-	  var proto = Base.prototype;
-	  var $native = proto[ITERATOR$2] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-	  var $default = $native || getMethod(DEFAULT);
-	  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-	  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-	  var methods, key, IteratorPrototype;
-	  // Fix native
-	  if ($anyNative) {
-	    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
-	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
-	      // Set @@toStringTag to native iterators
-	      _setToStringTag(IteratorPrototype, TAG, true);
-	      // fix for some old engines
-	      if ( typeof IteratorPrototype[ITERATOR$2] != 'function') _hide(IteratorPrototype, ITERATOR$2, returnThis);
-	    }
-	  }
-	  // fix Array#{values, @@iterator}.name in V8 / FF
-	  if (DEF_VALUES && $native && $native.name !== VALUES) {
-	    VALUES_BUG = true;
-	    $default = function values() { return $native.call(this); };
-	  }
-	  // Define iterator
-	  if ( (BUGGY || VALUES_BUG || !proto[ITERATOR$2])) {
-	    _hide(proto, ITERATOR$2, $default);
-	  }
-	  // Plug for library
-	  _iterators[NAME] = $default;
-	  _iterators[TAG] = returnThis;
-	  if (DEFAULT) {
-	    methods = {
-	      values: DEF_VALUES ? $default : getMethod(VALUES),
-	      keys: IS_SET ? $default : getMethod(KEYS),
-	      entries: $entries
-	    };
-	    if (FORCED) for (key in methods) {
-	      if (!(key in proto)) _redefine(proto, key, methods[key]);
-	    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
-	  }
-	  return methods;
-	};
-
-	// 22.1.3.4 Array.prototype.entries()
-	// 22.1.3.13 Array.prototype.keys()
-	// 22.1.3.29 Array.prototype.values()
-	// 22.1.3.30 Array.prototype[@@iterator]()
-	var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
-	  this._t = _toIobject(iterated); // target
-	  this._i = 0;                   // next index
-	  this._k = kind;                // kind
-	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var kind = this._k;
-	  var index = this._i++;
-	  if (!O || index >= O.length) {
-	    this._t = undefined;
-	    return _iterStep(1);
-	  }
-	  if (kind == 'keys') return _iterStep(0, index);
-	  if (kind == 'values') return _iterStep(0, O[index]);
-	  return _iterStep(0, [index, O[index]]);
-	}, 'values');
-
-	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-	_iterators.Arguments = _iterators.Array;
-
-	_addToUnscopables('keys');
-	_addToUnscopables('values');
-	_addToUnscopables('entries');
-
-	var ITERATOR$3 = _wks('iterator');
+	var ITERATOR$4 = _wks('iterator');
 	var SAFE_CLOSING = false;
 
 	try {
-	  var riter = [7][ITERATOR$3]();
+	  var riter = [7][ITERATOR$4]();
 	  riter['return'] = function () { SAFE_CLOSING = true; };
 	  // eslint-disable-next-line no-throw-literal
 	  Array.from(riter, function () { throw 2; });
@@ -1541,9 +1633,9 @@
 	  var safe = false;
 	  try {
 	    var arr = [7];
-	    var iter = arr[ITERATOR$3]();
+	    var iter = arr[ITERATOR$4]();
 	    iter.next = function () { return { done: safe = true }; };
-	    arr[ITERATOR$3] = function () { return iter; };
+	    arr[ITERATOR$4] = function () { return iter; };
 	    exec(arr);
 	  } catch (e) { /* empty */ }
 	  return safe;
@@ -2116,16 +2208,6 @@
 	  });
 	}
 
-	// 19.1.3.6 Object.prototype.toString()
-
-	var test = {};
-	test[_wks('toStringTag')] = 'z';
-	if (test + '' != '[object z]') {
-	  _redefine(Object.prototype, 'toString', function toString() {
-	    return '[object ' + _classof(this) + ']';
-	  }, true);
-	}
-
 	var _stringRepeat = function repeat(count) {
 	  var str = String(_defined(this));
 	  var res = '';
@@ -2254,9 +2336,9 @@
 	var NUMBER = 'Number';
 	var $Number = _global[NUMBER];
 	var Base = $Number;
-	var proto = $Number.prototype;
+	var proto$1 = $Number.prototype;
 	// Opera ~12 has broken Object#toString
-	var BROKEN_COF = _cof(_objectCreate(proto)) == NUMBER;
+	var BROKEN_COF = _cof(_objectCreate(proto$1)) == NUMBER;
 	var TRIM = 'trim' in String.prototype;
 
 	// 7.1.3 ToNumber(argument)
@@ -2291,7 +2373,7 @@
 	    var that = this;
 	    return that instanceof $Number
 	      // check on 1..constructor(foo) case
-	      && (BROKEN_COF ? _fails(function () { proto.valueOf.call(that); }) : _cof(that) != NUMBER)
+	      && (BROKEN_COF ? _fails(function () { proto$1.valueOf.call(that); }) : _cof(that) != NUMBER)
 	        ? _inheritIfRequired(new Base(toNumber(it)), that, $Number) : toNumber(it);
 	  };
 	  for (var keys = _descriptors ? gOPN(Base) : (
@@ -2300,13 +2382,13 @@
 	    // ES6 (in case, if modules with ES6 Number statics required before):
 	    'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' +
 	    'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'
-	  ).split(','), j = 0, key; keys.length > j; j++) {
-	    if (_has(Base, key = keys[j]) && !_has($Number, key)) {
-	      dP$1($Number, key, gOPD$1(Base, key));
+	  ).split(','), j = 0, key$1; keys.length > j; j++) {
+	    if (_has(Base, key$1 = keys[j]) && !_has($Number, key$1)) {
+	      dP$1($Number, key$1, gOPD$1(Base, key$1));
 	    }
 	  }
-	  $Number.prototype = proto;
-	  proto.constructor = $Number;
+	  $Number.prototype = proto$1;
+	  proto$1.constructor = $Number;
 	  _redefine(_global, NUMBER, $Number);
 	}
 
@@ -2393,13 +2475,28 @@
 
 	function byteToHexStrFast(byte) {
 	  return byte.toString(16).toUpperCase().padStart(2, '0');
-	} // TODO: Docstring
+	}
+	/**
+	 * Converts a Uint8Array into a string with base 16 hex digits. It doesn't
+	 * include an opening '0x'.
+	 *
+	 * @export
+	 * @param byteArray Uint8Array to convert to hex.
+	 * @returns String with base 16 hex digits.
+	 */
 
 	function byteArrayToHexStr(byteArray) {
 	  return byteArray.reduce(function (accumulator, current) {
 	    return accumulator + current.toString(16).toUpperCase().padStart(2, '0');
 	  }, '');
-	} // TODO: Docstring
+	}
+	/**
+	 * Concatenates an array of Uint8Arrays into a single Uint8Array.
+	 *
+	 * @export
+	 * @param arraysToConcat Arrays to concatenate.
+	 * @returns Single concatenated Uint8Array.
+	 */
 
 	function concatUint8Arrays(arraysToConcat) {
 	  var fullLength = arraysToConcat.reduce(function (accumulator, currentValue) {
@@ -2413,7 +2510,7 @@
 	  return combined;
 	}
 
-	/** Values for the Record Type field, including fat-binaries custom types. */
+	/** Values for the Record Type field, including Universal Hex custom types. */
 
 	var RecordType;
 
@@ -2442,10 +2539,15 @@
 	 */
 
 	var START_CODE_STR = ':';
+	var START_CODE_INDEX = 0;
 	var START_CODE_STR_LEN = START_CODE_STR.length;
+	var BYTE_COUNT_STR_INDEX = START_CODE_INDEX + START_CODE_STR_LEN;
 	var BYTE_COUNT_STR_LEN = 2;
+	var ADDRESS_STR_INDEX = BYTE_COUNT_STR_INDEX + BYTE_COUNT_STR_LEN;
 	var ADDRESS_STR_LEN = 4;
+	var RECORD_TYPE_STR_INDEX = ADDRESS_STR_INDEX + ADDRESS_STR_LEN;
 	var RECORD_TYPE_STR_LEN = 2;
+	var DATA_STR_INDEX = RECORD_TYPE_STR_INDEX + RECORD_TYPE_STR_LEN;
 	var DATA_STR_LEN_MIN = 0;
 	var CHECKSUM_STR_LEN = 2;
 	var MIN_RECORD_STR_LEN = START_CODE_STR_LEN + BYTE_COUNT_STR_LEN + ADDRESS_STR_LEN + RECORD_TYPE_STR_LEN + DATA_STR_LEN_MIN + CHECKSUM_STR_LEN;
@@ -2487,7 +2589,7 @@
 	 *
 	 * @param address - The two least significant bytes for the data address.
 	 * @param recordType - Record type, could be one of the standard types or any
-	 *    of the custom types created for forming fat binaries.
+	 *    of the custom types created for forming a Universal Hex.
 	 * @param dataBytes - Byte array with the data to include in the record.
 	 * @returns A string with the Intel Hex record.
 	 */
@@ -2555,10 +2657,26 @@
 	  var recordType = parseInt(recordTypeStr, 16);
 
 	  if (!isRecordTypeValid(recordType)) {
-	    throw new Error("Record type '" + recordTypeStr + "' is not valid.");
+	    throw new Error("Record type '" + recordTypeStr + "' from record '" + iHexRecord + "' is not valid.");
 	  }
 
 	  return recordType;
+	}
+	/**
+	 * Retrieves the data field from a record.
+	 *
+	 * @param iHexRecord Intel Hex record string.
+	 * @returns The record Data in a byte array.
+	 */
+
+
+	function getRecordData(iHexRecord) {
+	  try {
+	    // The only thing after the Data bytes is the Checksum (2 characters)
+	    return hexStrToBytes(iHexRecord.slice(DATA_STR_INDEX, -2));
+	  } catch (e) {
+	    throw new Error("Could not parse Intel Hex record \"" + iHexRecord + "\": " + e.message);
+	  }
 	}
 	/**
 	 * Parses an Intel Hex record into an Record object with its respective fields.
@@ -2709,13 +2827,13 @@
 	 */
 
 
-	function convertRecordToCustomData(iHexRecord) {
+	function convertRecordTo(iHexRecord, recordType) {
 	  var oRecord = parseRecord(iHexRecord);
 	  var recordContent = new Uint8Array(oRecord.data.length + 4);
 	  recordContent[0] = oRecord.data.length;
 	  recordContent[1] = oRecord.address >> 8;
 	  recordContent[2] = oRecord.address & 0xff;
-	  recordContent[3] = RecordType.CustomData;
+	  recordContent[3] = recordType;
 	  recordContent.set(oRecord.data, 4);
 	  var recordContentStr = byteArrayToHexStr(recordContent);
 	  var checksumStr = byteToHexStrFast(calcChecksumByte(recordContent));
@@ -2741,7 +2859,7 @@
 	var V1_BOARD_IDS = [0x9900, 0x9901];
 	var BLOCK_SIZE = 512;
 	/**
-	 * Converts a hex file string into a fat-binary ready hex string using custom
+	 * Converts a hex file string into a Universal Hex ready hex string using custom
 	 * records and 512 byte blocks.
 	 *
 	 * Block format:
@@ -2796,7 +2914,7 @@
 	      var recordType = getRecordType(record);
 
 	      if (replaceDataRecord && recordType === RecordType.Data) {
-	        record = convertRecordToCustomData(record);
+	        record = convertRecordTo(record, RecordType.CustomData);
 	      } else if (recordType === RecordType.ExtendedLinearAddress) {
 	        currentExtAddr = record;
 	      } else if (recordType === RecordType.EndOfFile) {
@@ -2825,17 +2943,18 @@
 	        var record = paddedDataRecord(Math.min((BLOCK_SIZE - blockLen - (padRecordBaseLen + 1)) / 2, recordPaddingCapacity$1));
 	        blockLines.push(record);
 	        blockLen += record.length + 1;
-	      } // TODO: Can we have a block that needs an odd number of padded chars?
+	      } // TODO: Can we end up with a block needing an odd number of padded chars?
 
 
 	      blockLines.push(blockEndRecord((BLOCK_SIZE - blockLen) / 2));
 	    }
 	  }
 
-	  return blockLines.join('\n') + '\n';
+	  return blockLines.length ? blockLines.join('\n') + '\n' : '';
 	}
 
-	function createFatBinary(hexes) {
+	function createUniversalHex(hexes) {
+	  if (!hexes.length) return '';
 	  var eofRecord = endOfFileRecord();
 	  var eofNlRecord = eofRecord + '\n';
 	  var customHexes = []; // We remove the EoF record from all but the last hex file so that the last
@@ -2849,15 +2968,15 @@
 	    } else if (customHex.endsWith(eofRecord)) {
 	      customHex = customHex.slice(0, customHex.length - eofRecord.length);
 	    } else {
-	      throw Error("Could not fine the End Of File record on hex with Board ID " + hexes[i].boardID);
+	      throw Error("Could not fine the End Of File record on hex with Board ID " + hexes[i].boardId);
 	    }
 
-	    customHex = iHexToCustomFormat(customHex, hexes[i].boardID);
+	    customHex = iHexToCustomFormat(customHex, hexes[i].boardId);
 	    customHexes.push(customHex);
 	  } // Process the last hex file with a guarantee EoF record
 
 
-	  var lastCustomHex = iHexToCustomFormat(hexes[hexes.length - 1].hex, hexes[hexes.length - 1].boardID);
+	  var lastCustomHex = iHexToCustomFormat(hexes[hexes.length - 1].hex, hexes[hexes.length - 1].boardId);
 	  customHexes.push(lastCustomHex);
 
 	  if (!lastCustomHex.endsWith(eofNlRecord)) {
@@ -2866,11 +2985,126 @@
 
 	  return customHexes.join('');
 	}
+	/**
+	 * Checks if the provided hex string is a fat binary.
+	 *
+	 * Very simple test only checking for the opening Extended Linear Address and
+	 * Block Start records.
+	 *
+	 * The string is manually checked as this method can be x20 faster than breaking
+	 * the string into records and checking their types with the ihex functions.
+	 *
+	 * @param hexStr Hex string to check
+	 * @return True if the hex is an Universal Hex.
+	 */
 
-	exports.createFatBinary = createFatBinary;
+
+	function isUniversalHex(hexStr) {
+	  // Check the beginning of the Extended Linear Address record
+	  var startOfElaRecord = ':02000004';
+
+	  if (hexStr.slice(0, startOfElaRecord.length) !== startOfElaRecord) {
+	    return false;
+	  } // Find the index for the next record, as we have unknown line endings
+
+
+	  var i = startOfElaRecord.length;
+
+	  while (hexStr[++i] !== ':' && i < 50) {
+	  } // Check the beginning of the Block Start record
+
+
+	  var startOfBsRecord = ':0400000A';
+
+	  if (hexStr.slice(i, i + startOfBsRecord.length) !== startOfBsRecord) {
+	    return false;
+	  }
+
+	  return true;
+	}
+	/**
+	 * Separates a Universal Hex into the individual hexes.
+	 *
+	 * @param universalHexStr Universal Hex string with the Universal Hex.
+	 * @returns An array of object with boardId and hex keys.
+	 */
+
+
+	function separateUniversalHex(universalHexStr) {
+	  var records = iHexToRecordStrs(universalHexStr);
+	  if (!records.length) throw new Error('Empty Universal Hex.'); // The format has to start with an Extended Linear Address and Block Start
+
+	  if (getRecordType(records[0]) !== RecordType.ExtendedLinearAddress || getRecordType(records[1]) !== RecordType.BlockStart || getRecordType(records[records.length - 1]) !== RecordType.EndOfFile) {
+	    throw new Error('Universal Hex block format invalid.');
+	  }
+
+	  var passThroughRecords = [RecordType.Data, RecordType.EndOfFile, RecordType.ExtendedSegmentAddress, RecordType.StartSegmentAddress]; // Initialise the structure to hold the different hexes
+
+	  var hexes = {};
+	  var currentBoardId = 0;
+
+	  for (var i = 0; i < records.length; i++) {
+	    var record = records[i];
+	    var recordType = getRecordType(record);
+
+	    if (passThroughRecords.includes(recordType)) {
+	      hexes[currentBoardId].hex.push(record);
+	    } else if (recordType === RecordType.CustomData) {
+	      hexes[currentBoardId].hex.push(convertRecordTo(record, RecordType.Data));
+	    } else if (recordType === RecordType.ExtendedLinearAddress) {
+	      // Extended Linear Address can be found as the start of a new block
+	      // No need to check array size as we known there will always be an EoF
+	      var nextRecord = records[i + 1];
+	      var nextRecordType = getRecordType(nextRecord);
+
+	      if (nextRecordType === RecordType.BlockStart) {
+	        // Processes the Block Start record (only first 2 bytes for Board ID)
+	        var blockStartData = getRecordData(nextRecord);
+
+	        if (blockStartData.length !== 4) {
+	          throw new Error("Block Start record invalid: " + nextRecord);
+	        }
+
+	        currentBoardId = (blockStartData[0] << 8) + blockStartData[1];
+	        hexes[currentBoardId] = hexes[currentBoardId] || {
+	          boardId: currentBoardId,
+	          lastExtAdd: record,
+	          hex: [record]
+	        };
+	        i++;
+	      }
+
+	      if (hexes[currentBoardId].lastExtAdd !== record) {
+	        hexes[currentBoardId].lastExtAdd = record;
+	        hexes[currentBoardId].hex.push(record);
+	      }
+	    }
+	  } // Form the return object with the same format as createUniversalHex() input
+
+
+	  var returnArray = [];
+	  Object.keys(hexes).forEach(function (boardId) {
+	    // Ensure all hexes (and not just the last) contain the EoF record
+	    var hex = hexes[boardId].hex;
+
+	    if (hex[hex.length - 1] !== endOfFileRecord()) {
+	      hex[hex.length] = endOfFileRecord();
+	    }
+
+	    returnArray.push({
+	      boardId: hexes[boardId].boardId,
+	      hex: hex.join('\n') + '\n'
+	    });
+	  });
+	  return returnArray;
+	}
+
+	exports.createUniversalHex = createUniversalHex;
 	exports.iHexToCustomFormat = iHexToCustomFormat;
+	exports.isUniversalHex = isUniversalHex;
+	exports.separateUniversalHex = separateUniversalHex;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=microbit-fb.umd.js.map
+//# sourceMappingURL=microbit-uh.umd.js.map
