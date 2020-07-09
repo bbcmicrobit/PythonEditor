@@ -526,10 +526,6 @@ function web_editor(config) {
         }
     }
 
-    // Update the docs link to append MicroPython version
-    var docsAnchor = $("#docs-link");
-    docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
-
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
@@ -751,10 +747,10 @@ function web_editor(config) {
             } catch(e) {
                 // Only display an error if there were no files added to the filesystem
                 if (!importedFiles.length) {
-                    errorMsg += config.translate.alerts.no_script + '\n';
-                    errorMsg += e.message;
                     return alert(config.translate.alerts.no_python + '\n\n' +
-                            config.translate.alerts.error + errorMsg);
+                            config.translate.alerts.error + '\n' +
+                            errorMsg +
+                            config.translate.alerts.no_script);
                 }
             }
         }
@@ -951,7 +947,7 @@ function web_editor(config) {
             updateMain();
             var output = FS.getFatHex();
         } catch(e) {
-            alert(config.translate.alerts.error + e.message);
+            alert(config.translate.alerts.error + '\n' + e.message);
             return;
         }
         // Safari before v10 had issues downloading the file blob
@@ -1354,6 +1350,11 @@ function web_editor(config) {
                     errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
                 }
                 break;
+            case "undefined":
+                console.log('Unexpected error received is undefined.');
+                // Defining something so that he rest of the function has something to query
+                err = 'Undefined error';
+                // Intentional fall-through to run default code as well
             default:
                 // Unexpected error type
                 console.log("Unexpected error type: " + typeof(err) );
@@ -1477,7 +1478,7 @@ function web_editor(config) {
                 throw Error('There is no storage space left.')
             }
         } catch(e) {
-            return alert(config.translate.alerts.error + e.message);
+            return alert(config.translate.alerts.error + '\n' + e.message);
         }
 
         $("#webusb-flashing-progress").val(0).hide();
@@ -1821,6 +1822,10 @@ function web_editor(config) {
                     console.log('Error disconnecting when using ' + (setEnable ? 'partial' : 'full') + ' flashing:\r\n' + err);
                 })
         });
+
+        // Update the MicroPython docs link to append the version to the URL
+        var docsAnchor = $('#docs-link');
+        docsAnchor.attr('href', docsAnchor.attr('href') + 'en/v' + UPY_VERSION);
 
         window.addEventListener('resize', function() {
             formatMenuContainer('command-options', 'options_container');
