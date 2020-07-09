@@ -1,6 +1,8 @@
 /**
- * Wrapper for microbit-fs to perform filesystem operations into two hex files.
+ * Wrapper for microbit-fs and microbit-universal-hex to perform filesystem
+ * operations into two hex files.
  *   https://github.com/microbit-foundation/microbit-fs
+ * https://github.com/microbit-foundation/microbit-universal-hex
  */
 'use strict';
 
@@ -8,7 +10,6 @@
  * @returns An object with the fs wrapper.
  */
 var fs = function() {
-    // micropythonFs wrapper to return
     var fsWrapper = {};
 
     var fs1 = null;
@@ -26,7 +27,7 @@ var fs = function() {
         if (fs1 && fs2) {
             Object.keys(Object.getPrototypeOf(fs1)).forEach(function(key) {
                 // We will duplicate all functions to call both instances
-                if (typeof fs1[key] === "function") {
+                if (typeof fs1[key] === 'function') {
                     fsWrapper[key] = function() {
                         var return1 = fs1[key].apply(fs1, arguments);
                         var return2 =  fs2[key].apply(fs2, arguments);
@@ -73,9 +74,9 @@ var fs = function() {
     };
 
     /**
-     * @returns String with a fat hex.
+     * @returns {string} Universal Hex string.
      */
-    fsWrapper.getFatHex = function() {
+    fsWrapper.getUniversalHex = function() {
         return microbitUh.createUniversalHex([
             { 'hex': fs1.getIntelHex(), 'boardId': 0x9900 },
             { 'hex': fs2.getIntelHex(), 'boardId': 0x9903 },
@@ -83,7 +84,7 @@ var fs = function() {
     };
 
     /**
-     * @param boardId String with the Board ID for the generation.
+     * @param {string} boardId String with the Board ID for the generation.
      * @returns Uint8Array with the data for the given Board ID.
      */
     fsWrapper.getBytesForBoardId = function(boardId) {
@@ -94,6 +95,72 @@ var fs = function() {
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }
+    };
+
+    /**
+     * Import the files from the provide hex string into the filesystem.
+     * If the import is successful this deletes all the previous files.
+     * 
+     * @param {string} hexStr Hex (Intel or Universal) string with files to
+     *   import.
+     * @return {string[]} Array with the filenames of all files imported.
+     */
+    fsWrapper.importFiles = function(hexStr) {
+        var hex = '';
+        if (microbitUh.isUniversalHex(hexStr)) {
+            // For now only extract one of the file systems
+            microbitUh.separateUniversalHex(hexStr).forEach(function(hexObj) {
+                if (hexObj.boardId == 0x9900 || hexObj.boardId == 0x9901) {
+                    hex = hexObj.hex;
+                }
+            });
+            if (!hex) {
+                // TODO: Add this string to the language files
+                throw new Error('Universal Hex does not contain data for the supported boards.');
+            }
+        } else {
+            hex = hexStr;
+        }
+
+        // TODO: Add this string to the language files
+        var errorMsg = 'Not a Universal Hex\n';
+        try {
+            var filesNames1 = fs1.importFilesFromIntelHex(hex, {
+                overwrite: true,
+                formatFirst: true
+            });
+            var filesNames2 = fs2.importFilesFromIntelHex(hex, {
+                overwrite: true,
+                formatFirst: true
+            });
+            // FIXME: Keep this during general testing, probably remove on final release for speed
+            if (JSON.stringify(filesNames1) !== JSON.stringify(filesNames2)) {
+                console.error('Return from importFilesFromIntelHex() differs:' +
+                              '\n\t' + return1 + '\n\t'+ return2);
+            }
+            return filesNames1;
+        } catch(e) {
+            errorMsg += e.message + '\n';
+        }
+
+        // Failed during fs file import, check if there is an appended script
+        var code = '';
+        try {
+            code = microbitFs.getIntelHexAppendedScript(hexStr);
+            // If no code is found throw a dummy error to trigger the catch below
+            if (!code) throw new Error('No appended code found.');
+        } catch(e) {
+            throw new Error(errorMsg + config.translate.alerts.no_script);
+        }
+        fs1.ls().forEach(function(fileName) {
+            fs1.remove(fileName);
+        });
+        fs1.write('main.py', code);
+        fs2.ls().forEach(function(fileName) {
+            fs2.remove(fileName);
+        });
+        fs2.write('main.py', code);
+        return ['main.py'];
     };
 
     return fsWrapper;

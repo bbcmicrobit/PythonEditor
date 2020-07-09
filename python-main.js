@@ -718,41 +718,21 @@ function web_editor(config) {
 
     // Reset the filesystem and load the files from this hex file to the fs and editor
     function loadHex(filename, hexStr) {
-        var errorMsg = '';
-        var code = '';
         var importedFiles = [];
-        var tryOldMethod = false;
         try {
             // If hexStr is parsed correctly it formats the file system before adding the new files
-            importedFiles = FS.importFilesFromIntelHex(hexStr, {
-                overwrite: true,
-                formatFirst: true
-            });
-            // Check if imported files includes a main.py file
-            if (importedFiles.indexOf('main.py') > -1) {
-                code = FS.read('main.py');
-            } else {
-                // There is no main.py file, but there could be appended code
-                tryOldMethod = true;
-                errorMsg += config.translate.alerts.no_main + '\n';
-            }
+            importedFiles = FS.importFiles(hexStr);
         } catch(e) {
-           tryOldMethod = true;
-           errorMsg += e.message + '\n';
+            return alert(config.translate.alerts.no_python + '\n\n' +
+                         config.translate.alerts.error + '\n' +
+                         e.message);
         }
-        if (tryOldMethod) {
-            try {
-                code = microbitFs.getIntelHexAppendedScript(hexStr);
-                FS.write('main.py', code);
-            } catch(e) {
-                // Only display an error if there were no files added to the filesystem
-                if (!importedFiles.length) {
-                    return alert(config.translate.alerts.no_python + '\n\n' +
-                            config.translate.alerts.error + '\n' +
-                            errorMsg +
-                            config.translate.alerts.no_script);
-                }
-            }
+        // Check if imported files includes a main.py file
+        var code = '';
+        if (importedFiles.indexOf('main.py') > -1) {
+            code = FS.read('main.py');
+        } else {
+            alert(config.translate.alerts.no_main);
         }
         setName(filename.replace('.hex', ''));
         EDITOR.setCode(code);
@@ -945,7 +925,7 @@ function web_editor(config) {
     function doDownload() {
         try {
             updateMain();
-            var output = FS.getFatHex();
+            var output = FS.getUniversalHex();
         } catch(e) {
             alert(config.translate.alerts.error + '\n' + e.message);
             return;
