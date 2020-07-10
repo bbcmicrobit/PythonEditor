@@ -2,14 +2,14 @@
  * Wrapper for microbit-fs and microbit-universal-hex to perform filesystem
  * operations into two hex files.
  *   https://github.com/microbit-foundation/microbit-fs
- * https://github.com/microbit-foundation/microbit-universal-hex
+ *   https://github.com/microbit-foundation/microbit-universal-hex
  */
 'use strict';
 
 /**
  * @returns An object with the fs wrapper.
  */
-var fs = function() {
+var microbitFsWrapper = function() {
     var fsWrapper = {};
 
     var fs1 = null;
@@ -24,24 +24,20 @@ var fs = function() {
      */
     function duplicateKeys() {
         // Only start the function duplication once both instances have been created
-        if (fs1 && fs2) {
-            Object.keys(Object.getPrototypeOf(fs1)).forEach(function(key) {
-                // We will duplicate all functions to call both instances
-                if (typeof fs1[key] === 'function') {
-                    fsWrapper[key] = function() {
-                        var return1 = fs1[key].apply(fs1, arguments);
-                        var return2 =  fs2[key].apply(fs2, arguments);
-                        // FIXME: Keep this during general testing, probably remove on final release for speed
-                        if (JSON.stringify(return1) !== JSON.stringify(return2)) {
-                            console.error('Return from call to ' + key + ' differs:\n\t' + return1 + '\n\t'+ return2 );
-                        }
-                        return return1;
+        Object.keys(Object.getPrototypeOf(fs1)).forEach(function(key) {
+            // We will duplicate all functions to call both instances
+            if (typeof fs1[key] === 'function') {
+                fsWrapper[key] = function() {
+                    var return1 = fs1[key].apply(fs1, arguments);
+                    var return2 =  fs2[key].apply(fs2, arguments);
+                    // FIXME: Keep this during general testing, probably remove on final release for speed
+                    if (JSON.stringify(return1) !== JSON.stringify(return2)) {
+                        console.error('Return from call to ' + key + ' differs:\n\t' + return1 + '\n\t'+ return2 );
                     }
+                    return return1;
                 }
-            });
-            // Perform simple check in case future microbitFs updates As iterating through the class instance methods depends on the 
-            console.log('FS fully initialised');
-        }
+            }
+        });
     }
 
     /**
@@ -49,28 +45,24 @@ var fs = function() {
      * initial main.py
      */
     fsWrapper.setupFilesystem = function() {
-        $.get('firmware.hex', function(fileStr) {
+        var deferred1 = $.get('firmware.hex', function(fileStr) {
             fs1 = new microbitFs.MicropythonFsHex(fileStr, {
                 'maxFsSize': commonFsSize,
             });
-            // The the current main.py
-            fs1.write('main.py', EDITOR.getCode());
-            duplicateKeys();
-        }).error(function() {
-            console.error('Could not load the MicroPython hex file.');
+        }).fail(function() {
+            console.error('Could not load the MicroPython hex 1 file.');
         });
-        $.get('firmware2.hex', function(fileStr) {
+        var deferred2 = $.get('firmware2.hex', function(fileStr) {
             fs2 = new microbitFs.MicropythonFsHex(fileStr, {
                 'maxFsSize': commonFsSize,
             });
-            // The the current main.py
-            fs2.write('main.py', EDITOR.getCode());
-            duplicateKeys();
-        }).error(function() {
-            console.error('Could not load the MicroPython hex file.');
+        }).fail(function() {
+            console.error('Could not load the MicroPython hex 2 file.');
         });
-        // TODO: The user could have edited the editor content and the main.py
-        // files would be out of sync
+
+        return $.when(deferred1, deferred2).done(function() {
+            duplicateKeys();
+        });
     };
 
     /**
@@ -150,7 +142,8 @@ var fs = function() {
             // If no code is found throw a dummy error to trigger the catch below
             if (!code) throw new Error('No appended code found.');
         } catch(e) {
-            throw new Error(errorMsg + config.translate.alerts.no_script);
+            // This was originally config.translate.alerts.no_script
+            throw new Error(errorMsg + 'Hex file does not contain an appended Python script.');
         }
         fs1.ls().forEach(function(fileName) {
             fs1.remove(fileName);
@@ -167,7 +160,7 @@ var fs = function() {
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-    global.fs = fs;
+    global.microbitFsWrapper = microbitFsWrapper;
 } else {
-    window.fs = fs;
+    window.microbitFsWrapper = microbitFsWrapper;
 }

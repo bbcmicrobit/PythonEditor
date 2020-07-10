@@ -397,7 +397,7 @@ function web_editor(config) {
     var TRANSLATIONS = translations();
 
     // Generating MicroPython hex with user code in the filesystem
-    var FS = fs();
+    var FS = microbitFsWrapper();
 
     // Represents the REPL terminal
     var REPL = null;
@@ -1855,7 +1855,13 @@ function web_editor(config) {
     setupEditor(qs, migration);
     setupButtons();
     setLanguage(qs.l || 'en');
-    FS.setupFilesystem();
+    FS.setupFilesystem().then(function() {
+        // Add the editor code to main.py
+        FS.create('main.py', EDITOR.getCode());
+        console.log('FS fully initialised');
+    }).fail(function() {
+        console.error('There was an issue initialising the file system.');
+    });
 
     // If iframe messaging allowed, initialize it
     if (controllerMode) {
