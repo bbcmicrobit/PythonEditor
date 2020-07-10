@@ -397,7 +397,7 @@ function web_editor(config) {
     var TRANSLATIONS = translations();
 
     // Generating MicroPython hex with user code in the filesystem
-    var FS = microbitFsWrapper();
+    window.FS = microbitFsWrapper();
 
     // Represents the REPL terminal
     var REPL = null;
