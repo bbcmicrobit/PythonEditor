@@ -68,30 +68,6 @@ function pythonEditor(id, autocompleteApi) {
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
 
-    // Generates an expanded list of words for the ACE autocomplete to digest.
-    var fullWordList = function(apiObj) {
-        var wordsHorizontal = [];
-        Object.keys(apiObj).forEach(function(module) {
-            wordsHorizontal.push(module);
-            if (Array.isArray(apiObj[module])){
-                apiObj[module].forEach(function(func) {
-                    wordsHorizontal.push(module + "." + func);
-                });
-            } else {
-                Object.keys(apiObj[module]).forEach(function(sub) {
-                    wordsHorizontal.push(module + "." + sub);
-                    if (Array.isArray(apiObj[module][sub])) {
-                        apiObj[module][sub].forEach(function(func) {
-                            wordsHorizontal.push(module + "." + sub + "." + func);
-                            wordsHorizontal.push(sub + "." + func);
-                        });
-                    }
-                });
-            }
-        });
-        return (wordsHorizontal);
-    };
-
     // Represents the ACE based editor.
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
     ACE.setOptions({
@@ -107,7 +83,7 @@ function pythonEditor(id, autocompleteApi) {
 
     // Configure Autocomplete
     var langTools = ace.require("ace/ext/language_tools");
-    var extraCompletions = fullWordList(autocompleteApi || []).map(function(word) {
+    var extraCompletions = (autocompleteApi || []).map(function(word) {
         return { "caption": word, "value": word, "meta": "static" };
     });
     langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
