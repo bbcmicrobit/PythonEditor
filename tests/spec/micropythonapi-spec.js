@@ -200,4 +200,57 @@ describe('Testing the MicroPython API helper functions', function() {
             });
         });
     });
+
+    describe('Detecting use of extra modules', function() {
+        it('from extra import *', function() {
+            var pyCode =
+                'from microbit import *\n' +
+                'import microbitProto';
+
+            var result = microPythonApi.compatibleApi('9901', pyCode);
+
+            expect(result).toBeFalsy();
+        });
+
+        it('from extra import *', function() {
+            var pyCode =
+                'from microbit import *\n' +
+                'from microbitProto import *\n';
+
+            var result = microPythonApi.compatibleApi('9901', pyCode);
+
+            expect(result).toBeFalsy();
+        });
+
+        it('from extra.nested import something', function() {
+            var pyCode =
+                'from microbit import *\n' +
+                'from microbitProto.Rhythms import SIMPLE\n';
+
+            var result = microPythonApi.compatibleApi('9901', pyCode);
+
+            expect(result).toBeFalsy();
+        });
+
+        it('Naive check for no false positives', function() {
+            var pyCode =
+                'import microbit\n' +
+                'from microbit import *\n' +
+                'from microbit import display\n' +
+                'from microbit import accelerometer as a, magnetometer as m\n' +
+                'from microbit import display, temperature, panic\n' +
+                'from .microbit.Image import HAPPY\n' +
+                'import microbit.uart\n' +
+                'import .microbit.i2c\n' +
+                'import radio as r, music as m\n' +
+                'from . import audio\n' +
+                '# Code';
+
+            var result = microPythonApi.compatibleApi('9901', pyCode);
+
+            expect(result).toBeTruthy();
+        });
+
+
+    });
 });

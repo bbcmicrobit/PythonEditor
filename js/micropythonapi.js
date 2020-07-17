@@ -6,7 +6,7 @@ var microPythonApi = (function () {
 
     var uPyApi = {
         "microbit" : {
-            "Image" : ['ALL_CLOCKS', 'ANGRY', 'ARROW_E', 'ARROW_N', 'ARROW_NE', 'ARROW_NW', 'ARROW_S', 'ARROW_SE', 'ARROW_SW', 'ARROW_W', 'ASLEEP', 'BUTTERFLY', 'CHESSBOARD', 'CLOCK1', 'CLOCK10', 'CLOCK11', 'CLOCK12', 'CLOCK2', 'CLOCK3', 'CLOCK4', 'CLOCK5', 'CLOCK6', 'CLOCK7', 'CLOCK8', 'CLOCK9', 'CONFUSED', 'COW', 'DIAMOND', 'DIAMOND_SMALL', 'DUCK', 'FABULOUS', 'GHOST', 'GIRAFFE', 'HAPPY', 'HEART', 'HEART_SMALL', 'HOUSE', 'MEH', 'MUSIC_CROTCHET', 'MUSIC_QUAVER', 'MUSIC_QUAVERS', 'NO', 'PACMAN', 'PITCHFORK', 'RABBIT', 'ROLLERSKATE', 'SAD', 'SILLY', 'SKULL', 'SMILE', 'SNAKE', 'SQUARE', 'SQUARE_SMALL', 'STICKFIGURE', 'SURPRISED', 'SWORD', 'TARGET', 'TORTOISE', 'TRIANGLE', 'TRIANGLE_LEFT', 'TSHIRT', 'UMBRELLA', 'XMAS', 'YES'],
+            "Image" : ["ALL_CLOCKS", "ANGRY", "ARROW_E", "ARROW_N", "ARROW_NE", "ARROW_NW", "ARROW_S", "ARROW_SE", "ARROW_SW", "ARROW_W", "ASLEEP", "BUTTERFLY", "CHESSBOARD", "CLOCK1", "CLOCK10", "CLOCK11", "CLOCK12", "CLOCK2", "CLOCK3", "CLOCK4", "CLOCK5", "CLOCK6", "CLOCK7", "CLOCK8", "CLOCK9", "CONFUSED", "COW", "DIAMOND", "DIAMOND_SMALL", "DUCK", "FABULOUS", "GHOST", "GIRAFFE", "HAPPY", "HEART", "HEART_SMALL", "HOUSE", "MEH", "MUSIC_CROTCHET", "MUSIC_QUAVER", "MUSIC_QUAVERS", "NO", "PACMAN", "PITCHFORK", "RABBIT", "ROLLERSKATE", "SAD", "SILLY", "SKULL", "SMILE", "SNAKE", "SQUARE", "SQUARE_SMALL", "STICKFIGURE", "SURPRISED", "SWORD", "TARGET", "TORTOISE", "TRIANGLE", "TRIANGLE_LEFT", "TSHIRT", "UMBRELLA", "XMAS", "YES"],
             "pin0" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
             "pin1" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
             "pin2" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
@@ -63,6 +63,14 @@ var microPythonApi = (function () {
         }
     };
 
+    var extraModules = {
+        "microbitProto": {
+            "Rhythms": ["SIMPLE", "TRIPLE", "SWUNG", "SYNCOPATED"],
+            "Effects":  ["HIGH_PITCH", "LOW_PITCH", "FADE_IN", "FADE_OUT", "REVERB", "ECHO", "HIGH_PASS", "LOW_PASS"],
+            "AudioProcessor": ["apply_effect"]
+        }
+    };
+
     /**
      * Generates an expanded list of words for the ACE autocomplete to digest.
      *
@@ -99,7 +107,7 @@ var microPythonApi = (function () {
      *   available modules.
      */
     var getFullMicroPythonApi = function() {
-        return flattenApi(uPyApi);
+        return flattenApi(uPyApi).concat(flattenApi(extraModules));
     };
 
     /**
@@ -170,13 +178,27 @@ var microPythonApi = (function () {
         return imports;
     };
 
-    var detectApiVersion = function() {
-        ;
+    var compatibleApi = function(boardId, pyCode) {
+        if (boardId == '9903' || boardId == '9904') {
+            return true;
+        } else if (boardId == '9900' || boardId == '9901') {
+            var additionalModules = Object.keys(extraModules)
+            var includesExtra = false;
+            var imports = detectImports(pyCode);
+            Object.keys(imports).forEach(function(topLevelModule) {
+                if (additionalModules.indexOf(topLevelModule) > -1) {
+                    includesExtra = true;
+                }
+            });
+            return !includesExtra;
+        } else {
+            throw new Error('Could not recognise the Board ID ' + boardId);
+        }
     };
 
     var publicApi = {
         'getFullApi': getFullMicroPythonApi,
-        'detectApiVersion': detectApiVersion,
+        'compatibleApi': compatibleApi,
     };
     if (typeof jasmine !== 'undefined' || typeof jest !== 'undefined') {
         // Add these private functions when running unit tests

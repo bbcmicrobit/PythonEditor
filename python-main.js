@@ -1463,6 +1463,10 @@ function web_editor(config) {
                 // Clear connecting timeout
                 clearTimeout(connectTimeout);
 
+                if (!microPythonApi.compatibleApi(window.dapwrapper.boardId, EDITOR.getCode())) {
+                    // TODO: Add to language strings
+                    throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
+                }
                 var flashData = FS.getBytesForBoardId(window.dapwrapper.boardId);
 
                 // Begin flashing
