@@ -415,8 +415,20 @@ Carry out this test in Chrome or a chrome-based browser:
 - [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
 - [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
 - [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
-- [ ] Type ``help()`` and confirm that you see a result. 
+- [ ] Type ``help()`` and confirm that you see a result.
 - [ ] Disconnect and confirm that menu returns to "Download" and "Connect".
+
+
+Test Case: Full Flash over WebUSB
+'''''''''''''''''''''''''''''''''
+This feature will only be available in the beta versions.
+Carry out this test in Chrome or a chrome-based browser:
+
+- Click the 'Beta Options' button.
+- Click the 'Quick Flash' toggle to disable it.
+- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
+- [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
+- [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
 
 
 Test Case: WebUSB not supported message is working
