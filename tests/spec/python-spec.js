@@ -26,8 +26,10 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             var dom_editor = $('#editor');
             expect(dom_editor.children().length).toBeGreaterThan(0);
             // It references the expected classes.
-            var expected_classes = ' ace_editor ace_hidpi ace-kr-theme ace_dark';
-            expect(dom_editor.attr('class')).toEqual(expected_classes);
+            var editorClasses = dom_editor.attr('class');
+            expect(editorClasses.indexOf('ace_editor')).toBeGreaterThan(-1);
+            expect(editorClasses.indexOf('ace-kr-theme')).toBeGreaterThan(-1);
+            expect(editorClasses.indexOf('ace_dark')).toBeGreaterThan(-1);
         });
 
         it("The expected theme is kr_theme.", function() {
