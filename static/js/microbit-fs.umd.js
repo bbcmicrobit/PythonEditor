@@ -4943,8 +4943,8 @@
 	    // Only account for magnetometer data for smaller flash size
 	    endAddress -= uicrData.flashPageSize;
 	  } else if (uicrData.flashSize === 0x80000) {
-	    // For the lager flash account for 56 KBs of bootloader
-	    endAddress -= 56 * 1024;
+	    // For the lager flash account for 68 KBs for bootloader and other pages (0x6F000)
+	    endAddress -= 68 * 1024;
 	  }
 	  return endAddress;
 	}
