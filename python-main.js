@@ -1467,7 +1467,11 @@ function web_editor(config) {
                     // TODO: Add to language strings
                     throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
                 }
-                var flashData = FS.getBytesForBoardId(window.dapwrapper.boardId);
+
+                // TODO: If the UICR is fixed in the future we can go back to only send the flash region without the whole hex data
+                var flashData = usePartialFlashing
+                    ? FS.getBytesForBoardId(window.dapwrapper.boardId)
+                    : FS.getIntelHexForBoardId(window.dapwrapper.boardId);
 
                 // Begin flashing
                 $('#webusb-flashing-loader').hide();

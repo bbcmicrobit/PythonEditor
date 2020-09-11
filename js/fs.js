@@ -89,6 +89,22 @@ var microbitFsWrapper = function() {
         }
     };
 
+    // TODO: doc this
+    fsWrapper.getIntelHexForBoardId = function(boardId) {
+        if (boardId == '9900' || boardId == '9901') {
+            var hexStr = fs1.getIntelHex();
+        } else if (boardId == '9903' || boardId == '9904') {
+            var hexStr = fs2.getIntelHex()
+        } else {
+            throw Error('Could not recognise the Board ID ' + boardId);
+        }
+        var hexBuffer = new Uint8Array(hexStr.length);
+        for (var i=0, strLen=hexStr.length; i < strLen; i++) {
+            hexBuffer[i] = hexStr.charCodeAt(i);
+        }
+        return hexBuffer.buffer;
+    };
+
     /**
      * Import the files from the provide hex string into the filesystem.
      * If the import is successful this deletes all the previous files.
