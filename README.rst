@@ -13,7 +13,7 @@ Developer Setup
 
 This editor works with any modern web browser.
 
-In addition to cloning the repository it is required to retrieve the GIT
+In addition for cloning the repository it is required to retrieve the GIT
 submodules::
 
     git clone https://github.com/bbcmicrobit/PythonEditor
@@ -37,7 +37,7 @@ for example::
 
 Or by double-clicking on the ``editor.html`` file from your file manager.
 
-**IMPORTANT**: When the editor is run from the file system, the "sharing"
+**IMPORTANT**: When the editor is running from the file system, the "sharing"
 button is hidden. Because of security reasons, many local browsers won't allow
 it to function correctly unless the editor is properly served from a network
 domain rather than directly from the file system.
