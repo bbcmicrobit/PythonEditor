@@ -10,7 +10,7 @@ BBC's micro:bit device (https://en.wikipedia.org/wiki/Micro_Bit).
 
 Developer Setup
 ---------------
-
+## Working condition of this editor.
 This editor works with any modern web browser.
 
 In addition to cloning the repository it is required to retrieve the GIT
@@ -37,7 +37,7 @@ for example::
 
 Or by double-clicking on the ``editor.html`` file from your file manager.
 
-**IMPORTANT**: When the editor is run from the file system, the "sharing"
+**IMPORTANT LINES**: When the editor is run from the file system, the "sharing"
 button is hidden. Because of security reasons, many local browsers won't allow
 it to function correctly unless the editor is properly served from a network
 domain rather than directly from the file system.
