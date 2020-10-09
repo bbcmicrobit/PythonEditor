@@ -1721,6 +1721,8 @@ function web_editor(config) {
             $("#modal-msg-overlay").click(function(e){
                 e.stopPropagation();
             });
+            $("#partial-flashing").hide();
+            $("#menu-switch-partial-flashing-label").hide();
         }
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
