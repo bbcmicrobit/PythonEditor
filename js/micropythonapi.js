@@ -4,7 +4,7 @@
 var microPythonApi = (function () {
     'use strict';
 
-    var uPyApi = {
+    var uPyBaseApi = {
         "microbit" : {
             "Image" : ["ALL_CLOCKS", "ANGRY", "ARROW_E", "ARROW_N", "ARROW_NE", "ARROW_NW", "ARROW_S", "ARROW_SE", "ARROW_SW", "ARROW_W", "ASLEEP", "BUTTERFLY", "CHESSBOARD", "CLOCK1", "CLOCK10", "CLOCK11", "CLOCK12", "CLOCK2", "CLOCK3", "CLOCK4", "CLOCK5", "CLOCK6", "CLOCK7", "CLOCK8", "CLOCK9", "CONFUSED", "COW", "DIAMOND", "DIAMOND_SMALL", "DUCK", "FABULOUS", "GHOST", "GIRAFFE", "HAPPY", "HEART", "HEART_SMALL", "HOUSE", "MEH", "MUSIC_CROTCHET", "MUSIC_QUAVER", "MUSIC_QUAVERS", "NO", "PACMAN", "PITCHFORK", "RABBIT", "ROLLERSKATE", "SAD", "SILLY", "SKULL", "SMILE", "SNAKE", "SQUARE", "SQUARE_SMALL", "STICKFIGURE", "SURPRISED", "SWORD", "TARGET", "TORTOISE", "TRIANGLE", "TRIANGLE_LEFT", "TSHIRT", "UMBRELLA", "XMAS", "YES"],
             "pin0" : ["is_touched", "read_analog", "read_digital", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
@@ -64,10 +64,10 @@ var microPythonApi = (function () {
     };
 
     var extraModules = {
-        "microbitProto": {
-            "Rhythms": ["SIMPLE", "TRIPLE", "SWUNG", "SYNCOPATED"],
-            "Effects":  ["HIGH_PITCH", "LOW_PITCH", "FADE_IN", "FADE_OUT", "REVERB", "ECHO", "HIGH_PASS", "LOW_PASS"],
-            "AudioProcessor": ["apply_effect"]
+        "microbit": {
+            "microphone": ["LOUD", "QUIET", "current_sound", "get_sounds", "is_sound", "sound_level", "was_sound"],
+            "pin_logo": ["is_touched"],
+            "pin_speaker": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"]
         }
     };
 
@@ -83,15 +83,15 @@ var microPythonApi = (function () {
             wordsHorizontal.push(module);
             if (Array.isArray(apiObj[module])){
                 apiObj[module].forEach(function(func) {
-                    wordsHorizontal.push(module + "." + func);
+                    wordsHorizontal.push(module + '.' + func);
                 });
             } else {
                 Object.keys(apiObj[module]).forEach(function(sub) {
-                    wordsHorizontal.push(module + "." + sub);
+                    wordsHorizontal.push(module + '.' + sub);
                     if (Array.isArray(apiObj[module][sub])) {
                         apiObj[module][sub].forEach(function(func) {
-                            wordsHorizontal.push(module + "." + sub + "." + func);
-                            wordsHorizontal.push(sub + "." + func);
+                            wordsHorizontal.push(module + '.' + sub + '.' + func);
+                            wordsHorizontal.push(sub + '.' + func);
                         });
                     }
                 });
@@ -107,8 +107,34 @@ var microPythonApi = (function () {
      *   available modules.
      */
     var getFullMicroPythonApi = function() {
-        return flattenApi(uPyApi).concat(flattenApi(extraModules));
+        var finalObj = $.extend(true, {}, uPyBaseApi, extraModules);
+        return flattenApi(finalObj);
     };
+
+    /**
+     * Generates the base API in a flat array needed for ACE autocompletion.
+     * 
+     * @return {string[]} Array with all the autocompletion combinations for
+     *   the base MicroPython API.
+     */
+    var getBaseMicroPythonApi = function() {
+        return flattenApi(uPyBaseApi);
+    };
+
+    /**
+     * Based on the board ID it generates the appropriate MicroPython API in a
+     * flat array needed for ACE autocompletion.
+     * 
+     * @return {string[]} Array with all the autocompletion combinations for
+     *   the MicroPython version relevant to the board ID.
+     */
+    var getCompatibleMicroPythonApi = function(boardId) {
+        if (boardId == '9903' || boardId == '9904') {
+            return getFullMicroPythonApi();
+        } else {
+            return getBaseMicroPythonApi();
+        }
+    }
 
     /**
      * Detect Python imports in the provided Python code string.
@@ -178,7 +204,7 @@ var microPythonApi = (function () {
         return imports;
     };
 
-    var compatibleApi = function(boardId, pyCode) {
+    var isApiUsedCompatible = function(boardId, pyCode) {
         if (boardId == '9903' || boardId == '9904') {
             return true;
         } else if (boardId == '9900' || boardId == '9901') {
@@ -198,7 +224,9 @@ var microPythonApi = (function () {
 
     var publicApi = {
         'getFullApi': getFullMicroPythonApi,
-        'compatibleApi': compatibleApi,
+        'getBaseApi': getBaseMicroPythonApi,
+        'getCompatibleMicroPythonApi': getCompatibleMicroPythonApi,
+        'isApiUsedCompatible': isApiUsedCompatible,
     };
     if (typeof jasmine !== 'undefined' || typeof jest !== 'undefined') {
         // Add these private functions when running unit tests

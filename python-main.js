@@ -60,7 +60,7 @@ doc.setAttribute('data-useragent', navigator.userAgent);
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
-function pythonEditor(id, autocompleteApi) {
+function pythonEditor(id) {
     'use strict';
 
     // An object that encapsulates the behaviour of the editor.
@@ -83,15 +83,17 @@ function pythonEditor(id, autocompleteApi) {
 
     // Configure Autocomplete
     var langTools = ace.require("ace/ext/language_tools");
-    var extraCompletions = (autocompleteApi || []).map(function(word) {
-        return { "caption": word, "value": word, "meta": "static" };
-    });
-    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
-        "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
-        "getCompletions": function(editor, session, pos, prefix, callback) {
-            callback(null, extraCompletions);
-        }
-    }]);
+    editor.setAutocompleteApi = function(autocompleteApi) {
+        var extraCompletions = (autocompleteApi || []).map(function(word) {
+            return { "caption": word, "value": word, "meta": "static" };
+        });
+        langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
+            "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
+            "getCompletions": function(editor, session, pos, prefix, callback) {
+                callback(null, extraCompletions);
+            }
+        }]);
+    };
 
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
@@ -480,6 +482,8 @@ function web_editor(config) {
         if(config.flags.experimental) {
             $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            // Set up autocomplete
+            EDITOR.setAutocompleteApi(microPythonApi.getBaseApi());
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
             $('#menu-switch-autocomplete-enter').prop("checked", false);
@@ -1220,6 +1224,10 @@ function web_editor(config) {
                     'message': 'connected'
                 }}));
 
+                // Update the Editor autocompletion MicroPython PI based on the board connected
+                var boardApi = microPythonApi.getCompatibleMicroPythonApi(window.dapwrapper.boardId);
+                EDITOR.setAutocompleteApi(boardApi);
+
                 // Change button to disconnect
                 $('#command-connect').hide();
                 $('#command-connecting').hide();
@@ -1463,10 +1471,11 @@ function web_editor(config) {
                 // Clear connecting timeout
                 clearTimeout(connectTimeout);
 
-                if (!microPythonApi.compatibleApi(window.dapwrapper.boardId, EDITOR.getCode())) {
-                    // TODO: Add to language strings
-                    throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
-                }
+                // TODO: Update the Api compatibility to take in consideration second level imports
+                //if (!microPythonApi.isApiUsedCompatible(window.dapwrapper.boardId, EDITOR.getCode())) {
+                //    // TODO: Add to language strings
+                //    throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
+                //}
 
                 // TODO: If the UICR is fixed in the future we can go back to only send the flash region without the whole hex data
                 var flashData = usePartialFlashing
