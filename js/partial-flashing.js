@@ -185,8 +185,8 @@ class DAPWrapper {
         PartialFlashingUtils.log("Detected board ID " + this.boardId);
         document.dispatchEvent(new CustomEvent("webusb", { detail: {
             "flash-type": "partial-flash",
-            "event-type": "board-id",
-            "message": this.boardId
+            "event-type": "info",
+            "message": "board-id/" + this.boardId,
         }}));
     }
 
