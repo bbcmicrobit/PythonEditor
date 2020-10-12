@@ -1477,17 +1477,16 @@ function web_editor(config) {
                 //    throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
                 //}
 
-                // TODO: If the UICR is fixed in the future we can go back to only send the flash region without the whole hex data
-                var flashData = usePartialFlashing
-                    ? FS.getBytesForBoardId(window.dapwrapper.boardId)
-                    : FS.getIntelHexForBoardId(window.dapwrapper.boardId);
-
+                // Collect data to flash, partial flashing can use just the flash bytes,
+                // but full flashing needs the entire Intel Hex to include the UICR data
+                var flashBytes = FS.getBytesForBoardId(window.dapwrapper.boardId);
+                var hexBuffer = FS.getIntelHexForBoardId(window.dapwrapper.boardId);
                 // Begin flashing
                 $('#webusb-flashing-loader').hide();
                 $('#webusb-flashing-progress').val(0).css('display', 'inline-block');
                 return usePartialFlashing
-                    ? PartialFlashing.flashAsync(window.dapwrapper, flashData, updateProgress)
-                    : PartialFlashing.fullFlashAsync(window.dapwrapper, flashData, updateProgress);
+                    ? PartialFlashing.flashAsync(window.dapwrapper, flashBytes, hexBuffer, updateProgress)
+                    : PartialFlashing.fullFlashAsync(window.dapwrapper, hexBuffer, updateProgress);
             })
             .then(function() {
                 // Show tick

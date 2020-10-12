@@ -551,6 +551,7 @@ let PartialFlashing = {
     // Write a single page of data to micro:bit ROM by writing it to micro:bit RAM and copying to ROM.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L385
     partialFlashPageAsync: function(dapwrapper, page, nextPage, i) {
+        // TODO: This short-circuits UICR, do we need to update this?
         if (page.targetAddr >= 0x10000000)
             return Promise.resolve();
 
@@ -598,7 +599,7 @@ let PartialFlashing = {
     // Flash the micro:bit's ROM with the provided image by only copying over the pages that differ.
     // Falls back to a full flash if partial flashing fails.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L335
-    partialFlashAsync: async function(dapwrapper, image, updateProgress) {
+    partialFlashAsync: async function(dapwrapper, flashBytes, hexBuffer, updateProgress) {
         let checksums;
         return this.getFlashChecksumsAsync(dapwrapper)
             .then(buf => {
@@ -607,7 +608,7 @@ let PartialFlashing = {
                 return dapwrapper.writeBlockAsync(this.loadAddr, this.flashPageBIN);
             })
             .then(async () => {
-                let aligned = PartialFlashingUtils.pageAlignBlocks(image, 0);
+                let aligned = PartialFlashingUtils.pageAlignBlocks(flashBytes, 0);
                 const totalPages = aligned.length;
                 PartialFlashingUtils.log("Total pages: " + totalPages);
                 aligned = PartialFlashingUtils.onlyChanged(aligned, checksums);
@@ -615,7 +616,7 @@ let PartialFlashing = {
 
                 if (aligned.length > (totalPages / 2)) {
                     try {
-                        await this.fullFlashAsync(dapwrapper, image, updateProgress);
+                        await this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
                     } catch(err) {
                         PartialFlashingUtils.log(err);
                         PartialFlashingUtils.log("Full flash failed, attempting partial flash.");
@@ -628,7 +629,7 @@ let PartialFlashing = {
                     } catch(err) {
                         PartialFlashingUtils.log(err);
                         PartialFlashingUtils.log("Partial flash failed, attempting full flash.");
-                        await this.fullFlashAsync(dapwrapper, image, updateProgress);
+                        await this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
                     }
                 }
 
@@ -695,7 +696,7 @@ let PartialFlashing = {
 
     // Flash the micro:bit's ROM with the provided image, resetting the micro:bit first.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L439
-    flashAsync: async function(dapwrapper, image, updateProgress) {
+    flashAsync: async function(dapwrapper, flashBytes, hexBuffer, updateProgress) {
         try {
             let p = Promise.resolve()
                 .then(() => {
@@ -727,11 +728,11 @@ let PartialFlashing = {
                         "event-type": "info",
                         "message": "flash-failed" + "/" + "attempting-full-flash"
                     }}));
-                    return this.fullFlashAsync(dapwrapper, image, updateProgress);
+                    return this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
                 } else {
                     // Start flashing
                     PartialFlashingUtils.log("Begin Flashing");
-                    return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                    return this.partialFlashAsync(dapwrapper, flashBytes, hexBuffer, updateProgress);
                 }
             })
             .finally(() => {

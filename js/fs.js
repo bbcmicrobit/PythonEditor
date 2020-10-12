@@ -45,14 +45,14 @@ var microbitFsWrapper = function() {
      * initial main.py
      */
     fsWrapper.setupFilesystem = function() {
-        var deferred1 = $.get('firmware.hex', function(fileStr) {
+        var deferred1 = $.get('micropython/microbit-micropython-v1.hex', function(fileStr) {
             fs1 = new microbitFs.MicropythonFsHex(fileStr, {
                 'maxFsSize': commonFsSize,
             });
         }).fail(function() {
             console.error('Could not load the MicroPython hex 1 file.');
         });
-        var deferred2 = $.get('firmware2.hex', function(fileStr) {
+        var deferred2 = $.get('micropython/microbit-micropython-v2.hex', function(fileStr) {
             fs2 = new microbitFs.MicropythonFsHex(fileStr, {
                 'maxFsSize': commonFsSize,
             });
@@ -89,7 +89,10 @@ var microbitFsWrapper = function() {
         }
     };
 
-    // TODO: doc this
+    /**
+     * @param {string} boardId String with the Board ID for the generation.
+     * @returns ArrayBuffer with the Intel Hex data for the given Board ID.
+     */
     fsWrapper.getIntelHexForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
             var hexStr = fs1.getIntelHex();
@@ -98,6 +101,7 @@ var microbitFsWrapper = function() {
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }
+        // iHex is ASCII so we can do a 1-to-1 conversion from chars to bytes
         var hexBuffer = new Uint8Array(hexStr.length);
         for (var i=0, strLen=hexStr.length; i < strLen; i++) {
             hexBuffer[i] = hexStr.charCodeAt(i);
