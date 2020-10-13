@@ -4578,23 +4578,28 @@
 	  }
 	});
 
-	// https://github.com/tc39/Array.prototype.includes
-
-	var $includes = _arrayIncludes(true);
-
-	_export(_export.P, 'Array', {
-	  includes: function includes(el /* , fromIndex = 0 */) {
-	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
-	  }
-	});
-
-	_addToUnscopables('includes');
-
+	/**
+	 * Interprets the data stored in the UICR memory space.
+	 *
+	 * For more info:
+	 * https://microbit-micropython.readthedocs.io/en/latest/devguide/hexformat.html
+	 *
+	 * (c) 2019 Micro:bit Educational Foundation and the microbit-fs contributors.
+	 * SPDX-License-Identifier: MIT
+	 */
+	var DEVICE_INFO = [{
+	  deviceVersion: 1,
+	  magicHeader: 0x17eeb07c,
+	  flashSize: 0x40000
+	}, {
+	  deviceVersion: 2,
+	  magicHeader: 0x47eeb07c,
+	  flashSize: 0x80000
+	}];
 	var UICR_START = 0x10001000;
 	var UICR_CUSTOMER_OFFSET = 0x80;
 	var UICR_CUSTOMER_UPY_OFFSET = 0x40;
 	var UICR_UPY_START = UICR_START + UICR_CUSTOMER_OFFSET + UICR_CUSTOMER_UPY_OFFSET;
-	var UPY_MAGIC_HEADER = [0x17eeb07c, 0x47eeb07c];
 	var UPY_MAGIC_LEN = 4;
 	var UPY_END_MARKER_LEN = 4;
 	var UPY_PAGE_SIZE_LEN = 4;
@@ -4687,7 +4692,16 @@
 
 	function confirmMagicValue(intelHexMap) {
 	  var readMagicHeader = getMagicValue(intelHexMap);
-	  return UPY_MAGIC_HEADER.includes(readMagicHeader);
+
+	  for (var _i = 0, DEVICE_INFO_1 = DEVICE_INFO; _i < DEVICE_INFO_1.length; _i++) {
+	    var device = DEVICE_INFO_1[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return true;
+	    }
+	  }
+
+	  return false;
 	}
 	/**
 	 * Reads the UICR data that contains the Magic Value that indicates the
@@ -4702,6 +4716,27 @@
 	  return getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.MagicValue);
 	}
 	/**
+	 * Reads the UICR data from an Intel Hex map and detects the device version.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns The micro:bit board version.
+	 */
+
+
+	function getDeviceVersion(intelHexMap) {
+	  var readMagicHeader = getMagicValue(intelHexMap);
+
+	  for (var _i = 0, DEVICE_INFO_2 = DEVICE_INFO; _i < DEVICE_INFO_2.length; _i++) {
+	    var device = DEVICE_INFO_2[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return device.deviceVersion;
+	    }
+	  }
+
+	  throw new Error('Cannot find device version, unknown UICR Magic value');
+	}
+	/**
 	 * Reads the UICR data from an Intel Hex map and retrieves the flash size.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
@@ -4711,13 +4746,16 @@
 
 	function getFlashSize(intelHexMap) {
 	  var readMagicHeader = getMagicValue(intelHexMap);
-	  if (readMagicHeader === UPY_MAGIC_HEADER[0]) {
-	    return 0x40000;
-	  } else if (readMagicHeader === UPY_MAGIC_HEADER[1]) {
-	    return 0x80000;
-	  } else {
-	    throw new Error('Unknwon UICR Magic value');
+
+	  for (var _i = 0, DEVICE_INFO_3 = DEVICE_INFO; _i < DEVICE_INFO_3.length; _i++) {
+	    var device = DEVICE_INFO_3[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return device.flashSize;
+	    }
 	  }
+
+	  throw new Error('Cannot find flash size, unknown UICR Magic value');
 	}
 	/**
 	 * Reads the UICR data that contains the flash page size.
@@ -4791,6 +4829,7 @@
 	  var pagesUsed = getPagesUsed(uicrMap);
 	  var versionAddress = getVersionLocation(uicrMap);
 	  var version = getStringFromIntelHexMap(intelHexMap, versionAddress);
+	  var deviceVersion = getDeviceVersion(uicrMap);
 	  return {
 	    flashPageSize: flashPageSize,
 	    flashSize: flashSize,
@@ -4801,7 +4840,8 @@
 	    uicrStartAddress: MicropythonUicrAddress.MagicValue,
 	    uicrEndAddress: MicropythonUicrAddress.End,
 	    versionAddress: versionAddress,
-	    version: version
+	    version: version,
+	    deviceVersion: deviceVersion
 	  };
 	}
 	/**
@@ -4909,12 +4949,23 @@
 	  var fsMaxSize = CHUNK_LEN * MAX_NUMBER_OF_CHUNKS; // We need to add the persistent data which is one page aligned after fs data
 
 	  fsMaxSize += uicrData.flashPageSize - fsMaxSize % uicrData.flashPageSize;
-	  // Removed as the current MicroPython implementation has persisten page inside the fs flash area
-	  // fsMaxSize += uicrData.flashPageSize; // Fs is placed at the end of flash, the space available from the MicroPython
+
+	  if (uicrData.deviceVersion === 1) {
+	    // TODO: v2 has persistent page inside the fs flash area
+	    fsMaxSize += uicrData.flashPageSize;
+	  }
+
+	  var runtimeEndAddress = uicrData.runtimeEndAddress;
+
+	  if (uicrData.deviceVersion === 2) {
+	    // TODO: MicroPython for v2 is currently reserving a page for future expansion
+	    runtimeEndAddress += uicrData.flashPageSize;
+	  } // Fs is placed at the end of flash, the space available from the MicroPython
 	  // end to the end of flash might be larger than the fs max possible size
 
+
 	  var fsMaxSizeStartAddress = getEndAddress(intelHexMap) - fsMaxSize;
-	  var startAddress = Math.max(uicrData.runtimeEndAddress, fsMaxSizeStartAddress); // Ensure the start address is aligned with the page size
+	  var startAddress = Math.max(runtimeEndAddress, fsMaxSizeStartAddress); // Ensure the start address is aligned with the page size
 
 	  if (startAddress % uicrData.flashPageSize) {
 	    throw new Error('File system start address from UICR does not align with flash page size.');
@@ -4936,16 +4987,20 @@
 
 	function getEndAddress(intelHexMap) {
 	  var uicrData = getHexMapUicrData(intelHexMap);
-	  var endAddress = isAppendedScriptPresent(intelHexMap) ? exports.AppendedBlock.StartAdd : uicrData.flashSize; // Magnetometer calibration data is one flash page
+	  var endAddress = isAppendedScriptPresent(intelHexMap) ? exports.AppendedBlock.StartAdd : uicrData.flashSize;
 
-	  
-	  if (uicrData.flashSize === 0x40000) {
-	    // Only account for magnetometer data for smaller flash size
+	  if (uicrData.deviceVersion === 1) {
+	    // In v1 the magnetometer calibration data takes one flash page
 	    endAddress -= uicrData.flashPageSize;
-	  } else if (uicrData.flashSize === 0x80000) {
-	    // For the lager flash account for 68 KBs for bootloader and other pages (0x6F000)
+	  } else if (uicrData.deviceVersion === 2) {
+	    // TODO: For v2 72 KBs are used for bootloader and other pages (0x6E000)
+	    // endAddress -= 72 * 1024;
+	    // TODO: for the current release we need to overlap this page
 	    endAddress -= 68 * 1024;
+	  } else {
+	    throw new Error('Unknown device flash map');
 	  }
+
 	  return endAddress;
 	}
 	/**
