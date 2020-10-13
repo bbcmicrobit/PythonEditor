@@ -1,3 +1,17 @@
+2.0.1
+-----
+* Added Chinese translations 🇨🇳 (#306 #316)
+* Fix issue downloading Python files in Safari (#298)
+* Accessibility improvements (#290 #299 #301 #304 #303 #302 #310 #313 #315)
+* Improve button text for readability by adding text shadow (#307)
+* Fix UI issue with the WebUSB connection spinner position (#300)
+* Fix issue with WebUSB error modal links not working (#317)
+* Focus the serial terminal when REPL button is pressed (#314)
+* WebUSB reliability improvements
+* Updates on the manual test checklist (#296)
+* Doc updates (#305)
+* Test updates (#326)
+
 2.0.0
 -----
 * Added Croatian language 🇭🇷 (#294)
