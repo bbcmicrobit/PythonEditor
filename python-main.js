@@ -60,37 +60,13 @@ doc.setAttribute('data-useragent', navigator.userAgent);
 Returns an object that defines the behaviour of the Python editor. The editor
 is attached to the div with the referenced id.
 */
-function pythonEditor(id, autocompleteApi) {
+function pythonEditor(id) {
     'use strict';
 
     // An object that encapsulates the behaviour of the editor.
     var editor = {};
     editor.initialFontSize = 22;
     editor.fontSizeStep = 4;
-
-    // Generates an expanded list of words for the ACE autocomplete to digest.
-    var fullWordList = function(apiObj) {
-        var wordsHorizontal = [];
-        Object.keys(apiObj).forEach(function(module) {
-            wordsHorizontal.push(module);
-            if (Array.isArray(apiObj[module])){
-                apiObj[module].forEach(function(func) {
-                    wordsHorizontal.push(module + "." + func);
-                });
-            } else {
-                Object.keys(apiObj[module]).forEach(function(sub) {
-                    wordsHorizontal.push(module + "." + sub);
-                    if (Array.isArray(apiObj[module][sub])) {
-                        apiObj[module][sub].forEach(function(func) {
-                            wordsHorizontal.push(module + "." + sub + "." + func);
-                            wordsHorizontal.push(sub + "." + func);
-                        });
-                    }
-                });
-            }
-        });
-        return (wordsHorizontal);
-    };
 
     // Represents the ACE based editor.
     var ACE = ace.edit(id);  // The editor is in the tag with the referenced id.
@@ -107,15 +83,17 @@ function pythonEditor(id, autocompleteApi) {
 
     // Configure Autocomplete
     var langTools = ace.require("ace/ext/language_tools");
-    var extraCompletions = fullWordList(autocompleteApi || []).map(function(word) {
-        return { "caption": word, "value": word, "meta": "static" };
-    });
-    langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
-        "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
-        "getCompletions": function(editor, session, pos, prefix, callback) {
-            callback(null, extraCompletions);
-        }
-    }]);
+    editor.setAutocompleteApi = function(autocompleteApi) {
+        var extraCompletions = (autocompleteApi || []).map(function(word) {
+            return { "caption": word, "value": word, "meta": "static" };
+        });
+        langTools.setCompleters([langTools.keyWordCompleter, langTools.textCompleter, {
+            "identifierRegexps": [/[a-zA-Z_0-9\.\-\u00A2-\uFFFF]/],
+            "getCompletions": function(editor, session, pos, prefix, callback) {
+                callback(null, extraCompletions);
+            }
+        }]);
+    };
 
     editor.enableAutocomplete = function(enable) {
         ACE.setOption('enableBasicAutocompletion', enable);
@@ -396,21 +374,20 @@ function web_editor(config) {
     var BLOCKS = blocks();
     var TRANSLATIONS = translations();
 
+    // Generating MicroPython hex with user code in the filesystem
+    window.FS = microbitFsWrapper();
+
     // Represents the REPL terminal
     var REPL = null;
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
 
-    var inIframe = window !== window.parent;
-
     // Indicate if editor can listen and respond to messages
+    var inIframe = window !== window.parent;
     var controllerMode = inIframe && urlparse("controller") === "1";
 
     var usePartialFlashing = true;
-
-    // MicroPython filesystem to be initialised on page load.
-    window.micropythonFs = undefined;
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
@@ -505,6 +482,8 @@ function web_editor(config) {
         if(config.flags.experimental) {
             $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
+            // Set up autocomplete
+            EDITOR.setAutocompleteApi(microPythonApi.getBaseApi());
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
             $('#menu-switch-autocomplete-enter').prop("checked", false);
@@ -519,16 +498,13 @@ function web_editor(config) {
         }).join("&");
         helpAnchor.attr("href", helpAnchor.attr("href") + "?" + featureQueryString);
 
+        // Enable WebUSB if available in this browser
         if (navigator.usb) {
             script('static/js/dap.umd.js');
             script('static/js/hterm_all.min.js');
-            script('partial-flashing.js');
+            script('js/partial-flashing.js');
         }
     }
-
-    // Update the docs link to append MicroPython version
-    var docsAnchor = $("#docs-link");
-    docsAnchor.attr("href", docsAnchor.attr("href") + "en/" + "v" + UPY_VERSION);
 
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
@@ -668,15 +644,6 @@ function web_editor(config) {
       });
     }
 
-    // Sets up the file system and adds the initial main.py
-    function setupFilesystem() {
-        micropythonFs = new microbitFs.MicropythonFsHex($('#firmware').text());
-        // Limit filesystem size to 20K
-        micropythonFs.setStorageSize(20 * 1024);
-        // The the current main.py
-        micropythonFs.write('main.py', EDITOR.getCode());
-    }
-
     // Based on the Python code magic comment it detects a module
     function isPyModule(codeStr) {
         var isModule = false;
@@ -699,7 +666,7 @@ function web_editor(config) {
         var moduleName = filename.replace('.py', '');
         filename = isModule ? filename : 'main.py';
         var showModuleLoadedAlert = true;
-        if (isModule && micropythonFs.exists(filename)) {
+        if (isModule && FS.exists(filename)) {
             if (!confirm(config.translate.confirms.replace_module.replace('{{module_name}}', moduleName))) {
                 return;
             }
@@ -708,7 +675,7 @@ function web_editor(config) {
         }
         if (codeStr) {
             try {
-                micropythonFs.write(filename, codeStr);
+                FS.write(filename, codeStr);
             } catch(e) {
                 alert(config.translate.alerts.load_code + '\n' + e.message);
             }
@@ -716,8 +683,8 @@ function web_editor(config) {
             return alert(config.translate.alerts.empty);
         }
         if (isModule) {
-            if (micropythonFs.getStorageRemaining() < 0){
-                micropythonFs.remove(filename);
+            if (FS.getStorageRemaining() < 0){
+                FS.remove(filename);
                 return alert(config.translate.alerts.module_out_of_space);
             }
             if (showModuleLoadedAlert) {
@@ -731,41 +698,21 @@ function web_editor(config) {
 
     // Reset the filesystem and load the files from this hex file to the fs and editor
     function loadHex(filename, hexStr) {
-        var errorMsg = '';
-        var code = '';
         var importedFiles = [];
-        var tryOldMethod = false;
         try {
             // If hexStr is parsed correctly it formats the file system before adding the new files
-            importedFiles = micropythonFs.importFilesFromIntelHex(hexStr, {
-                overwrite: true,
-                formatFirst:true
-            });
-            // Check if imported files includes a main.py file
-            if (importedFiles.indexOf('main.py') > -1) {
-                code = micropythonFs.read('main.py');
-            } else {
-                // There is no main.py file, but there could be appended code
-                tryOldMethod = true;
-                errorMsg += config.translate.alerts.no_main + '\n';
-            }
+            importedFiles = FS.importFiles(hexStr);
         } catch(e) {
-           tryOldMethod = true;
-           errorMsg += e.message + '\n';
+            return alert(config.translate.alerts.no_python + '\n\n' +
+                         config.translate.alerts.error + '\n' +
+                         e.message);
         }
-        if (tryOldMethod) {
-            try {
-                code = microbitFs.getIntelHexAppendedScript(hexStr);
-                micropythonFs.write('main.py', code);
-            } catch(e) {
-                // Only display an error if there were no files added to the filesystem
-                if (!importedFiles.length) {
-                    errorMsg += config.translate.alerts.no_script + '\n';
-                    errorMsg += e.message;
-                    return alert(config.translate.alerts.no_python + '\n\n' +
-                            config.translate.alerts.error + errorMsg);
-                }
-            }
+        // Check if imported files includes a main.py file
+        var code = '';
+        if (importedFiles.indexOf('main.py') > -1) {
+            code = FS.read('main.py');
+        } else {
+            alert(config.translate.alerts.no_main);
         }
         setName(filename.replace('.hex', ''));
         EDITOR.setCode(code);
@@ -774,7 +721,7 @@ function web_editor(config) {
     // Function for adding file to filesystem
     function loadFileToFilesystem(filename, fileBytes) {
         // Check if file already exists and confirm overwrite
-        if (filename !== 'main.py' && micropythonFs.exists(filename)) {
+        if (filename !== 'main.py' && FS.exists(filename)) {
             if (!confirm(config.translate.confirms.replace_file.replace('{{file_name}}', filename))) {
                 return;
             }
@@ -784,12 +731,12 @@ function web_editor(config) {
             return;
         }
         try {
-            micropythonFs.write(filename, fileBytes);
+            FS.write(filename, fileBytes);
             // Check if the filesystem has run out of space
-            var _ = micropythonFs.getIntelHex();
+            var _ = FS.getIntelHex();
         } catch(e) {
-            if (micropythonFs.exists(filename)) {
-                micropythonFs.remove(filename);
+            if (FS.exists(filename)) {
+                FS.remove(filename);
             }
             return alert(config.translate.alerts.cant_add_file + filename + '\n' + e.message);
         }
@@ -805,12 +752,12 @@ function web_editor(config) {
         // Safari before v10 had issues downloading a file blob
         if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.save);
-            var output = micropythonFs.read(filename);
+            var output = FS.read(filename);
             window.open('data:application/octet;charset=utf-8,' + encodeURIComponent(output), '_newtab');
             return;
         }
         // This works in all other browsers
-        var output = micropythonFs.readBytes(filename);
+        var output = FS.readBytes(filename);
         var blob = new Blob([output], { 'type': 'text/plain' });
         if (filename === 'main.py') {
             filename = getSafeName() + '.py';
@@ -823,21 +770,21 @@ function web_editor(config) {
         var modulesSize = 0;
         var otherSize = 0;
         var mainSize = 0;
-        var totalSpace = micropythonFs.getStorageSize();
+        var totalSpace = FS.getStorageSize();
         try {
-            micropythonFs.write('main.py', EDITOR.getCode());
-            mainSize = micropythonFs.size('main.py');
+            updateMain();
+            mainSize = FS.size('main.py');
         } catch(e) {
             // No need to do any action with an error, just keep the size 0
         }
-        micropythonFs.ls().forEach(function(filename) {
+        FS.ls().forEach(function(filename) {
             var extension = filename.split('.').pop();
             if (extension === 'py') {
                 if (filename !== 'main.py') {
-                    modulesSize += micropythonFs.size(filename);
+                    modulesSize += FS.size(filename);
                 }
             } else {
-                otherSize += micropythonFs.size(filename);
+                otherSize += FS.size(filename);
             }
         });
         var firstTrFound = false;
@@ -870,7 +817,7 @@ function web_editor(config) {
     function updateFileTables(loadStrings) {
         // Delete the current table body content and add rows file by file
         $('.fs-file-list table tbody').empty();
-        micropythonFs.ls().forEach(function(filename) {
+        FS.ls().forEach(function(filename) {
             var pseudoUniqueId = Math.random().toString(36).substr(2, 9);
             var name = filename;
             var disabled = '';
@@ -880,7 +827,7 @@ function web_editor(config) {
             }
             $('.fs-file-list table tbody').append(
                 '<tr><td>' + name + '</td>' +
-                '<td>' + (micropythonFs.size(filename)/1024).toFixed(2) + ' Kb</td>' +
+                '<td>' + (FS.size(filename)/1024).toFixed(2) + ' Kb</td>' +
                 '<td><button id="' + pseudoUniqueId + '_remove" class="action save-button remove ' + disabled + '" title='+ loadStrings["remove-but"] + ' ' + disabled + '><i class="fa fa-trash"></i></button>' +
                 '<button id="' + pseudoUniqueId + '_save" class="action save-button save" title='+ loadStrings["save-but"] +'><i class="fa fa-download"></i></button></td></tr>'
             );
@@ -888,7 +835,7 @@ function web_editor(config) {
                 downloadFileFromFilesystem(filename);
             });
             $('#' + pseudoUniqueId + '_remove').click(function(e) {
-                micropythonFs.remove(filename);
+                FS.remove(filename);
                 updateFileTables(loadStrings);
                 var content = $('.expandable-content')[0];
                 content.style.maxHeight = content.scrollHeight + "px";
@@ -897,30 +844,23 @@ function web_editor(config) {
         updateStorageBar();
     }
 
-    // Generates the text for a hex file with MicroPython and the user code
-    function generateFullHex(format) {
-        var fullHex;
+    // Update main.py code with required rules for including or excluding the file
+    function updateMain() {
         try {
             // Remove main.py if editor content is empty to download a hex file
-            // that includes the filesystem but doesn't try to run any code
-            if (!EDITOR.getCode()) {
-                if (micropythonFs.exists('main.py')) {
-                    micropythonFs.remove('main.py');
+            // with MicroPython included (also includes the rest of the filesystem)
+            var mainCode = EDITOR.getCode();
+            if (!mainCode) {
+                if (FS.exists('main.py')) {
+                    FS.remove('main.py');
                 }
             } else {
-                micropythonFs.write('main.py', EDITOR.getCode());
-            }
-            // Generate hex file
-            if(format == "bytes") {
-                fullHex = micropythonFs.getIntelHexBytes();
-            } else {
-                fullHex = micropythonFs.getIntelHex();
+                FS.write('main.py', mainCode);
             }
         } catch(e) {
             // We generate a user readable error here to be caught and displayed
             throw new Error(config.translate.alerts.load_code + '\n' + e.message);
         }
-        return fullHex;
     }
 
     // Trap focus in modal and pass focus to first actionable element
@@ -964,9 +904,10 @@ function web_editor(config) {
     // This function describes what to do when the download button is clicked.
     function doDownload() {
         try {
-            var output = generateFullHex("string");
+            updateMain();
+            var output = FS.getUniversalHex();
         } catch(e) {
-            alert(config.translate.alerts.error + e.message);
+            alert(config.translate.alerts.error + '\n' + e.message);
             return;
         }
         // Safari before v10 had issues downloading the file blob
@@ -988,6 +929,7 @@ function web_editor(config) {
             modalMsg(config['translate']['load']['invalid-file-title'], config['translate']['load']['extension-warning'],"");
         }
     }
+
     // Describes what to do when the save/load button is clicked.
     function doFiles() {
         var template = $('#files-template').html();
@@ -998,13 +940,13 @@ function web_editor(config) {
             content: Mustache.render(template, loadStrings),
             afterOpen: function(vexContent) {
                 focusModal("#files-modal");
-                $("#show-files").attr("title", loadStrings["show-files"] +" (" + micropythonFs.ls().length + ")");
-                document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                $('#show-files').attr('title', loadStrings['show-files'] +' (' + FS.ls().length + ')');
+                document.getElementById('show-files').innerHTML = loadStrings['show-files'] + ' (' + FS.ls().length + ') <i class="fa fa-caret-down">';
                 $('#save-hex').click(function() {
                     doDownload();
                 });
                 $('#save-py').click(function() {
-                    if (micropythonFs.ls().length > 1) {
+                    if (FS.ls().length > 1) {
                         if (!confirm(config.translate.confirms.download_py_multiple.replace('{{file_name}}', getSafeName() + '.py'))) {
                             return;
                         }
@@ -1028,8 +970,8 @@ function web_editor(config) {
                     content.style.maxHeight = null;
                     $("#hide-files").attr("id", "show-files");
                     $("#show-files").attr("aria-expanded","false");
-                    $("#show-files").attr("title", loadStrings["show-files"] + " (" + micropythonFs.ls().length + ")");
-                    document.getElementById("show-files").innerHTML = loadStrings["show-files"] + " (" + micropythonFs.ls().length + ") <i class='fa fa-caret-down'>";
+                    $('#show-files').attr('title', loadStrings['show-files'] + ' (' + FS.ls().length + ')');
+                    document.getElementById('show-files').innerHTML = loadStrings['show-files'] + ' (' + FS.ls().length + ') <i class="fa fa-caret-down">';
                   } else {
                     content.style.maxHeight = content.scrollHeight + "px";
                     $("#show-files").attr("id", "hide-files");
@@ -1272,55 +1214,28 @@ function web_editor(config) {
         // Show error on WebUSB Disconnect Events
         navigator.usb.addEventListener('disconnect', showDisconnectError);
 
-        var p = Promise.resolve();
-        if (usePartialFlashing) {
-            console.log("Connecting: Using Quick Flash");
-            p = PartialFlashing.connectDapAsync();
-        }
-        else {
-            console.log("Connecting: Using Full Flash");
-            p = navigator.usb.requestDevice({
-                filters: [{vendorId: 0x0d28, productId: 0x0204}]
-            }).then(function(device) {
-                // Connect to device
-                window.transport = new DAPjs.WebUSB(device);
-                window.daplink = new DAPjs.DAPLink(window.transport);
-
-                // Ensure disconnected
-                window.daplink.disconnect().catch(function(e) {
-                    // Do nothing if already disconnected
-                });
-
-                // Connect to board
-                return window.daplink.connect();
-            })
+        console.log("Connecting WebUSB");
+        return PartialFlashing.connectDapAsync()
             .then(function() {
-                console.log('Connection Complete');
+                // Dispatch event for listeners
+                document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                    'flash-type': 'webusb',
+                    'event-type': 'info',
+                    'message': 'connected'
+                }}));
+
+                // Update the Editor autocompletion MicroPython PI based on the board connected
+                var boardApi = microPythonApi.getCompatibleMicroPythonApi(window.dapwrapper.boardId);
+                EDITOR.setAutocompleteApi(boardApi);
+
+                // Change button to disconnect
+                $('#command-connect').hide();
+                $('#command-connecting').hide();
+                $('#command-disconnect').show();
+                // Change download to flash
+                $('#command-download').hide();
+                $('#command-flash').show();
             });
-        }
-
-        return p.then(function() {
-            // Dispatch event for listeners
-            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
-                'flash-type': 'webusb',
-                'event-type': 'info',
-                'message': 'connected'
-            }}));
-
-            // Change button to disconnect
-            $("#command-connect").hide();
-            $("#command-connecting").hide();
-            $("#command-disconnect").show();
-
-            // Change download to flash
-            $("#command-download").hide();
-            $("#command-flash").show();
-
-            if (serial) {
-                doSerial();
-            }
-        })
-        .catch(webusbErrorHandler);
     }
 
     function webusbErrorHandler(err) {
@@ -1399,6 +1314,11 @@ function web_editor(config) {
                     errorDescription += '<br>' + config["translate"]["webusb"]["err"]["partial-flashing-disable"];
                 }
                 break;
+            case "undefined":
+                console.log('Unexpected error received is undefined.');
+                // Defining something so that he rest of the function has something to query
+                err = 'Undefined error';
+                // Intentional fall-through to run default code as well
             default:
                 // Unexpected error type
                 console.log("Unexpected error type: " + typeof(err) );
@@ -1456,16 +1376,14 @@ function web_editor(config) {
             }
         });
 
-        // Send event
+        // Sanitise error message, replace all special chars with '-', if last char is '-' remove it
         var errorMessage = (err.message ? (err.message.replace(/\W+/g, '-').replace(/\W$/, '').toLowerCase()) : "");
-        // Append error message, replace all special chars with '-', if last char is '-' remove it
-        var details = {
-                "flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), 
-                "event-type": ((err.name == "device-disconnected") ? "info" : "error"), 
-                "message": errorType + "/" + errorMessage
-        };
-
-        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
+        // Send event
+        document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+            'flash-type': usePartialFlashing ? 'partial-flash' : 'full-flash',
+            'event-type': (err.name == 'device-disconnected') ? 'info' : 'error',
+            'message': errorType + '/' + errorMessage
+        }}));
     }
 
     function doDisconnect() {
@@ -1473,9 +1391,7 @@ function web_editor(config) {
         navigator.usb.removeEventListener('disconnect', showDisconnectError);
 
         // Hide serial and disconnect if open
-        if ($("#repl").css('display') != 'none') {
-            closeSerial();
-        }
+        if ($('#repl').is(':visible')) closeSerial();
 
         // Change button to connect
         $("#command-disconnect").hide();
@@ -1486,49 +1402,47 @@ function web_editor(config) {
         $("#command-flash").hide();
         $("#command-download").show();
 
-        var p = Promise.resolve();
-
-        if (usePartialFlashing && window.dapwrapper) {
-            console.log('Disconnecting: Using Quick Flash');
-            p = p.then(function() { return window.dapwrapper.disconnectAsync() });
+        console.log('Disconnecting WebUSB');
+        if (window.dapwrapper) {
+            return window.dapwrapper.disconnectAsync()
+                .catch(function(err) {
+                    console.log('Error during disconnection:\r\n' + err);
+                    console.trace();
+                    document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                        'flash-type': 'webusb',
+                        'event-type': 'error',
+                        'message': 'error-disconnecting'
+                    }}));
+                })
+                .finally(function() {
+                    console.log('Disconnection Complete');
+                    document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+                        'flash-type': 'webusb',
+                        'event-type': 'info',
+                        'message': 'disconnected'
+                    }}));
+                });
+        } else {
+            return Promise.resolve();
         }
-        else if (window.daplink) {
-            console.log('Disconnecting: Using Full Flash');
-            p = p.then(function() { return window.daplink.disconnect() });
-        }
-
-        p = p.catch(function() {
-            console.log('Error during disconnection');
-            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
-                'flash-type': 'webusb',
-                'event-type': 'error',
-                'message': 'error-disconnecting'
-            }}));
-        }).finally(function() {
-            console.log('Disconnection Complete');
-            document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
-                'flash-type': 'webusb',
-                'event-type': 'info',
-                'message': 'disconnected'
-            }}));
-        });
-
-        return p;
     }
 
     function doFlash() {
         var startTime = new Date().getTime();
 
         // Hide serial and disconnect if open
-        if ($("#repl").css('display') != 'none') {
-            closeSerial();
-        }
+        if ($('#repl').is(':visible')) closeSerial();
 
-        // Get the hex to flash in bytes format, exit if there is an error
+        // Update main.py and check we don't run out of filesystem space
         try {
-            var output = generateFullHex('bytes');
+            updateMain();
+            var freeFsSpace = FS.getStorageRemaining();
+            if (freeFsSpace < 0) {
+                // TODO: Create new string for translation
+                throw Error('There is no storage space left.')
+            }
         } catch(e) {
-            return alert(config.translate.alerts.error + e.message);
+            return alert(config.translate.alerts.error + '\n' + e.message);
         }
 
         $("#webusb-flashing-progress").val(0).hide();
@@ -1538,75 +1452,70 @@ function web_editor(config) {
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
 
-        var connectTimeout = setTimeout(function() {
-            var error = {"name": "timeout-error", "message": config["translate"]["webusb"]["err"]["timeout-error"]};
-            webusbErrorHandler(error);
-        }, 10000);
-
         var updateProgress = function(progress) {
             $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
         };
 
-        var p = Promise.resolve();
-        if (usePartialFlashing) {
-            p = window.dapwrapper.disconnectAsync()
-                .then(function() {
-                    return PartialFlashing.connectDapAsync();
-                })
-                .then(function() {
-                    // Clear connecting timeout
-                    clearTimeout(connectTimeout);
+        var connectTimeout = setTimeout(function() {
+            webusbErrorHandler({
+                'name': 'timeout-error',
+                'message': config['translate']['webusb']['err']['timeout-error']
+            });
+        }, 10 * 1000);
 
-                    // Begin flashing
-                    $("#webusb-flashing-loader").hide();
-                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
-                    return PartialFlashing.flashAsync(window.dapwrapper, output, updateProgress);
-                });
-        }
-        else {
-            // Push binary to board
-            console.log("Starting Full Flash");
-            p = window.daplink.connect()
-                .then(function() {
-                    // Clear connecting timeout
-                    clearTimeout(connectTimeout);
+        return window.dapwrapper.disconnectAsync()
+            .then(function() {
+                return PartialFlashing.connectDapAsync();
+            })
+            .then(function() {
+                // Clear connecting timeout
+                clearTimeout(connectTimeout);
 
-                    // Event to monitor flashing progress
-                    window.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
+                // TODO: Update the Api compatibility to take in consideration second level imports
+                //if (!microPythonApi.isApiUsedCompatible(window.dapwrapper.boardId, EDITOR.getCode())) {
+                //    // TODO: Add to language strings
+                //    throw new Error('One ore more of the modules used in this script are not available in this version of MicroPython.');
+                //}
 
-                    // Encode firmware for flashing
-                    var enc = new TextEncoder();
-                    var image = enc.encode(output).buffer;
+                // Collect data to flash, partial flashing can use just the flash bytes,
+                // but full flashing needs the entire Intel Hex to include the UICR data
+                var flashBytes = FS.getBytesForBoardId(window.dapwrapper.boardId);
+                var hexBuffer = FS.getIntelHexForBoardId(window.dapwrapper.boardId);
+                // Begin flashing
+                $('#webusb-flashing-loader').hide();
+                $('#webusb-flashing-progress').val(0).css('display', 'inline-block');
+                return usePartialFlashing
+                    ? PartialFlashing.flashAsync(window.dapwrapper, flashBytes, hexBuffer, updateProgress)
+                    : PartialFlashing.fullFlashAsync(window.dapwrapper, hexBuffer, updateProgress);
+            })
+            .then(function() {
+                // Show tick
+                $('#webusb-flashing-progress').hide();
+                $('#webusb-flashing-complete').show();
 
-                    $("#webusb-flashing-loader").hide();
-                    $("#webusb-flashing-progress").val(0).css("display", "inline-block");
-                    return window.daplink.flash(image);
-                });
-        }
+                // Send flash timing event
+                var timeTaken = (new Date().getTime()) - startTime;
+                document.dispatchEvent(new CustomEvent('webusb', { detail: {
+                    'flash-type' : (usePartialFlashing ? 'partial-flash' : 'full-flash'),
+                    'event-type': 'flash-time',
+                    'message': timeTaken
+                }}));
+                console.log("Flash complete");
 
-        return p.then(function() {
-            // Show tick
-            $("#webusb-flashing-progress").hide();
-            $("#webusb-flashing-complete").show();
-
-            // Send flash timing event
-            var timeTaken = (new Date().getTime() - startTime);
-            var details = {"flash-type": (usePartialFlashing ? "partial-flash" : "full-flash"), "event-type": "flash-time", "message": timeTaken};
-            document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-
-            console.log("Flash complete");
-
-            // Close overview
-            setTimeout(flashErrorClose, 500);
-        })
-        .catch(webusbErrorHandler)
-        .finally(function() {
-            // Remove event listener
-            window.removeEventListener("unhandledrejection", webusbErrorHandler);
-        });
+                // Close overview
+                setTimeout(flashErrorClose, 500);
+            })
+            .catch(function(err) {
+                clearTimeout(connectTimeout);
+                return webusbErrorHandler(err);
+            })
+            .finally(function() {
+                // Remove event listener
+                window.removeEventListener('unhandledrejection', webusbErrorHandler);
+            });
     }
 
-    function closeSerial(keepSession) {
+    function closeSerial() {
         console.log("Closing Serial Terminal");
         $('#repl').empty();
         $('#repl').hide();
@@ -1618,9 +1527,10 @@ function web_editor(config) {
         $('#command-serial').attr('title', serialButton['title']);
         $('#command-serial > .roundlabel').text(serialButton['label']);
 
-        var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-        daplink.stopSerialRead();
-        daplink.removeAllListeners(DAPjs.DAPLink.EVENT_SERIAL_DATA);
+        if (window.dapwrapper) {
+            window.dapwrapper.daplink.stopSerialRead();
+            window.dapwrapper.daplink.removeAllListeners(DAPjs.DAPLink.EVENT_SERIAL_DATA);
+        }
         REPL.uninstallKeyboard();
         REPL.io.pop();
         REPL = null;
@@ -1628,36 +1538,39 @@ function web_editor(config) {
 
     function doSerial() {
         // Hide terminal if it is currently shown
-        var serialButton = config["translate"]["static-strings"]["buttons"]["command-serial"];
-        if ($("#repl").css('display') != 'none') {
+        if ($('#repl').is(':visible')) {
             closeSerial();
             return;
         }
 
-        console.log("Setting Up Serial Terminal");
-        // Check if we need to connect
-        if ($("#command-connect").is(":visible")){
-            doConnect(true);
-        } else {
-            // Change Serial button to close
-            $("#command-serial").attr("title", serialButton["title-close"]);
-            $("#command-serial > .roundlabel").text(serialButton["label-close"]);
-
-            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-
-            daplink.connect()
-            .then( function() {
-                return daplink.setSerialBaudrate(115200);
+        console.log('Setting Up Serial Terminal');
+        return Promise.resolve()
+            .then(function() {
+                // Connect first if not done already
+                if ($('#command-connect').is(':visible')) {
+                    return doConnect();
+                }
+                return Promise.resolve();
             })
-            .then( function() {
-                return daplink.getSerialBaudrate();
+            .then(function() {
+                return window.dapwrapper.disconnectAsync();
             })
-            .then(function(baud) {
-                daplink.startSerialRead(1);
+            .then(function() {
+                return window.dapwrapper.daplink.connect();
+            })
+            .then(function() {
+                // Change Serial button to close
+                var serialButton = config['translate']['static-strings']['buttons']['command-serial'];
+                $('#command-serial').attr('title', serialButton['title-close']);
+                $('#command-serial > .roundlabel').text(serialButton['label-close']);
+
+                return window.dapwrapper.daplink.setSerialBaudrate(115200);
+            })
+            .then(function() {
+                window.dapwrapper.daplink.startSerialRead(1);
                 lib.init(setupHterm);
             })
             .catch(webusbErrorHandler);
-        }
     }
 
     function setupHterm() {
@@ -1670,21 +1583,19 @@ function web_editor(config) {
             REPL.onTerminalReady = function() {
                 var io = REPL.io.push();
                 io.onVTKeystroke = function(str) {
-                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    window.dapwrapper.daplink.serialWrite(str);
                 };
                 io.sendString = function(str) {
-                    var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-                    daplink.serialWrite(str);
+                    window.dapwrapper.daplink.serialWrite(str);
                 };
                 io.onTerminalResize = function(columns, rows) {
                 };
+                REPL.focus();
             };
             REPL.decorate(document.querySelector('#repl'));
             REPL.installKeyboard();
 
-            var daplink = usePartialFlashing ? window.dapwrapper.daplink : window.daplink;
-            daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+            window.dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
                 REPL.io.print(data); // first byte of data is length
             });
         }
@@ -1783,7 +1694,7 @@ function web_editor(config) {
         });
         if (navigator.usb) {
             $("#command-connect").click(function () {
-                doConnect();
+                doConnect().catch(webusbErrorHandler);
             });
             $("#command-disconnect").click(function () {
                 doDisconnect();
@@ -1792,13 +1703,16 @@ function web_editor(config) {
                 doSerial();
             });
             $("#request-repl").click(function () {
-                var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-                daplink.serialWrite('\x03');
-                REPL.focus();
+                window.dapwrapper.daplink.serialWrite('\x03').then(function() {
+                    REPL.focus();
+                });
             });
             $("#request-serial").click(function () {
-                var daplink = usePartialFlashing && window.dapwrapper ? window.dapwrapper.daplink : window.daplink;
-                daplink.serialWrite('\x04');
+                window.dapwrapper.daplink.serialWrite('\x03').then(function() {
+                    return window.dapwrapper.daplink.serialWrite('\x04');
+                }).then(function() {
+                    REPL.focus();
+                });
             });
         } else {
             var WebUSBUnavailable = function() {
@@ -1815,6 +1729,8 @@ function web_editor(config) {
             $("#modal-msg-overlay").click(function(e){
                 e.stopPropagation();
             });
+            $("#partial-flashing").hide();
+            $("#menu-switch-partial-flashing-label").hide();
         }
         $("#command-options").click(function (e) {
             // Hide any other open menus and show/hide options menu
@@ -1873,12 +1789,17 @@ function web_editor(config) {
         $('#menu-switch-partial-flashing').on('change', function() {
             var setEnable = $(this).is(':checked');
             return doDisconnect()
-                .catch(function(err) {
-                    // Assume an error means that it is already disconnected.
-                    // console.log("Error disconnecting when " + (setEnable ? "not " : "") + "using partial flashing: \r\n" + err);
+                .then(function() {
+                     usePartialFlashing = setEnable;
                 })
-                .then(function() { usePartialFlashing = setEnable } ) 
+                .catch(function(err) {
+                    console.log('Error disconnecting when using ' + (setEnable ? 'partial' : 'full') + ' flashing:\r\n' + err);
+                })
         });
+
+        // Update the MicroPython docs link to append the version to the URL
+        var docsAnchor = $('#docs-link');
+        docsAnchor.attr('href', docsAnchor.attr('href') + 'en/v' + UPY_VERSION);
 
         window.addEventListener('resize', function() {
             formatMenuContainer('command-options', 'options_container');
@@ -1928,9 +1849,12 @@ function web_editor(config) {
     setupEditor(qs, migration);
     setupButtons();
     setLanguage(qs.l || 'en');
-    document.addEventListener('DOMContentLoaded', function() {
-        // Firmware at the end of the HTML file has to be loaded first
-        setupFilesystem();
+    FS.setupFilesystem().then(function() {
+        // Add the editor code to main.py
+        FS.create('main.py', EDITOR.getCode());
+        console.log('FS fully initialised');
+    }).fail(function() {
+        console.error('There was an issue initialising the file system.');
     });
 
     // If iframe messaging allowed, initialize it

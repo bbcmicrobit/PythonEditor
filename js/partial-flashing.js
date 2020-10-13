@@ -36,8 +36,8 @@
 'use strict';
 
 let PartialFlashingUtils = {
-    pageSize: 1024,
-    numPages: 256,
+    pageSize: null,
+    numPages: null,
     log: console.log,
 
     // The Control/Status Word register is used to configure and control transfers through the APB interface.
@@ -135,7 +135,7 @@ let PartialFlashingUtils = {
         let unaligned = new Uint8Array(buffer);
         let pages = [];
         for (let i = 0; i < unaligned.byteLength;) {
-            let newbuf = new Uint8Array(this.pageSize);
+            let newbuf = new Uint8Array(this.pageSize).fill(0xff);
             let startPad = (targetAddr + i) & (this.pageSize - 1)
             let newAddr = (targetAddr + i) - startPad
             for (; i < unaligned.byteLength; ++i) {
@@ -172,7 +172,22 @@ class DAPWrapper {
         this.reconnected = false;
         this.flashing = true;
         this.device = device;
-        this.allocDAP(device);
+        this.allocBoardID();
+        this.allocDAP();
+    }
+
+    allocBoardID() {
+        // The micro:bit board ID is the serial number first 4 hex digits
+        if (!(this.device && this.device.serialNumber)) {
+            throw new Error('Could not detected ID from connected board.');
+        }
+        this.boardId = this.device.serialNumber.substring(0,4);
+        PartialFlashingUtils.log("Detected board ID " + this.boardId);
+        document.dispatchEvent(new CustomEvent("webusb", { detail: {
+            "flash-type": "partial-flash",
+            "event-type": "info",
+            "message": "board-id/" + this.boardId,
+        }}));
     }
 
     allocDAP() {
@@ -451,13 +466,15 @@ let PartialFlashing = {
 
     // Source code for binaries in can be found at https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/external/sha/source/main.c
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L243
+    // Update from https://github.com/microsoft/pxt-microbit/commit/a35057717222b8e48335144f497b55e29e9b0f25
     flashPageBIN: new Uint32Array([
         0xbe00be00, // bkpt - LR is set to this
-        0x2402b5f0, 0x4a174b16, 0x2480509c, 0x002500e4, 0x2e00591e, 0x24a1d0fc,
-        0x511800e4, 0x2c00595c, 0x2400d0fc, 0x2480509c, 0x002500e4, 0x2e00591e,
-        0x2401d0fc, 0x595c509c, 0xd0fc2c00, 0x00ed2580, 0x002e2400, 0x5107590f,
-        0x2f00595f, 0x3404d0fc, 0xd1f742ac, 0x50992100, 0x2a00599a, 0xbdf0d0fc,
-        0x4001e000, 0x00000504,
+        0x2502b5f0, 0x4c204b1f, 0xf3bf511d, 0xf3bf8f6f, 0x25808f4f, 0x002e00ed,
+        0x2f00595f, 0x25a1d0fc, 0x515800ed, 0x2d00599d, 0x2500d0fc, 0xf3bf511d,
+        0xf3bf8f6f, 0x25808f4f, 0x002e00ed, 0x2f00595f, 0x2501d0fc, 0xf3bf511d,
+        0xf3bf8f6f, 0x599d8f4f, 0xd0fc2d00, 0x25002680, 0x00f60092, 0xd1094295,
+        0x511a2200, 0x8f6ff3bf, 0x8f4ff3bf, 0x2a00599a, 0xbdf0d0fc, 0x5147594f,
+        0x2f00599f, 0x3504d0fc, 0x46c0e7ec, 0x4001e000, 0x00000504,
     ]),
 
     // void computeHashes(uint32_t *dst, uint8_t *ptr, uint32_t pageSize, uint32_t numPages)
@@ -495,22 +512,16 @@ let PartialFlashing = {
                 return Promise.resolve();
             })
             .then(() => {
-                if(window.previousDapWrapper) {
-                    if(window.previousDapWrapper.device) {
-                        return window.previousDapWrapper.device;
-                    }
+                if (window.previousDapWrapper && window.previousDapWrapper.device) {
+                    return window.previousDapWrapper.device;
                 }
-
                 return navigator.usb.requestDevice({ filters: [{vendorId: 0x0d28, productId: 0x0204}] });
             })
             .then(device => {
                 let w = new DAPWrapper(device);
                 window.previousDapWrapper = w;
-                return w.reconnectAsync(true)
-                    .then(() => {
-                        return w
-                    })
-            })
+                return w.reconnectAsync(true).then(() => w)
+            });
     },
 
     // Runs the checksum algorithm on the micro:bit's whole flash memory, and returns the results.
@@ -532,13 +543,15 @@ let PartialFlashing = {
               dapwrapper.cortexM.writeCoreRegister(PartialFlashingUtils.CoreRegister.LR, this.loadAddr + 1),
               dapwrapper.cortexM.writeCoreRegister(PartialFlashingUtils.CoreRegister.SP, this.stackAddr),
               dapwrapper.cortexM.writeCoreRegister(0, page.targetAddr),
-              dapwrapper.cortexM.writeCoreRegister(1, addr)])
+              dapwrapper.cortexM.writeCoreRegister(1, addr),
+              dapwrapper.cortexM.writeCoreRegister(2, PartialFlashingUtils.pageSize >> 2)])
             .then(() => dapwrapper.cortexM.resume(false));
     },
 
     // Write a single page of data to micro:bit ROM by writing it to micro:bit RAM and copying to ROM.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L385
     partialFlashPageAsync: function(dapwrapper, page, nextPage, i) {
+        // TODO: This short-circuits UICR, do we need to update this?
         if (page.targetAddr >= 0x10000000)
             return Promise.resolve();
 
@@ -554,8 +567,9 @@ let PartialFlashing = {
         // All subsequent pages will have already been written to RAM.
         if (i == 0) {
             let u32data = new Uint32Array(page.data.length / 4);
-            for (let i = 0; i < page.data.length; i += 4)
-                u32data[i >> 2] = PartialFlashingUtils.read32FromUInt8Array(page.data, i);
+            for (let j = 0; j < page.data.length; j += 4) {
+                u32data[j >> 2] = PartialFlashingUtils.read32FromUInt8Array(page.data, j);
+            }
             writeBl = dapwrapper.writeBlockAsync(thisAddr, u32data);
         }
 
@@ -585,7 +599,7 @@ let PartialFlashing = {
     // Flash the micro:bit's ROM with the provided image by only copying over the pages that differ.
     // Falls back to a full flash if partial flashing fails.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L335
-    partialFlashAsync: async function(dapwrapper, image, updateProgress) {
+    partialFlashAsync: async function(dapwrapper, flashBytes, hexBuffer, updateProgress) {
         let checksums;
         return this.getFlashChecksumsAsync(dapwrapper)
             .then(buf => {
@@ -594,25 +608,28 @@ let PartialFlashing = {
                 return dapwrapper.writeBlockAsync(this.loadAddr, this.flashPageBIN);
             })
             .then(async () => {
-                let aligned = PartialFlashingUtils.pageAlignBlocks(image, 0);
-                PartialFlashingUtils.log("Total pages: " + aligned.length);
+                let aligned = PartialFlashingUtils.pageAlignBlocks(flashBytes, 0);
+                const totalPages = aligned.length;
+                PartialFlashingUtils.log("Total pages: " + totalPages);
                 aligned = PartialFlashingUtils.onlyChanged(aligned, checksums);
                 PartialFlashingUtils.log("Changed pages: " + aligned.length);
 
-                if (aligned.length > 100) {
+                if (aligned.length > (totalPages / 2)) {
                     try {
-                        await this.fullFlashAsync(dapwrapper, image);
-                    } catch {
-                        PartialFlashingUtils.log(`Full flash failed, attempting partial flash.`);
+                        await this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
+                    } catch(err) {
+                        PartialFlashingUtils.log(err);
+                        PartialFlashingUtils.log("Full flash failed, attempting partial flash.");
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
                     }
                 }
                 else {
                     try {
                         await this.partialFlashCoreAsync(dapwrapper, aligned, updateProgress);
-                    } catch {
-                        PartialFlashingUtils.log(`Partial flash failed, attempting full flash.`);
-                        await this.fullFlashAsync(dapwrapper, image);
+                    } catch(err) {
+                        PartialFlashingUtils.log(err);
+                        PartialFlashingUtils.log("Partial flash failed, attempting full flash.");
+                        await this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
                     }
                 }
 
@@ -628,24 +645,20 @@ let PartialFlashing = {
     },
 
     // Perform full flash of micro:bit's ROM using daplink.
-    fullFlashAsync: function(dapwrapper, image) {
+    fullFlashAsync: function(dapwrapper, image, updateProgress) {
         PartialFlashingUtils.log("Full flash");
         // Event to monitor flashing progress
-        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, function(progress) {
-            $("#webusb-flashing-progress").val(progress).css("display", "inline-block");
-        });
+        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
         return dapwrapper.transport.open()
-                    .then(() => { return dapwrapper.daplink.flash(image) } )
-                    .then(() => {
-                        // Send event
-                        var details = {
-                                "flash-type": "partial-flash",
-                                "event-type": "info",
-                                "message": "full-flash-successful"
-                        };
-
-                        document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                    } );
+            .then(() => dapwrapper.daplink.flash(image))
+            .then(() => {
+                // Send event
+                document.dispatchEvent(new CustomEvent("webusb", { detail: {
+                    "flash-type": "full-flash",
+                    "event-type": "info",
+                    "message": "full-flash-successful"
+                }}));
+            });
     },
 
     // Connect to the micro:bit using WebUSB and setup DAPWrapper.
@@ -683,7 +696,7 @@ let PartialFlashing = {
 
     // Flash the micro:bit's ROM with the provided image, resetting the micro:bit first.
     // Drawn from https://github.com/microsoft/pxt-microbit/blob/dec5b8ce72d5c2b4b0b20aafefce7474a6f0c7b2/editor/extension.tsx#L439
-    flashAsync: async function(dapwrapper, image, updateProgress) {
+    flashAsync: async function(dapwrapper, flashBytes, hexBuffer, updateProgress) {
         try {
             let p = Promise.resolve()
                 .then(() => {
@@ -710,18 +723,16 @@ let PartialFlashing = {
                     PartialFlashingUtils.log("Resetting micro:bit timed out");
                     PartialFlashingUtils.log("Partial flashing failed. Attempting Full Flash");
                     // Send event
-                    var details = {
-                            "flash-type": "partial-flash",
-                            "event-type": "info",
-                            "message": "flash-failed" + "/" + "attempting-full-flash"
-                    };
-
-                    document.dispatchEvent(new CustomEvent('webusb', { detail: details }));
-                    return this.fullFlashAsync(dapwrapper, image);
+                    document.dispatchEvent(new CustomEvent("webusb", { detail: {
+                        "flash-type": "partial-flash",
+                        "event-type": "info",
+                        "message": "flash-failed" + "/" + "attempting-full-flash"
+                    }}));
+                    return this.fullFlashAsync(dapwrapper, hexBuffer, updateProgress);
                 } else {
                     // Start flashing
                     PartialFlashingUtils.log("Begin Flashing");
-                    return this.partialFlashAsync(dapwrapper, image, updateProgress);
+                    return this.partialFlashAsync(dapwrapper, flashBytes, hexBuffer, updateProgress);
                 }
             })
             .finally(() => {

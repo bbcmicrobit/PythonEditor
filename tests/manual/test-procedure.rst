@@ -60,16 +60,18 @@ the "Test Cases" opening paragraphs carefully.
 You will need
 '''''''''''''
 
-- Internet Explorer 10: non-Chrome-based.
+- Internet Explorer 10: non-Chrome-based
 
-- A modern version of Edge: Edge v44 or lower: non-Chrome-based.
-                            Edge v77 or higher: Chrome-based.
+- A modern version of Edge
 
-- A modern version of Chrome: Chrome-based.
+  - Edge v44 or lower: non-Chrome-based
+  - Edge v77 or higher: Chrome-based
 
-- A modern version of Firefox: non-Chrome-based.
+- A modern version of Chrome: Chrome-based
 
-- A text editor (the one included in most operating systems is fine).
+- A modern version of Firefox: non-Chrome-based
+
+- A text editor (the one included in most operating systems is fine)
 
 - Access to the Python Editor under test
 
@@ -335,8 +337,8 @@ Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in
 Test Case: Hex file containing module can be loaded in the editor
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load the file ``emoji-example.hex`` into the editor using drag&drop
-- [ ] In the Load/Save modal, confirm the editor has loaded the 
-    ``emoji-example.py (main.py)`` and ``emoji.py`` files.
+- [ ] In the Load/Save modal, confirm the editor has loaded the
+  ``emoji-example.py (main.py)`` and ``emoji.py`` files.
 - [ ] Confirm that each .py file can be downloaded individually.
 - [ ] Confirm that the emoji.py file can be deleted.
 - Program the project by any method to the micro:bit.
@@ -396,25 +398,43 @@ Test Case: Zoom changes the Text Editor font size
 Test Case: Language options work
 ''''''''''''''''''''''''''''''''
 - Confirm that selecting each language option changes it to the corresponding language
+
+- [ ] English
 - [ ] Spanish
 - [ ] Polish
 - [ ] Croatian
-- [ ] English
+- [ ] Chinese (simplified)
+- [ ] Chinese (traditional Hong Kong)
+- [ ] Traditional Taiwanese
 
 
 Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in Chrome or a chrome-based browser:
+
 - [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
 - [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
 - [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
-- [ ] Type ``help()`` and confirm that you see a result. 
+- [ ] Type ``help()`` and confirm that you see a result.
 - [ ] Disconnect and confirm that menu returns to "Download" and "Connect".
+
+
+Test Case: Full Flash over WebUSB
+'''''''''''''''''''''''''''''''''
+This feature will only be available in the beta versions.
+Carry out this test in Chrome or a chrome-based browser:
+
+- Click the 'Beta Options' button.
+- Click the 'Quick Flash' toggle to disable it.
+- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
+- [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
+- [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
 
 
 Test Case: WebUSB not supported message is working
 ''''''''''''''''''''''''''''''''''''''''''''''''''
-Carry out this test in non-Chrome-based browsers 
+Carry out this test in non-Chrome-based browsers:
+
 - Click the 'Connect' button.
 - [ ] Confirm the WebUSB not supported message box is displayed.
 - Click outside the modal.
@@ -428,6 +448,7 @@ Carry out this test in non-Chrome-based browsers
 Test Case: WebUSB error modal links are working
 '''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in Chrome or a chrome-based browser:
+
 - Click the 'Connect' button.
 - Click 'Cancel' button in the WebUSB device selection window that opens.
 - Click the 'Download Hex' link in the modal that opens.
@@ -441,6 +462,8 @@ Carry out this test in Chrome or a chrome-based browser:
 
 Test Case: Autocomplete
 '''''''''''''''''''''''
+This feature will only be available in the beta versions.
+
 - [ ] Start typing in the editor and confirm that autocomplete offers suggestions
   eg type 'di' and be offered 'display'.
 - [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
@@ -449,26 +472,35 @@ Test Case: Autocomplete
 Test Case A11y: Keyboard focus order follows the visual layout
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - [ ] Using your keyboard, navigate through the menu and any submenus using the
- `tab` and `enter` or `space` keysand confirm  they follow natural order of the
- page elements eg.left to right and top top bottom.
+  `tab` and `enter` or `space` keysand confirm  they follow natural order of the
+  page elements eg.left to right and top top bottom.
 - [ ] Using your keyboard, navigate through the modal windows using the `tab`
- and `enter` or `space` keys and confirm  they follow natural order of the 
- page elements eg.left to right and top top bottom.
+  and `enter` or `space` keys and confirm  they follow natural order of the
+  page elements eg.left to right and top top bottom.
 
 
 Test Case A11y: Esc key returns focus to menu
 '''''''''''''''''''''''''''''''''''''''''''''
 - [ ] Type something in the text editor, then confirm the `Esc` key returns the
- focus to the menu from the text editor.
-- [ ] Enter the Load/Save modal window and confirm the `Esc` key closes the 
- open modal.
+  focus to the menu from the text editor.
+- [ ] Enter the Load/Save modal window and confirm the `Esc` key closes the
+  open modal.
 
 
 Test Case A11y: Using a screenreader
 ''''''''''''''''''''''''''''''''''''
 - [ ] If you are using a Mac, enable the Voiceover tool
- https://support.apple.com/en-gb/guide/voiceover-guide/vo2682/web and 
- repeat the A11y tests using Voiceover.
+  https://support.apple.com/en-gb/guide/voiceover-guide/vo2682/web and
+  repeat the A11y tests using Voiceover.
+
+
+Test Case Unit Tests: Browser based unit tests
+''''''''''''''''''''''''''''''''''''''''''''''
+This test will need a local clone of the repository version under test.
+
+- Serve the repository contents locally.
+- Open the served tests.html file.
+- [ ] Confirm all tests pass (errors will be marked red).
 
 
 Test results

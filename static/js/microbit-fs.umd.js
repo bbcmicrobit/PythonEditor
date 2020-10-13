@@ -2,7 +2,7 @@
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(global = global || self, factory(global.microbitFs = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -33,7 +33,7 @@
 	});
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.9' };
+	var core = module.exports = { version: '2.6.11' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -124,7 +124,7 @@
 	  return store[key] || (store[key] = value !== undefined ? value : {});
 	})('versions', []).push({
 	  version: _core.version,
-	  mode: _library ? 'pure' : 'global',
+	  mode:  'global',
 	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 	});
 	});
@@ -960,7 +960,7 @@
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true);
 	      // fix for some old engines
-	      if (!_library && typeof IteratorPrototype[ITERATOR$2] != 'function') _hide(IteratorPrototype, ITERATOR$2, returnThis);
+	      if ( typeof IteratorPrototype[ITERATOR$2] != 'function') _hide(IteratorPrototype, ITERATOR$2, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -969,7 +969,7 @@
 	    $default = function values() { return $native.call(this); };
 	  }
 	  // Define iterator
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR$2])) {
+	  if ( (BUGGY || VALUES_BUG || !proto[ITERATOR$2])) {
 	    _hide(proto, ITERATOR$2, $default);
 	  }
 	  // Plug for library
@@ -1023,6 +1023,8 @@
 	try {
 	  var riter = [7][ITERATOR$3]();
 	  riter['return'] = function () { SAFE_CLOSING = true; };
+	  // eslint-disable-next-line no-throw-literal
+	  Array.from(riter, function () { throw 2; });
 	} catch (e) { /* empty */ }
 
 	var _iterDetect = function (exec, skipClosing) {
@@ -2302,6 +2304,8 @@
 	});
 
 	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
 	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
 	    _typeof = function (obj) {
 	      return typeof obj;
@@ -2338,7 +2342,7 @@
 	}
 
 	function _slicedToArray(arr, i) {
-	  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+	  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 	}
 
 	function _arrayWithHoles(arr) {
@@ -2346,6 +2350,7 @@
 	}
 
 	function _iterableToArrayLimit(arr, i) {
+	  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
 	  var _arr = [];
 	  var _n = true;
 	  var _d = false;
@@ -2371,8 +2376,80 @@
 	  return _arr;
 	}
 
+	function _unsupportedIterableToArray(o, minLen) {
+	  if (!o) return;
+	  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+	  var n = Object.prototype.toString.call(o).slice(8, -1);
+	  if (n === "Object" && o.constructor) n = o.constructor.name;
+	  if (n === "Map" || n === "Set") return Array.from(n);
+	  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+	}
+
+	function _arrayLikeToArray(arr, len) {
+	  if (len == null || len > arr.length) len = arr.length;
+
+	  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+	  return arr2;
+	}
+
 	function _nonIterableRest() {
-	  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+	  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+	}
+
+	function _createForOfIteratorHelper(o) {
+	  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+	    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {
+	      var i = 0;
+
+	      var F = function () {};
+
+	      return {
+	        s: F,
+	        n: function () {
+	          if (i >= o.length) return {
+	            done: true
+	          };
+	          return {
+	            done: false,
+	            value: o[i++]
+	          };
+	        },
+	        e: function (e) {
+	          throw e;
+	        },
+	        f: F
+	      };
+	    }
+
+	    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+	  }
+
+	  var it,
+	      normalCompletion = true,
+	      didErr = false,
+	      err;
+	  return {
+	    s: function () {
+	      it = o[Symbol.iterator]();
+	    },
+	    n: function () {
+	      var step = it.next();
+	      normalCompletion = step.done;
+	      return step;
+	    },
+	    e: function (e) {
+	      didErr = true;
+	      err = e;
+	    },
+	    f: function () {
+	      try {
+	        if (!normalCompletion && it.return != null) it.return();
+	      } finally {
+	        if (didErr) throw err;
+	      }
+	    }
+	  };
 	}
 
 	var _createProperty = function (object, index, value) {
@@ -2380,7 +2457,7 @@
 	  else object[index] = value;
 	};
 
-	_export(_export.S + _export.F * !_iterDetect(function (iter) { }), 'Array', {
+	_export(_export.S + _export.F * !_iterDetect(function (iter) { Array.from(iter); }), 'Array', {
 	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
 	  from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
 	    var O = _toObject(arrayLike);
@@ -2463,7 +2540,7 @@
 
 	var defineProperty = _objectDp.f;
 	var _wksDefine = function (name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol =  _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: _wksExt.f(name) });
 	};
 
@@ -3110,9 +3187,7 @@
 	 */
 
 
-	var MemoryMap =
-	/*#__PURE__*/
-	function () {
+	var MemoryMap = /*#__PURE__*/function () {
 	  /**
 	   * @param {Iterable} blocks The initial value for the memory blocks inside this
 	   * <tt>MemoryMap</tt>. All keys must be numeric, and all values must be instances of
@@ -3125,12 +3200,11 @@
 	    this._blocks = new Map();
 
 	    if (blocks && typeof blocks[Symbol.iterator] === 'function') {
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
+	      var _iterator = _createForOfIteratorHelper(blocks),
+	          _step;
 
 	      try {
-	        for (var _iterator = blocks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        for (_iterator.s(); !(_step = _iterator.n()).done;) {
 	          var tuple = _step.value;
 
 	          if (!(tuple instanceof Array) || tuple.length !== 2) {
@@ -3140,18 +3214,9 @@
 	          this.set(tuple[0], tuple[1]);
 	        }
 	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
+	        _iterator.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return != null) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
+	        _iterator.f();
 	      }
 	    } else if (_typeof(blocks) === 'object') {
 	      // Try iterating through the object's keys
@@ -3658,12 +3723,12 @@
 	    key: "clone",
 	    value: function clone() {
 	      var cloned = new MemoryMap();
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
+
+	      var _iterator2 = _createForOfIteratorHelper(this),
+	          _step2;
 
 	      try {
-	        for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
 	          var _step2$value = _slicedToArray(_step2.value, 2),
 	              addr = _step2$value[0],
 	              value = _step2$value[1];
@@ -3671,18 +3736,9 @@
 	          cloned.set(addr, new Uint8Array(value));
 	        }
 	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _iterator2.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-	            _iterator2.return();
-	          }
-	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
-	          }
-	        }
+	        _iterator2.f();
 	      }
 
 	      return cloned;
@@ -3739,12 +3795,12 @@
 	      }
 
 	      var sliced = new MemoryMap();
-	      var _iteratorNormalCompletion3 = true;
-	      var _didIteratorError3 = false;
-	      var _iteratorError3 = undefined;
+
+	      var _iterator3 = _createForOfIteratorHelper(this),
+	          _step3;
 
 	      try {
-	        for (var _iterator3 = this[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
 	          var _step3$value = _slicedToArray(_step3.value, 2),
 	              blockAddr = _step3$value[0],
 	              block = _step3$value[1];
@@ -3763,18 +3819,9 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
+	        _iterator3.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-	            _iterator3.return();
-	          }
-	        } finally {
-	          if (_didIteratorError3) {
-	            throw _iteratorError3;
-	          }
-	        }
+	        _iterator3.f();
 	      }
 
 	      return sliced;
@@ -3803,12 +3850,12 @@
 	      }
 
 	      var out = new Uint8Array(length).fill(padByte);
-	      var _iteratorNormalCompletion4 = true;
-	      var _didIteratorError4 = false;
-	      var _iteratorError4 = undefined;
+
+	      var _iterator4 = _createForOfIteratorHelper(this),
+	          _step4;
 
 	      try {
-	        for (var _iterator4 = this[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
 	          var _step4$value = _slicedToArray(_step4.value, 2),
 	              blockAddr = _step4$value[0],
 	              block = _step4$value[1];
@@ -3827,18 +3874,9 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError4 = true;
-	        _iteratorError4 = err;
+	        _iterator4.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-	            _iterator4.return();
-	          }
-	        } finally {
-	          if (_didIteratorError4) {
-	            throw _iteratorError4;
-	          }
-	        }
+	        _iterator4.f();
 	      }
 
 	      return out;
@@ -3865,12 +3903,11 @@
 	  }, {
 	    key: "contains",
 	    value: function contains(memMap) {
-	      var _iteratorNormalCompletion5 = true;
-	      var _didIteratorError5 = false;
-	      var _iteratorError5 = undefined;
+	      var _iterator5 = _createForOfIteratorHelper(memMap),
+	          _step5;
 
 	      try {
-	        for (var _iterator5 = memMap[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
 	          var _step5$value = _slicedToArray(_step5.value, 2),
 	              blockAddr = _step5$value[0],
 	              block = _step5$value[1];
@@ -3889,18 +3926,9 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError5 = true;
-	        _iteratorError5 = err;
+	        _iterator5.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-	            _iterator5.return();
-	          }
-	        } finally {
-	          if (_didIteratorError5) {
-	            throw _iteratorError5;
-	          }
-	        }
+	        _iterator5.f();
 	      }
 
 	      return true;
@@ -4034,21 +4062,20 @@
 	    value: function overlapMemoryMaps(memoryMaps) {
 	      // First pass: create a list of addresses where any block starts or ends.
 	      var cuts = new Set();
-	      var _iteratorNormalCompletion6 = true;
-	      var _didIteratorError6 = false;
-	      var _iteratorError6 = undefined;
+
+	      var _iterator6 = _createForOfIteratorHelper(memoryMaps),
+	          _step6;
 
 	      try {
-	        for (var _iterator6 = memoryMaps[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+	        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
 	          var _step6$value = _slicedToArray(_step6.value, 2),
 	              blocks = _step6$value[1];
 
-	          var _iteratorNormalCompletion7 = true;
-	          var _didIteratorError7 = false;
-	          var _iteratorError7 = undefined;
+	          var _iterator7 = _createForOfIteratorHelper(blocks),
+	              _step7;
 
 	          try {
-	            for (var _iterator7 = blocks[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+	            for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
 	              var _step7$value = _slicedToArray(_step7.value, 2),
 	                  address = _step7$value[0],
 	                  block = _step7$value[1];
@@ -4057,33 +4084,15 @@
 	              cuts.add(address + block.length);
 	            }
 	          } catch (err) {
-	            _didIteratorError7 = true;
-	            _iteratorError7 = err;
+	            _iterator7.e(err);
 	          } finally {
-	            try {
-	              if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
-	                _iterator7.return();
-	              }
-	            } finally {
-	              if (_didIteratorError7) {
-	                throw _iteratorError7;
-	              }
-	            }
+	            _iterator7.f();
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError6 = true;
-	        _iteratorError6 = err;
+	        _iterator6.e(err);
 	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-	            _iterator6.return();
-	          }
-	        } finally {
-	          if (_didIteratorError6) {
-	            throw _iteratorError6;
-	          }
-	        }
+	        _iterator6.f();
 	      }
 
 	      var orderedCuts = Array.from(cuts.values()).sort(function (a, b) {
@@ -4095,19 +4104,19 @@
 	        var cut = orderedCuts[i];
 	        var nextCut = orderedCuts[i + 1];
 	        var tuples = [];
-	        var _iteratorNormalCompletion8 = true;
-	        var _didIteratorError8 = false;
-	        var _iteratorError8 = undefined;
+
+	        var _iterator8 = _createForOfIteratorHelper(memoryMaps),
+	            _step8;
 
 	        try {
-	          for (var _iterator8 = memoryMaps[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+	          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
 	            var _step8$value = _slicedToArray(_step8.value, 2),
 	                setId = _step8$value[0],
-	                blocks = _step8$value[1];
+	                _blocks = _step8$value[1];
 
 	            // Find the block with the highest address that is equal or lower to
 	            // the current cut (if any)
-	            var blockAddr = Array.from(blocks.keys()).reduce(function (acc, val) {
+	            var blockAddr = Array.from(_blocks.keys()).reduce(function (acc, val) {
 	              if (val > cut) {
 	                return acc;
 	              }
@@ -4116,28 +4125,20 @@
 	            }, -1);
 
 	            if (blockAddr !== -1) {
-	              var block = blocks.get(blockAddr);
+	              var _block = _blocks.get(blockAddr);
+
 	              var subBlockStart = cut - blockAddr;
 	              var subBlockEnd = nextCut - blockAddr;
 
-	              if (subBlockStart < block.length) {
-	                tuples.push([setId, block.subarray(subBlockStart, subBlockEnd)]);
+	              if (subBlockStart < _block.length) {
+	                tuples.push([setId, _block.subarray(subBlockStart, subBlockEnd)]);
 	              }
 	            }
 	          }
 	        } catch (err) {
-	          _didIteratorError8 = true;
-	          _iteratorError8 = err;
+	          _iterator8.e(err);
 	        } finally {
-	          try {
-	            if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
-	              _iterator8.return();
-	            }
-	          } finally {
-	            if (_didIteratorError8) {
-	              throw _iteratorError8;
-	            }
-	          }
+	          _iterator8.f();
 	        }
 
 	        if (tuples.length) {
@@ -4146,7 +4147,7 @@
 	      };
 
 	      for (var i = 0, l = orderedCuts.length - 1; i < l; i++) {
-	        _loop(i, l);
+	        _loop(i);
 	      }
 
 	      return overlaps;
@@ -4360,33 +4361,14 @@
 	    };
 	  })();
 
-	  if (module) {
-	    TextDecoderLite.TextDecoderLite = TextDecoderLite;
-	    TextDecoderLite.TextEncoderLite = TextEncoderLite;
+	  if ( module) {
 	    module.exports.TextDecoderLite = TextDecoderLite;
 	    module.exports.TextEncoderLite = TextEncoderLite;
-	    module.exports = TextDecoderLite;
 	  }
 	});
 	var textEncoderLite_1 = textEncoderLite.TextDecoderLite;
 	var textEncoderLite_2 = textEncoderLite.TextEncoderLite;
 
-	/**
-	 * Marker placed inside the MicroPython hex string to indicate where to
-	 * inject the user Python Code.
-	 */
-
-	var HEX_INSERTION_POINT = ':::::::::::::::::::::::::::::::::::::::::::\n';
-	/**
-	 * Removes the old insertion line the input Intel Hex string contains it.
-	 *
-	 * @param intelHex - String with the intel hex lines.
-	 * @returns The Intel Hex string without insertion line.
-	 */
-
-	function cleanseOldHexFormat(intelHex) {
-	  return intelHex.replace(HEX_INSERTION_POINT, '');
-	}
 	/**
 	 * Converts a string into a byte array of characters.
 	 * @param str - String to convert to bytes.
@@ -4441,6 +4423,22 @@
 	/** How many bytes per Intel Hex record line. */
 
 	var HEX_RECORD_DATA_LEN = 16;
+	/**
+	 * Marker placed inside the MicroPython hex string to indicate where to
+	 * inject the user Python Code.
+	 */
+
+	var HEX_INSERTION_POINT = ':::::::::::::::::::::::::::::::::::::::::::\n';
+	/**
+	 * Removes the old insertion line the input Intel Hex string contains it.
+	 *
+	 * @param intelHex - String with the intel hex lines.
+	 * @returns The Intel Hex string without insertion line.
+	 */
+
+	function cleanseOldHexFormat(intelHex) {
+	  return intelHex.replace(HEX_INSERTION_POINT, '');
+	}
 	/**
 	 * Parses through an Intel Hex string to find the Python code at the
 	 * allocated address and extracts it.
@@ -4585,12 +4583,23 @@
 	 *
 	 * For more info:
 	 * https://microbit-micropython.readthedocs.io/en/latest/devguide/hexformat.html
+	 *
+	 * (c) 2019 Micro:bit Educational Foundation and the microbit-fs contributors.
+	 * SPDX-License-Identifier: MIT
 	 */
+	var DEVICE_INFO = [{
+	  deviceVersion: 1,
+	  magicHeader: 0x17eeb07c,
+	  flashSize: 0x40000
+	}, {
+	  deviceVersion: 2,
+	  magicHeader: 0x47eeb07c,
+	  flashSize: 0x80000
+	}];
 	var UICR_START = 0x10001000;
 	var UICR_CUSTOMER_OFFSET = 0x80;
 	var UICR_CUSTOMER_UPY_OFFSET = 0x40;
 	var UICR_UPY_START = UICR_START + UICR_CUSTOMER_OFFSET + UICR_CUSTOMER_UPY_OFFSET;
-	var UPY_MAGIC_HEADER = 0x17eeb07c;
 	var UPY_MAGIC_LEN = 4;
 	var UPY_END_MARKER_LEN = 4;
 	var UPY_PAGE_SIZE_LEN = 4;
@@ -4598,6 +4607,7 @@
 	var UPY_PAGES_USED_LEN = 2;
 	var UPY_DELIMITER_LEN = 4;
 	var UPY_VERSION_LEN = 4;
+	var UPY_REGIONS_TERMINATOR_LEN = 4;
 	/** UICR Customer area addresses for MicroPython specific data. */
 
 	var MicropythonUicrAddress;
@@ -4610,7 +4620,8 @@
 	  MicropythonUicrAddress[MicropythonUicrAddress["PagesUsed"] = MicropythonUicrAddress.StartPage + UPY_START_PAGE_LEN] = "PagesUsed";
 	  MicropythonUicrAddress[MicropythonUicrAddress["Delimiter"] = MicropythonUicrAddress.PagesUsed + UPY_PAGES_USED_LEN] = "Delimiter";
 	  MicropythonUicrAddress[MicropythonUicrAddress["VersionLocation"] = MicropythonUicrAddress.Delimiter + UPY_DELIMITER_LEN] = "VersionLocation";
-	  MicropythonUicrAddress[MicropythonUicrAddress["End"] = MicropythonUicrAddress.VersionLocation + UPY_VERSION_LEN] = "End";
+	  MicropythonUicrAddress[MicropythonUicrAddress["RegionsTerminator"] = MicropythonUicrAddress.VersionLocation + UPY_REGIONS_TERMINATOR_LEN] = "RegionsTerminator";
+	  MicropythonUicrAddress[MicropythonUicrAddress["End"] = MicropythonUicrAddress.RegionsTerminator + UPY_VERSION_LEN] = "End";
 	})(MicropythonUicrAddress || (MicropythonUicrAddress = {}));
 	/**
 	 * Reads a 32 bit little endian number from an Intel Hex memory map.
@@ -4656,17 +4667,18 @@
 
 	function getStringFromIntelHexMap(intelHexMap, address) {
 	  var memBlock = intelHexMap.slice(address).get(address);
-	  var i = 0;
+	  var iStrEnd = 0;
 
-	  for (i = 0; i < memBlock.length && memBlock[i] !== 0; i++) {
+	  while (iStrEnd < memBlock.length && memBlock[iStrEnd] !== 0) {
+	    iStrEnd++;
 	  }
 
-	  if (i === memBlock.length) {
+	  if (iStrEnd === memBlock.length) {
 	    // Could not find a null character to indicate the end of the string
 	    return '';
 	  }
 
-	  var stringBytes = memBlock.slice(0, i);
+	  var stringBytes = memBlock.slice(0, iStrEnd);
 	  return bytesToStr(stringBytes);
 	}
 	/**
@@ -4679,8 +4691,71 @@
 
 
 	function confirmMagicValue(intelHexMap) {
-	  var readMagicHeader = getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.MagicValue);
-	  return readMagicHeader === UPY_MAGIC_HEADER;
+	  var readMagicHeader = getMagicValue(intelHexMap);
+
+	  for (var _i = 0, DEVICE_INFO_1 = DEVICE_INFO; _i < DEVICE_INFO_1.length; _i++) {
+	    var device = DEVICE_INFO_1[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return true;
+	    }
+	  }
+
+	  return false;
+	}
+	/**
+	 * Reads the UICR data that contains the Magic Value that indicates the
+	 * MicroPython presence in the hex data.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns The Magic Value from UICR.
+	 */
+
+
+	function getMagicValue(intelHexMap) {
+	  return getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.MagicValue);
+	}
+	/**
+	 * Reads the UICR data from an Intel Hex map and detects the device version.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns The micro:bit board version.
+	 */
+
+
+	function getDeviceVersion(intelHexMap) {
+	  var readMagicHeader = getMagicValue(intelHexMap);
+
+	  for (var _i = 0, DEVICE_INFO_2 = DEVICE_INFO; _i < DEVICE_INFO_2.length; _i++) {
+	    var device = DEVICE_INFO_2[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return device.deviceVersion;
+	    }
+	  }
+
+	  throw new Error('Cannot find device version, unknown UICR Magic value');
+	}
+	/**
+	 * Reads the UICR data from an Intel Hex map and retrieves the flash size.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns The micro:bit flash size.
+	 */
+
+
+	function getFlashSize(intelHexMap) {
+	  var readMagicHeader = getMagicValue(intelHexMap);
+
+	  for (var _i = 0, DEVICE_INFO_3 = DEVICE_INFO; _i < DEVICE_INFO_3.length; _i++) {
+	    var device = DEVICE_INFO_3[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return device.flashSize;
+	    }
+	  }
+
+	  throw new Error('Cannot find flash size, unknown UICR Magic value');
 	}
 	/**
 	 * Reads the UICR data that contains the flash page size.
@@ -4707,12 +4782,11 @@
 	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.StartPage);
 	}
 	/**
-	 * Reads the UICR data that contains the address of the location in flash where
-	 * the MicroPython version is stored.
+	 * Reads the UICR data that contains the number of flash pages used by the
+	 * MicroPython runtime.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns The address of the location in flash where the MicroPython version
-	 * is stored.
+	 * @returns The number of pages used by the MicroPython runtime.
 	 */
 
 
@@ -4720,11 +4794,12 @@
 	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.PagesUsed);
 	}
 	/**
-	 * Reads the UICR data that contains the number of flash pages used by the
-	 * MicroPython runtime.
+	 * Reads the UICR data that contains the address of the location in flash where
+	 * the MicroPython version is stored.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns The number of pages used by the MicroPython runtime.
+	 * @returns The address of the location in flash where the MicroPython version
+	 * is stored.
 	 */
 
 
@@ -4748,19 +4823,25 @@
 	    throw new Error('Could not find valid MicroPython UICR data.');
 	  }
 
-	  var pageSize = getPageSize(uicrMap);
+	  var flashPageSize = getPageSize(uicrMap);
+	  var flashSize = getFlashSize(uicrMap);
 	  var startPage = getStartPage(uicrMap);
 	  var pagesUsed = getPagesUsed(uicrMap);
 	  var versionAddress = getVersionLocation(uicrMap);
 	  var version = getStringFromIntelHexMap(intelHexMap, versionAddress);
+	  var deviceVersion = getDeviceVersion(uicrMap);
 	  return {
-	    flashPageSize: pageSize,
+	    flashPageSize: flashPageSize,
+	    flashSize: flashSize,
 	    runtimeStartPage: startPage,
-	    runtimeStartAddress: startPage * pageSize,
+	    runtimeStartAddress: startPage * flashPageSize,
 	    runtimeEndUsed: pagesUsed,
-	    runtimeEndAddress: pagesUsed * pageSize,
+	    runtimeEndAddress: pagesUsed * flashPageSize,
+	    uicrStartAddress: MicropythonUicrAddress.MagicValue,
+	    uicrEndAddress: MicropythonUicrAddress.End,
 	    versionAddress: versionAddress,
-	    version: version
+	    version: version,
+	    deviceVersion: deviceVersion
 	  };
 	}
 	/**
@@ -4787,13 +4868,37 @@
 	var CHUNK_HEADER_END_OFFSET_LEN = 1;
 	var CHUNK_HEADER_NAME_LEN = 1;
 	var MAX_FILENAME_LENGTH = 120;
-	/** Flash values for the micro:bit nRF microcontroller. */
+	/**
+	 * Chunks are a double linked list with 1-byte pointers and the front marker
+	 * (previous pointer) cannot have the values listed in the ChunkMarker enum
+	 */
 
-	var FLASH_PAGE_SIZE = 1024;
-	var FLASH_END = 0x40000;
-	/** Size of pages with specific functions. */
+	var MAX_NUMBER_OF_CHUNKS = 256 - 4;
+	/**
+	 * To speed up the Intel Hex string generation with MicroPython and the
+	 * filesystem we can cache some of the Intel Hex records and the parsed Memory
+	 * Map. This function creates an object with cached data that can then be sent
+	 * to other functions from this module.
+	 *
+	 * @param originalIntelHex Intel Hex string with MicroPython to cache.
+	 * @returns Cached MpFsBuilderCache object.
+	 */
 
-	var CALIBRATION_PAGE_SIZE = FLASH_PAGE_SIZE;
+	function createMpFsBuilderCache(originalIntelHex) {
+	  var originalMemMap = MemoryMap.fromHex(originalIntelHex);
+	  var uicrData = getHexMapUicrData(originalMemMap); // slice() returns a new MemoryMap with only the MicroPython data, so it will
+	  // not include the UICR. The End Of File record is removed because this string
+	  // will be concatenated with the filesystem data any thing else in the MemMap
+
+	  var uPyIntelHex = originalMemMap.slice(uicrData.runtimeStartAddress, uicrData.runtimeEndAddress - uicrData.runtimeStartAddress).asHexString().replace(':00000001FF', '');
+	  return {
+	    originalIntelHex: originalIntelHex,
+	    originalMemMap: originalMemMap,
+	    uPyIntelHex: uPyIntelHex,
+	    uPyEndAddress: uicrData.runtimeEndAddress,
+	    fsSize: getMemMapFsSize(originalMemMap)
+	  };
+	}
 	/**
 	 * Scans the file system area inside the Intel Hex data a returns a list of
 	 * available chunks.
@@ -4801,6 +4906,7 @@
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
 	 * @returns List of all unused chunks.
 	 */
+
 
 	function getFreeChunks(intelHexMap) {
 	  var freeChunks = [];
@@ -4830,7 +4936,7 @@
 	}
 	/**
 	 * Calculates from the input Intel Hex where the MicroPython runtime ends and
-	 * return that as the start of the filesystem area.
+	 * and where the start of the filesystem would be based on that.
 	 *
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
 	 * @returns Filesystem start address
@@ -4838,10 +4944,30 @@
 
 
 	function getStartAddress(intelHexMap) {
-	  var uicrData = getHexMapUicrData(intelHexMap);
-	  var startAddress = uicrData.runtimeEndAddress; // Ensure the start address aligns with the page size
+	  var uicrData = getHexMapUicrData(intelHexMap); // Calculate the maximum flash space the filesystem can possible take
 
-	  if (startAddress % FLASH_PAGE_SIZE) {
+	  var fsMaxSize = CHUNK_LEN * MAX_NUMBER_OF_CHUNKS; // We need to add the persistent data which is one page aligned after fs data
+
+	  fsMaxSize += uicrData.flashPageSize - fsMaxSize % uicrData.flashPageSize;
+
+	  if (uicrData.deviceVersion === 1) {
+	    // TODO: v2 has persistent page inside the fs flash area
+	    fsMaxSize += uicrData.flashPageSize;
+	  }
+
+	  var runtimeEndAddress = uicrData.runtimeEndAddress;
+
+	  if (uicrData.deviceVersion === 2) {
+	    // TODO: MicroPython for v2 is currently reserving a page for future expansion
+	    runtimeEndAddress += uicrData.flashPageSize;
+	  } // Fs is placed at the end of flash, the space available from the MicroPython
+	  // end to the end of flash might be larger than the fs max possible size
+
+
+	  var fsMaxSizeStartAddress = getEndAddress(intelHexMap) - fsMaxSize;
+	  var startAddress = Math.max(runtimeEndAddress, fsMaxSizeStartAddress); // Ensure the start address is aligned with the page size
+
+	  if (startAddress % uicrData.flashPageSize) {
 	    throw new Error('File system start address from UICR does not align with flash page size.');
 	  }
 
@@ -4860,13 +4986,22 @@
 
 
 	function getEndAddress(intelHexMap) {
-	  var endAddress = FLASH_END;
+	  var uicrData = getHexMapUicrData(intelHexMap);
+	  var endAddress = isAppendedScriptPresent(intelHexMap) ? exports.AppendedBlock.StartAdd : uicrData.flashSize;
 
-	  if (isAppendedScriptPresent(intelHexMap)) {
-	    endAddress = exports.AppendedBlock.StartAdd;
+	  if (uicrData.deviceVersion === 1) {
+	    // In v1 the magnetometer calibration data takes one flash page
+	    endAddress -= uicrData.flashPageSize;
+	  } else if (uicrData.deviceVersion === 2) {
+	    // TODO: For v2 72 KBs are used for bootloader and other pages (0x6E000)
+	    // endAddress -= 72 * 1024;
+	    // TODO: for the current release we need to overlap this page
+	    endAddress -= 68 * 1024;
+	  } else {
+	    throw new Error('Unknown device flash map');
 	  }
 
-	  return endAddress - CALIBRATION_PAGE_SIZE;
+	  return endAddress;
 	}
 	/**
 	 * Calculates the address for the last page available to the filesystem.
@@ -4877,12 +5012,13 @@
 
 
 	function getLastPageAddress(intelHexMap) {
-	  return getEndAddress(intelHexMap) - FLASH_PAGE_SIZE;
+	  var uicrData = getHexMapUicrData(intelHexMap);
+	  return getEndAddress(intelHexMap) - uicrData.flashPageSize;
 	}
 	/**
 	 * If not present already, it sets the persistent page in flash.
 	 *
-	 * This page can be located right below right on top or below the filesystem
+	 * This page can be located right below or right on top of the filesystem
 	 * space.
 	 *
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
@@ -4890,8 +5026,9 @@
 
 
 	function setPersistentPage(intelHexMap) {
-	  // TODO: This could be the first or the last page. Check first if it exists,
-	  // if it doesn't then randomise its location.
+	  // At the moment we place this persistent page at the end of the filesystem
+	  // TODO: This could be set to the first or the last page. Check first if it
+	  //  exists, if it doesn't then randomise its location.
 	  intelHexMap.set(getLastPageAddress(intelHexMap), new Uint8Array([253
 	  /* PersistentData */
 	  ]));
@@ -5076,7 +5213,7 @@
 	  return file.getFsFileSize();
 	}
 	/**
-	 * Adds a byte array as a file to a MicroPython Memory Map.
+	 * Adds a byte array as a file into a MicroPython Memory Map.
 	 *
 	 * @throws {Error} When the invalid file name is given.
 	 * @throws {Error} When the the file doesn't have any data.
@@ -5086,7 +5223,6 @@
 	 * @param intelHexMap - Memory map for the MicroPython Intel Hex.
 	 * @param filename - Name for the file.
 	 * @param data - Byte array for the file data.
-	 * @returns MicroPython Memory map with the file in the filesystem.
 	 */
 
 
@@ -5105,21 +5241,20 @@
 	  var fileFsBytes = fsFile.getFsBytes(freeChunks);
 	  intelHexMap.set(chunksStartAddress, fileFsBytes);
 	  setPersistentPage(intelHexMap);
-	  return intelHexMap;
 	}
 	/**
 	 * Adds a hash table of filenames and byte arrays as files to the MicroPython
 	 * filesystem.
 	 *
 	 * @throws {Error} When the an invalid file name is given.
-	 * @throws {Error} When the a file doesn't have any data.
+	 * @throws {Error} When a file doesn't have any data.
 	 * @throws {Error} When there are issues calculating the file system boundaries.
 	 * @throws {Error} When there is no space left for a file.
 	 *
-	 * @param intelHex - MicroPython Intel Hex string.
+	 * @param intelHex - MicroPython Intel Hex string or MemoryMap.
 	 * @param files - Hash table with filenames as the key and byte arrays as the
 	 *     value.
-	 * @returns MicroPython Intel Hex string with the file in the filesystem.
+	 * @returns MicroPython Intel Hex string with the files in the filesystem.
 	 */
 
 
@@ -5128,15 +5263,42 @@
 	    returnBytes = false;
 	  }
 
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
+	  var intelHexMap;
+
+	  if (typeof intelHex === 'string') {
+	    intelHexMap = MemoryMap.fromHex(intelHex);
+	  } else {
+	    intelHexMap = intelHex.clone();
+	  }
+
+	  var uicrData = getHexMapUicrData(intelHexMap);
 	  Object.keys(files).forEach(function (filename) {
-	    intelHexMap = addMemMapFile(intelHexMap, filename, files[filename]);
+	    addMemMapFile(intelHexMap, filename, files[filename]);
 	  });
-	  return returnBytes ? intelHexMap.slicePad(0, FLASH_END) : intelHexMap.asHexString() + '\n';
+	  return returnBytes ? intelHexMap.slicePad(0, uicrData.flashSize) : intelHexMap.asHexString() + '\n';
 	}
 	/**
-	 * Reads the filesystem included in a MicroPython Intel Hex string.
+	 * Generates an Intel Hex string with MicroPython and files in the filesystem.
+	 *
+	 * Uses pre-cached MicroPython memory map and Intel Hex string of record to
+	 * speed up the Intel Hex generation compared to addIntelHexFiles().
+	 *
+	 * @param cache - Object with cached data from createMpFsBuilderCache().
+	 * @param files - Hash table with filenames as the key and byte arrays as the
+	 *     value.
+	 * @returns MicroPython Intel Hex string with the files in the filesystem.
+	 */
+
+
+	function generateHexWithFiles(cache, files) {
+	  var memMapWithFiles = cache.originalMemMap.clone();
+	  Object.keys(files).forEach(function (filename) {
+	    addMemMapFile(memMapWithFiles, filename, files[filename]);
+	  });
+	  return cache.uPyIntelHex + memMapWithFiles.slice(cache.uPyEndAddress).asHexString() + '\n';
+	}
+	/**
+	 * Reads the filesystem included in a MicroPython Intel Hex string or Map.
 	 *
 	 * @throws {Error} When multiple files with the same name encountered.
 	 * @throws {Error} When a file chunk points to an unused chunk.
@@ -5144,21 +5306,27 @@
 	 * @throws {Error} When following through the chunks linked list iterates
 	 *     through more chunks and used chunks (sign of an infinite loop).
 	 *
-	 * @param intelHex - The MicroPython Intel Hex string to read from.
+	 * @param intelHex - The MicroPython Intel Hex string or MemoryMap to read from.
 	 * @returns Dictionary with the filename as key and byte array as values.
 	 */
 
 
 	function getIntelHexFiles(intelHex) {
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var hexMap = MemoryMap.fromHex(intelHexClean);
+	  var hexMap;
+
+	  if (typeof intelHex === 'string') {
+	    hexMap = MemoryMap.fromHex(intelHex);
+	  } else {
+	    hexMap = intelHex.clone();
+	  }
+
 	  var startAddress = getStartAddress(hexMap);
 	  var endAddress = getLastPageAddress(hexMap); // TODO: endAddress as the getLastPageAddress works now because this
 	  // library uses the last page as the "persistent" page, so the filesystem does
 	  // end there. In reality, the persistent page could be the first or the last
 	  // page, so we should get the end address as the magnetometer page and then
-	  // check if the persistent marker is present in the first of last page and take that
-	  // into account in the memory range calculation.
+	  // check if the persistent marker is present in the first of last page and
+	  // take that into account in the memory range calculation.
 	  // Note that the persistent marker is only present at the top of the page
 	  // Iterate through the filesystem to collect used chunks and file starts
 
@@ -5266,18 +5434,17 @@
 	/**
 	 * Calculate the MicroPython filesystem size.
 	 *
-	 * @param intelHex - The MicroPython Intel Hex string.
+	 * @param intelHexMap - The MicroPython Intel Hex Memory Map.
 	 * @returns Size of the filesystem in bytes.
 	 */
 
 
-	function getIntelHexFsSize(intelHex) {
-	  var intelHexClean = cleanseOldHexFormat(intelHex);
-	  var intelHexMap = MemoryMap.fromHex(intelHexClean);
+	function getMemMapFsSize(intelHexMap) {
+	  var uicrData = getHexMapUicrData(intelHexMap);
 	  var startAddress = getStartAddress(intelHexMap);
-	  var endAddress = getEndAddress(intelHexMap); // Remember that one page is used as persistent page
+	  var endAddress = getEndAddress(intelHexMap); // One extra page is used as persistent page
 
-	  return endAddress - startAddress - FLASH_PAGE_SIZE;
+	  return endAddress - startAddress - uicrData.flashPageSize;
 	}
 
 	var SimpleFile =
@@ -5330,8 +5497,6 @@
 	   * File System manager constructor.
 	   * At the moment it needs a MicroPython hex string without a files included.
 	   *
-	   * TODO: If files are already in input hex file, deal with them somehow.
-	   *
 	   * @param intelHex - MicroPython Intel Hex string.
 	   */
 	  function MicropythonFsHex(intelHex, _a) {
@@ -5339,14 +5504,19 @@
 	        maxFsSize = _b === void 0 ? 0 : _b;
 	    this._files = {};
 	    this._storageSize = 0;
-	    this._intelHex = intelHex;
-	    this.importFilesFromIntelHex(this._intelHex);
 
-	    if (this.ls().length) {
-	      throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
+	    if (!intelHex) {
+	      throw new Error('Invalid MicroPython hex invalid.');
 	    }
 
-	    this.setStorageSize(maxFsSize);
+	    this._uPyFsBuilderCache = createMpFsBuilderCache(intelHex);
+	    this.setStorageSize(maxFsSize || this._uPyFsBuilderCache.fsSize); // Check if there are files in the input hex
+
+	    var hexFiles = getIntelHexFiles(this._uPyFsBuilderCache.originalMemMap);
+
+	    if (Object.keys(hexFiles).length) {
+	      throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
+	    }
 	  }
 	  /**
 	   * Create a new file and add it to the file system.
@@ -5484,7 +5654,7 @@
 
 	  MicropythonFsHex.prototype.size = function (filename) {
 	    if (!filename) {
-	      throw new Error('Invalid filename.');
+	      throw new Error("Invalid filename: " + filename);
 	    }
 
 	    if (!this.exists(filename)) {
@@ -5514,22 +5684,22 @@
 
 
 	  MicropythonFsHex.prototype.setStorageSize = function (size) {
-	    if (size > getIntelHexFsSize(this._intelHex)) {
+	    if (size > this._uPyFsBuilderCache.fsSize) {
 	      throw new Error('Storage size limit provided is larger than size available in the MicroPython hex.');
 	    }
 
 	    this._storageSize = size;
 	  };
 	  /**
-	   * Calculate the MicroPython filesystem total size.
-	   * If an max storage size limit has been set, it returns this number.
+	   * The available filesystem total size either calculated by the MicroPython
+	   * hex or the max storage size limit has been set.
 	   *
 	   * @returns Size of the filesystem in bytes.
 	   */
 
 
 	  MicropythonFsHex.prototype.getStorageSize = function () {
-	    return this._storageSize ? this._storageSize : getIntelHexFsSize(this._intelHex);
+	    return this._storageSize;
 	  };
 	  /**
 	   * @returns The total number of bytes currently used by files in the file system.
@@ -5564,6 +5734,7 @@
 	   * Read the files included in a MicroPython hex string and add them to this
 	   * instance.
 	   *
+	   * @throws {Error} When there are no files to import in the hex.
 	   * @throws {Error} When there is a problem reading the files from the hex.
 	   * @throws {Error} When a filename already exists in this instance (all other
 	   *     files are still imported).
@@ -5586,6 +5757,10 @@
 	        formatFirst = _d === void 0 ? false : _d;
 
 	    var files = getIntelHexFiles(intelHex);
+
+	    if (!Object.keys(files).length) {
+	      throw new Error('Hex does not have any files to import');
+	    }
 
 	    if (formatFirst) {
 	      delete this._files;
@@ -5615,23 +5790,20 @@
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
 	   *
-	   * @param intelHex - Optionally provide a different Intel Hex to include the
-	   *    filesystem into.
 	   * @returns A new string with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHex = function (intelHex) {
+	  MicropythonFsHex.prototype.getIntelHex = function () {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
 
-	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return addIntelHexFiles(finalHex, files);
+	    return generateHexWithFiles(this._uPyFsBuilderCache, files);
 	  };
 	  /**
 	   * Generate a byte array of the MicroPython and filesystem data.
@@ -5640,36 +5812,34 @@
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
 	   *
-	   * @param intelHex - Optionally provide a different Intel Hex to include the
-	   *    filesystem into.
 	   * @returns A Uint8Array with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHexBytes = function (intelHex) {
+	  MicropythonFsHex.prototype.getIntelHexBytes = function () {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
 
-	    var finalHex = intelHex || this._intelHex;
 	    var files = {};
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return addIntelHexFiles(finalHex, files, true);
+	    return addIntelHexFiles(this._uPyFsBuilderCache.originalMemMap, files, true);
 	  };
 
 	  return MicropythonFsHex;
 	}();
 
-	exports.addIntelHexAppendedScript = addIntelHexAppendedScript;
-	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
-	exports.isAppendedScriptPresent = isAppendedScriptPresent;
 	exports.MicropythonFsHex = MicropythonFsHex;
+	exports.addIntelHexAppendedScript = addIntelHexAppendedScript;
+	exports.cleanseOldHexFormat = cleanseOldHexFormat;
 	exports.getHexMapUicrData = getHexMapUicrData;
+	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
 	exports.getIntelHexUicrData = getIntelHexUicrData;
+	exports.isAppendedScriptPresent = isAppendedScriptPresent;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=microbit-fs.umd.js.map
