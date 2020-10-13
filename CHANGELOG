@@ -1,3 +1,13 @@
+2.1.0-beta.5
+------------
+* Adds support for the new micro:bit
+* Python Editor now generates Universal Hex files
+* Minor WebUSB improvement
+* Autocompletion adds the new API only when a new board is WebUSB connected
+* Hide "Quick Flash" entry in settings if WebUSB is not available
+* Reorganisation of files in the project
+* Updated the microbit-fs and microbit-uh libraries to the latest commit
+
 2.0.1
 -----
 * Added Chinese translations 🇨🇳 (#306 #316)
