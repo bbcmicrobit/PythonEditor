@@ -4951,18 +4951,12 @@
 	  fsMaxSize += uicrData.flashPageSize - fsMaxSize % uicrData.flashPageSize;
 
 	  if (uicrData.deviceVersion === 1) {
-	    // TODO: v2 has persistent page inside the fs flash area
+	    // TODO: v2 has persistent page inside the fs flash area instead
 	    fsMaxSize += uicrData.flashPageSize;
 	  }
 
-	  var runtimeEndAddress = uicrData.runtimeEndAddress;
-
-	  if (uicrData.deviceVersion === 2) {
-	    // TODO: MicroPython for v2 is currently reserving a page for future expansion
-	    runtimeEndAddress += uicrData.flashPageSize;
-	  } // Fs is placed at the end of flash, the space available from the MicroPython
+	  var runtimeEndAddress = uicrData.runtimeEndAddress; // Fs is placed at the end of flash, the space available from the MicroPython
 	  // end to the end of flash might be larger than the fs max possible size
-
 
 	  var fsMaxSizeStartAddress = getEndAddress(intelHexMap) - fsMaxSize;
 	  var startAddress = Math.max(runtimeEndAddress, fsMaxSizeStartAddress); // Ensure the start address is aligned with the page size
@@ -4993,10 +4987,8 @@
 	    // In v1 the magnetometer calibration data takes one flash page
 	    endAddress -= uicrData.flashPageSize;
 	  } else if (uicrData.deviceVersion === 2) {
-	    // TODO: For v2 72 KBs are used for bootloader and other pages (0x6E000)
-	    // endAddress -= 72 * 1024;
-	    // TODO: for the current release we need to overlap this page
-	    endAddress -= 68 * 1024;
+	    // TODO: For v2 52 KBs are used for bootloader and other pages (0x73000)
+	    endAddress -= 52 * 1024;
 	  } else {
 	    throw new Error('Unknown device flash map');
 	  }
