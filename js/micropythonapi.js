@@ -67,8 +67,11 @@ var microPythonApi = (function () {
         "microbit": {
             "microphone": ["LOUD", "QUIET", "current_sound", "get_sounds", "is_sound", "sound_level", "was_sound"],
             "pin_logo": ["is_touched"],
-            "pin_speaker": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"]
-        }
+            "pin_speaker": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"],
+            "pin_audio": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"],
+            "set_volume": ""
+        },
+        "audio" : ["play", "AudioFrame", "stop", "is_playing"]
     };
 
     /**
@@ -107,6 +110,7 @@ var microPythonApi = (function () {
      *   available modules.
      */
     var getFullMicroPythonApi = function() {
+        // TODO: This does not seem to expand arrays shared by both objects
         var finalObj = $.extend(true, {}, uPyBaseApi, extraModules);
         return flattenApi(finalObj);
     };
