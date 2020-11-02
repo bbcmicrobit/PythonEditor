@@ -1,3 +1,9 @@
+2.1.0-beta.6
+------------
+* Update the MicroPython version to commit 3e09245a46
+* Add a message on the WebUSB modal when a full flash is performed
+* Other minor bug fixes
+
 2.1.0-beta.5
 ------------
 * Adds support for the new micro:bit
