@@ -14,7 +14,11 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         // Flags allow Puppeteer to run within a container.
         browser = await puppeteer.launch({
             headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+            defaultViewport: {
+                width: 1024,
+                height: 768
+            }
         });
     });
 
@@ -22,7 +26,7 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         browser.close();
     });
 
-    test( 'Checks the editor.html page with Axe', async () => {
+    test('Checks the editor.html page with Axe', async () => {
         // First, run some code which loads the content of the page.
         const page = await browser.newPage();
         await page.goto(editorURL);
@@ -35,7 +39,7 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.close();
     });
 
-    test( 'Checks the Load/Save modal with Axe', async () => {
+    test('Checks the Load/Save modal with Axe', async () => {
         const page = await browser.newPage();
         await page.goto(editorURL);
         await page.waitForSelector("#command-files");
@@ -50,7 +54,7 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.close();
     });
 
-    test( 'Checks the Load/Save modal with Axe', async () => {
+    test('Checks the Snippets modal with Axe', async () => {
         const page = await browser.newPage();
         await page.goto(editorURL);
         await page.waitForSelector("#command-snippet");
@@ -65,12 +69,12 @@ describe("Puppeteer accessibility tests for the Python Editor.", function() {
         await page.close();
     });
 
-    test( 'Checks the help.html page with Axe', async () => {
+    test('Checks the help.html page with Axe', async () => {
         const page = await browser.newPage();
         await page.goto(helpURL);
         await new AxePuppeteer(page).analyze();
-        await expect(page).toPassAxeTests({    
-            // exclude code highlighter        
+        await expect(page).toPassAxeTests({
+            // exclude code highlighter
             exclude: '.hljs-comment',
             // disable checking for h1 as we aren't using this heading
             disabledRules: [ 'page-has-heading-one' ],
