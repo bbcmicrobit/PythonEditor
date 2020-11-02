@@ -648,7 +648,9 @@ let PartialFlashing = {
     fullFlashAsync: function(dapwrapper, image, updateProgress) {
         PartialFlashingUtils.log("Full flash");
         // Event to monitor flashing progress
-        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, updateProgress);
+        dapwrapper.daplink.on(DAPjs.DAPLink.EVENT_PROGRESS, (progress) => {
+            updateProgress(progress, true);
+        });
         return dapwrapper.transport.open()
             .then(() => dapwrapper.daplink.flash(image))
             .then(() => {

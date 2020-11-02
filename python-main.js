@@ -1451,8 +1451,11 @@ function web_editor(config) {
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
+        // TODO: Translate this string
+        $('#flashing-extra-msg').text('Full flash in progress, subsequent flashes will be much quicker.').hide();
 
-        var updateProgress = function(progress) {
+        var updateProgress = function(progress, longFlash) {
+            $('#flashing-extra-msg').toggle(!!longFlash);
             $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
         };
 
