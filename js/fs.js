@@ -29,15 +29,18 @@ var microbitFsWrapper = function() {
             if (typeof fs1[key] === 'function') {
                 fsWrapper[key] = function() {
                     var return1 = fs1[key].apply(fs1, arguments);
-                    var return2 =  fs2[key].apply(fs2, arguments);
+                    var return2 = fs2[key].apply(fs2, arguments);
                     // FIXME: Keep this during general testing, probably remove on final release for speed
                     if (JSON.stringify(return1) !== JSON.stringify(return2)) {
                         console.error('Return from call to ' + key + ' differs:\n\t' + return1 + '\n\t'+ return2 );
                     }
                     return return1;
-                }
+                };
             }
         });
+        // Remove the MicropythonFsHex functions we don't want to expose
+        delete fsWrapper['getIntelHex'];
+        delete fsWrapper['getIntelHexBytes'];
     }
 
     /**

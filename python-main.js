@@ -733,7 +733,7 @@ function web_editor(config) {
         try {
             FS.write(filename, fileBytes);
             // Check if the filesystem has run out of space
-            var _ = FS.getIntelHex();
+            var _ = FS.getUniversalHex();
         } catch(e) {
             if (FS.exists(filename)) {
                 FS.remove(filename);
