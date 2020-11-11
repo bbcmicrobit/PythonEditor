@@ -96,7 +96,7 @@ var language = {
     "close": "Zamknij",
     "request-repl": "Wyślij CTRL-C aby wystartować REPL",
     "request-serial": "Wyślij CTRL-D aby zresetować",
-    "flashing-text": "Instalowanie na micro:bit",
+    "flashing-title": "Instalowanie na MicroPython",
     "download": "Download hex"
   },
   "load": {

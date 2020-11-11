@@ -96,7 +96,7 @@ var language = {
     "close": "关闭",
     "request-repl": "发送 CTRL-C 到 REPL",
     "request-serial": "发送 CTRL-D 以复位",
-    "flashing-text": "编程 micro:bit",
+    "flashing-title": "编程 MicroPython",
     "download": "下载 Hex"
   },
   "load": {

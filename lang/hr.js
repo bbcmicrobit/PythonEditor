@@ -96,7 +96,7 @@ var language = {
     "close": "Zatvori",
     "request-repl": "Pošalji CTRL-C za REPL",
     "request-serial": "Pošalji CTRL-D za krenuti ispočetka",
-    "flashing-text": "\"Flashanje\" micro:bita (prijenos datoteke)",
+    "flashing-title": "\"Flashanje\" MicroPython (prijenos datoteke)",
     "download": "Preuzmi .hex"
   },
   "load": {

@@ -96,7 +96,7 @@ var language = {
     "close": "關閉",
     "request-repl": "發送 CTRL-C 到 REPL",
     "request-serial": "發送 CTRL-D 以復位",
-    "flashing-text": "編程 micro:bit",
+    "flashing-title": "編程 MicroPython",
     "download": "下載 Hex"
   },
   "load": {

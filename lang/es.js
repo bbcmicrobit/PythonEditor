@@ -96,7 +96,7 @@ var language = {
     "close": "Cerrar",
     "request-repl": "Envia CTRL-C para el REPL",
     "request-serial": "Envia CTRL-D para reiniciar",
-    "flashing-text": "Flasheando micro:bit",
+    "flashing-title": "Flasheando MicroPython",
     "download": "Descargar Hex"
   },
   "load": {

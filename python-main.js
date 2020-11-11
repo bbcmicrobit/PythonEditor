@@ -330,7 +330,6 @@ function translations() {
         $('#script-name-label').text(language['static-strings']['script-name']['label']);
         $('#request-repl').text(language['webusb']['request-repl']);
         $('#request-serial').text(language['webusb']['request-serial']);
-        $('#flashing-text').text(language['webusb']['flashing-text']);
         var optionsStrings = language['static-strings']['options-dropdown'];
         for (var object in optionsStrings) {
             $("#" + object).text(optionsStrings[object]);
@@ -1451,11 +1450,19 @@ function web_editor(config) {
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
-        // TODO: Translate this string
-        $('#flashing-extra-msg').text('Full flash in progress, subsequent flashes will be much quicker.').hide();
+        // TODO: Translate these string
+        $('#flashing-title').text('Flashing code');
+        $('#flashing-extra-msg').text('Initial flash might longer, subsequent flashes will be quicker.').hide();
 
         var updateProgress = function(progress, longFlash) {
-            $('#flashing-extra-msg').toggle(!!longFlash);
+            // TODO: Translate these string
+            if (!!longFlash) {
+                $('#flashing-title').text(language['webusb']['flashing-title']);
+                $('#flashing-extra-msg').show()
+            } else {
+                $('#flashing-title').text('Flashing code');
+                $('#flashing-extra-msg').hide();
+            }
             $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');
         };
 
