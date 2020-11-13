@@ -4403,6 +4403,15 @@
 	  combined.set(second, first.length);
 	  return combined;
 	};
+	var areUint8ArraysEqual = function areUint8ArraysEqual(first, second) {
+	  if (first.length !== second.length) return false;
+
+	  for (var i = 0; i < first.length; i++) {
+	    if (first[i] !== second[i]) return false;
+	  }
+
+	  return true;
+	};
 
 	/** User script located at specific flash address. */
 
@@ -4570,6 +4579,16 @@
 
 	// https://github.com/tc39/proposal-object-values-entries
 
+	var $entries = _objectToArray(true);
+
+	_export(_export.S, 'Object', {
+	  entries: function entries(it) {
+	    return $entries(it);
+	  }
+	});
+
+	// https://github.com/tc39/proposal-object-values-entries
+
 	var $values = _objectToArray(false);
 
 	_export(_export.S, 'Object', {
@@ -4577,6 +4596,1038 @@
 	    return $values(it);
 	  }
 	});
+
+	// 7.2.8 IsRegExp(argument)
+
+
+	var MATCH = _wks('match');
+	var _isRegexp = function (it) {
+	  var isRegExp;
+	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	};
+
+	// helper for String#{startsWith, endsWith, includes}
+
+
+
+	var _stringContext = function (that, searchString, NAME) {
+	  if (_isRegexp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
+	  return String(_defined(that));
+	};
+
+	var MATCH$1 = _wks('match');
+	var _failsIsRegexp = function (KEY) {
+	  var re = /./;
+	  try {
+	    '/./'[KEY](re);
+	  } catch (e) {
+	    try {
+	      re[MATCH$1] = false;
+	      return !'/./'[KEY](re);
+	    } catch (f) { /* empty */ }
+	  } return true;
+	};
+
+	var INCLUDES = 'includes';
+
+	_export(_export.P + _export.F * _failsIsRegexp(INCLUDES), 'String', {
+	  includes: function includes(searchString /* , position = 0 */) {
+	    return !!~_stringContext(this, searchString, INCLUDES)
+	      .indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var ENDS_WITH = 'endsWith';
+	var $endsWith = ''[ENDS_WITH];
+
+	_export(_export.P + _export.F * _failsIsRegexp(ENDS_WITH), 'String', {
+	  endsWith: function endsWith(searchString /* , endPosition = @length */) {
+	    var that = _stringContext(this, searchString, ENDS_WITH);
+	    var endPosition = arguments.length > 1 ? arguments[1] : undefined;
+	    var len = _toLength(that.length);
+	    var end = endPosition === undefined ? len : Math.min(_toLength(endPosition), len);
+	    var search = String(searchString);
+	    return $endsWith
+	      ? $endsWith.call(that, search, end)
+	      : that.slice(end - search.length, end) === search;
+	  }
+	});
+
+	// https://github.com/tc39/Array.prototype.includes
+
+	var $includes = _arrayIncludes(true);
+
+	_export(_export.P, 'Array', {
+	  includes: function includes(el /* , fromIndex = 0 */) {
+	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	_addToUnscopables('includes');
+
+	var $min = Math.min;
+	var $push = [].push;
+	var $SPLIT = 'split';
+	var LENGTH = 'length';
+	var LAST_INDEX$1 = 'lastIndex';
+	var MAX_UINT32 = 0xffffffff;
+
+	// babel-minify transpiles RegExp('x', 'y') -> /x/y and it causes SyntaxError
+	var SUPPORTS_Y = !_fails(function () { RegExp(MAX_UINT32, 'y'); });
+
+	// @@split logic
+	_fixReWks('split', 2, function (defined, SPLIT, $split, maybeCallNative) {
+	  var internalSplit;
+	  if (
+	    'abbc'[$SPLIT](/(b)*/)[1] == 'c' ||
+	    'test'[$SPLIT](/(?:)/, -1)[LENGTH] != 4 ||
+	    'ab'[$SPLIT](/(?:ab)*/)[LENGTH] != 2 ||
+	    '.'[$SPLIT](/(.?)(.?)/)[LENGTH] != 4 ||
+	    '.'[$SPLIT](/()()/)[LENGTH] > 1 ||
+	    ''[$SPLIT](/.?/)[LENGTH]
+	  ) {
+	    // based on es5-shim implementation, need to rework it
+	    internalSplit = function (separator, limit) {
+	      var string = String(this);
+	      if (separator === undefined && limit === 0) return [];
+	      // If `separator` is not a regex, use native split
+	      if (!_isRegexp(separator)) return $split.call(string, separator, limit);
+	      var output = [];
+	      var flags = (separator.ignoreCase ? 'i' : '') +
+	                  (separator.multiline ? 'm' : '') +
+	                  (separator.unicode ? 'u' : '') +
+	                  (separator.sticky ? 'y' : '');
+	      var lastLastIndex = 0;
+	      var splitLimit = limit === undefined ? MAX_UINT32 : limit >>> 0;
+	      // Make `global` and avoid `lastIndex` issues by working with a copy
+	      var separatorCopy = new RegExp(separator.source, flags + 'g');
+	      var match, lastIndex, lastLength;
+	      while (match = _regexpExec.call(separatorCopy, string)) {
+	        lastIndex = separatorCopy[LAST_INDEX$1];
+	        if (lastIndex > lastLastIndex) {
+	          output.push(string.slice(lastLastIndex, match.index));
+	          if (match[LENGTH] > 1 && match.index < string[LENGTH]) $push.apply(output, match.slice(1));
+	          lastLength = match[0][LENGTH];
+	          lastLastIndex = lastIndex;
+	          if (output[LENGTH] >= splitLimit) break;
+	        }
+	        if (separatorCopy[LAST_INDEX$1] === match.index) separatorCopy[LAST_INDEX$1]++; // Avoid an infinite loop
+	      }
+	      if (lastLastIndex === string[LENGTH]) {
+	        if (lastLength || !separatorCopy.test('')) output.push('');
+	      } else output.push(string.slice(lastLastIndex));
+	      return output[LENGTH] > splitLimit ? output.slice(0, splitLimit) : output;
+	    };
+	  // Chakra, V8
+	  } else if ('0'[$SPLIT](undefined, 0)[LENGTH]) {
+	    internalSplit = function (separator, limit) {
+	      return separator === undefined && limit === 0 ? [] : $split.call(this, separator, limit);
+	    };
+	  } else {
+	    internalSplit = $split;
+	  }
+
+	  return [
+	    // `String.prototype.split` method
+	    // https://tc39.github.io/ecma262/#sec-string.prototype.split
+	    function split(separator, limit) {
+	      var O = defined(this);
+	      var splitter = separator == undefined ? undefined : separator[SPLIT];
+	      return splitter !== undefined
+	        ? splitter.call(separator, O, limit)
+	        : internalSplit.call(String(O), separator, limit);
+	    },
+	    // `RegExp.prototype[@@split]` method
+	    // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@split
+	    //
+	    // NOTE: This cannot be properly polyfilled in engines that don't support
+	    // the 'y' flag.
+	    function (regexp, limit) {
+	      var res = maybeCallNative(internalSplit, regexp, this, limit, internalSplit !== $split);
+	      if (res.done) return res.value;
+
+	      var rx = _anObject(regexp);
+	      var S = String(this);
+	      var C = _speciesConstructor(rx, RegExp);
+
+	      var unicodeMatching = rx.unicode;
+	      var flags = (rx.ignoreCase ? 'i' : '') +
+	                  (rx.multiline ? 'm' : '') +
+	                  (rx.unicode ? 'u' : '') +
+	                  (SUPPORTS_Y ? 'y' : 'g');
+
+	      // ^(? + rx + ) is needed, in combination with some S slicing, to
+	      // simulate the 'y' flag.
+	      var splitter = new C(SUPPORTS_Y ? rx : '^(?:' + rx.source + ')', flags);
+	      var lim = limit === undefined ? MAX_UINT32 : limit >>> 0;
+	      if (lim === 0) return [];
+	      if (S.length === 0) return _regexpExecAbstract(splitter, S) === null ? [S] : [];
+	      var p = 0;
+	      var q = 0;
+	      var A = [];
+	      while (q < S.length) {
+	        splitter.lastIndex = SUPPORTS_Y ? q : 0;
+	        var z = _regexpExecAbstract(splitter, SUPPORTS_Y ? S : S.slice(q));
+	        var e;
+	        if (
+	          z === null ||
+	          (e = $min(_toLength(splitter.lastIndex + (SUPPORTS_Y ? 0 : q)), S.length)) === p
+	        ) {
+	          q = _advanceStringIndex(S, q, unicodeMatching);
+	        } else {
+	          A.push(S.slice(p, q));
+	          if (A.length === lim) return A;
+	          for (var i = 1; i <= z.length - 1; i++) {
+	            A.push(z[i]);
+	            if (A.length === lim) return A;
+	          }
+	          q = p = e;
+	        }
+	      }
+	      A.push(S.slice(p));
+	      return A;
+	    }
+	  ];
+	});
+
+	// 20.1.2.4 Number.isNaN(number)
+
+
+	_export(_export.S, 'Number', {
+	  isNaN: function isNaN(number) {
+	    // eslint-disable-next-line no-self-compare
+	    return number != number;
+	  }
+	});
+
+	/**
+	 * General utilities.
+	 *
+	 * (c) 2020 Micro:bit Educational Foundation and the project contributors.
+	 * SPDX-License-Identifier: MIT
+	 */
+
+	/**
+	 * Convert from a string with a hexadecimal number into a Uint8Array byte array.
+	 *
+	 * @export
+	 * @param hexStr A string with a hexadecimal number.
+	 * @returns A Uint8Array with the number broken down in bytes.
+	 */
+	function hexStrToBytes(hexStr) {
+	  if (hexStr.length % 2 !== 0) {
+	    throw new Error("Hex string \"" + hexStr + "\" is not divisible by 2.");
+	  }
+
+	  var byteArray = hexStr.match(/.{1,2}/g);
+
+	  if (byteArray) {
+	    return new Uint8Array(byteArray.map(function (byteStr) {
+	      var byteNum = parseInt(byteStr, 16);
+
+	      if (Number.isNaN(byteNum)) {
+	        throw new Error("There were some non-hex characters in \"" + hexStr + "\".");
+	      } else {
+	        return byteNum;
+	      }
+	    }));
+	  } else {
+	    return new Uint8Array();
+	  }
+	}
+	/**
+	 * A version of byteToHexStr() without input sanitation, only to be called when
+	 * the caller can guarantee the input is a positive integer between 0 and 0xFF.
+	 *
+	 * @export
+	 * @param byte Number to convert into a hex string.
+	 * @returns String with hex value, padded to always have 2 characters.
+	 */
+
+	function byteToHexStrFast(byte) {
+	  return byte.toString(16).toUpperCase().padStart(2, '0');
+	}
+	/**
+	 * Converts a Uint8Array into a string with base 16 hex digits. It doesn't
+	 * include an opening '0x'.
+	 *
+	 * @export
+	 * @param byteArray Uint8Array to convert to hex.
+	 * @returns String with base 16 hex digits.
+	 */
+
+	function byteArrayToHexStr(byteArray) {
+	  return byteArray.reduce(function (accumulator, current) {
+	    return accumulator + current.toString(16).toUpperCase().padStart(2, '0');
+	  }, '');
+	}
+	/**
+	 * Concatenates an array of Uint8Arrays into a single Uint8Array.
+	 *
+	 * @export
+	 * @param arraysToConcat Arrays to concatenate.
+	 * @returns Single concatenated Uint8Array.
+	 */
+
+	function concatUint8Arrays(arraysToConcat) {
+	  var fullLength = arraysToConcat.reduce(function (accumulator, currentValue) {
+	    return accumulator + currentValue.length;
+	  }, 0);
+	  var combined = new Uint8Array(fullLength);
+	  arraysToConcat.reduce(function (accumulator, currentArray) {
+	    combined.set(currentArray, accumulator);
+	    return accumulator + currentArray.length;
+	  }, 0);
+	  return combined;
+	}
+
+	/** Values for the Record Type field, including Universal Hex custom types. */
+
+	var RecordType;
+
+	(function (RecordType) {
+	  RecordType[RecordType["Data"] = 0] = "Data";
+	  RecordType[RecordType["EndOfFile"] = 1] = "EndOfFile";
+	  RecordType[RecordType["ExtendedSegmentAddress"] = 2] = "ExtendedSegmentAddress";
+	  RecordType[RecordType["StartSegmentAddress"] = 3] = "StartSegmentAddress";
+	  RecordType[RecordType["ExtendedLinearAddress"] = 4] = "ExtendedLinearAddress";
+	  RecordType[RecordType["StartLinearAddress"] = 5] = "StartLinearAddress";
+	  RecordType[RecordType["BlockStart"] = 10] = "BlockStart";
+	  RecordType[RecordType["BlockEnd"] = 11] = "BlockEnd";
+	  RecordType[RecordType["PaddedData"] = 12] = "PaddedData";
+	  RecordType[RecordType["CustomData"] = 13] = "CustomData";
+	  RecordType[RecordType["OtherData"] = 14] = "OtherData";
+	})(RecordType || (RecordType = {}));
+	/**
+	 * The maximum data bytes per record is 0xFF, 16 and 32 bytes are the two most
+	 * common lengths, but DAPLink doesn't support more than 32 bytes.
+	 */
+
+
+	var RECORD_DATA_MAX_BYTES = 32;
+	/**
+	 * Constants for the record character lengths.
+	 */
+
+	var START_CODE_STR = ':';
+	var START_CODE_INDEX = 0;
+	var START_CODE_STR_LEN = START_CODE_STR.length;
+	var BYTE_COUNT_STR_INDEX = START_CODE_INDEX + START_CODE_STR_LEN;
+	var BYTE_COUNT_STR_LEN = 2;
+	var ADDRESS_STR_INDEX = BYTE_COUNT_STR_INDEX + BYTE_COUNT_STR_LEN;
+	var ADDRESS_STR_LEN = 4;
+	var RECORD_TYPE_STR_INDEX = ADDRESS_STR_INDEX + ADDRESS_STR_LEN;
+	var RECORD_TYPE_STR_LEN = 2;
+	var DATA_STR_INDEX = RECORD_TYPE_STR_INDEX + RECORD_TYPE_STR_LEN;
+	var DATA_STR_LEN_MIN = 0;
+	var CHECKSUM_STR_LEN = 2;
+	var MIN_RECORD_STR_LEN = START_CODE_STR_LEN + BYTE_COUNT_STR_LEN + ADDRESS_STR_LEN + RECORD_TYPE_STR_LEN + DATA_STR_LEN_MIN + CHECKSUM_STR_LEN;
+	var MAX_RECORD_STR_LEN = MIN_RECORD_STR_LEN - DATA_STR_LEN_MIN + RECORD_DATA_MAX_BYTES * 2;
+	/**
+	 * Checks if a given number is a valid Record type.
+	 *
+	 * @param recordType Number to check
+	 * @returns True if it's a valid Record type.
+	 */
+
+	function isRecordTypeValid(recordType) {
+	  // Checking ranges is more efficient than object key comparison
+	  // This also allow us use a const enum (compilation replaces it by literals)
+	  if (recordType >= RecordType.Data && recordType <= RecordType.StartLinearAddress || recordType >= RecordType.BlockStart && recordType <= RecordType.OtherData) {
+	    return true;
+	  }
+
+	  return false;
+	}
+	/**
+	 * Calculates the Intel Hex checksum.
+	 *
+	 * This is basically the LSB of the two's complement of the sum of all bytes.
+	 *
+	 * @param dataBytes A byte array to calculate the checksum into.
+	 * @returns Checksum byte.
+	 */
+
+
+	function calcChecksumByte(dataBytes) {
+	  var sum = dataBytes.reduce(function (accumulator, currentValue) {
+	    return accumulator + currentValue;
+	  }, 0);
+	  return -sum & 0xff;
+	}
+	/**
+	 * Creates an Intel Hex record with normal or custom record types.
+	 *
+	 * @param address - The two least significant bytes for the data address.
+	 * @param recordType - Record type, could be one of the standard types or any
+	 *    of the custom types created for forming a Universal Hex.
+	 * @param dataBytes - Byte array with the data to include in the record.
+	 * @returns A string with the Intel Hex record.
+	 */
+
+
+	function createRecord(address, recordType, dataBytes) {
+	  if (address < 0 || address > 0xffff) {
+	    throw new Error("Record (" + recordType + ") address out of range: " + address);
+	  }
+
+	  var byteCount = dataBytes.length;
+
+	  if (byteCount > RECORD_DATA_MAX_BYTES) {
+	    throw new Error("Record (" + recordType + ") data has too many bytes (" + byteCount + ").");
+	  }
+
+	  if (!isRecordTypeValid(recordType)) {
+	    throw new Error("Record type '" + recordType + "' is not valid.");
+	  }
+
+	  var recordContent = concatUint8Arrays([new Uint8Array([byteCount, address >> 8, address & 0xff, recordType]), dataBytes]);
+	  var recordContentStr = byteArrayToHexStr(recordContent);
+	  var checksumStr = byteToHexStrFast(calcChecksumByte(recordContent));
+	  return "" + START_CODE_STR + recordContentStr + checksumStr;
+	}
+	/**
+	 * Check if an Intel Hex record conforms to the following rules:
+	 *  - Correct length of characters
+	 *  - Starts with a colon
+	 *
+	 * TODO: Apply more rules.
+	 *
+	 * @param iHexRecord - Single Intel Hex record to check.
+	 * @returns A boolean indicating if the record is valid.
+	 */
+
+
+	function validateRecord(iHexRecord) {
+	  if (iHexRecord.length < MIN_RECORD_STR_LEN) {
+	    throw new Error("Record length too small: " + iHexRecord);
+	  }
+
+	  if (iHexRecord.length > MAX_RECORD_STR_LEN) {
+	    throw new Error("Record length is too large: " + iHexRecord);
+	  }
+
+	  if (iHexRecord[0] !== ':') {
+	    throw new Error("Record does not start with a \":\": " + iHexRecord);
+	  }
+
+	  return true;
+	}
+	/**
+	 * Retrieves the Record Type form an Intel Hex record line.
+	 *
+	 * @param iHexRecord Intel hex record line without line terminator.
+	 * @returns The RecordType value.
+	 */
+
+
+	function getRecordType(iHexRecord) {
+	  validateRecord(iHexRecord);
+	  var recordTypeCharStart = START_CODE_STR_LEN + BYTE_COUNT_STR_LEN + ADDRESS_STR_LEN;
+	  var recordTypeStr = iHexRecord.slice(recordTypeCharStart, recordTypeCharStart + RECORD_TYPE_STR_LEN);
+	  var recordType = parseInt(recordTypeStr, 16);
+
+	  if (!isRecordTypeValid(recordType)) {
+	    throw new Error("Record type '" + recordTypeStr + "' from record '" + iHexRecord + "' is not valid.");
+	  }
+
+	  return recordType;
+	}
+	/**
+	 * Retrieves the data field from a record.
+	 *
+	 * @param iHexRecord Intel Hex record string.
+	 * @returns The record Data in a byte array.
+	 */
+
+
+	function getRecordData(iHexRecord) {
+	  try {
+	    // The only thing after the Data bytes is the Checksum (2 characters)
+	    return hexStrToBytes(iHexRecord.slice(DATA_STR_INDEX, -2));
+	  } catch (e) {
+	    throw new Error("Could not parse Intel Hex record \"" + iHexRecord + "\": " + e.message);
+	  }
+	}
+	/**
+	 * Parses an Intel Hex record into an Record object with its respective fields.
+	 *
+	 * @param iHexRecord Intel hex record line without line terminator.
+	 * @returns New object with the Record interface.
+	 */
+
+
+	function parseRecord(iHexRecord) {
+	  validateRecord(iHexRecord);
+	  var recordBytes;
+
+	  try {
+	    recordBytes = hexStrToBytes(iHexRecord.substring(1));
+	  } catch (e) {
+	    throw new Error("Could not parse Intel Hex record \"" + iHexRecord + "\": " + e.message);
+	  }
+
+	  var byteCountIndex = 0;
+	  var byteCount = recordBytes[0];
+	  var addressIndex = byteCountIndex + BYTE_COUNT_STR_LEN / 2;
+	  var address = (recordBytes[addressIndex] << 8) + recordBytes[addressIndex + 1];
+	  var recordTypeIndex = addressIndex + ADDRESS_STR_LEN / 2;
+	  var recordType = recordBytes[recordTypeIndex];
+	  var dataIndex = recordTypeIndex + RECORD_TYPE_STR_LEN / 2;
+	  var checksumIndex = dataIndex + byteCount;
+	  var data = recordBytes.slice(dataIndex, checksumIndex);
+	  var checksum = recordBytes[checksumIndex];
+	  var totalLength = checksumIndex + CHECKSUM_STR_LEN / 2;
+
+	  if (recordBytes.length > totalLength) {
+	    throw new Error("Parsed record \"" + iHexRecord + "\" is larger than indicated by the byte count." + ("\n\tExpected: " + totalLength + "; Length: " + recordBytes.length + "."));
+	  }
+
+	  return {
+	    byteCount: byteCount,
+	    address: address,
+	    recordType: recordType,
+	    data: data,
+	    checksum: checksum
+	  };
+	}
+	/**
+	 * Creates an End Of File Intel Hex record.
+	 *
+	 * @returns End of File record with new line.
+	 */
+
+
+	function endOfFileRecord() {
+	  // No need to use createRecord(), this record is always the same
+	  return ':00000001FF';
+	}
+	/**
+	 * Creates an Extended Linear Address record from a 4 byte address.
+	 *
+	 * @param address - Full 32 bit address.
+	 * @returns The Extended Linear Address Intel Hex record.
+	 */
+
+
+	function extLinAddressRecord(address) {
+	  if (address < 0 || address > 0xffffffff) {
+	    throw new Error("Address '" + address + "' for Extended Linear Address record is out of range.");
+	  }
+
+	  return createRecord(0, RecordType.ExtendedLinearAddress, new Uint8Array([address >> 24 & 0xff, address >> 16 & 0xff]));
+	}
+	/**
+	 * Creates a Block Start (custom) Intel Hex Record.
+	 *
+	 * @param boardId Board ID to embed into the record, 0 to 0xFFF.
+	 * @returns A Block Start (custom) Intel Hex record.
+	 */
+
+
+	function blockStartRecord(boardId) {
+	  if (boardId < 0 || boardId > 0xffff) {
+	    throw new Error('Board ID out of range when creating Block Start record.');
+	  }
+
+	  return createRecord(0, RecordType.BlockStart, new Uint8Array([boardId >> 8 & 0xff, boardId & 0xff, 0xc0, 0xde]));
+	}
+	/**
+	 * Create Block End (custom) Intel Hex Record.
+	 *
+	 * The Data field in this Record will be ignored and can be used for padding.
+	 *
+	 * @param padBytesLen Number of bytes to add to the Data field.
+	 * @returns A Block End (custom) Intel Hex record.
+	 */
+
+
+	function blockEndRecord(padBytesLen) {
+	  // This function is called very often with the same arguments, so cache
+	  // those results for better performance
+	  switch (padBytesLen) {
+	    case 0x4:
+	      // Common for blocks that have full Data records with 0x10 bytes and a
+	      // single Extended Linear Address record
+	      return ':0400000BFFFFFFFFF5';
+
+	    case 0x0c:
+	      // The most common padding, when a block has 10 full (0x10) Data records
+	      return ':0C00000BFFFFFFFFFFFFFFFFFFFFFFFFF5';
+
+	    default:
+	      // Input sanitation will be done in createRecord, no need to do it here too
+	      var recordData = new Uint8Array(padBytesLen).fill(0xff);
+	      return createRecord(0, RecordType.BlockEnd, recordData);
+	  }
+	}
+	/**
+	 * Create a Padded Data (custom) Intel Hex Record.
+	 * This record is used to add padding data, to be ignored by DAPLink, to be able
+	 * to create blocks of 512-bytes.
+	 *
+	 * @param padBytesLen Number of bytes to add to the Data field.
+	 * @returns A Padded Data (custom) Intel Hex record.
+	 */
+
+
+	function paddedDataRecord(padBytesLen) {
+	  // Input sanitation will be done in createRecord, no need to do it here too
+	  var recordData = new Uint8Array(padBytesLen).fill(0xff);
+	  return createRecord(0, RecordType.PaddedData, recordData);
+	}
+	/**
+	 * Changes the record type of a Record to a Custom Data type.
+	 *
+	 * The data field is kept, but changing the record type will trigger the
+	 * checksum to be updated as well.
+	 *
+	 * @param iHexRecord Intel hex record line without line terminator.
+	 * @returns A Custom Data Intel Hex record with the same data field.
+	 */
+
+
+	function convertRecordTo(iHexRecord, recordType) {
+	  var oRecord = parseRecord(iHexRecord);
+	  var recordContent = new Uint8Array(oRecord.data.length + 4);
+	  recordContent[0] = oRecord.data.length;
+	  recordContent[1] = oRecord.address >> 8;
+	  recordContent[2] = oRecord.address & 0xff;
+	  recordContent[3] = recordType;
+	  recordContent.set(oRecord.data, 4);
+	  var recordContentStr = byteArrayToHexStr(recordContent);
+	  var checksumStr = byteToHexStrFast(calcChecksumByte(recordContent));
+	  return "" + START_CODE_STR + recordContentStr + checksumStr;
+	}
+	/**
+	 * Converts and Extended Segment Linear Address record to an Extended Linear
+	 * Address record.
+	 *
+	 * @throws {Error} When the record does not contain exactly 2 bytes.
+	 * @throws {Error} When the Segmented Address is not a multiple of 0x1000.
+	 *
+	 * @param iHexRecord Intel hex record line without line terminator.
+	 */
+
+
+	function convertExtSegToLinAddressRecord(iHexRecord) {
+	  var segmentAddress = getRecordData(iHexRecord);
+
+	  if (segmentAddress.length !== 2 || segmentAddress[0] & 0xf || // Only process multiples of 0x1000
+	  segmentAddress[1] !== 0) {
+	    throw new Error("Invalid Extended Segment Address record " + iHexRecord);
+	  }
+
+	  var startAddress = segmentAddress[0] << 12;
+	  return extLinAddressRecord(startAddress);
+	}
+	/**
+	 * Separates an Intel Hex file (string) into an array of Record strings.
+	 *
+	 * @param iHexStr Intel Hex file as a string.
+	 * @returns Array of Records in string format.
+	 */
+
+
+	function iHexToRecordStrs(iHexStr) {
+	  // For some reason this is quicker than .split(/\r?\n/)
+	  // Up to x200 faster in Chrome (!) and x1.5 faster in Firefox
+	  var output = iHexStr.replace(/\r/g, '').split('\n'); // Boolean filter removes all falsy values as some of these files contain
+	  // multiple empty lines we want to remove
+
+	  return output.filter(Boolean);
+	}
+	/**
+	 * Iterates through the beginning of an array of Intel Hex records to find the
+	 * longest record data field length.
+	 *
+	 * Once it finds 12 records at the maximum size found so far (starts at 16
+	 * bytes) it will stop iterating.
+	 *
+	 * This is useful to identify the expected max size of the data records for an
+	 * Intel Hex, and then be able to generate new custom records of the same size.
+	 *
+	 * @param iHexRecords Array of Intel Hex Records.
+	 * @returns Number of data bytes in a full record.
+	 */
+
+
+	function findDataFieldLength(iHexRecords) {
+	  var maxDataBytes = 16;
+	  var maxDataBytesCount = 0;
+
+	  for (var _i = 0, iHexRecords_1 = iHexRecords; _i < iHexRecords_1.length; _i++) {
+	    var record = iHexRecords_1[_i];
+	    var dataBytesLength = (record.length - MIN_RECORD_STR_LEN) / 2;
+
+	    if (dataBytesLength > maxDataBytes) {
+	      maxDataBytes = dataBytesLength;
+	      maxDataBytesCount = 0;
+	    } else if (dataBytesLength === maxDataBytes) {
+	      maxDataBytesCount++;
+	    }
+
+	    if (maxDataBytesCount > 12) {
+	      break;
+	    }
+	  }
+
+	  if (maxDataBytes > RECORD_DATA_MAX_BYTES) {
+	    throw new Error("Intel Hex record data size is too large: " + maxDataBytes);
+	  }
+
+	  return maxDataBytes;
+	}
+
+	var V1_BOARD_IDS = [0x9900, 0x9901];
+	var BLOCK_SIZE = 512;
+	/**
+	 * Converts an Intel Hex file string into a Universal Hex ready hex string using
+	 * custom records and 512 byte blocks.
+	 *
+	 * More information on the format:
+	 *   https://github.com/microbit-foundation/universal-hex
+	 *
+	 * @throws {Error} When the Board ID is not between 0 and 2^16.
+	 * @throws {Error} When there is an EoF record not at the end of the file.
+	 *
+	 * @param iHexStr - Intel Hex string to convert into the custom format with 512
+	 *    byte blocks and the customer records.
+	 * @returns New Intel Hex string with the custom format.
+	 */
+
+	function iHexToCustomFormatBlocks(iHexStr, boardId) {
+	  // Hex files for v1.3 and v1.5 continue using the normal Data Record Type
+	  var replaceDataRecord = !V1_BOARD_IDS.includes(boardId); // Generate some constant records
+
+	  var startRecord = blockStartRecord(boardId);
+	  var currentExtAddr = extLinAddressRecord(0); // Pre-calculate known record lengths
+
+	  var extAddrRecordLen = currentExtAddr.length;
+	  var startRecordLen = startRecord.length;
+	  var endRecordBaseLen = blockEndRecord(0).length;
+	  var padRecordBaseLen = paddedDataRecord(0).length;
+	  var hexRecords = iHexToRecordStrs(iHexStr);
+	  var recordPaddingCapacity = findDataFieldLength(hexRecords); // Each loop iteration corresponds to a 512-bytes block
+
+	  var ih = 0;
+	  var blockLines = [];
+
+	  while (ih < hexRecords.length) {
+	    var blockLen = 0; // Check for an extended linear record to not repeat it after a block start
+
+	    var firstRecordType = getRecordType(hexRecords[ih]);
+
+	    if (firstRecordType === RecordType.ExtendedLinearAddress) {
+	      currentExtAddr = hexRecords[ih];
+	      ih++;
+	    } else if (firstRecordType === RecordType.ExtendedSegmentAddress) {
+	      currentExtAddr = convertExtSegToLinAddressRecord(hexRecords[ih]);
+	      ih++;
+	    }
+
+	    blockLines.push(currentExtAddr);
+	    blockLen += extAddrRecordLen + 1;
+	    blockLines.push(startRecord);
+	    blockLen += startRecordLen + 1;
+	    blockLen += endRecordBaseLen + 1;
+	    var endOfFile = false;
+
+	    while (hexRecords[ih] && BLOCK_SIZE >= blockLen + hexRecords[ih].length + 1) {
+	      var record = hexRecords[ih++];
+	      var recordType = getRecordType(record);
+
+	      if (replaceDataRecord && recordType === RecordType.Data) {
+	        record = convertRecordTo(record, RecordType.CustomData);
+	      } else if (recordType === RecordType.ExtendedLinearAddress) {
+	        currentExtAddr = record;
+	      } else if (recordType === RecordType.ExtendedSegmentAddress) {
+	        record = convertExtSegToLinAddressRecord(record);
+	        currentExtAddr = record;
+	      } else if (recordType === RecordType.EndOfFile) {
+	        endOfFile = true;
+	        break;
+	      }
+
+	      blockLines.push(record);
+	      blockLen += record.length + 1;
+	    }
+
+	    if (endOfFile) {
+	      // Error if we encounter an EoF record and it's not the end of the file
+	      if (ih !== hexRecords.length) {
+	        throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex");
+	      } // The EoF record goes after the Block End Record, it won't break 512-byte
+	      // boundary as it was already calculated in the previous loop that it fits
+
+
+	      blockLines.push(blockEndRecord(0));
+	      blockLines.push(endOfFileRecord());
+	    } else {
+	      // We might need additional padding records
+	      // const charsLeft = BLOCK_SIZE - blockLen;
+	      while (BLOCK_SIZE - blockLen > recordPaddingCapacity * 2) {
+	        var record = paddedDataRecord(Math.min((BLOCK_SIZE - blockLen - (padRecordBaseLen + 1)) / 2, recordPaddingCapacity));
+	        blockLines.push(record);
+	        blockLen += record.length + 1;
+	      }
+
+	      blockLines.push(blockEndRecord((BLOCK_SIZE - blockLen) / 2));
+	    }
+	  }
+
+	  blockLines.push(''); // Ensure there is a blank new line at the end
+
+	  return blockLines.join('\n');
+	}
+	/**
+	 * Converts an Intel Hex file string into a Universal Hex ready hex string using
+	 * custom records and sections aligned with 512-byte boundaries.
+	 *
+	 * More information on the format:
+	 *   https://github.com/microbit-foundation/universal-hex
+	 *
+	 * @throws {Error} When the Board ID is not between 0 and 2^16.
+	 * @throws {Error} When there is an EoF record not at the end of the file.
+	 *
+	 * @param iHexStr - Intel Hex string to convert into the custom format with 512
+	 *    byte blocks and the customer records.
+	 * @returns New Intel Hex string with the custom format.
+	 */
+
+
+	function iHexToCustomFormatSection(iHexStr, boardId) {
+	  var sectionLines = [];
+	  var sectionLen = 0;
+	  var ih = 0;
+
+	  var addRecordLength = function addRecordLength(record) {
+	    sectionLen += record.length + 1; // Extra character counted for '\n'
+	  };
+
+	  var addRecord = function addRecord(record) {
+	    sectionLines.push(record);
+	    addRecordLength(record);
+	  };
+
+	  var hexRecords = iHexToRecordStrs(iHexStr);
+	  if (!hexRecords.length) return ''; // If first record is not an Extended Segmented/Linear Address we start at 0x0
+
+	  var iHexFirstRecordType = getRecordType(hexRecords[0]);
+
+	  if (iHexFirstRecordType === RecordType.ExtendedLinearAddress) {
+	    addRecord(hexRecords[0]);
+	    ih++;
+	  } else if (iHexFirstRecordType === RecordType.ExtendedSegmentAddress) {
+	    addRecord(convertExtSegToLinAddressRecord(hexRecords[0]));
+	    ih++;
+	  } else {
+	    addRecord(extLinAddressRecord(0));
+	  } // Add the Block Start record to the beginning of the segment
+
+
+	  addRecord(blockStartRecord(boardId)); // Iterate through the rest of the records and add them
+
+	  var replaceDataRecord = !V1_BOARD_IDS.includes(boardId);
+	  var endOfFile = false;
+
+	  while (ih < hexRecords.length) {
+	    var record = hexRecords[ih++];
+	    var recordType = getRecordType(record);
+
+	    if (recordType === RecordType.Data) {
+	      addRecord(replaceDataRecord ? convertRecordTo(record, RecordType.CustomData) : record);
+	    } else if (recordType === RecordType.ExtendedSegmentAddress) {
+	      addRecord(convertExtSegToLinAddressRecord(record));
+	    } else if (recordType === RecordType.ExtendedLinearAddress) {
+	      addRecord(record);
+	    } else if (recordType === RecordType.EndOfFile) {
+	      endOfFile = true;
+	      break;
+	    }
+	  }
+
+	  if (ih !== hexRecords.length) {
+	    throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex ");
+	  } // Add to the section size calculation the minimum length for the Block End
+	  // record that will be placed at the end (no padding included yet)
+
+
+	  addRecordLength(blockEndRecord(0)); // Calculate padding required to end in a 512-byte boundary
+
+	  var recordNoDataLenChars = paddedDataRecord(0).length + 1;
+	  var recordDataMaxBytes = findDataFieldLength(hexRecords);
+	  var paddingCapacityChars = recordDataMaxBytes * 2;
+	  var charsNeeded = (BLOCK_SIZE - sectionLen % BLOCK_SIZE) % BLOCK_SIZE;
+
+	  while (charsNeeded > paddingCapacityChars) {
+	    var byteLen = charsNeeded - recordNoDataLenChars >> 1; // Integer div 2
+
+	    var record = paddedDataRecord(Math.min(byteLen, recordDataMaxBytes));
+	    addRecord(record);
+	    charsNeeded = (BLOCK_SIZE - sectionLen % BLOCK_SIZE) % BLOCK_SIZE;
+	  }
+
+	  sectionLines.push(blockEndRecord(charsNeeded >> 1));
+	  if (endOfFile) sectionLines.push(endOfFileRecord());
+	  sectionLines.push(''); // Ensure there is a blank new line at the end
+
+	  return sectionLines.join('\n');
+	}
+	/**
+	 * Creates a Universal Hex from an collection of Intel Hex strings and their
+	 * board IDs.
+	 *
+	 * @param hexes An array of objects containing an Intel Hex strings and the
+	 *     board ID associated with it.
+	 * @param blocks Indicate if the Universal Hex should be blocks instead of
+	 *     sections.
+	 */
+
+
+	function createUniversalHex(hexes, blocks) {
+	  if (blocks === void 0) {
+	    blocks = false;
+	  }
+
+	  if (!hexes.length) return '';
+	  var iHexToCustomFormat = blocks ? iHexToCustomFormatBlocks : iHexToCustomFormatSection;
+	  var eofNlRecord = endOfFileRecord() + '\n';
+	  var customHexes = []; // We remove the EoF record from all but the last hex file so that the last
+	  // blocks are padded and there is single EoF record
+
+	  for (var i = 0; i < hexes.length - 1; i++) {
+	    var customHex = iHexToCustomFormat(hexes[i].hex, hexes[i].boardId);
+
+	    if (customHex.endsWith(eofNlRecord)) {
+	      customHex = customHex.slice(0, customHex.length - eofNlRecord.length);
+	    }
+
+	    customHexes.push(customHex);
+	  } // Process the last hex file with a guaranteed EoF record
+
+
+	  var lastCustomHex = iHexToCustomFormat(hexes[hexes.length - 1].hex, hexes[hexes.length - 1].boardId);
+	  customHexes.push(lastCustomHex);
+
+	  if (!lastCustomHex.endsWith(eofNlRecord)) {
+	    customHexes.push(eofNlRecord);
+	  }
+
+	  return customHexes.join('');
+	}
+	/**
+	 * Checks if the provided hex string is a universal hex.
+	 *
+	 * Very simple test only checking for the opening Extended Linear Address and
+	 * Block Start records.
+	 *
+	 * The string is manually checked as this method can be x20 faster than breaking
+	 * the string into records and checking their types with the ihex functions.
+	 *
+	 * @param hexStr Hex string to check
+	 * @return True if the hex is an Universal Hex.
+	 */
+
+
+	function isUniversalHex(hexStr) {
+	  // Check the beginning of the Extended Linear Address record
+	  var elaRecordBeginning = ':02000004';
+
+	  if (hexStr.slice(0, elaRecordBeginning.length) !== elaRecordBeginning) {
+	    return false;
+	  } // Find the index for the next record, as we have unknown line endings
+
+
+	  var i = elaRecordBeginning.length;
+
+	  while (hexStr[++i] !== ':' && i < MAX_RECORD_STR_LEN + 3) {
+	  } // Check the beginning of the Block Start record
+
+
+	  var blockStartBeginning = ':0400000A';
+
+	  if (hexStr.slice(i, i + blockStartBeginning.length) !== blockStartBeginning) {
+	    return false;
+	  }
+
+	  return true;
+	}
+	/**
+	 * Separates a Universal Hex into the individual hexes.
+	 *
+	 * @param universalHexStr Universal Hex string with the Universal Hex.
+	 * @returns An array of object with boardId and hex keys.
+	 */
+
+
+	function separateUniversalHex(universalHexStr) {
+	  var records = iHexToRecordStrs(universalHexStr);
+	  if (!records.length) throw new Error('Empty Universal Hex.'); // The format has to start with an Extended Linear Address and Block Start
+
+	  if (getRecordType(records[0]) !== RecordType.ExtendedLinearAddress || getRecordType(records[1]) !== RecordType.BlockStart || getRecordType(records[records.length - 1]) !== RecordType.EndOfFile) {
+	    throw new Error('Universal Hex block format invalid.');
+	  }
+
+	  var passThroughRecords = [RecordType.Data, RecordType.EndOfFile, RecordType.ExtendedSegmentAddress, RecordType.StartSegmentAddress]; // Initialise the structure to hold the different hexes
+
+	  var hexes = {};
+	  var currentBoardId = 0;
+
+	  for (var i = 0; i < records.length; i++) {
+	    var record = records[i];
+	    var recordType = getRecordType(record);
+
+	    if (passThroughRecords.includes(recordType)) {
+	      hexes[currentBoardId].hex.push(record);
+	    } else if (recordType === RecordType.CustomData) {
+	      hexes[currentBoardId].hex.push(convertRecordTo(record, RecordType.Data));
+	    } else if (recordType === RecordType.ExtendedLinearAddress) {
+	      // Extended Linear Address can be found as the start of a new block
+	      // No need to check array size as it's confirmed hex ends with an EoF
+	      var nextRecord = records[i + 1];
+
+	      if (getRecordType(nextRecord) === RecordType.BlockStart) {
+	        // Processes the Block Start record (only first 2 bytes for Board ID)
+	        var blockStartData = getRecordData(nextRecord);
+
+	        if (blockStartData.length !== 4) {
+	          throw new Error("Block Start record invalid: " + nextRecord);
+	        }
+
+	        currentBoardId = (blockStartData[0] << 8) + blockStartData[1];
+	        hexes[currentBoardId] = hexes[currentBoardId] || {
+	          boardId: currentBoardId,
+	          lastExtAdd: record,
+	          hex: [record]
+	        };
+	        i++;
+	      }
+
+	      if (hexes[currentBoardId].lastExtAdd !== record) {
+	        hexes[currentBoardId].lastExtAdd = record;
+	        hexes[currentBoardId].hex.push(record);
+	      }
+	    }
+	  } // Form the return object with the same format as createUniversalHex() input
+
+
+	  var returnArray = [];
+	  Object.keys(hexes).forEach(function (boardId) {
+	    // Ensure all hexes (and not just the last) contain the EoF record
+	    var hex = hexes[boardId].hex;
+
+	    if (hex[hex.length - 1] !== endOfFileRecord()) {
+	      hex[hex.length] = endOfFileRecord();
+	    }
+
+	    returnArray.push({
+	      boardId: hexes[boardId].boardId,
+	      hex: hex.join('\n') + '\n'
+	    });
+	  });
+	  return returnArray;
+	}
 
 	/**
 	 * Interprets the data stored in the UICR memory space.
@@ -5482,33 +6533,69 @@
 	  return SimpleFile;
 	}();
 
+	/**
+	 * Manage filesystem files in one or multiple MicroPython hex files.
+	 *
+	 * @public
+	 */
+
 	var MicropythonFsHex =
 	/** @class */
 	function () {
 	  /**
 	   * File System manager constructor.
-	   * At the moment it needs a MicroPython hex string without a files included.
 	   *
-	   * @param intelHex - MicroPython Intel Hex string.
+	   * At the moment it needs a MicroPython hex string without files included.
+	   * Multiple MicroPython images can be provided to generate a Universal Hex.
+	   *
+	   * @throws {Error} When any of the input iHex contains filesystem files.
+	   * @throws {Error} When any of the input iHex is not a valid MicroPython hex.
+	   *
+	   * @param intelHex - MicroPython Intel Hex string or an array of Intel Hex
+	   *    strings with their respective board IDs.
 	   */
 	  function MicropythonFsHex(intelHex, _a) {
+	    var _this = this;
+
 	    var _b = (_a === void 0 ? {} : _a).maxFsSize,
 	        maxFsSize = _b === void 0 ? 0 : _b;
+	    this._uPyFsBuilderCache = [];
 	    this._files = {};
 	    this._storageSize = 0;
+	    var hexWithIdArray = Array.isArray(intelHex) ? intelHex : [{
+	      hex: intelHex,
+	      boardId: 0x0000
+	    }]; // Generate and store the MicroPython Builder caches
 
-	    if (!intelHex) {
-	      throw new Error('Invalid MicroPython hex invalid.');
-	    }
+	    var minFsSize = Infinity;
+	    hexWithIdArray.forEach(function (hexWithId) {
+	      if (!hexWithId.hex) {
+	        throw new Error('Invalid MicroPython hex.');
+	      }
 
-	    this._uPyFsBuilderCache = createMpFsBuilderCache(intelHex);
-	    this.setStorageSize(maxFsSize || this._uPyFsBuilderCache.fsSize); // Check if there are files in the input hex
+	      var builderCache = createMpFsBuilderCache(hexWithId.hex);
+	      var thisBuilderCache = {
+	        originalIntelHex: builderCache.originalIntelHex,
+	        originalMemMap: builderCache.originalMemMap,
+	        uPyEndAddress: builderCache.uPyEndAddress,
+	        uPyIntelHex: builderCache.uPyIntelHex,
+	        fsSize: builderCache.fsSize,
+	        boardId: hexWithId.boardId
+	      };
 
-	    var hexFiles = getIntelHexFiles(this._uPyFsBuilderCache.originalMemMap);
+	      _this._uPyFsBuilderCache.push(thisBuilderCache);
 
-	    if (Object.keys(hexFiles).length) {
-	      throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
-	    }
+	      minFsSize = Math.min(minFsSize, thisBuilderCache.fsSize);
+	    });
+	    this.setStorageSize(maxFsSize || minFsSize); // Check if there are files in any of the input hex
+
+	    this._uPyFsBuilderCache.forEach(function (builderCache) {
+	      var hexFiles = getIntelHexFiles(builderCache.originalMemMap);
+
+	      if (Object.keys(hexFiles).length) {
+	        throw new Error('There are files in the MicropythonFsHex constructor hex file input.');
+	      }
+	    });
 	  }
 	  /**
 	   * Create a new file and add it to the file system.
@@ -5676,7 +6763,13 @@
 
 
 	  MicropythonFsHex.prototype.setStorageSize = function (size) {
-	    if (size > this._uPyFsBuilderCache.fsSize) {
+	    var minFsSize = Infinity;
+
+	    this._uPyFsBuilderCache.forEach(function (builderCache) {
+	      minFsSize = Math.min(minFsSize, builderCache.fsSize);
+	    });
+
+	    if (size > minFsSize) {
 	      throw new Error('Storage size limit provided is larger than size available in the MicroPython hex.');
 	    }
 
@@ -5701,11 +6794,9 @@
 	  MicropythonFsHex.prototype.getStorageUsed = function () {
 	    var _this = this;
 
-	    var total = 0;
-	    Object.values(this._files).forEach(function (value) {
-	      return total += _this.size(value.filename);
-	    });
-	    return total;
+	    return Object.values(this._files).reduce(function (accumulator, current) {
+	      return accumulator + _this.size(current.filename);
+	    }, 0);
 	  };
 	  /**
 	   * @returns The remaining storage of the file system in bytes.
@@ -5713,14 +6804,7 @@
 
 
 	  MicropythonFsHex.prototype.getStorageRemaining = function () {
-	    var _this = this;
-
-	    var total = 0;
-	    var capacity = this.getStorageSize();
-	    Object.values(this._files).forEach(function (value) {
-	      return total += _this.size(value.filename);
-	    });
-	    return capacity - total;
+	    return this.getStorageSize() - this.getStorageUsed();
 	  };
 	  /**
 	   * Read the files included in a MicroPython hex string and add them to this
@@ -5751,11 +6835,10 @@
 	    var files = getIntelHexFiles(intelHex);
 
 	    if (!Object.keys(files).length) {
-	      throw new Error('Hex does not have any files to import');
+	      throw new Error('Intel Hex does not have any files to import');
 	    }
 
 	    if (formatFirst) {
-	      delete this._files;
 	      this._files = {};
 	    }
 
@@ -5775,18 +6858,126 @@
 	    return Object.keys(files);
 	  };
 	  /**
-	   * Generate a new copy of the MicroPython Intel Hex with the filesystem
-	   * included.
+	   * Read the files included in a MicroPython Universal Hex string and add them
+	   * to this instance.
+	   *
+	   * @throws {Error} When there are no files to import from one of the hex.
+	   * @throws {Error} When the files in the individual hex are different.
+	   * @throws {Error} When there is a problem reading files from one of the hex.
+	   * @throws {Error} When a filename already exists in this instance (all other
+	   *     files are still imported).
+	   *
+	   * @param universalHex - MicroPython Universal Hex string with files.
+	   * @param overwrite - Flag to overwrite existing files in this instance.
+	   * @param formatFirst - Erase all the previous files before importing. It only
+	   *     erases the files after there are no error during hex file parsing.
+	   * @returns A filename list of added files.
+	   */
+
+
+	  MicropythonFsHex.prototype.importFilesFromUniversalHex = function (universalHex, _a) {
+	    var _this = this;
+
+	    var _b = _a === void 0 ? {} : _a,
+	        _c = _b.overwrite,
+	        overwrite = _c === void 0 ? false : _c,
+	        _d = _b.formatFirst,
+	        formatFirst = _d === void 0 ? false : _d;
+
+	    if (!isUniversalHex(universalHex)) {
+	      throw new Error('Universal Hex provided is invalid.');
+	    }
+
+	    var hexWithIds = separateUniversalHex(universalHex);
+	    var allFileGroups = [];
+	    hexWithIds.forEach(function (hexWithId) {
+	      var fileGroup = getIntelHexFiles(hexWithId.hex);
+
+	      if (!Object.keys(fileGroup).length) {
+	        throw new Error("Hex with ID " + hexWithId.boardId + " from Universal Hex does not have any files to import");
+	      }
+
+	      allFileGroups.push(fileGroup);
+	    }); // Ensure all hexes have the same files
+
+	    allFileGroups.forEach(function (fileGroup) {
+	      // Create new array without this current group
+	      var compareFileGroups = allFileGroups.filter(function (v) {
+	        return v !== fileGroup;
+	      });
+
+	      var _loop_1 = function _loop_1(fileName, fileContent) {
+	        compareFileGroups.forEach(function (compareGroup) {
+	          if (!compareGroup.hasOwnProperty(fileName) || !areUint8ArraysEqual(compareGroup[fileName], fileContent)) {
+	            throw new Error('Mismatch in the different Hexes inside the Universal Hex');
+	          }
+	        });
+	      }; // Check that all files in this group are in all the others
+
+
+	      for (var _i = 0, _a = Object.entries(fileGroup); _i < _a.length; _i++) {
+	        var _b = _a[_i],
+	            fileName = _b[0],
+	            fileContent = _b[1];
+
+	        _loop_1(fileName, fileContent);
+	      }
+	    }); // If we reached this point all file groups are the same and we can use any
+
+	    var files = allFileGroups[0];
+
+	    if (formatFirst) {
+	      this._files = {};
+	    }
+
+	    var existingFiles = [];
+	    Object.keys(files).forEach(function (filename) {
+	      if (!overwrite && _this.exists(filename)) {
+	        existingFiles.push(filename);
+	      } else {
+	        _this.write(filename, files[filename]);
+	      }
+	    }); // Only throw the error at the end so that all other files are imported
+
+	    if (existingFiles.length) {
+	      throw new Error("Files \"" + existingFiles + "\" from hex already exists.");
+	    }
+
+	    return Object.keys(files);
+	  };
+
+	  MicropythonFsHex.prototype.importFilesFromHex = function (hexStr, _a) {
+	    var _b = _a === void 0 ? {} : _a,
+	        _c = _b.overwrite,
+	        overwrite = _c === void 0 ? false : _c,
+	        _d = _b.formatFirst,
+	        formatFirst = _d === void 0 ? false : _d;
+
+	    var options = {
+	      overwrite: overwrite,
+	      formatFirst: formatFirst
+	    };
+	    return isUniversalHex(hexStr) ? this.importFilesFromUniversalHex(hexStr, options) : this.importFilesFromIntelHex(hexStr, options);
+	  };
+	  /**
+	   * Generate a new copy of the MicroPython Intel Hex with the files in the
+	   * filesystem included.
 	   *
 	   * @throws {Error} When a file doesn't have any data.
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
+	   * @throws {Error} When the board ID is not found.
+	   * @throws {Error} When there are multiple MicroPython hexes and board ID is
+	   *    not provided.
+	   *
+	   * @param boardId - When multiple MicroPython hex files are provided select
+	   *    one via this argument.
 	   *
 	   * @returns A new string with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHex = function () {
+	  MicropythonFsHex.prototype.getIntelHex = function (boardId) {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
@@ -5795,7 +6986,25 @@
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return generateHexWithFiles(this._uPyFsBuilderCache, files);
+
+	    if (boardId === undefined) {
+	      if (this._uPyFsBuilderCache.length === 1) {
+	        return generateHexWithFiles(this._uPyFsBuilderCache[0], files);
+	      } else {
+	        throw new Error('The Board ID must be specified if there are multiple MicroPythons.');
+	      }
+	    }
+
+	    for (var _i = 0, _a = this._uPyFsBuilderCache; _i < _a.length; _i++) {
+	      var builderCache = _a[_i];
+
+	      if (builderCache.boardId === boardId) {
+	        return generateHexWithFiles(builderCache, files);
+	      }
+	    } // If we reach this point we could not find the board ID
+
+
+	    throw new Error('Board ID requested not found.');
 	  };
 	  /**
 	   * Generate a byte array of the MicroPython and filesystem data.
@@ -5803,12 +7012,18 @@
 	   * @throws {Error} When a file doesn't have any data.
 	   * @throws {Error} When there are issues calculating file system boundaries.
 	   * @throws {Error} When there is no space left for a file.
+	   * @throws {Error} When the board ID is not found.
+	   * @throws {Error} When there are multiple MicroPython hexes and board ID is
+	   *    not provided.
+	   *
+	   * @param boardId - When multiple MicroPython hex files are provided select
+	   *    one via this argument.
 	   *
 	   * @returns A Uint8Array with MicroPython and the filesystem included.
 	   */
 
 
-	  MicropythonFsHex.prototype.getIntelHexBytes = function () {
+	  MicropythonFsHex.prototype.getIntelHexBytes = function (boardId) {
 	    if (this.getStorageRemaining() < 0) {
 	      throw new Error('There is no storage space left.');
 	    }
@@ -5817,7 +7032,57 @@
 	    Object.values(this._files).forEach(function (file) {
 	      files[file.filename] = file.getBytes();
 	    });
-	    return addIntelHexFiles(this._uPyFsBuilderCache.originalMemMap, files, true);
+
+	    if (boardId === undefined) {
+	      if (this._uPyFsBuilderCache.length === 1) {
+	        return addIntelHexFiles(this._uPyFsBuilderCache[0].originalMemMap, files, true);
+	      } else {
+	        throw new Error('The Board ID must be specified if there are multiple MicroPythons.');
+	      }
+	    }
+
+	    for (var _i = 0, _a = this._uPyFsBuilderCache; _i < _a.length; _i++) {
+	      var builderCache = _a[_i];
+
+	      if (builderCache.boardId === boardId) {
+	        return addIntelHexFiles(builderCache.originalMemMap, files, true);
+	      }
+	    } // If we reach this point we could not find the board ID
+
+
+	    throw new Error('Board ID requested not found.');
+	  };
+	  /**
+	   * Generate a new copy of a MicroPython Universal Hex with the files in the
+	   * filesystem included.
+	   *
+	   * @throws {Error} When a file doesn't have any data.
+	   * @throws {Error} When there are issues calculating file system boundaries.
+	   * @throws {Error} When there is no space left for a file.
+	   * @throws {Error} When this method is called without having multiple
+	   *    MicroPython hexes.
+	   *
+	   * @returns A new Universal Hex string with MicroPython and filesystem.
+	   */
+
+
+	  MicropythonFsHex.prototype.getUniversalHex = function () {
+	    var _this = this;
+
+	    if (this._uPyFsBuilderCache.length === 1) {
+	      throw new Error('MicropythonFsHex constructor must have more than one MicroPython ' + 'Intel Hex to generate a Universal Hex.');
+	    }
+
+	    var iHexWithIds = [];
+
+	    this._uPyFsBuilderCache.forEach(function (builderCache) {
+	      iHexWithIds.push({
+	        hex: _this.getIntelHex(builderCache.boardId),
+	        boardId: builderCache.boardId
+	      });
+	    });
+
+	    return createUniversalHex(iHexWithIds);
 	  };
 
 	  return MicropythonFsHex;
