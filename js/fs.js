@@ -12,35 +12,32 @@
 var microbitFsWrapper = function() {
     var fsWrapper = {};
 
-    var fs1 = null;
-    var fs2 = null;
-
+    var uPyFs = null;
     var commonFsSize = 20 * 1024;
+    var passthroughMethods = [
+        'create',
+        'exists',
+        'getStorageRemaining',
+        'getStorageSize',
+        'getUniversalHex',
+        'ls',
+        'read',
+        'readBytes',
+        'remove',
+        'size',
+        'write',
+    ];
 
     /**
-     * Looks up the object keys from the MicropythonFsHex prototype and
-     * creates functions with the same name in this object to run the same
-     * method in both instances of MicropythonFsHex()
+     * Duplicates some of the methods from the MicropythonFsHex class by
+     * creating functions with the same name in this object.
      */
-    function duplicateKeys() {
-        // Only start the function duplication once both instances have been created
-        Object.keys(Object.getPrototypeOf(fs1)).forEach(function(key) {
-            // We will duplicate all functions to call both instances
-            if (typeof fs1[key] === 'function') {
-                fsWrapper[key] = function() {
-                    var return1 = fs1[key].apply(fs1, arguments);
-                    var return2 = fs2[key].apply(fs2, arguments);
-                    // FIXME: Keep this during general testing, probably remove on final release for speed
-                    if (JSON.stringify(return1) !== JSON.stringify(return2)) {
-                        console.error('Return from call to ' + key + ' differs:\n\t' + return1 + '\n\t'+ return2 );
-                    }
-                    return return1;
-                };
-            }
+    function duplicateMethods() {
+        passthroughMethods.forEach(function(method) {
+            fsWrapper[method] = function() {
+                return uPyFs[method].apply(uPyFs, arguments);
+            };
         });
-        // Remove the MicropythonFsHex functions we don't want to expose
-        delete fsWrapper['getIntelHex'];
-        delete fsWrapper['getIntelHexBytes'];
     }
 
     /**
@@ -48,34 +45,32 @@ var microbitFsWrapper = function() {
      * initial main.py
      */
     fsWrapper.setupFilesystem = function() {
+        var uPyV1 = null;
+        var uPyV2 = null;
+
         var deferred1 = $.get('micropython/microbit-micropython-v1.hex', function(fileStr) {
-            fs1 = new microbitFs.MicropythonFsHex(fileStr, {
-                'maxFsSize': commonFsSize,
-            });
+            uPyV1 = fileStr;
         }).fail(function() {
-            console.error('Could not load the MicroPython hex 1 file.');
+            console.error('Could not load the MicroPython v1 file.');
         });
         var deferred2 = $.get('micropython/microbit-micropython-v2.hex', function(fileStr) {
-            fs2 = new microbitFs.MicropythonFsHex(fileStr, {
-                'maxFsSize': commonFsSize,
-            });
+            uPyV2 = fileStr;
         }).fail(function() {
-            console.error('Could not load the MicroPython hex 2 file.');
+            console.error('Could not load the MicroPython v2 file.');
         });
 
         return $.when(deferred1, deferred2).done(function() {
-            duplicateKeys();
+            if (!uPyV1 || !uPyV2) {
+                console.error('There was an issue loading the MicroPython Hex files.');
+            }
+            uPyFs = new microbitFs.MicropythonFsHex([
+                { hex: uPyV1, boardId: 0x9900 },
+                { hex: uPyV2, boardId: 0x9903 },
+            ], {
+                'maxFsSize': commonFsSize,
+            });
+            duplicateMethods();
         });
-    };
-
-    /**
-     * @returns {string} Universal Hex string.
-     */
-    fsWrapper.getUniversalHex = function() {
-        return microbitUh.createUniversalHex([
-            { 'hex': fs1.getIntelHex(), 'boardId': 0x9900 },
-            { 'hex': fs2.getIntelHex(), 'boardId': 0x9903 },
-        ]);
     };
 
     /**
@@ -84,9 +79,9 @@ var microbitFsWrapper = function() {
      */
     fsWrapper.getBytesForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
-            return fs1.getIntelHexBytes();
+            return uPyFs.getIntelHexBytes(0x9900);
         } else if (boardId == '9903' || boardId == '9904') {
-            return fs2.getIntelHexBytes();
+            return uPyFs.getIntelHexBytes(0x9903);
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }
@@ -98,9 +93,9 @@ var microbitFsWrapper = function() {
      */
     fsWrapper.getIntelHexForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
-            var hexStr = fs1.getIntelHex();
+            var hexStr = uPyFs.getIntelHex(0x9900);
         } else if (boardId == '9903' || boardId == '9904') {
-            var hexStr = fs2.getIntelHex()
+            var hexStr = uPyFs.getIntelHex(0x9903);
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }
@@ -115,67 +110,39 @@ var microbitFsWrapper = function() {
     /**
      * Import the files from the provide hex string into the filesystem.
      * If the import is successful this deletes all the previous files.
-     * 
+     *
      * @param {string} hexStr Hex (Intel or Universal) string with files to
-     *   import.
+     *     import.
      * @return {string[]} Array with the filenames of all files imported.
      */
-    fsWrapper.importFiles = function(hexStr) {
-        var hex = '';
-        if (microbitUh.isUniversalHex(hexStr)) {
-            // For now only extract one of the file systems
-            microbitUh.separateUniversalHex(hexStr).forEach(function(hexObj) {
-                if (hexObj.boardId == 0x9900 || hexObj.boardId == 0x9901) {
-                    hex = hexObj.hex;
-                }
-            });
-            if (!hex) {
-                // TODO: Add this string to the language files
-                throw new Error('Universal Hex does not contain data for the supported boards.');
-            }
-        } else {
-            hex = hexStr;
-        }
-
-        // TODO: Add this string to the language files
-        var errorMsg = 'Not a Universal Hex\n';
-        try {
-            var filesNames1 = fs1.importFilesFromIntelHex(hex, {
-                overwrite: true,
-                formatFirst: true
-            });
-            var filesNames2 = fs2.importFilesFromIntelHex(hex, {
-                overwrite: true,
-                formatFirst: true
-            });
-            // FIXME: Keep this during general testing, probably remove on final release for speed
-            if (JSON.stringify(filesNames1) !== JSON.stringify(filesNames2)) {
-                console.error('Return from importFilesFromIntelHex() differs:' +
-                              '\n\t' + return1 + '\n\t'+ return2);
-            }
-            return filesNames1;
-        } catch(e) {
-            errorMsg += e.message + '\n';
-        }
-
-        // Failed during fs file import, check if there is an appended script
-        var code = '';
-        try {
-            code = microbitFs.getIntelHexAppendedScript(hexStr);
-            // If no code is found throw a dummy error to trigger the catch below
-            if (!code) throw new Error('No appended code found.');
-        } catch(e) {
-            // This was originally config.translate.alerts.no_script
-            throw new Error(errorMsg + 'Hex file does not contain an appended Python script.');
-        }
-        fs1.ls().forEach(function(fileName) {
-            fs1.remove(fileName);
+    fsWrapper.importHexFiles = function(hexStr) {
+        var filesNames = uPyFs.importFilesFromHex(hexStr, {
+            overwrite: true,
+            formatFirst: true
         });
-        fs1.write('main.py', code);
-        fs2.ls().forEach(function(fileName) {
-            fs2.remove(fileName);
+        if (!filesNames.length) {
+            throw new Error('The filesystem in the hex file was empty');
+        }
+        return filesNames;
+    };
+
+    /**
+     * Import an appended script from the provide hex string into the filesystem.
+     * If the import is successful this deletes all the previous files.
+     *
+     * @param {string} hexStr Hex (Intel or Universal) string with files to
+     *     import.
+     * @return {string[]} Array with the filenames of all files imported.
+     */
+    fsWrapper.importHexAppended = function(hexStr) {
+        var code = microbitFs.getIntelHexAppendedScript(hexStr);
+        if (!code) {
+            throw new Error('No appended code found in the hex file');
+        };
+        uPyFs.ls().forEach(function(fileName) {
+            uPyFs.remove(fileName);
         });
-        fs2.write('main.py', code);
+        uPyFs.write('main.py', code);
         return ['main.py'];
     };
 
