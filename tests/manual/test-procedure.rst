@@ -496,10 +496,10 @@ Test Case A11y: Using a screenreader
 
 Test Case Unit Tests: Browser based unit tests
 ''''''''''''''''''''''''''''''''''''''''''''''
-This test will need a local clone of the repository version under test.
-
-- Serve the repository contents locally.
-- Open the served tests.html file.
+This test uses a local clone of the repository.
+- Clone the repository version under test and start the local server.
+(see https://github.com/bbcmicrobit/PythonEditor/blob/master/README.rst)
+- Launch "http://localhost:8000/tests.html" in the browser.
 - [ ] Confirm all tests pass (errors will be marked red).
 
 
