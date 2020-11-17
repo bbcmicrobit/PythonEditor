@@ -1807,10 +1807,6 @@ function web_editor(config) {
                 })
         });
 
-        // Update the MicroPython docs link to append the version to the URL
-        var docsAnchor = $('#docs-link');
-        docsAnchor.attr('href', docsAnchor.attr('href') + 'en/v' + UPY_VERSION);
-
         window.addEventListener('resize', function() {
             formatMenuContainer('command-options', 'options_container');
             formatMenuContainer('command-help', 'helpsupport_container');
