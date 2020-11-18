@@ -71,6 +71,9 @@ You will need
 
 - A modern version of Firefox: non-Chrome-based
 
+- A modern version of Safari: non-Chrome-based with **Press Tab to highlight each item on a web page**
+  enabled for A11y tests (https://support.apple.com/en-gb/guide/safari/ibrw1075/mac)
+  
 - A text editor (the one included in most operating systems is fine)
 
 - Access to the Python Editor under test
