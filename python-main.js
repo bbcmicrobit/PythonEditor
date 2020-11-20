@@ -698,13 +698,18 @@ function web_editor(config) {
     // Reset the filesystem and load the files from this hex file to the fs and editor
     function loadHex(filename, hexStr) {
         var importedFiles = [];
+        // If hexStr is parsed correctly it formats the file system before adding the new files
         try {
-            // If hexStr is parsed correctly it formats the file system before adding the new files
-            importedFiles = FS.importFiles(hexStr);
-        } catch(e) {
-            return alert(config.translate.alerts.no_python + '\n\n' +
-                         config.translate.alerts.error + '\n' +
-                         e.message);
+            importedFiles = FS.importHexFiles(hexStr);
+        } catch(hexImportError) {
+            try {
+                importedFiles = FS.importHexAppended(hexStr);
+            } catch(appendedError) {
+                return alert(config.translate.alerts.no_python + '\n\n' +
+                             config.translate.alerts.error + '\n' +
+                             hexImportError.message + '\n' + 
+                             config['translate']['alerts']['no_script']);
+            }
         }
         // Check if imported files includes a main.py file
         var code = '';

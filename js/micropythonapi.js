@@ -65,11 +65,13 @@ var microPythonApi = (function () {
 
     var extraModules = {
         "microbit": {
-            "microphone": ["LOUD", "QUIET", "current_sound", "get_sounds", "is_sound", "sound_level", "was_sound"],
+            "microphone": ["current_event", "get_events", "is_event", "set_threshold", "sound_level", "was_event"],
             "pin_logo": ["is_touched"],
-            "pin_speaker": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"],
-            "pin_audio": ["get_analog_period_microseconds", "get_mode", "get_pull", "read_digital", "set_analog_period", "set_analog_period_microseconds", "set_pull", "write_analog", "write_digital"],
-            "set_volume": ""
+            "pin_speaker": ["disable", "enable", "get_analog_period_microseconds", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
+            "set_volume": "",
+            "audio" : ["play", "AudioFrame", "stop", "is_playing"],
+            "Sound": ["GIGGLE", "HAPPY", "HELLO", "MYSTERIOUS", "SAD", "SLIDE", "SOARING", "SPRING", "TWINKLE", "YAWN"],
+            "SoundEvent": ["LOUD", "QUIET"]
         },
         "audio" : ["play", "AudioFrame", "stop", "is_playing"]
     };
