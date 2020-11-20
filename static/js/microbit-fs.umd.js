@@ -4403,6 +4403,14 @@
 	  combined.set(second, first.length);
 	  return combined;
 	};
+	/**
+	 * Compares two Uint8Array.
+	 *
+	 * @param first - The first array to compare.
+	 * @param second - The second array to compare.
+	 * @returns Boolean indicating if they are equal.
+	 */
+
 	var areUint8ArraysEqual = function areUint8ArraysEqual(first, second) {
 	  if (first.length !== second.length) return false;
 
@@ -5630,6 +5638,339 @@
 	}
 
 	/**
+	 * Reads a 64 bit little endian number from an Intel Hex memory map.
+	 *
+	 * Any missing data in that address range that is not contained inside the
+	 * MemoryMap is filled with 0xFF.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @param address - Start address of the 32 bit number.
+	 * @returns Number with the unsigned integer representation of those 8 bytes.
+	 */
+
+	function getUint64(intelHexMap, address) {
+	  var uint64Data = intelHexMap.slicePad(address, 8, 0xff); // Typed arrays use the native endianness, force little endian with DataView
+
+	  return new DataView(uint64Data.buffer).getUint32(0, true
+	  /* little endian */
+	  );
+	}
+	/**
+	 * Reads a 32 bit little endian number from an Intel Hex memory map.
+	 *
+	 * Any missing data in that address range that is not contained inside the
+	 * MemoryMap is filled with 0xFF.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @param address - Start address of the 32 bit number.
+	 * @returns Number with the unsigned integer representation of those 4 bytes.
+	 */
+
+	function getUint32(intelHexMap, address) {
+	  var uint32Data = intelHexMap.slicePad(address, 4, 0xff); // Typed arrays use the native endianness, force little endian with DataView
+
+	  return new DataView(uint32Data.buffer).getUint32(0, true
+	  /* little endian */
+	  );
+	}
+	/**
+	 * Reads a 16 bit little endian number from an Intel Hex memory map.
+	 *
+	 * Any missing data in that address range that is not contained inside the
+	 * MemoryMap is filled with 0xFF.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @param address - Start address of the 16 bit number.
+	 * @returns Number with the unsigned integer representation of those 2 bytes.
+	 */
+
+	function getUint16(intelHexMap, address) {
+	  var uint16Data = intelHexMap.slicePad(address, 2, 0xff); // Typed arrays use the native endianness, force little endian with DataView
+
+	  return new DataView(uint16Data.buffer).getUint16(0, true
+	  /* little endian */
+	  );
+	}
+	/**
+	 * Reads a 8 bit number from an Intel Hex memory map.
+	 *
+	 * If the data is not contained inside the MemoryMap it returns 0xFF.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @param address - Start address of the 16 bit number.
+	 * @returns Number with the unsigned integer representation of those 2 bytes.
+	 */
+
+	function getUint8(intelHexMap, address) {
+	  var uint16Data = intelHexMap.slicePad(address, 1, 0xff);
+	  return uint16Data[0];
+	}
+	/**
+	 * Decodes a UTF-8 null terminated string stored in the Intel Hex data at
+	 * the indicated address.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @param address - Start address for the string.
+	 * @returns String read from the Intel Hex data.
+	 */
+
+	function getString(intelHexMap, address) {
+	  var memBlock = intelHexMap.slice(address).get(address);
+	  var iStrEnd = 0;
+
+	  while (iStrEnd < memBlock.length && memBlock[iStrEnd] !== 0) {
+	    iStrEnd++;
+	  }
+
+	  if (iStrEnd === memBlock.length) {
+	    // Could not find a null character to indicate the end of the string
+	    return '';
+	  }
+
+	  var stringBytes = memBlock.slice(0, iStrEnd);
+	  return bytesToStr(stringBytes);
+	}
+
+	/**
+	 * Interprets the Flash Regions Table stored in flash.
+	 *
+	 * The micro:bit flash layout is divided in flash regions, each containing a
+	 * different type of data (Nordic SoftDevice, MicroPython, bootloader, etc).
+	 * One of the regions is dedicated to the micro:bit filesystem, and this info
+	 * is used by this library to add the user files into a MicroPython hex File.
+	 *
+	 * The Flash Regions Table stores a data table at the end of the last flash page
+	 * used by the MicroPython runtime.
+	 * The table contains a series of 16-byte rows with info about each region
+	 * and it ends with a 16-byte table header with info about the table itself.
+	 * All in little-endian format.
+	 *
+	 * ```
+	 * |                                                               | Low address
+	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | Row 1
+	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | ...
+	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | Row N
+	 * | MAGIC_1       | VER   | T_LEN |REG_CNT| P_SIZE| MAGIC_2       | Header
+	 * |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---| Page end
+	 * |0x0|0x1|0x2|0x3|0x4|0x5|0x6|0x7|0x8|0x9|0xa|0xb|0xc|0xd|0xe|0xf|
+	 * |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+	 * ```
+	 *
+	 * More information about how this data is added to the MicroPython Intel Hex
+	 * file can be found in the MicroPython for micro:bit v2 repository:
+	 *   https://github.com/microbit-foundation/micropython-microbit-v2/blob/40e9bb687eb561cf590d151c6afa35efbcd4fec0/src/addlayouttable.py
+	 *
+	 * @packageDocumentation
+	 *
+	 * (c) 2020 Micro:bit Educational Foundation and the microbit-fs contributors.
+	 * SPDX-License-Identifier: MIT
+	 */
+
+	var MAGIC2_LEN_BYTES = 4;
+	var P_SIZE_LOG2_LEN_BYTES = 2;
+	var NUM_REG_LEN_BYTES = 2;
+	var TABLE_LEN_LEN_BYTES = 2;
+	var VERSION_LEN_BYTES = 2;
+	var MAGIC_1_LEN_BYTES = 4;
+	/**
+	 * Offset for each of the Table header fields, starting from the end of the row.
+	 *
+	 * These are the fields stored in each row for each of the regions, and
+	 * any additional region data from the Region interface is derived from this.
+	 *
+	 * |0x00|..|..|0x03|0x04|0x05|0x06|0x07|0x08|0x09|0x0a|0x0b|0x0c|..|..|0x0f|
+	 * |----|--|--|----|----|----|----|----|----|----|----|----|----|--|--|----|
+	 * | MAGIC_1       | VERSION |TABLE_LEN|REG_COUNT| P_SIZE  | MAGIC_2       |
+	 */
+
+	var RegionHeaderOffset;
+
+	(function (RegionHeaderOffset) {
+	  RegionHeaderOffset[RegionHeaderOffset["magic2"] = MAGIC2_LEN_BYTES] = "magic2";
+	  RegionHeaderOffset[RegionHeaderOffset["pageSizeLog2"] = RegionHeaderOffset.magic2 + P_SIZE_LOG2_LEN_BYTES] = "pageSizeLog2";
+	  RegionHeaderOffset[RegionHeaderOffset["regionCount"] = RegionHeaderOffset.pageSizeLog2 + NUM_REG_LEN_BYTES] = "regionCount";
+	  RegionHeaderOffset[RegionHeaderOffset["tableLength"] = RegionHeaderOffset.regionCount + TABLE_LEN_LEN_BYTES] = "tableLength";
+	  RegionHeaderOffset[RegionHeaderOffset["version"] = RegionHeaderOffset.tableLength + VERSION_LEN_BYTES] = "version";
+	  RegionHeaderOffset[RegionHeaderOffset["magic_1"] = RegionHeaderOffset.version + MAGIC_1_LEN_BYTES] = "magic_1";
+	})(RegionHeaderOffset || (RegionHeaderOffset = {})); // Magic numbers to identify the Flash Regions Table in flash
+
+
+	var REGION_HEADER_MAGIC_1 = 0x597f30fe;
+	var REGION_HEADER_MAGIC_2 = 0xc1b1d79d; // Sizes for each of the fields in each Region row from the Flash Regions Table
+
+	var REGION_ID_BYTES = 1;
+	var REGION_HASH_TYPE_BYTES = 1;
+	var REGION_START_PAGE_BYTES = 2;
+	var REGION_LEN_BYTES = 4;
+	var REGION_HASH_DATA_BYTES = 8;
+	/**
+	 * Offset for each of the Region row fields, starting from the end of the row.
+	 *
+	 * These are the fields stored in each row for each of the regions, and
+	 * any additional region data from the Region interface is derived from this.
+	 *
+	 * |0x00|0x01|0x02|0x03|0x04|0x05|0x06|0x07|0x08|..|..|..|..|..|..|0x0f|
+	 * |----|----|----|----|----|----|----|----|----|--|--|--|--|--|--|----|
+	 * | ID | HT |1ST_PAGE | REGION_LENGTH     | HASH_DATA                 |
+	 */
+
+	var RegionRowOffset;
+
+	(function (RegionRowOffset) {
+	  RegionRowOffset[RegionRowOffset["hashData"] = REGION_HASH_DATA_BYTES] = "hashData";
+	  RegionRowOffset[RegionRowOffset["lengthBytes"] = RegionRowOffset.hashData + REGION_LEN_BYTES] = "lengthBytes";
+	  RegionRowOffset[RegionRowOffset["startPage"] = RegionRowOffset.lengthBytes + REGION_START_PAGE_BYTES] = "startPage";
+	  RegionRowOffset[RegionRowOffset["hashType"] = RegionRowOffset.startPage + REGION_HASH_TYPE_BYTES] = "hashType";
+	  RegionRowOffset[RegionRowOffset["id"] = RegionRowOffset.hashType + REGION_ID_BYTES] = "id";
+	})(RegionRowOffset || (RegionRowOffset = {}));
+
+	var REGION_ROW_LEN_BYTES = RegionRowOffset.id;
+	/**
+	 * The "hash type" field in a region row indicates how to interpret the "hash
+	 * data" field.
+	 */
+
+	var RegionHashType;
+
+	(function (RegionHashType) {
+	  /** The hash data is empty. */
+	  RegionHashType[RegionHashType["empty"] = 0] = "empty";
+	  /** The full hash data field is used as a hash of the region in flash */
+
+	  RegionHashType[RegionHashType["data"] = 1] = "data";
+	  /** The 4 LSB bytes of the hash data field are used as a pointer  */
+
+	  RegionHashType[RegionHashType["pointer"] = 2] = "pointer";
+	})(RegionHashType || (RegionHashType = {}));
+	/** Indicates the data contain in each of the different regions */
+
+
+	var RegionId;
+
+	(function (RegionId) {
+	  RegionId[RegionId["softDevice"] = 1] = "softDevice";
+	  RegionId[RegionId["microPython"] = 2] = "microPython";
+	  RegionId[RegionId["fs"] = 3] = "fs";
+	})(RegionId || (RegionId = {}));
+	/**
+	 * .
+	 *
+	 * @param iHexMap - .
+	 * @returns {TableHeader}
+	 */
+
+
+	function getTableHeader(iHexMap) {
+	  var endAddress = 0;
+
+	  for (var i = 4096; i <= 0x80000; i += 4096) {
+	    if (iHexMap.getUint32(i - RegionHeaderOffset.magic2, true) === REGION_HEADER_MAGIC_2 && iHexMap.getUint32(i - RegionHeaderOffset.magic_1, true) === REGION_HEADER_MAGIC_1) {
+	      endAddress = i;
+	      break;
+	    }
+	  }
+
+	  var version = getUint16(iHexMap, endAddress - RegionHeaderOffset.version);
+	  var tableLength = getUint16(iHexMap, endAddress - RegionHeaderOffset.tableLength);
+	  var regionCount = getUint16(iHexMap, endAddress - RegionHeaderOffset.regionCount);
+	  var pageSizeLog2 = getUint16(iHexMap, endAddress - RegionHeaderOffset.pageSizeLog2);
+	  var pageSize = Math.pow(2, pageSizeLog2);
+	  var startAddress = endAddress - RegionHeaderOffset.magic_1;
+	  return {
+	    pageSizeLog2: pageSizeLog2,
+	    pageSize: pageSize,
+	    regionCount: regionCount,
+	    tableLength: tableLength,
+	    version: version,
+	    endAddress: endAddress,
+	    startAddress: startAddress
+	  };
+	}
+	/**
+	 * .
+	 *
+	 * @param iHexMap - .
+	 * @param rowEndAddress - .
+	 * @returns The Region info from the row.
+	 */
+
+
+	function getRegionRow(iHexMap, rowEndAddress) {
+	  var id = getUint8(iHexMap, rowEndAddress - RegionRowOffset.id);
+	  var hashType = getUint8(iHexMap, rowEndAddress - RegionRowOffset.hashType);
+	  var hashData = getUint64(iHexMap, rowEndAddress - RegionRowOffset.hashData);
+	  var hashPointerData = '';
+
+	  if (hashType === RegionHashType.pointer) {
+	    // Pointer to a string in the hex is only 4 bytes instead of 8
+	    hashPointerData = getString(iHexMap, hashData & 0xffffffff);
+	  }
+
+	  var startPage = getUint16(iHexMap, rowEndAddress - RegionRowOffset.startPage);
+	  var lengthBytes = getUint32(iHexMap, rowEndAddress - RegionRowOffset.lengthBytes);
+	  return {
+	    id: id,
+	    startPage: startPage,
+	    lengthBytes: lengthBytes,
+	    hashType: hashType,
+	    hashData: hashData,
+	    hashPointerData: hashPointerData
+	  };
+	}
+	/**
+	 * Reads the UICR data from an Intel Hex map and retrieves the MicroPython data.
+	 *
+	 * @throws {Error} When the Magic Header is not present.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns Object with the decoded UICR MicroPython data.
+	 */
+
+
+	function getHexMapUicrData(iHexMap) {
+	  var tableHeader = getTableHeader(iHexMap);
+	  var regionRows = {};
+
+	  for (var i = 0; i < tableHeader.regionCount; i++) {
+	    var rowEndAddress = tableHeader.startAddress - i * REGION_ROW_LEN_BYTES;
+	    var regionRow = getRegionRow(iHexMap, rowEndAddress);
+	    regionRows[regionRow.id] = regionRow;
+	  }
+
+	  if (!regionRows.hasOwnProperty(RegionId.microPython)) {
+	    throw new Error('Could not find a MicroPython region in the regions table.');
+	  }
+
+	  if (!regionRows.hasOwnProperty(RegionId.fs)) {
+	    throw new Error('Could not find a File System region in the regions table.');
+	  } // Have to manually set the start at address 0 even if regions don't cover it
+
+
+	  var runtimeStartAddress = 0;
+	  var runtimeEndAddress = regionRows[RegionId.microPython].startPage * tableHeader.pageSize + regionRows[RegionId.microPython].lengthBytes; // The table is placed at the end of the last page used by MicroPython and we
+	  // need to include it
+
+	  runtimeEndAddress = tableHeader.endAddress;
+	  var uPyVersion = regionRows[RegionId.microPython].hashPointerData;
+	  var fsStartAddress = regionRows[RegionId.fs].startPage * tableHeader.pageSize;
+	  var fsEndAddress = fsStartAddress + regionRows[RegionId.fs].lengthBytes;
+	  return {
+	    flashPageSize: tableHeader.pageSize,
+	    flashSize: 512 * 1024,
+	    flashStartAddress: 0,
+	    flashEndAddress: 512 * 1024,
+	    runtimeStartAddress: runtimeStartAddress,
+	    runtimeEndAddress: runtimeEndAddress,
+	    fsStartAddress: fsStartAddress,
+	    fsEndAddress: fsEndAddress,
+	    uPyVersion: uPyVersion,
+	    deviceVersion: 2
+	    /* two */
+
+	  };
+	}
+
+	/**
 	 * Interprets the data stored in the UICR memory space.
 	 *
 	 * For more info:
@@ -5639,13 +5980,19 @@
 	 * SPDX-License-Identifier: MIT
 	 */
 	var DEVICE_INFO = [{
-	  deviceVersion: 1,
+	  deviceVersion: 1
+	  /* one */
+	  ,
 	  magicHeader: 0x17eeb07c,
-	  flashSize: 0x40000
+	  flashSize: 256 * 1024,
+	  fsEnd: 256 * 1024
 	}, {
-	  deviceVersion: 2,
+	  deviceVersion: 2
+	  /* two */
+	  ,
 	  magicHeader: 0x47eeb07c,
-	  flashSize: 0x80000
+	  flashSize: 512 * 1024,
+	  fsEnd: 0x73000
 	}];
 	var UICR_START = 0x10001000;
 	var UICR_CUSTOMER_OFFSET = 0x80;
@@ -5674,64 +6021,6 @@
 	  MicropythonUicrAddress[MicropythonUicrAddress["RegionsTerminator"] = MicropythonUicrAddress.VersionLocation + UPY_REGIONS_TERMINATOR_LEN] = "RegionsTerminator";
 	  MicropythonUicrAddress[MicropythonUicrAddress["End"] = MicropythonUicrAddress.RegionsTerminator + UPY_VERSION_LEN] = "End";
 	})(MicropythonUicrAddress || (MicropythonUicrAddress = {}));
-	/**
-	 * Reads a 32 bit little endian number from an Intel Hex memory map.
-	 *
-	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @param address - Start address of the 32 bit number.
-	 * @returns Number with the unsigned integer representation of those 4 bytes.
-	 */
-
-
-	function getUint32FromIntelHexMap(intelHexMap, address) {
-	  var uint32Data = intelHexMap.slicePad(address, 4, 0xff); // Typed arrays use the native endianness, force little endian with DataView
-
-	  return new DataView(uint32Data.buffer).getUint32(0, true
-	  /* little endian */
-	  );
-	}
-	/**
-	 * Reads a 16 bit little endian number from an Intel Hex memory map.
-	 *
-	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @param address - Start address of the 16 bit number.
-	 * @returns Number with the unsigned integer representation of those 2 bytes.
-	 */
-
-
-	function getUint16FromIntelHexMap(intelHexMap, address) {
-	  var uint16Data = intelHexMap.slicePad(address, 2, 0xff); // Typed arrays use the native endianness, force little endian with DataView
-
-	  return new DataView(uint16Data.buffer).getUint16(0, true
-	  /* little endian */
-	  );
-	}
-	/**
-	 * Decodes a UTF-8 null terminated string stored in the Intel Hex data at
-	 * the indicated address.
-	 *
-	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @param address - Start address for the string.
-	 * @returns String read from the Intel Hex data.
-	 */
-
-
-	function getStringFromIntelHexMap(intelHexMap, address) {
-	  var memBlock = intelHexMap.slice(address).get(address);
-	  var iStrEnd = 0;
-
-	  while (iStrEnd < memBlock.length && memBlock[iStrEnd] !== 0) {
-	    iStrEnd++;
-	  }
-
-	  if (iStrEnd === memBlock.length) {
-	    // Could not find a null character to indicate the end of the string
-	    return '';
-	  }
-
-	  var stringBytes = memBlock.slice(0, iStrEnd);
-	  return bytesToStr(stringBytes);
-	}
 	/**
 	 * Check if the magic number for the MicroPython UICR data is present in the
 	 * Intel Hex memory map.
@@ -5764,7 +6053,7 @@
 
 
 	function getMagicValue(intelHexMap) {
-	  return getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.MagicValue);
+	  return getUint32(intelHexMap, MicropythonUicrAddress.MagicValue);
 	}
 	/**
 	 * Reads the UICR data from an Intel Hex map and detects the device version.
@@ -5809,6 +6098,27 @@
 	  throw new Error('Cannot find flash size, unknown UICR Magic value');
 	}
 	/**
+	 * Reads the UICR data from an Intel Hex map and retrieves the flash size.
+	 *
+	 * @param intelHexMap - Memory map of the Intel Hex data.
+	 * @returns The micro:bit flash size.
+	 */
+
+
+	function getFsEndAddress(intelHexMap) {
+	  var readMagicHeader = getMagicValue(intelHexMap);
+
+	  for (var _i = 0, DEVICE_INFO_4 = DEVICE_INFO; _i < DEVICE_INFO_4.length; _i++) {
+	    var device = DEVICE_INFO_4[_i];
+
+	    if (device.magicHeader === readMagicHeader) {
+	      return device.fsEnd;
+	    }
+	  }
+
+	  throw new Error('Cannot find fs end address, unknown UICR Magic value');
+	}
+	/**
 	 * Reads the UICR data that contains the flash page size.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
@@ -5817,7 +6127,7 @@
 
 
 	function getPageSize(intelHexMap) {
-	  var pageSize = getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.PageSize); // Page size is stored as a log base 2
+	  var pageSize = getUint32(intelHexMap, MicropythonUicrAddress.PageSize); // Page size is stored as a log base 2
 
 	  return Math.pow(2, pageSize);
 	}
@@ -5830,7 +6140,7 @@
 
 
 	function getStartPage(intelHexMap) {
-	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.StartPage);
+	  return getUint16(intelHexMap, MicropythonUicrAddress.StartPage);
 	}
 	/**
 	 * Reads the UICR data that contains the number of flash pages used by the
@@ -5842,7 +6152,7 @@
 
 
 	function getPagesUsed(intelHexMap) {
-	  return getUint16FromIntelHexMap(intelHexMap, MicropythonUicrAddress.PagesUsed);
+	  return getUint16(intelHexMap, MicropythonUicrAddress.PagesUsed);
 	}
 	/**
 	 * Reads the UICR data that contains the address of the location in flash where
@@ -5855,7 +6165,7 @@
 
 
 	function getVersionLocation(intelHexMap) {
-	  return getUint32FromIntelHexMap(intelHexMap, MicropythonUicrAddress.VersionLocation);
+	  return getUint32(intelHexMap, MicropythonUicrAddress.VersionLocation);
 	}
 	/**
 	 * Reads the UICR data from an Intel Hex map and retrieves the MicroPython data.
@@ -5867,7 +6177,7 @@
 	 */
 
 
-	function getHexMapUicrData(intelHexMap) {
+	function getHexMapUicrData$1(intelHexMap) {
 	  var uicrMap = intelHexMap.slice(UICR_UPY_START);
 
 	  if (!confirmMagicValue(uicrMap)) {
@@ -5877,21 +6187,26 @@
 	  var flashPageSize = getPageSize(uicrMap);
 	  var flashSize = getFlashSize(uicrMap);
 	  var startPage = getStartPage(uicrMap);
+	  var flashStartAddress = startPage * flashPageSize;
+	  var flashEndAddress = flashStartAddress + flashSize;
 	  var pagesUsed = getPagesUsed(uicrMap);
+	  var runtimeEndAddress = pagesUsed * flashPageSize;
 	  var versionAddress = getVersionLocation(uicrMap);
-	  var version = getStringFromIntelHexMap(intelHexMap, versionAddress);
+	  var uPyVersion = getString(intelHexMap, versionAddress);
 	  var deviceVersion = getDeviceVersion(uicrMap);
+	  var fsEndAddress = getFsEndAddress(uicrMap);
 	  return {
 	    flashPageSize: flashPageSize,
 	    flashSize: flashSize,
-	    runtimeStartPage: startPage,
-	    runtimeStartAddress: startPage * flashPageSize,
-	    runtimeEndUsed: pagesUsed,
-	    runtimeEndAddress: pagesUsed * flashPageSize,
+	    flashStartAddress: flashStartAddress,
+	    flashEndAddress: flashEndAddress,
+	    runtimeStartAddress: flashStartAddress,
+	    runtimeEndAddress: runtimeEndAddress,
+	    fsStartAddress: runtimeEndAddress,
+	    fsEndAddress: fsEndAddress,
 	    uicrStartAddress: MicropythonUicrAddress.MagicValue,
 	    uicrEndAddress: MicropythonUicrAddress.End,
-	    versionAddress: versionAddress,
-	    version: version,
+	    uPyVersion: uPyVersion,
 	    deviceVersion: deviceVersion
 	  };
 	}
@@ -5907,7 +6222,30 @@
 
 
 	function getIntelHexUicrData(intelHex) {
-	  return getHexMapUicrData(MemoryMap.fromHex(intelHex));
+	  return getHexMapUicrData$1(MemoryMap.fromHex(intelHex));
+	}
+
+	/**
+	 * .
+	 *
+	 * (c) 2020 Micro:bit Educational Foundation and the microbit-fs contributors.
+	 * SPDX-License-Identifier: MIT
+	 */
+
+	function getHexMapDeviceMemInfo(intelHexMap) {
+	  var errorMsg = '';
+
+	  try {
+	    return getHexMapUicrData$1(intelHexMap);
+	  } catch (err) {
+	    errorMsg += err.message + '\n';
+	  }
+
+	  try {
+	    return getHexMapUicrData(intelHexMap);
+	  } catch (err) {
+	    throw new Error(errorMsg + err.message);
+	  }
 	}
 
 	/** Sizes for the different parts of the file system chunks. */
@@ -5937,16 +6275,16 @@
 
 	function createMpFsBuilderCache(originalIntelHex) {
 	  var originalMemMap = MemoryMap.fromHex(originalIntelHex);
-	  var uicrData = getHexMapUicrData(originalMemMap); // slice() returns a new MemoryMap with only the MicroPython data, so it will
+	  var deviceMem = getHexMapDeviceMemInfo(originalMemMap); // slice() returns a new MemoryMap with only the MicroPython data, so it will
 	  // not include the UICR. The End Of File record is removed because this string
 	  // will be concatenated with the filesystem data any thing else in the MemMap
 
-	  var uPyIntelHex = originalMemMap.slice(uicrData.runtimeStartAddress, uicrData.runtimeEndAddress - uicrData.runtimeStartAddress).asHexString().replace(':00000001FF', '');
+	  var uPyIntelHex = originalMemMap.slice(deviceMem.runtimeStartAddress, deviceMem.runtimeEndAddress - deviceMem.runtimeStartAddress).asHexString().replace(':00000001FF', '');
 	  return {
 	    originalIntelHex: originalIntelHex,
 	    originalMemMap: originalMemMap,
 	    uPyIntelHex: uPyIntelHex,
-	    uPyEndAddress: uicrData.runtimeEndAddress,
+	    uPyEndAddress: deviceMem.runtimeEndAddress,
 	    fsSize: getMemMapFsSize(originalMemMap)
 	  };
 	}
@@ -5995,24 +6333,17 @@
 
 
 	function getStartAddress(intelHexMap) {
-	  var uicrData = getHexMapUicrData(intelHexMap); // Calculate the maximum flash space the filesystem can possible take
+	  var deviceMem = getHexMapDeviceMemInfo(intelHexMap); // Calculate the maximum flash space the filesystem can possible take
 
-	  var fsMaxSize = CHUNK_LEN * MAX_NUMBER_OF_CHUNKS; // We need to add the persistent data which is one page aligned after fs data
+	  var fsMaxSize = CHUNK_LEN * MAX_NUMBER_OF_CHUNKS; // The persistent data page is the last page of the filesystem space
+	  // no need to add it in calculations
+	  // There might more free space than the filesystem needs, in that case
+	  // we move the start address down
 
-	  fsMaxSize += uicrData.flashPageSize - fsMaxSize % uicrData.flashPageSize;
+	  var startAddressForMaxFs = getEndAddress(intelHexMap) - fsMaxSize;
+	  var startAddress = Math.max(deviceMem.fsStartAddress, startAddressForMaxFs); // Ensure the start address is aligned with the page size
 
-	  if (uicrData.deviceVersion === 1) {
-	    // TODO: v2 has persistent page inside the fs flash area instead
-	    fsMaxSize += uicrData.flashPageSize;
-	  }
-
-	  var runtimeEndAddress = uicrData.runtimeEndAddress; // Fs is placed at the end of flash, the space available from the MicroPython
-	  // end to the end of flash might be larger than the fs max possible size
-
-	  var fsMaxSizeStartAddress = getEndAddress(intelHexMap) - fsMaxSize;
-	  var startAddress = Math.max(runtimeEndAddress, fsMaxSizeStartAddress); // Ensure the start address is aligned with the page size
-
-	  if (startAddress % uicrData.flashPageSize) {
+	  if (startAddress % deviceMem.flashPageSize) {
 	    throw new Error('File system start address from UICR does not align with flash page size.');
 	  }
 
@@ -6031,18 +6362,20 @@
 
 
 	function getEndAddress(intelHexMap) {
-	  var uicrData = getHexMapUicrData(intelHexMap);
-	  var endAddress = isAppendedScriptPresent(intelHexMap) ? exports.AppendedBlock.StartAdd : uicrData.flashSize;
+	  var deviceMem = getHexMapDeviceMemInfo(intelHexMap);
+	  var endAddress = deviceMem.fsEndAddress; // TODO: Maybe we should move this inside the UICR module to calculate
+	  // the real fs area in that step
 
-	  if (uicrData.deviceVersion === 1) {
-	    // In v1 the magnetometer calibration data takes one flash page
-	    endAddress -= uicrData.flashPageSize;
-	  } else if (uicrData.deviceVersion === 2) {
-	    // TODO: For v2 52 KBs are used for bootloader and other pages (0x73000)
-	    endAddress -= 52 * 1024;
-	  } else {
-	    throw new Error('Unknown device flash map');
-	  }
+	  if (deviceMem.deviceVersion === 1
+	  /* one */
+	  ) {
+	      if (isAppendedScriptPresent(intelHexMap)) {
+	        endAddress = exports.AppendedBlock.StartAdd;
+	      } // In v1 the magnetometer calibration data takes one flash page
+
+
+	      endAddress -= deviceMem.flashPageSize;
+	    }
 
 	  return endAddress;
 	}
@@ -6055,8 +6388,8 @@
 
 
 	function getLastPageAddress(intelHexMap) {
-	  var uicrData = getHexMapUicrData(intelHexMap);
-	  return getEndAddress(intelHexMap) - uicrData.flashPageSize;
+	  var deviceMem = getHexMapDeviceMemInfo(intelHexMap);
+	  return getEndAddress(intelHexMap) - deviceMem.flashPageSize;
 	}
 	/**
 	 * If not present already, it sets the persistent page in flash.
@@ -6314,11 +6647,11 @@
 	    intelHexMap = intelHex.clone();
 	  }
 
-	  var uicrData = getHexMapUicrData(intelHexMap);
+	  var deviceMem = getHexMapDeviceMemInfo(intelHexMap);
 	  Object.keys(files).forEach(function (filename) {
 	    addMemMapFile(intelHexMap, filename, files[filename]);
 	  });
-	  return returnBytes ? intelHexMap.slicePad(0, uicrData.flashSize) : intelHexMap.asHexString() + '\n';
+	  return returnBytes ? intelHexMap.slicePad(0, deviceMem.flashSize) : intelHexMap.asHexString() + '\n';
 	}
 	/**
 	 * Generates an Intel Hex string with MicroPython and files in the filesystem.
@@ -6483,11 +6816,11 @@
 
 
 	function getMemMapFsSize(intelHexMap) {
-	  var uicrData = getHexMapUicrData(intelHexMap);
+	  var deviceMem = getHexMapDeviceMemInfo(intelHexMap);
 	  var startAddress = getStartAddress(intelHexMap);
 	  var endAddress = getEndAddress(intelHexMap); // One extra page is used as persistent page
 
-	  return endAddress - startAddress - uicrData.flashPageSize;
+	  return endAddress - startAddress - deviceMem.flashPageSize;
 	}
 
 	var SimpleFile =
@@ -6945,6 +7278,24 @@
 
 	    return Object.keys(files);
 	  };
+	  /**
+	   * Read the files included in a MicroPython Universal or Intel Hex string and
+	   * add them to this instance.
+	   *
+	   * @throws {Error} When there are no files to import from the hex.
+	   * @throws {Error} When in the Universal Hex the files of the individual hexes
+	   *    are different.
+	   * @throws {Error} When there is a problem reading files from one of the hex.
+	   * @throws {Error} When a filename already exists in this instance (all other
+	   *     files are still imported).
+	   *
+	   * @param hexStr - MicroPython Intel or Universal Hex string with files.
+	   * @param overwrite - Flag to overwrite existing files in this instance.
+	   * @param formatFirst - Erase all the previous files before importing. It only
+	   *     erases the files after there are no error during hex file parsing.
+	   * @returns A filename list of added files.
+	   */
+
 
 	  MicropythonFsHex.prototype.importFilesFromHex = function (hexStr, _a) {
 	    var _b = _a === void 0 ? {} : _a,
@@ -7091,7 +7442,7 @@
 	exports.MicropythonFsHex = MicropythonFsHex;
 	exports.addIntelHexAppendedScript = addIntelHexAppendedScript;
 	exports.cleanseOldHexFormat = cleanseOldHexFormat;
-	exports.getHexMapUicrData = getHexMapUicrData;
+	exports.getHexMapUicrData = getHexMapUicrData$1;
 	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
 	exports.getIntelHexUicrData = getIntelHexUicrData;
 	exports.isAppendedScriptPresent = isAppendedScriptPresent;
