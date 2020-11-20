@@ -1,3 +1,11 @@
+2.1.0-beta.7
+------------
+* Update the MicroPython version to commit 44a75bb
+* Update the microbit-fs library to adebf8b
+* Add info message on the WebUSB modal when a full flash is performed
+* Minor updates in the tests
+* Other minor bug fixes
+
 2.1.0-beta.6
 ------------
 * Update the MicroPython version to commit 3e09245a46
