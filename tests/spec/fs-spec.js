@@ -94,19 +94,6 @@ describe('Testing the filesystem wrapper', function() {
         });
     });
 
-    it('Produces a Universal Hex', function(done) {
-        var FS = microbitFsWrapper();
-        expect(FS.write).toBeFalsy();
-
-        FS.setupFilesystem().then(function() {
-
-            var result = FS.getUniversalHex();
-
-            expect(microbitUh.isUniversalHex(result)).toBeTruthy();
-            done();
-        });
-    });
-
     it('Produces a Byte Array for a single board', function(done) {
         var FS = microbitFsWrapper();
         expect(FS.write).toBeFalsy();
