@@ -27,20 +27,16 @@ WELL DONE!
 
 You've found the source! :-)
 
-If you want to see how the editor works you should check out the python-main.js file - it has all sorts of
-helpful comments for you so you'll be able to work it all out.
+If you want to see how the editor works you should check out the js/python-main.js file - it has all
+sorts of helpful comments for you so you'll be able to work it all out.
 
-If you're wondering what the long string of random looking characters is at the end of this file, well, it's
-a copy of the MicroPython runtime that we copy onto the micro:bit. When you click download, the code you've
-written in the editor is similarly encoded and then inserted at the end where you see a line of ::::::::::::
-characters.
+If you want to know more about this Python Editor visit:
+https://github.com/bbcmicrobit/PythonEditor
 
 If you want to know more about Python visit:
-
 http://python.org/
 
 If you want to know more about MicroPython (the version of Python we're using here), then visit:
-
 http://micropython.org/
 
 Finally, remember the Zen of MicroPython:
@@ -72,11 +68,9 @@ Nicholas and Damien.
         <script type="application/javascript">
             if (navigator.appVersion.indexOf("MSIE 9") !== -1 || navigator.appVersion.indexOf("MSIE 8") !== -1 || navigator.appVersion.indexOf("MSIE 7") !== -1)
             {
-                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 10 or greater.</a>');
+                document.write('<a href="https://www.microsoft.com/en-gb/download/internet-explorer.aspx">Please upgrade to IE 11 or a Chrome based browser</a>');
                 document.execCommand('Stop');
             }
-        </script>
-        <script type="application/javascript">
             // VERSION INFORMATION
             EDITOR_VERSION = "2.1.0-beta.7";
             UPY_1_VERSION = "1.0.1";
@@ -441,7 +435,7 @@ Nicholas and Damien.
         <script src="js/micropythonapi.js"></script>
         <script src="js/urlparser.js"></script>
         <script src="js/fs.js"></script>
-        <script src="python-main.js"></script>
+        <script src="js/python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
         <script>
             // Call the web_editor function to start the editor running.

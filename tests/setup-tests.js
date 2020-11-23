@@ -22,4 +22,4 @@ global.microbitUh = require('../static/js/microbit-uh.umd.js');
 require('../js/micropythonapi.js');
 require('../js/urlparser.js');
 require('../js/fs.js');
-require('../python-main.js');
+require('../js/python-main.js');
