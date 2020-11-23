@@ -257,8 +257,14 @@ Code block 1::
 
 Test Case: module.py file can be loaded by file picker and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Load by Load/Save > Add file the file ``emoji.py``
+- Load by Load/Save > Or browse for a file, the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- [ ] Confirm the file shows up in the files list with the same title.
+
+
+Test Case: module.py file can be loaded by file picker and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by Load/Save > Add file the file ``emoji.py``
 - [ ] Confirm the file shows up in the files list with the same title.
 - Return to the editor and replace the current script with the following::
 
