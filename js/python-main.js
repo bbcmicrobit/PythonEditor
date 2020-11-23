@@ -210,7 +210,7 @@ function blocks() {
     var workspace = null;
 
     blocklyWrapper.init = function() {
-        // Lazy loading all the JS files
+        // Lazy loading all Blockly the JS files from submodules
         script('blockly/blockly_compressed.js');
         script('blockly/blocks_compressed.js');
         script('blockly/python_compressed.js');
@@ -229,11 +229,13 @@ function blocks() {
         script('microbit_blocks/generators/python.js');
         script('blockly/msg/js/en.js');
         script('microbit_blocks/messages/en/messages.js');
+        // Load the toolbox
+        script('/js/blocks-toolbox.js');
     };
 
-    blocklyWrapper.inject = function(blocklyElement, toolboxElement, zoomLevel, zoomScaleSteps) {
+    blocklyWrapper.inject = function(blocklyElement, zoomLevel, zoomScaleSteps) {
         workspace = Blockly.inject(blocklyElement, {
-            toolbox: toolboxElement,
+            toolbox: BLOCKS_TOOLBOX,
             zoom: {
                 controls: false,
                 wheel: false,
@@ -469,8 +471,8 @@ function web_editor(config) {
     // elements as required.
     function setupFeatureFlags() {
         if(config.flags.blocks) {
-            $("#command-blockly").removeClass('hidden');
             BLOCKS.init();
+            $('#command-blockly').removeClass('hidden');
         }
         if(config.flags.snippets) {
             $("#command-snippet").removeClass('hidden');
@@ -1094,8 +1096,7 @@ function web_editor(config) {
                 var fontSteps = (getFontSize() - EDITOR.initialFontSize) / EDITOR.fontSizeStep;
                 var zoomLevel = (fontSteps * zoomScaleSteps) + 1.0;
                 var blocklyElement = document.getElementById('blockly');
-                var toolboxElement = document.getElementById('blockly-toolbox');
-                BLOCKS.inject(blocklyElement, toolboxElement, zoomLevel, zoomScaleSteps);
+                BLOCKS.inject(blocklyElement, zoomLevel, zoomScaleSteps);
                 BLOCKS.addCodeChangeListener(function(code) {
                     EDITOR.setCode(code);
                 });
