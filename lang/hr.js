@@ -1,4 +1,4 @@
-var language = {
+var LANGUAGE = {
   "code_snippets": {
     "title": "Ulomci kôda",
     "description": "Ulomci kôda su kratki blokovi koda koje možeš više puta koristiti u svojim programima. Postoje ulomci za najčešće stvari koje se izvode pomoću programa MicroPython.",
@@ -37,7 +37,7 @@ var language = {
     "load_code": "Uh! Kôd se ne može upisati u .hex datoteku.",
     "unrecognised_hex": "Nažalost ne prepoznajemo datoteku",
     "snippets": "Ulomci su isključeni kada je uključena \"blockly\" biblioteka.",
-    "error": "Greška:\n",
+    "error": "Greška:",
     "empty": "Pythonova datoteka je prazna.",
     "no_python": "U .hex datoteci nije pronađen važeći Pythonov kôd.",
     "no_script": "U hex datoteci nije pronađen Pythonov programski kôd.",

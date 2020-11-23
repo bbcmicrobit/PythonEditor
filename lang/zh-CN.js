@@ -1,4 +1,4 @@
-var language = {
+var LANGUAGE = {
   "code_snippets": {
     "title": "代码段",
     "description": "代码片段是在您自己的程序中重复使用的短代码块，这是使用MicroPython时最常见的一些代码片段。",

@@ -1,4 +1,4 @@
-var language = {
+var LANGUAGE = {
   "code_snippets": {
     "title": "Fragmenty Kodu",
     "description": "Fragmenty kodu są krótkimi blokami kodu do użycia we własnych programach. Znajdują się fragmenty dla zwykłych rzeczy, które będziemy chcieli zrobić za pomocą MicroPython.",
@@ -37,7 +37,7 @@ var language = {
     "load_code": "Ups! Nie można załadować kodu do pliku hex.",
     "unrecognised_hex": "Przepraszamy, nie mogliśmy rozpoznać tego pliku ",
     "snippets": "Fragmenty są wyłączone, gdy blockly jest włączony.",
-    "error": "Błąd:\n",
+    "error": "Błąd:",
     "empty": "Plik Pythona nie zawiera żadnego kodu.",
     "no_python": "Nie znaleziono poprawnego kodu Pythona w pliku hex.",
     "no_script": "Plik hex nie zawiera skyrptu Pythona.",

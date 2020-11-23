@@ -1,4 +1,4 @@
-var language = {
+var LANGUAGE = {
   "code_snippets": {
     "title": "程式碼片段",
     "description": "程式碼片段（Code snippets）可以讓你在編程中快速使用代碼，這裡提供 MicroPython 裡最常見的一些。",
@@ -37,7 +37,7 @@ var language = {
     "load_code": "哎呀！無法將代碼載入到十六進位檔案中。",
     "unrecognised_hex": "抱歉，我們無法識別這個檔案",
     "snippets": "當 blockly 啟用時無法使用程式碼片段。",
-    "error": "錯誤：\n",
+    "error": "錯誤：",
     "empty": "這個 Python 檔案沒有任何內容。",
     "no_python": "在 hex 檔中找不到有效的 Python 程式碼。",
     "no_script": "Hex 檔的內容不包含 Python 腳本。",

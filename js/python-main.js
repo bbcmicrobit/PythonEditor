@@ -8,15 +8,18 @@ everything does.)
 /*
 Lazy load JS script files.
 */
-function script(url, id) {
+function script(url, id, onLoadCallback) {
     var s = document.createElement('script');
-    if(id){
+    if (id){
         s.id = id;
     }
     s.type = 'text/javascript';
     s.async = false;
     s.defer = true;
     s.src = url;
+    if (onLoadCallback) {
+        s.onload = onLoadCallback;
+    }
     var x = document.getElementsByTagName('head')[0];
     x.appendChild(s);
 }
@@ -283,40 +286,47 @@ function blocks() {
  * Allows the Python Editor to display in multiple languages by manipulating
  * strings with correct JS language objects.
  */
-function translations() {
+function translations(baseLanguage) {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
     var validLangs = ['en', 'es', 'pl', 'hr', 'zh-HK', 'zh-CN', 'zh-TW'];
 
+    // This is the base language that will be extended with the translations.
+    // It is assumed this translation object (likely 'en') contains all the
+    // keys the editor needs. By extending this object instead of replacing it
+    // we ensure this will still contain any keys a translation might not have.
+    var _baseLanguage = baseLanguage;
+    var _extendedLang = baseLanguage;
+    translateEmbedStrings();
+
     /* Replaces DOM script element with the new language js file. */
-    function updateLang(newLang, callback) {
+    function updateLang(newLang, successCallback, errorCallback) {
         var elementId = 'lang';
         var newLangURL = 'lang/' + newLang + '.js';
         var endsWithURL = new RegExp(newLangURL + "$");
-        var runCallback = function() {
-            translateEmbedStrings(language);
-            callback(language);
-        };
         if (endsWithURL.test(document.getElementById(elementId).src)) {
             // The request newLang is the current one, don't reload js file
-            return runCallback(language);
+            return successCallback();
         }
         // Check for a valid language
         if (validLangs.indexOf(newLang) >- 1) {
+            LANGUAGE = null;
             document.getElementById(elementId).remove();
-            script(newLangURL, elementId);
-            document.getElementById(elementId).onload = runCallback;
+            script(newLangURL, elementId, function() {
+                _extendedLang = $.extend(true, {}, _baseLanguage, LANGUAGE);
+                translateEmbedStrings();
+                successCallback(_extendedLang);
+            });
         } else {
-            // Don't throw an error, but inform the console
-            runCallback();
             console.error('Requested language not available: ' + newLang);
+            errorCallback();
         }
     }
 
     /* Replaces the strings already loaded in the DOM, the rest are dynamically loaded. */
-    function translateEmbedStrings(language) {
-        var buttons = language['static-strings']['buttons'];
+    function translateEmbedStrings() {
+        var buttons = _extendedLang['static-strings']['buttons'];
         $('.roundbutton').each(function(object, value) {
             var button_id = $(value).attr('id');
             $(value).attr('title', buttons[button_id]['title']);
@@ -328,15 +338,15 @@ function translations() {
                 $(value).children(':last').text(buttons[button_id]['label-close']);
             }
         });
-        $('.ace_text-input').attr('aria-label',language['static-strings']['text-editor']['aria-label']);
-        $('#script-name-label').text(language['static-strings']['script-name']['label']);
-        $('#request-repl').text(language['webusb']['request-repl']);
-        $('#request-serial').text(language['webusb']['request-serial']);
-        var optionsStrings = language['static-strings']['options-dropdown'];
+        $('.ace_text-input').attr('aria-label', _extendedLang['static-strings']['text-editor']['aria-label']);
+        $('#script-name-label').text(_extendedLang['static-strings']['script-name']['label']);
+        $('#request-repl').text(_extendedLang['webusb']['request-repl']);
+        $('#request-serial').text(_extendedLang['webusb']['request-serial']);
+        var optionsStrings = _extendedLang['static-strings']['options-dropdown'];
         for (var object in optionsStrings) {
             $("#" + object).text(optionsStrings[object]);
         }
-        var helpStrings = language['help'];
+        var helpStrings = _extendedLang['help'];
         for (var object in helpStrings) {
             if (helpStrings.hasOwnProperty(object)) {
                 if (object.match(/ver/)) {
@@ -344,15 +354,18 @@ function translations() {
                     continue;
                 }
                 $('#' + object).text(helpStrings[object]['label']);
-                $('#' + object).attr('title',helpStrings[object]['title']);
+                $('#' + object).attr('title', helpStrings[object]['title']);
             }
         }
-        var languages = language['languages'];
+        var languages = _extendedLang['languages'];
         for (var object in languages) {
             if (languages.hasOwnProperty(object)) {
                 $('#' + object).attr('title',languages[object]['title']);
             }
         }
+        // WebUSB flashing modal
+        $('#flashing-extra-msg').text(_extendedLang['webusb']['flashing-long-msg']);
+        $('#flashing-title').text(_extendedLang['webusb']['flashing-title']);
     }
 
     return {
@@ -373,7 +386,7 @@ function web_editor(config) {
     window.EDITOR = pythonEditor('editor', config.microPythonApi);
 
     var BLOCKS = blocks();
-    var TRANSLATIONS = translations();
+    var TRANSLATIONS = translations(config.translate);
 
     // Generating MicroPython hex with user code in the filesystem
     window.FS = microbitFsWrapper();
@@ -463,7 +476,11 @@ function web_editor(config) {
             config.translate = translations;
             document.getElementsByTagName('HTML')[0].setAttribute('lang', lang);
             $('ul.tree > li > span > a').removeClass('is-selected');
-            $('#'+lang).addClass('is-selected'); 
+            $('#' + lang).addClass('is-selected');
+        }, function() {
+            // At the moment we fail silently. If the language request came
+            // a URL parameter we ignore it, if it came from a menu it will
+            // be caught by the CI tests
         });
     }
 
@@ -710,7 +727,7 @@ function web_editor(config) {
                 return alert(config.translate.alerts.no_python + '\n\n' +
                              config.translate.alerts.error + '\n' +
                              hexImportError.message + '\n' + 
-                             config['translate']['alerts']['no_script']);
+                             config.translate.alerts.no_script);
             }
         }
         // Check if imported files includes a main.py file
@@ -1443,8 +1460,7 @@ function web_editor(config) {
             updateMain();
             var freeFsSpace = FS.getStorageRemaining();
             if (freeFsSpace < 0) {
-                // TODO: Create new string for translation
-                throw Error('There is no storage space left.')
+                throw Error(config.translate.alerts.module_out_of_space);
             }
         } catch(e) {
             return alert(config.translate.alerts.error + '\n' + e.message);
@@ -1456,17 +1472,14 @@ function web_editor(config) {
         $('#flashing-overlay-error').html("");
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
-        // TODO: Translate these string
-        $('#flashing-title').text('Flashing code');
-        $('#flashing-extra-msg').text('Initial flash might longer, subsequent flashes will be quicker.').hide();
+        $('#flashing-extra-msg').hide();
 
         var updateProgress = function(progress, longFlash) {
-            // TODO: Translate these string
             if (!!longFlash) {
-                $('#flashing-title').text(language['webusb']['flashing-title']);
+                $('#flashing-title').text(config.translate.webusb['flashing-title']);
                 $('#flashing-extra-msg').show()
             } else {
-                $('#flashing-title').text('Flashing code');
+                $('#flashing-title').text(config.translate.webusb['flashing-title-code']);
                 $('#flashing-extra-msg').hide();
             }
             $('#webusb-flashing-progress').val(progress).css('display', 'inline-block');

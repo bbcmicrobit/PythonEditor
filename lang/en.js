@@ -1,4 +1,4 @@
-var language = {
+var LANGUAGE = {
   'code_snippets': {
     'title': 'Code Snippets',
     'description': "Code snippets are short blocks of code to re-use in your own programs. There are snippets for most common things you'll want to do using MicroPython.",
@@ -97,6 +97,8 @@ var language = {
     'request-repl': 'Send CTRL-C for REPL',
     'request-serial': 'Send CTRL-D to reset',
     'flashing-title': 'Flashing MicroPython',
+    'flashing-title-code': 'Flashing code',
+    'flashing-long-msg': 'Initial flash might take longer, subsequent flashes will be quicker.',
     'download': 'Download Hex'
   },
   'load': {
