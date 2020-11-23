@@ -19,6 +19,7 @@ var microbitFsWrapper = function() {
         'exists',
         'getStorageRemaining',
         'getStorageSize',
+        'getStorageUsed',
         'getUniversalHex',
         'ls',
         'read',
@@ -63,8 +64,9 @@ var microbitFsWrapper = function() {
             if (!uPyV1 || !uPyV2) {
                 console.error('There was an issue loading the MicroPython Hex files.');
             }
+            // TODO: We need to use ID 9901 for app compatibility, but can soon be changed to 9900 (as per spec)
             uPyFs = new microbitFs.MicropythonFsHex([
-                { hex: uPyV1, boardId: 0x9900 },
+                { hex: uPyV1, boardId: 0x9901 },
                 { hex: uPyV2, boardId: 0x9903 },
             ], {
                 'maxFsSize': commonFsSize,
@@ -79,7 +81,7 @@ var microbitFsWrapper = function() {
      */
     fsWrapper.getBytesForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
-            return uPyFs.getIntelHexBytes(0x9900);
+            return uPyFs.getIntelHexBytes(0x9901);
         } else if (boardId == '9903' || boardId == '9904') {
             return uPyFs.getIntelHexBytes(0x9903);
         } else {
@@ -93,7 +95,7 @@ var microbitFsWrapper = function() {
      */
     fsWrapper.getIntelHexForBoardId = function(boardId) {
         if (boardId == '9900' || boardId == '9901') {
-            var hexStr = uPyFs.getIntelHex(0x9900);
+            var hexStr = uPyFs.getIntelHex(0x9901);
         } else if (boardId == '9903' || boardId == '9904') {
             var hexStr = uPyFs.getIntelHex(0x9903);
         } else {
@@ -101,7 +103,7 @@ var microbitFsWrapper = function() {
         }
         // iHex is ASCII so we can do a 1-to-1 conversion from chars to bytes
         var hexBuffer = new Uint8Array(hexStr.length);
-        for (var i=0, strLen=hexStr.length; i < strLen; i++) {
+        for (var i = 0, strLen = hexStr.length; i < strLen; i++) {
             hexBuffer[i] = hexStr.charCodeAt(i);
         }
         return hexBuffer.buffer;

@@ -307,7 +307,7 @@ function translations(baseLanguage) {
         var endsWithURL = new RegExp(newLangURL + "$");
         if (endsWithURL.test(document.getElementById(elementId).src)) {
             // The request newLang is the current one, don't reload js file
-            return successCallback();
+            return successCallback(_extendedLang);
         }
         // Check for a valid language
         if (validLangs.indexOf(newLang) >- 1) {
