@@ -5637,6 +5637,12 @@
 	  return returnArray;
 	}
 
+	_typedArray('Uint32', 4, function (init) {
+	  return function Uint32Array(data, byteOffset, length) {
+	    return init(this, data, byteOffset, length);
+	  };
+	});
+
 	/**
 	 * Reads a 64 bit little endian number from an Intel Hex memory map.
 	 *
@@ -5731,40 +5737,39 @@
 	  return bytesToStr(stringBytes);
 	}
 
+	/** Indicates the data contain in each of the different regions */
+
+	var RegionId;
+
+	(function (RegionId) {
+	  /** Soft Device is the data blob containing the Nordic Bluetooth stack. */
+	  RegionId[RegionId["softDevice"] = 1] = "softDevice";
+	  /** Contains the MicroPython runtime. */
+
+	  RegionId[RegionId["microPython"] = 2] = "microPython";
+	  /** Contains the MicroPython microbit filesystem reserved flash. */
+
+	  RegionId[RegionId["fs"] = 3] = "fs";
+	})(RegionId || (RegionId = {}));
 	/**
-	 * Interprets the Flash Regions Table stored in flash.
-	 *
-	 * The micro:bit flash layout is divided in flash regions, each containing a
-	 * different type of data (Nordic SoftDevice, MicroPython, bootloader, etc).
-	 * One of the regions is dedicated to the micro:bit filesystem, and this info
-	 * is used by this library to add the user files into a MicroPython hex File.
-	 *
-	 * The Flash Regions Table stores a data table at the end of the last flash page
-	 * used by the MicroPython runtime.
-	 * The table contains a series of 16-byte rows with info about each region
-	 * and it ends with a 16-byte table header with info about the table itself.
-	 * All in little-endian format.
-	 *
-	 * ```
-	 * |                                                               | Low address
-	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | Row 1
-	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | ...
-	 * | ID| HT|1ST_PAG| REGION_LENGTH | HASH_DATA                     | Row N
-	 * | MAGIC_1       | VER   | T_LEN |REG_CNT| P_SIZE| MAGIC_2       | Header
-	 * |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---| Page end
-	 * |0x0|0x1|0x2|0x3|0x4|0x5|0x6|0x7|0x8|0x9|0xa|0xb|0xc|0xd|0xe|0xf|
-	 * |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-	 * ```
-	 *
-	 * More information about how this data is added to the MicroPython Intel Hex
-	 * file can be found in the MicroPython for micro:bit v2 repository:
-	 *   https://github.com/microbit-foundation/micropython-microbit-v2/blob/40e9bb687eb561cf590d151c6afa35efbcd4fec0/src/addlayouttable.py
-	 *
-	 * @packageDocumentation
-	 *
-	 * (c) 2020 Micro:bit Educational Foundation and the microbit-fs contributors.
-	 * SPDX-License-Identifier: MIT
+	 * The "hash type" field in a region row indicates how to interpret the "hash
+	 * data" field.
 	 */
+
+
+	var RegionHashType;
+
+	(function (RegionHashType) {
+	  /** The hash data is empty. */
+	  RegionHashType[RegionHashType["empty"] = 0] = "empty";
+	  /** The full hash data field is used as a hash of the region in flash */
+
+	  RegionHashType[RegionHashType["data"] = 1] = "data";
+	  /** The 4 LSB bytes of the hash data field are used as a pointer  */
+
+	  RegionHashType[RegionHashType["pointer"] = 2] = "pointer";
+	})(RegionHashType || (RegionHashType = {})); // Sizes for each of the fields in the Flash Regions Table header
+
 
 	var MAGIC2_LEN_BYTES = 4;
 	var P_SIZE_LOG2_LEN_BYTES = 2;
@@ -5791,7 +5796,7 @@
 	  RegionHeaderOffset[RegionHeaderOffset["regionCount"] = RegionHeaderOffset.pageSizeLog2 + NUM_REG_LEN_BYTES] = "regionCount";
 	  RegionHeaderOffset[RegionHeaderOffset["tableLength"] = RegionHeaderOffset.regionCount + TABLE_LEN_LEN_BYTES] = "tableLength";
 	  RegionHeaderOffset[RegionHeaderOffset["version"] = RegionHeaderOffset.tableLength + VERSION_LEN_BYTES] = "version";
-	  RegionHeaderOffset[RegionHeaderOffset["magic_1"] = RegionHeaderOffset.version + MAGIC_1_LEN_BYTES] = "magic_1";
+	  RegionHeaderOffset[RegionHeaderOffset["magic1"] = RegionHeaderOffset.version + MAGIC_1_LEN_BYTES] = "magic1";
 	})(RegionHeaderOffset || (RegionHeaderOffset = {})); // Magic numbers to identify the Flash Regions Table in flash
 
 
@@ -5826,56 +5831,46 @@
 
 	var REGION_ROW_LEN_BYTES = RegionRowOffset.id;
 	/**
-	 * The "hash type" field in a region row indicates how to interpret the "hash
-	 * data" field.
-	 */
-
-	var RegionHashType;
-
-	(function (RegionHashType) {
-	  /** The hash data is empty. */
-	  RegionHashType[RegionHashType["empty"] = 0] = "empty";
-	  /** The full hash data field is used as a hash of the region in flash */
-
-	  RegionHashType[RegionHashType["data"] = 1] = "data";
-	  /** The 4 LSB bytes of the hash data field are used as a pointer  */
-
-	  RegionHashType[RegionHashType["pointer"] = 2] = "pointer";
-	})(RegionHashType || (RegionHashType = {}));
-	/** Indicates the data contain in each of the different regions */
-
-
-	var RegionId;
-
-	(function (RegionId) {
-	  RegionId[RegionId["softDevice"] = 1] = "softDevice";
-	  RegionId[RegionId["microPython"] = 2] = "microPython";
-	  RegionId[RegionId["fs"] = 3] = "fs";
-	})(RegionId || (RegionId = {}));
-	/**
-	 * .
+	 * Iterates through the provided Intel Hex Memory Map and tries to find the
+	 * Flash Regions Table header, by looking for the magic values at the end of
+	 * each flash page.
 	 *
-	 * @param iHexMap - .
-	 * @returns {TableHeader}
+	 * TODO: Indicate here what errors can be thrown.
+	 *
+	 * @param iHexMap - Intel Hex memory map to scan for the Flash Regions Table.
+	 * @param pSize - Flash page size to scan at the end of each page.
+	 * @returns The table header data.
 	 */
 
+	function getTableHeader(iHexMap, pSize) {
+	  if (pSize === void 0) {
+	    pSize = 1024;
+	  }
 
-	function getTableHeader(iHexMap) {
 	  var endAddress = 0;
+	  var magic1ToFind = new Uint8Array(new Uint32Array([REGION_HEADER_MAGIC_1]).buffer);
+	  var magic2ToFind = new Uint8Array(new Uint32Array([REGION_HEADER_MAGIC_2]).buffer);
+	  var mapEntries = iHexMap.paginate(pSize, 0xff).entries();
 
-	  for (var i = 4096; i <= 0x80000; i += 4096) {
-	    if (iHexMap.getUint32(i - RegionHeaderOffset.magic2, true) === REGION_HEADER_MAGIC_2 && iHexMap.getUint32(i - RegionHeaderOffset.magic_1, true) === REGION_HEADER_MAGIC_1) {
-	      endAddress = i;
+	  for (var iter = mapEntries.next(); !iter.done; iter = mapEntries.next()) {
+	    if (!iter.value) continue;
+	    var blockByteArray = iter.value[1];
+	    var subArrayMagic2 = blockByteArray.subarray(-RegionHeaderOffset.magic2);
+
+	    if (areUint8ArraysEqual(subArrayMagic2, magic2ToFind) && areUint8ArraysEqual(blockByteArray.subarray(-RegionHeaderOffset.magic1, -(RegionHeaderOffset.magic1 - MAGIC_1_LEN_BYTES)), magic1ToFind)) {
+	      var pageStartAddress = iter.value[0];
+	      endAddress = pageStartAddress + pSize;
 	      break;
 	    }
-	  }
+	  } // TODO: Throw an error if table is not found.
+
 
 	  var version = getUint16(iHexMap, endAddress - RegionHeaderOffset.version);
 	  var tableLength = getUint16(iHexMap, endAddress - RegionHeaderOffset.tableLength);
 	  var regionCount = getUint16(iHexMap, endAddress - RegionHeaderOffset.regionCount);
 	  var pageSizeLog2 = getUint16(iHexMap, endAddress - RegionHeaderOffset.pageSizeLog2);
 	  var pageSize = Math.pow(2, pageSizeLog2);
-	  var startAddress = endAddress - RegionHeaderOffset.magic_1;
+	  var startAddress = endAddress - RegionHeaderOffset.magic1;
 	  return {
 	    pageSizeLog2: pageSizeLog2,
 	    pageSize: pageSize,
@@ -5887,10 +5882,15 @@
 	  };
 	}
 	/**
-	 * .
+	 * Parses a Region rows from a Flash Regions Table inside the Intel Hex memory
+	 * map, which ends at the provided rowEndAddress.
 	 *
-	 * @param iHexMap - .
-	 * @param rowEndAddress - .
+	 * Since the Flash Regions Table is placed at the end of a page, we iterate
+	 * from the end to the beginning.
+	 *
+	 * @param iHexMap - Intel Hex memory map to scan for the Flash Regions Table.
+	 * @param rowEndAddress - Address at which the row ends (same as the address
+	 *    where the next row or table header starts).
 	 * @returns The Region info from the row.
 	 */
 
@@ -5918,17 +5918,21 @@
 	  };
 	}
 	/**
-	 * Reads the UICR data from an Intel Hex map and retrieves the MicroPython data.
+	 * Reads the Flash Regions Table data from an Intel Hex map and retrieves the
+	 * MicroPython DeviceMemInfo data.
 	 *
 	 * @throws {Error} When the Magic Header is not present.
+	 * @throws {Error} When the MicroPython or FS regions are not found.
 	 *
-	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns Object with the decoded UICR MicroPython data.
+	 * @param intelHexMap - Memory map of the Intel Hex to scan.
+	 * @returns Object with the parsed data from the Flash Regions Table.
 	 */
 
 
-	function getHexMapUicrData(iHexMap) {
-	  var tableHeader = getTableHeader(iHexMap);
+	function getHexMapFlashRegionsData(iHexMap) {
+	  // TODO: There is currently have some "internal" knowledge here and it's
+	  // scanning the flash knowing the page size is 4 KBs
+	  var tableHeader = getTableHeader(iHexMap, 4096);
 	  var regionRows = {};
 
 	  for (var i = 0; i < tableHeader.regionCount; i++) {
@@ -6098,10 +6102,10 @@
 	  throw new Error('Cannot find flash size, unknown UICR Magic value');
 	}
 	/**
-	 * Reads the UICR data from an Intel Hex map and retrieves the flash size.
+	 * Reads the UICR data from an Intel Hex map and retrieves the fs end address.
 	 *
 	 * @param intelHexMap - Memory map of the Intel Hex data.
-	 * @returns The micro:bit flash size.
+	 * @returns The micro:bit filesystem end address.
 	 */
 
 
@@ -6177,7 +6181,7 @@
 	 */
 
 
-	function getHexMapUicrData$1(intelHexMap) {
+	function getHexMapUicrData(intelHexMap) {
 	  var uicrMap = intelHexMap.slice(UICR_UPY_START);
 
 	  if (!confirmMagicValue(uicrMap)) {
@@ -6210,20 +6214,6 @@
 	    deviceVersion: deviceVersion
 	  };
 	}
-	/**
-	 * Reads the UICR data from an Intel Hex string and retrieves the MicroPython
-	 * data.
-	 *
-	 * @throws {Error} When the Magic Header is not present.
-	 *
-	 * @param intelHex - MicroPython Intel Hex string.
-	 * @returns Object with the decoded UICR MicroPython data.
-	 */
-
-
-	function getIntelHexUicrData(intelHex) {
-	  return getHexMapUicrData$1(MemoryMap.fromHex(intelHex));
-	}
 
 	/**
 	 * .
@@ -6236,16 +6226,27 @@
 	  var errorMsg = '';
 
 	  try {
-	    return getHexMapUicrData$1(intelHexMap);
+	    return getHexMapUicrData(intelHexMap);
 	  } catch (err) {
 	    errorMsg += err.message + '\n';
 	  }
 
 	  try {
-	    return getHexMapUicrData(intelHexMap);
+	    return getHexMapFlashRegionsData(intelHexMap);
 	  } catch (err) {
 	    throw new Error(errorMsg + err.message);
 	  }
+	}
+	/**
+	 * .
+	 *
+	 * @param intelHex - MicroPython Intel Hex string.
+	 * @returns .
+	 */
+
+
+	function getIntelHexDeviceMemInfo(intelHex) {
+	  return getHexMapDeviceMemInfo(MemoryMap.fromHex(intelHex));
 	}
 
 	/** Sizes for the different parts of the file system chunks. */
@@ -7297,17 +7298,11 @@
 	   */
 
 
-	  MicropythonFsHex.prototype.importFilesFromHex = function (hexStr, _a) {
-	    var _b = _a === void 0 ? {} : _a,
-	        _c = _b.overwrite,
-	        overwrite = _c === void 0 ? false : _c,
-	        _d = _b.formatFirst,
-	        formatFirst = _d === void 0 ? false : _d;
+	  MicropythonFsHex.prototype.importFilesFromHex = function (hexStr, options) {
+	    if (options === void 0) {
+	      options = {};
+	    }
 
-	    var options = {
-	      overwrite: overwrite,
-	      formatFirst: formatFirst
-	    };
 	    return isUniversalHex(hexStr) ? this.importFilesFromUniversalHex(hexStr, options) : this.importFilesFromIntelHex(hexStr, options);
 	  };
 	  /**
@@ -7442,9 +7437,9 @@
 	exports.MicropythonFsHex = MicropythonFsHex;
 	exports.addIntelHexAppendedScript = addIntelHexAppendedScript;
 	exports.cleanseOldHexFormat = cleanseOldHexFormat;
-	exports.getHexMapUicrData = getHexMapUicrData$1;
+	exports.getHexMapDeviceMemInfo = getHexMapDeviceMemInfo;
 	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
-	exports.getIntelHexUicrData = getIntelHexUicrData;
+	exports.getIntelHexDeviceMemInfo = getIntelHexDeviceMemInfo;
 	exports.isAppendedScriptPresent = isAppendedScriptPresent;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
