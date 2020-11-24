@@ -1,3 +1,12 @@
+2.1.0
+-----
+* Update MicroPython to the v2.0.0-beta.1 release
+* Updated microbit-fs to v0.9.0 release
+* Removed microbit-universal-hex library as microbit-fs generates Universal Hexes
+* Universal Hex generated with board ID 9901 for the v1 section
+* Translation system updated to be more robust to missing translations
+* Minor reorganisation of some js files
+
 2.1.0-beta.7
 ------------
 * Update the MicroPython version to commit 44a75bb
