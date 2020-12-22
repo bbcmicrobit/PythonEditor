@@ -83,7 +83,7 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "Trebaš <a target=\"_blank\" href=\"https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit\">promijeniti svoj micro:bit firmware</a> da bi tu značajku mogao koristiti.",
+      "update-req": "Trebaš <a target=\"_blank\" href=\"https://microbit.org/firmware/\">promijeniti svoj micro:bit firmware</a> da bi tu značajku mogao koristiti.",
       "clear-connect": "Za ovaj je uređaj vezan još jedan proces.<br>Zatvori sve tabove u kojima se koristi WebUSB (npr. MakeCode, Python Editor) ili isključi pa ponovo uključi micro:bit i onda pokušaj ponovo.",
       "reconnect-microbit": "Nanovo uključi svoj micro:bit i pokušaj opet.",
       "partial-flashing-disable": "Ako se greške ponavljaju, pokušaj u beta opcijama isključiti opciju Quick Flash.",

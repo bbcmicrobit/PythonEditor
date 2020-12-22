@@ -83,7 +83,7 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "需要 <a target=\"_blank\" href=\"https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit\"> 更新 micro:bit 固件</a> 以使用這個功能.",
+      "update-req": "需要 <a target=\"_blank\" href=\"https://microbit.org/firmware/\"> 更新 micro:bit 固件</a> 以使用這個功能.",
       "clear-connect": "另一個進程已連接到這個設備。<br>關閉其它可能使用 WebUSB 的標籤（如 MakeCode、Python Editor），或者拔掉 micro:bit 插頭再重新插上。",
       "reconnect-microbit": "請重新連接 micro:bit 然後再次嘗試。",
       "partial-flashing-disable": "如果錯誤仍然存在，請嘗試禁用beta選項中的快速下載。",

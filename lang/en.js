@@ -83,7 +83,8 @@ var LANGUAGE = {
   },
   'webusb': {
     'err': {
-      'update-req': 'You need to <a target="_blank" href="https://support.microbit.org/support/solutions/articles/19000019131-how-to-upgrade-the-firmware-on-the-micro-bit">update your micro:bit firmware</a> to make use of this feature.',
+      'update-req': 'You need to <a target="_blank" href="https://microbit.org/firmware/">update your micro:bit firmware</a> to make use of this feature.',
+      'update-req-title': 'Please update the micro:bit firmware',
       'clear-connect': 'Another process is connected to this device.<br>Close any other tabs that may be using WebUSB (e.g. MakeCode, Python Editor), or unplug and replug the micro:bit before trying again.',
       'reconnect-microbit': 'Please reconnect your micro:bit and try again.',
       'partial-flashing-disable': 'If the errors persist, try disabling Quick Flash in the beta options.',

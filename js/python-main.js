@@ -1297,8 +1297,9 @@ function web_editor(config) {
 
                 // Determine error type
                 if (err.message === "No valid interfaces found.") {
-                    errorType = "update-req";
-                    errorTitle = err.message;
+                    errorTitle = config["translate"]["webusb"]['err']['update-req-title'];
+                    errorType = 'update-req';
+                    err.message = ''
                     errorDescription = config["translate"]["webusb"]["err"][errorType];
                 } else if (err.message === "Unable to claim interface.") {
                     errorType = "clear-connect";
@@ -1367,8 +1368,7 @@ function web_editor(config) {
 
         var errorHTML = 
                     '<div>' + 
-                        '<strong>' + errorTitle + '</strong>' +
-                        '<br >' + 
+                        '<h3 id="modal-overlay-title">' + errorTitle + '</h3>' +
                         errorDescription + 
                         (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
                     '</div>' + 

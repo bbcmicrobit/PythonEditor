@@ -786,11 +786,17 @@ input:checked + .menu-switch-slider:before {
   text-align: left;
 }
 
+#modal-overlay-title {
+  margin: 0 0 20px 0;
+  padding: 0;
+  font-size: 1.4rem;
+}
+
 #modal-msg-title{
   color:#336699;
   font-weight: bold;
-
 }
+
 .modal-close{
   color:#336699;
   content: "\00D7";
