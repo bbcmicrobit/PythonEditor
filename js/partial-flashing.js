@@ -172,7 +172,6 @@ class DAPWrapper {
         this.reconnected = false;
         this.flashing = true;
         this.device = device;
-        this.allocBoardID();
         this.allocDAP();
     }
 
@@ -183,11 +182,6 @@ class DAPWrapper {
         }
         this.boardId = this.device.serialNumber.substring(0,4);
         PartialFlashingUtils.log("Detected board ID " + this.boardId);
-        document.dispatchEvent(new CustomEvent("webusb", { detail: {
-            "flash-type": "partial-flash",
-            "event-type": "info",
-            "message": "board-id/" + this.boardId,
-        }}));
     }
 
     allocDAP() {
@@ -209,7 +203,8 @@ class DAPWrapper {
         }
         return p
             .then(() => self.daplink.connect())
-            .then(() => self.cortexM.connect());
+            .then(() => self.cortexM.connect())
+            .then(() => self.allocBoardID());
     }
 
     disconnectAsync() {
