@@ -64,16 +64,20 @@ var microPythonApi = (function () {
     };
 
     var extraModules = {
+        "audio" : ["play", "AudioFrame", "stop", "is_playing"],
         "microbit": {
-            "microphone": ["current_event", "get_events", "is_event", "set_threshold", "sound_level", "was_event"],
-            "pin_logo": ["is_touched"],
-            "pin_speaker": ["disable", "enable", "get_analog_period_microseconds", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
-            "set_volume": "",
             "audio" : ["AudioFrame","is_playing", "play", "stop"],
+            "microphone": ["current_event", "get_events", "is_event", "set_threshold", "sound_level", "was_event"],
+            "pin_logo": ["CAPACITIVE", "RESISTIVE", "is_touched", "set_touch_mode"],
+            "pin_speaker": ["get_analog_period_microseconds", "set_analog_period", "set_analog_period_microseconds", "write_analog", "write_digital"],
+            "set_volume": "",
+            "speaker": ["off", "on"],
             "Sound": ["GIGGLE", "HAPPY", "HELLO", "MYSTERIOUS", "SAD", "SLIDE", "SOARING", "SPRING", "TWINKLE", "YAWN"],
             "SoundEvent": ["LOUD", "QUIET"]
         },
-        "audio" : ["play", "AudioFrame", "stop", "is_playing"]
+        "neopixel": {
+            "NeoPixel" : ["clear", "fill", "show", "write"],
+        },
     };
 
     /**
