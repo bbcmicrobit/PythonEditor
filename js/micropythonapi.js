@@ -4,6 +4,8 @@
 var microPythonApi = (function () {
     'use strict';
 
+    // This API can be obtained running this script on a micro:bit
+    // micropython/microbit-api-instropection.py
     var uPyBaseApi = {
         "array": ["array"],
         "audio": ["AudioFrame", "play"],
