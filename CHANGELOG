@@ -1,3 +1,9 @@
+2.1.1
+-----
+* Update MicroPython to the v2.0.0-beta.3 release
+* Improve the error reporting for old DAPLink versions attempting to WebUSB connect
+* Fix WebUSB issue detecting the board ID
+
 2.1.0
 -----
 * Update MicroPython to the v2.0.0-beta.1 release
