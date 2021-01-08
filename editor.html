@@ -449,6 +449,19 @@ Nicholas and Damien.
             };
             web_editor(config);
         </script>
+        <script>
+        // Load the freshdesk widget
+            window.fwSettings={
+            'widget_id':19000000341
+            };
+            !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}() 
+        </script>
+        <script type='text/javascript' src='https://widget.freshworks.com/widgets/19000000341.js' async defer>
+        // Prefill the subject
+        FreshworksWidget('prefill', 'ticketForm', {subject: 'Python Editor feedback'});
+        // Hide the subject field
+        FreshworksWidget('hide', 'ticketForm', ['subject']);
+        </script>
         </main>
     </body>
 </html>
