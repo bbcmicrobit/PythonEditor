@@ -655,6 +655,55 @@ function web_editor(config) {
         }
     }
 
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent)
+            || ( navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+
+    // functions for webkit postMessage to the 'host' message handler
+    function webkitHostMsgExists() {
+        return window.webkit
+            && window.webkit.messageHandlers
+            && window.webkit.messageHandlers.host
+            && window.webkit.messageHandlers.host.postMessage;
+    }
+
+    function webkitHostIOS() {
+        return webkitHostMsgExists() && isIOS();
+    }
+
+    function webkitHostFlashAndDownload() {
+        return webkitHostIOS();
+    }
+
+    function webkitHostNoUSB() {
+        return webkitHostIOS();
+    }
+
+    function webkitHostMsgFile(name,data,action) {
+        window.webkit.messageHandlers.host.postMessage({'name': name,action:data});
+    }
+                      
+    function webkitHostMsgSave(name,data) {
+        webkitHostMsgFile(name,data,'save');
+    }
+  
+    function webkitHostMsgDownload(name,data) {
+        webkitHostMsgFile(name,data,'download');
+    }
+
+    function webkitHostMsgFlash() {
+        try {
+            updateMain();
+            var output = FS.getUniversalHex();
+        } catch(e) {
+            alert(config.translate.alerts.error + '\n' + e.message);
+            return;
+        }
+        var filename = getSafeName() + '.hex';
+        webkitHostMsgDownload(filename,output);
+    }
+
     // Reset the filesystem and load the files from this hex file to the fs and editor
     function loadHex(filename, hexStr) {
         var importedFiles = [];
@@ -713,6 +762,15 @@ function web_editor(config) {
 
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
+        //Use webkit host postMessage
+        if (webkitHostFlashAndDownload()) {
+            var output = FS.readBytes(filename);
+            if (filename === 'main.py') {
+                filename = getSafeName() + '.py';
+            }
+            webkitHostMsgSave(filename,output);
+            return;
+        }
         // Safari before v10 had issues downloading a file blob
         if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.save);
@@ -872,6 +930,12 @@ function web_editor(config) {
             var output = FS.getUniversalHex();
         } catch(e) {
             alert(config.translate.alerts.error + '\n' + e.message);
+            return;
+        }
+        //Use webkit host postMessage
+        if (webkitHostFlashAndDownload()) {
+            var filename = getSafeName() + '.hex';
+            webkitHostMsgSave(filename,output)
             return;
         }
         // Safari before v10 had issues downloading the file blob
@@ -1356,6 +1420,11 @@ function web_editor(config) {
     }
 
     function doFlash() {
+        if (webkitHostFlashAndDownload()) {
+            webkitHostMsgFlash();
+            return;
+        }
+ 
         var startTime = new Date().getTime();
 
         // Hide serial and disconnect if open
@@ -1743,6 +1812,14 @@ function web_editor(config) {
                 $('.buttons_menu_container').addClass('hidden');
             }
         });
+          
+        if ( webkitHostNoUSB())
+        {
+          $("#command-connect").hide();
+          $("#command-serial").hide();
+          $("#command-download").hide();
+          $("#command-flash").show();
+        }
     }
 
     // Extracts the query string and turns it into an object of key/value
