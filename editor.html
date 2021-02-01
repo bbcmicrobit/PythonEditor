@@ -154,27 +154,6 @@ Nicholas and Damien.
             </table>
           </div>
         </script>
-        <script id="share-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-share-alt"></i> <strong>{{ title }}</strong></h2>
-            <div id="make-link">
-                <p>{{ instructions }}</p>
-                <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="passphrase" type="password"/></p>
-                <p><label for="hint" class="share-label">{{ hint }}</label> <input id="hint"/></p>
-                <p><button id="button-create-link">{{ button }}</button></p>
-            </div>
-            <div id="share-link">
-                <p>{{ description }}</p>
-                <textarea id="direct-link" readonly style="width:100%; height:200px;border:0;"></textarea>
-                <p id="shortener" style="display: none;">{{ shortener }} <a href="#" id="short-link"></a></p>
-            </div>
-        </script>
-        <script id="decrypt-template" type="x-tmpl-mustache">
-            <h2><i class="fa fa-unlock-alt"></i> <strong>{{ title }}</strong></h2>
-            <p>{{ instructions }}</p>
-            <p><label for="passphrase" class="share-label">{{ passphrase }}</label> <input id="passphrase" type="password"/></p>
-            <p>{{ hint }}</p>
-            <p><button id="button-decrypt-link">{{ button }}</button></p>
-        </script>
         <main id="main" role="main" class="vbox main">
           <div id="toolbox" class="hbox">
             <div id="commands" class="hbox">
@@ -277,14 +256,6 @@ Nicholas and Damien.
                       </svg>
                     </div>
                     <div class="roundlabel">Blockly</div>
-                </a>
-                <a href="#" class="roundbutton action hidden" id="command-share"
-                    tabindex="60"
-                    title="Create a link to share your script">
-                    <div class="roundsymbol">
-                        <i class="fa fa-share-alt"></i>
-                    </div>
-                    <div class="roundlabel">Share</div>
                 </a>
                 <a href="#" class="roundbutton action experimental" id="command-options"
                     tabindex="70"
@@ -419,7 +390,6 @@ Nicholas and Damien.
         <script src="ace/ext-language_tools.js" type="application/javascript" charset="utf-8"></script>
         <script src="static/js/jquery-2.1.4.min.js" type="application/javascript"></script>
         <script src="static/js/jquery.browser.min.js" type="application/javascript"></script>
-        <script src="static/js/forge.min.js" type="application/javascript"></script>
         <script src="static/js/FileSaver.min.js" type="application/javascript"></script>
         <script src="static/js/vex.combined.min.js" type="application/javascript"></script>
         <script src="static/js/encoding.min.js" type="application/javascript"></script>
@@ -443,7 +413,6 @@ Nicholas and Damien.
                 flags: {
                     blocks: false,
                     snippets: true,
-                    share: false,
                     experimental: false,
                 },
             };

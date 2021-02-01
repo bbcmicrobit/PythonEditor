@@ -246,33 +246,4 @@ describe("An editor for MicroPython on the BBC micro:bit:", function() {
             expect(result).toEqual(expected);
         });
     });
-
-    describe("It's possible to encrypt and decrypt scripts.", function() {
-
-        var editor;
-
-        beforeEach(function() {
-            $('body').append('<div id="editor"></div>');
-            editor = pythonEditor('editor');
-        });
-
-        afterEach(function() {
-            $('#editor').remove();
-        });
-
-        it("The editor encrypts plaintext to URL safe cyphertext with a passphrase.", function() {
-            var plaintext = "Hello, world";
-            var passphrase = "password";
-            var result = editor.encrypt(passphrase, plaintext);
-            expect(plaintext).toEqual(editor.decrypt(passphrase, result));
-        });
-
-        it("The editor decrypts a URL safe cyphertext to plaintext with a passphrase.", function() {
-            var cyphertext = "U2FsdGVkX1%2FlI5ZAWvG6lrNyGcYXCRN7l9EHmdQgqNU%3D";
-            var passphrase = "password";
-            var result = editor.decrypt(passphrase, cyphertext);
-            var expected = "Hello, world";
-            expect(result).toEqual(expected);
-        });
-    });
 });

@@ -22,7 +22,6 @@
     "axe-core": "3.4.2",
     "axe-puppeteer": "1.0.0",
     "jest": "^24.9.0",
-    "node-forge": "0.8.5",
     "node-static": "^0.7.11",
     "puppeteer": "^1.19.0",
     "tmp": "^0.1.0"

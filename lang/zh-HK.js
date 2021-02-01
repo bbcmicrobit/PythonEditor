@@ -16,21 +16,6 @@ var LANGUAGE = {
     "for": "使用集合中的每個項目執行某些操作",
     "try": "嘗試執行某些操作並處理異常（錯誤）"
   },
-  "share": {
-    "title": "分享代碼",
-    "instructions": "使用密碼和可選提示（幫助您記憶密碼）創建安全鏈接分享您的程序。",
-    "passphrase": "密碼：",
-    "hint": "密碼提示：",
-    "button": "創建鏈接",
-    "description": "這個網址指向您的程序：",
-    "shortener": "這是短鏈接版本："
-  },
-  "decrypt": {
-    "title": "解密代碼",
-    "instructions": "輸入密碼解密源代碼。",
-    "passphrase": "密碼：",
-    "button": "解密"
-  },
   "alerts": {
     "download": "Safari存在一個錯誤，這意味着您的程序將作為一個未命名的檔案下載，請將其重命名為以.py結尾的檔案，或者使用Firefox或Chrome等瀏覽器，它們沒有這個錯誤。",
     "save": "Safari存在一個錯誤，這意味着您的程序將作為一個未命名的檔案下載，請將其重命名為以.hex結尾的檔案，或者使用Firefox或Chrome等瀏覽器，它們沒有這個錯誤。",
@@ -198,10 +183,6 @@ var LANGUAGE = {
       "command-language": {
         "title": "選擇一種語言",
         "label": "語言"
-      },
-      "command-share": {
-        "title": "創建一個鏈接分享腳本",
-        "label": "分享"
       },
       "command-zoom-in": {
         "title": "放大"

@@ -16,21 +16,6 @@ var LANGUAGE = {
     "for": "在集合裡對每個（for each）項目都執行某項操作",
     "try": "嘗試（try）做某事以處理異常或錯誤"
   },
-  "share": {
-    "title": "分享程式",
-    "instructions": "使用密碼和提示（非必要，但可幫你回憶密碼）以建立一個能與他人共享程式的安全連結。",
-    "passphrase": "密碼： ",
-    "hint": "密碼提示： ",
-    "button": "建立連結",
-    "description": "此 URL 指向您的程式碼：",
-    "shortener": "這是短網址："
-  },
-  "decrypt": {
-    "title": "解密原始程式碼",
-    "instructions": "輸入密碼以解密原始程式碼。",
-    "passphrase": "密碼： ",
-    "button": "解碼"
-  },
   "alerts": {
     "download": "在 Safari 上有個已知問題，你的工作將在被下載時會是一個未命名的檔案，請將它重新命名成以 .hex 結尾的檔案。另一個方法是改用 Firefox 或 Chrome 瀏覽器，它們不會發生這種問題。",
     "save": "在 Safari 上有個已知問題，你的工作將在被下載時會是一個未命名的檔案，請將它重新命名成以 .py 結尾的檔案。另一個方法是改用 Firefox 或 Chrome 瀏覽器，它們不會發生這種問題。",
@@ -198,10 +183,6 @@ var LANGUAGE = {
       "command-language": {
         "title": "選取語言",
         "label": "語言"
-      },
-      "command-share": {
-        "title": "建立一個連結共享你的腳本",
-        "label": "分享"
       },
       "command-zoom-in": {
         "title": "放大"

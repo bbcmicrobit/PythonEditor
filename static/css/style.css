@@ -509,11 +509,6 @@ a.command:hover {
     display: none;
 }
 
-.share-label {
-    display: inline-block;
-    width: 200px;
-}
-
 .snippet-button {
     text-decoration: none;
     background: none;
@@ -529,9 +524,6 @@ a.command:hover {
     box-shadow: 0px 0px 5px 3px #FFCC33;
 }
 
-#share-link {
-    display: none;
-}
 
 .blocklySvg {
     background-image: url('../img/experimental.png');

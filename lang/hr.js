@@ -16,21 +16,6 @@ var LANGUAGE = {
     "for": "za svaku stavku iz nekog skupa napravi neku radnju",
     "try": "pokušaj napraviti nešto i uz to upravljati iznimkama (greškama)"
   },
-  "share": {
-    "title": "Podijeli kôd",
-    "instructions": "Kreiraj lozinku, a možda i natuknicu (kako bi lakše zapamtio lozinku) i time stvorio sigurnu poveznicu za dijeljenje koda s ostalima.",
-    "passphrase": "Lozinka: ",
-    "hint": "Natuknica za lozinku: ",
-    "button": "Kreiraj poveznicu",
-    "description": "Ovaj URL upućuje na tvoj kôd:",
-    "shortener": "Ovo je kraća verzija poveznice:"
-  },
-  "decrypt": {
-    "title": "Dekriptiraj izvorni kôd",
-    "instructions": "Upiši lozinku za dekriptiranje izvornoga kôda.",
-    "passphrase": "Lozinka: ",
-    "button": "Dekriptiraj"
-  },
   "alerts": {
     "download": "Safari ima bug zbog kojega će tvoj uradak preuzeti kao neimenovanu datoteku. Zato te molimo da joj dodijeliš ime koje završava s .hex. Drugi način je da koristiš Firefox ili Chrome preglednik koji nemaju taj bug.",
     "save": "Safari ima bug zbog kojega će tvoj uradak preuzeti kao neimenovanu datoteku. Zato te molimo da joj dodijeliš ime koje završava s .hex. Drugi način je da koristiš Firefox ili Chrome preglednik koji nemaju taj bug.",
@@ -198,10 +183,6 @@ var LANGUAGE = {
       "command-language": {
         "title": "Odaberi jezik",
         "label": "Jezik"
-      },
-      "command-share": {
-        "title": "Kreiraj poveznicu putem koje ćeš dijeliti svoj programski kôd",
-        "label": "Podijeli"
       },
       "command-zoom-in": {
         "title": "Povećaj"

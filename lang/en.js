@@ -16,21 +16,6 @@ var LANGUAGE = {
     'for': 'for each item in a collection of items do something with each item',
     'try': 'try doing something and handle exceptions (errors)'
   },
-  'share': {
-    'title': 'Share Code',
-    'instructions': 'Use a password and optional hint (to help you remember the password) to securely create a link to share your code with others.',
-    'passphrase': 'Password: ',
-    'hint': 'Password hint: ',
-    'button': 'Create Link',
-    'description': 'This URL points to your code:',
-    'shortener': 'This is a short version of the link:'
-  },
-  'decrypt': {
-    'title': 'Decrypt Source Code',
-    'instructions': 'Enter a password to decrypt the source code.',
-    'passphrase': 'Password: ',
-    'button': 'Decrypt'
-  },
   'alerts': {
     'download': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .hex. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
     'save': 'Safari has a bug that means your work will be downloaded as an un-named file. Please rename it to something ending in .py. Alternatively, use a browser such as Firefox or Chrome. They do not suffer from this bug.',
@@ -201,10 +186,6 @@ var LANGUAGE = {
       'command-language': {
         'title': 'Select a language',
         'label': 'Language'
-      },
-      'command-share': {
-        'title': 'Create a link to share your script',
-        'label': 'Share'
       },
       'command-zoom-in': {
         'title': 'Zoom in'

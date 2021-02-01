@@ -16,21 +16,6 @@ var LANGUAGE = {
     "for": "por cada elemento de una colección de elementos, haz algo con cada elemento",
     "try": "intenta hacer algo y maneja las excepciones (errores)"
   },
-  "share": {
-    "title": "Compartir código",
-    "instructions": "Use una contraseña y una sugerencia opcional (para ayudarte a recordar la contraseña) para crear de forma segura un enlace para compartir tu código con otros.",
-    "passphrase": "Contraseña: ",
-    "hint": "Pista de la contraseña: ",
-    "button": "Crear enlace",
-    "description": "Esta URL apunta a tu código:",
-    "shortener": "Esta es una versión corta del enlace:"
-  },
-  "decrypt": {
-    "title": "Descifrar el Código Fuente",
-    "instructions": "Entra una contraseña para descifrar el código fuente.",
-    "passphrase": "Contraseña: ",
-    "button": "Descifrar"
-  },
   "alerts": {
     "download": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .hex. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
     "save": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .py. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
@@ -198,10 +183,6 @@ var LANGUAGE = {
       "command-language": {
         "title": "Seleccionar Idioma",
         "label": "Idioma"
-      },
-      "command-share": {
-        "title": "Crear un enlace para compartir tu script",
-        "label": "Compartir"
       },
       "command-zoom-in": {
         "title": "Aumentar zoom"

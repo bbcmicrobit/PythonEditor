@@ -16,21 +16,6 @@ var LANGUAGE = {
     "for": "dla każdego przedmiotu w kolekcji przedmiotów zrób co coś z każdym przedmiotem",
     "try": "spróbuj coś zrobić i obsłuż wyjątki (błędy)"
   },
-  "share": {
-    "title": "Udostępnij Kod",
-    "instructions": "Użyj hasła i opcjonalnej podpowiedzi (aby pomóc ci zapamiętać hasło), aby bezpiecznie utworzyć link do udostępniania twojego kodu z innymi.",
-    "passphrase": "Hasło: ",
-    "hint": "Podpowiedź do hasła: ",
-    "button": "Utwórz Link",
-    "description": "Ten URL wskazuje do twojego kodu:",
-    "shortener": "To jest skrócona wersia linku:"
-  },
-  "decrypt": {
-    "title": "Odszyfruj kod",
-    "instructions": "Wpisz hasło aby odszyfrować kod.",
-    "passphrase": "Hasło: ",
-    "button": "Odszyfruj"
-  },
   "alerts": {
     "download": "Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.",
     "save": "Safari ma błąd, który znaczy że ​​twoja praca zostanie pobrana jako nie nazwany plik. Zmień nazwę na coś kończącego się na .hex. Możesz też użyć innej przeglądarki, takiej jak Firefox lub Chrome którę nie mają tego błędu.",
@@ -198,10 +183,6 @@ var LANGUAGE = {
       "command-language": {
         "title": "Wybierz Język",
         "label": "Język"
-      },
-      "command-share": {
-        "title": "Utwórz link, aby udostępnić swój kod",
-        "label": "Udostępnić"
       },
       "command-zoom-in": {
         "title": "Powiększ"

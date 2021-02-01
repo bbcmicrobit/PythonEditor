@@ -24,7 +24,7 @@
     <script src="js/urlparser.js"></script>
     <script>
         $(document).ready(function() {
-            var paramsToCheck = ["snippets","blocks","share","experimental"];
+            var paramsToCheck = ["snippets", "blocks", "experimental"];
             paramsToCheck.forEach(function(key){
                 var urlFlag = urlparse(key) || "false";
                 if( urlFlag === "true"){
@@ -219,21 +219,6 @@
             Clicking on the <strong>Help</strong> button opens a range of support options. From here
             you can navigate to the MicroPython language reference documentation, this help page :),
             the micro:bit support knowledgebase, the feedback form and the Python Editor issue tracker.
-            </td>
-        </tr>
-        <tr id="btn-share" class="hidden">
-            <td>
-                <div id="command-share" class="roundsymbol" title="Share  project">
-                    <i class="fa fa-share-alt"></i>
-                </div>
-            </td>
-            <td>
-            Clicking on the "Share" button creates a unique link that points to
-             script. Add this link to  bookmarks to retrieve  code.
-            If you share this link others will be able to see  code. So
-             code remains private you must set a password and an optional
-            password hint for it. <strong>This button is not available if
-            you're running the editor from a local file system.</strong>
             </td>
         </tr>
         <tr>

@@ -155,45 +155,6 @@ function pythonEditor(id) {
         }
     };
 
-    // Given a password and some plaintext, will return an encrypted version.
-    editor.encrypt = function(password, plaintext) {
-        var key_size = 24;
-        var iv_size = 8;
-        var salt = forge.random.getBytesSync(8);
-        var derived_bytes = forge.pbe.opensslDeriveBytes(password, salt, key_size + iv_size);
-        var buffer = forge.util.createBuffer(derived_bytes);
-        var key = buffer.getBytes(key_size);
-        var iv = buffer.getBytes(iv_size);
-        var cipher = forge.cipher.createCipher('AES-CBC', key);
-        cipher.start({iv: iv});
-        cipher.update(forge.util.createBuffer(plaintext, 'binary'));
-        cipher.finish();
-        var output = forge.util.createBuffer();
-        output.putBytes('Salted__');
-        output.putBytes(salt);
-        output.putBuffer(cipher.output);
-        return encodeURIComponent(btoa(output.getBytes()));
-    };
-
-    // Given a password and cyphertext will return the decrypted plaintext.
-    editor.decrypt = function(password, cyphertext) {
-        var input = atob(decodeURIComponent(cyphertext));
-        input = forge.util.createBuffer(input, 'binary');
-        input.getBytes('Salted__'.length);
-        var salt = input.getBytes(8);
-        var key_size = 24;
-        var iv_size = 8;
-        var derived_bytes = forge.pbe.opensslDeriveBytes(password, salt, key_size + iv_size);
-        var buffer = forge.util.createBuffer(derived_bytes);
-        var key = buffer.getBytes(key_size);
-        var iv = buffer.getBytes(iv_size);
-        var decipher = forge.cipher.createDecipher('AES-CBC', key);
-        decipher.start({iv: iv});
-        decipher.update(input);
-        var result = decipher.finish();
-        return decipher.output.getBytes();
-    };
-
     return editor;
 }
 /* Attach to the global object if running in node */
@@ -494,9 +455,6 @@ function web_editor(config) {
         if(config.flags.snippets) {
             $("#command-snippet").removeClass('hidden');
         }
-        if(config.flags.share) {
-            $("#command-share").removeClass('hidden');
-        }
         if(config.flags.experimental) {
             $('.experimental').removeClass('experimental');
             EDITOR.ACE.renderer.scroller.style.backgroundImage = "url('static/img/experimental.png')";
@@ -527,28 +485,11 @@ function web_editor(config) {
     // This function is called to initialise the editor. It sets things up so
     // the user sees their code or, in the case of a new program, uses some
     // sane defaults.
-    function setupEditor(message, migration) {
+    function setupEditor(migration) {
         // Set version in document title
         document.title = document.title + ' ' + EDITOR_VERSION;
         // Setup the Ace editor.
-        if(message.n && message.c && message.s) {
-            var template = $('#decrypt-template').html();
-            Mustache.parse(template);
-            var context = config.translate.decrypt;
-            if (message.h) {
-                context.hint = '(Hint: ' + decodeURIComponent(message.h) + ')';
-            }
-            vex.open({
-                content: Mustache.render(template, context)
-            });
-            $('#button-decrypt-link').click(function() {
-                var password = $('#passphrase').val();
-                setName(EDITOR.decrypt(password, message.n));
-                EDITOR.setCode(EDITOR.decrypt(password, message.s));
-                vex.close();
-                EDITOR.focus();
-            });
-        } else if(migration != null){
+        if (migration != null) {
             setName(migration.meta.name);
             EDITOR.setCode(migration.source);
             EDITOR.focus();
@@ -1158,46 +1099,6 @@ function web_editor(config) {
         });
     }
 
-    function doShare() {
-        // Triggered when the user wants to generate a link to share their code.
-        var template = $('#share-template').html();
-        Mustache.parse(template);
-        vex.open({
-            content: Mustache.render(template, config.translate.share)
-        });
-        $('#passphrase').focus();
-        $('#button-create-link').click(function() {
-            var password = $('#passphrase').val();
-            var hint = $('#hint').val();
-            var qs_array = [];
-            // Name
-            qs_array.push('n=' + EDITOR.encrypt(password, getName()));
-            // Source
-            qs_array.push('s=' + EDITOR.encrypt(password, EDITOR.getCode()));
-            // Hint
-            qs_array.push('h=' + encodeURIComponent(hint));
-            var old_url = window.location.href.split('?');
-            var new_url = old_url[0].replace('#', '') + '?' + qs_array.join('&');
-            $('#make-link').hide();
-            $('#direct-link').val(new_url);
-            $('#share-link').show();
-            // shortener API
-            var url = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB2_Cwh5lKUX4a681ZERd3FAt8ijdwbukk";
-            $.ajax(url, {
-                type: "POST",
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    longUrl: new_url
-                })
-            }).done(function( data ) {
-                console.log(data);
-                $('#short-link').attr('href', data.id);
-                $('#short-link').text(data.id);
-                $('#shortener').show();
-            });
-        });
-    }
-
     function doDrop(e) {
         // Triggered when a user drops a file onto the editor.
         e.stopPropagation();
@@ -1723,9 +1624,6 @@ function web_editor(config) {
         $("#command-snippet").click(function () {
             doSnippets();
         });
-        $("#command-share").click(function () {
-            doShare();
-        });
         if (navigator.usb) {
             $("#command-connect").click(function () {
                 doConnect().catch(webusbErrorHandler);
@@ -1851,11 +1749,6 @@ function web_editor(config) {
     // pairs.
     function get_qs_context() {
         var query_string = window.location.search.substring(1);
-        if(window.location.href.indexOf("file://") == 0 ) {
-            // Running from the local file system so switch off network share.
-            $('#command-share').hide();
-            return {};
-        }
         var kv_pairs = query_string.split('&');
         var result = {};
         for (var i = 0; i < kv_pairs.length; i++) {
@@ -1876,7 +1769,7 @@ function web_editor(config) {
     var qs = get_qs_context();
     var migration = get_migration();
     setupFeatureFlags();
-    setupEditor(qs, migration);
+    setupEditor(migration);
     setupButtons();
     setLanguage(qs.l || 'en');
     FS.setupFilesystem().then(function() {
