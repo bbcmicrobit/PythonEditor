@@ -51,7 +51,9 @@ var EDITOR_IFRAME_MESSAGING = Object.freeze({
     workspacesync: "workspacesync",
     workspacesave: "workspacesave",
     workspaceloaded: "workspaceloaded",
-    importproject: "importproject"
+    importproject: "importproject",
+    loadhex: "loadhex",
+    loadfile: "loadfile"
   }
 })
 
@@ -360,7 +362,8 @@ function web_editor(config) {
 
     // Indicate if editor can listen and respond to messages
     var inIframe = window !== window.parent;
-    var controllerMode = inIframe && urlparse("controller") === "1";
+    var mobileApp = 1;
+    var controllerMode = (inIframe || mobileApp) && urlparse("controller") === "1";
 
     var usePartialFlashing = true;
 
@@ -583,6 +586,16 @@ function web_editor(config) {
                   // Notify parent about editor successfully configured
                   window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
                   break;
+               
+                // Parent is sending HEX file
+                case EDITOR_IFRAME_MESSAGING.actions.loadhex:
+                  loadHex(event.data.filename, event.data.hexstring);
+                  break;
+
+                // Parent is sending file for filesystem
+                case EDITOR_IFRAME_MESSAGING.actions.loadfile:
+                  loadFileToFilesystem(event.data.filename, event.data.filestring);
+                  break;
 
                 default:
                   throw new Error("Unsupported action.")
@@ -602,6 +615,52 @@ function web_editor(config) {
         debounceCodeChange(EDITOR.getCode());
       });
     }
+    
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent)
+            || ( navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+    
+    function isAndroid() {
+        return navigator.userAgent.includes('wv'); // WebView on modern Android
+    }
+    
+    function isMobileApp() {
+        return webkitHostMsgExists() && (isIOS() || isAndroid());
+    }
+
+    // functions for webkit postMessage to the 'host' message handler
+    function webkitHostMsgExists() {
+        return window.webkit
+            && window.webkit.messageHandlers
+            && window.webkit.messageHandlers.host
+            && window.webkit.messageHandlers.host.postMessage;
+    }
+
+    function webkitHostMsgFile(name,data,action) {
+        window.webkit.messageHandlers.host.postMessage({'name': name,action:data});
+    }
+                      
+    function webkitHostMsgSave(name,data) {
+        webkitHostMsgFile(name,data,'save');
+    }
+  
+    function webkitHostMsgDownload(name,data) {
+        webkitHostMsgFile(name,data,'download');
+    }
+
+    function webkitHostMsgFlash() {
+        try {
+            updateMain();
+            var output = FS.getUniversalHex();
+        } catch(e) {
+            alert(config.translate.alerts.error + '\n' + e.message);
+            return;
+        }
+        var filename = getSafeName() + '.hex';
+        webkitHostMsgDownload(filename,output);
+    }
+
 
     // Based on the Python code magic comment it detects a module
     function isPyModule(codeStr) {
@@ -653,55 +712,6 @@ function web_editor(config) {
             setName(moduleName);
             EDITOR.setCode(codeStr);
         }
-    }
-
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent)
-            || ( navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    }
-
-    // functions for webkit postMessage to the 'host' message handler
-    function webkitHostMsgExists() {
-        return window.webkit
-            && window.webkit.messageHandlers
-            && window.webkit.messageHandlers.host
-            && window.webkit.messageHandlers.host.postMessage;
-    }
-
-    function webkitHostIOS() {
-        return webkitHostMsgExists() && isIOS();
-    }
-
-    function webkitHostFlashAndDownload() {
-        return webkitHostIOS();
-    }
-
-    function webkitHostNoUSB() {
-        return webkitHostIOS();
-    }
-
-    function webkitHostMsgFile(name,data,action) {
-        window.webkit.messageHandlers.host.postMessage({'name': name,action:data});
-    }
-                      
-    function webkitHostMsgSave(name,data) {
-        webkitHostMsgFile(name,data,'save');
-    }
-  
-    function webkitHostMsgDownload(name,data) {
-        webkitHostMsgFile(name,data,'download');
-    }
-
-    function webkitHostMsgFlash() {
-        try {
-            updateMain();
-            var output = FS.getUniversalHex();
-        } catch(e) {
-            alert(config.translate.alerts.error + '\n' + e.message);
-            return;
-        }
-        var filename = getSafeName() + '.hex';
-        webkitHostMsgDownload(filename,output);
     }
 
     // Reset the filesystem and load the files from this hex file to the fs and editor
@@ -763,7 +773,7 @@ function web_editor(config) {
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
         //Use webkit host postMessage
-        if (webkitHostFlashAndDownload()) {
+        if (isMobileApp()) {
             var output = FS.readBytes(filename);
             if (filename === 'main.py') {
                 filename = getSafeName() + '.py';
@@ -933,7 +943,7 @@ function web_editor(config) {
             return;
         }
         //Use webkit host postMessage
-        if (webkitHostFlashAndDownload()) {
+        if (isMobileApp()) {
             var filename = getSafeName() + '.hex';
             webkitHostMsgSave(filename,output)
             return;
@@ -1420,7 +1430,7 @@ function web_editor(config) {
     }
 
     function doFlash() {
-        if (webkitHostFlashAndDownload()) {
+        if (isMobileApp()) {
             webkitHostMsgFlash();
             return;
         }
@@ -1813,7 +1823,7 @@ function web_editor(config) {
             }
         });
           
-        if ( webkitHostNoUSB())
+        if ( isMobileApp())
         {
           $("#command-connect").hide();
           $("#command-serial").hide();
