@@ -54,7 +54,7 @@ var EDITOR_IFRAME_MESSAGING = Object.freeze({
     importproject: "importproject",
     loadhex: "loadhex",
     loadfile: "loadfile",
-    enableappmode: "enableappmode"
+    downloadmode: "downloadmode"
   }
 })
 
@@ -599,8 +599,8 @@ function web_editor(config) {
                   loadFileToFilesystem(event.data.filename, event.data.filestring);
                   break;
                 
-                // Parent is requesting app mode. Downloads will use postMessage
-                case EDITOR_IFRAME_MESSAGING.actions.enableappmode:
+                // Parent is requesting postMessage downloads
+                case EDITOR_IFRAME_MESSAGING.actions.downloadmode:
                   usePostMessageFlashing = event.data.enabled;
                   break;
 
