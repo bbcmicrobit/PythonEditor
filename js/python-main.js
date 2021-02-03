@@ -53,7 +53,8 @@ var EDITOR_IFRAME_MESSAGING = Object.freeze({
     workspaceloaded: "workspaceloaded",
     importproject: "importproject",
     loadhex: "loadhex",
-    loadfile: "loadfile"
+    loadfile: "loadfile",
+    enableappmode: "enableappmode"
   }
 })
 
@@ -362,8 +363,8 @@ function web_editor(config) {
 
     // Indicate if editor can listen and respond to messages
     var inIframe = window !== window.parent;
-    var mobileApp = 1;
-    var controllerMode = (inIframe || mobileApp) && urlparse("controller") === "1";
+    var controllerMode = (inIframe && urlparse("controller") === "1") || urlparse("controller") === "2";
+    var enableAppMode = 0;
 
     var usePartialFlashing = true;
 
@@ -597,6 +598,10 @@ function web_editor(config) {
                   loadFileToFilesystem(event.data.filename, event.data.filestring);
                   break;
 
+                case EDITOR_IFRAME_MESSAGING.actions.enableappmode:
+                  enableAppMode = event.data.enabled;
+                  break;
+
                 default:
                   throw new Error("Unsupported action.")
               }
@@ -616,19 +621,6 @@ function web_editor(config) {
       });
     }
     
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent)
-            || ( navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    }
-    
-    function isAndroid() {
-        return navigator.userAgent.includes('wv'); // WebView on modern Android
-    }
-    
-    function isMobileApp() {
-        return webkitHostMsgExists() && (isIOS() || isAndroid());
-    }
-
     // functions for webkit postMessage to the 'host' message handler
     function webkitHostMsgExists() {
         return window.webkit
@@ -773,7 +765,7 @@ function web_editor(config) {
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
         //Use webkit host postMessage
-        if (isMobileApp()) {
+        if (enableAppMode) {
             var output = FS.readBytes(filename);
             if (filename === 'main.py') {
                 filename = getSafeName() + '.py';
@@ -943,7 +935,7 @@ function web_editor(config) {
             return;
         }
         //Use webkit host postMessage
-        if (isMobileApp()) {
+        if (enableAppMode) {
             var filename = getSafeName() + '.hex';
             webkitHostMsgSave(filename,output)
             return;
@@ -1430,7 +1422,7 @@ function web_editor(config) {
     }
 
     function doFlash() {
-        if (isMobileApp()) {
+        if (enableAppMode) {
             webkitHostMsgFlash();
             return;
         }
@@ -1823,11 +1815,11 @@ function web_editor(config) {
             }
         });
           
-        if ( isMobileApp())
+        if ( enableAppMode )
         {
           $("#command-connect").hide();
           $("#command-serial").hide();
-          $("#command-download").hide();
+          $("#command-download").show();
           $("#command-flash").show();
         }
     }
