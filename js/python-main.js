@@ -597,7 +597,8 @@ function web_editor(config) {
                 case EDITOR_IFRAME_MESSAGING.actions.loadfile:
                   loadFileToFilesystem(event.data.filename, event.data.filestring);
                   break;
-
+                
+                // Parent is requesting app mode. Downloads will use postMessage
                 case EDITOR_IFRAME_MESSAGING.actions.enableappmode:
                   enableAppMode = event.data.enabled;
                   break;
@@ -619,14 +620,6 @@ function web_editor(config) {
       EDITOR.on_change(function () {
         debounceCodeChange(EDITOR.getCode());
       });
-    }
-    
-    // functions for webkit postMessage to the 'host' message handler
-    function webkitHostMsgExists() {
-        return window.webkit
-            && window.webkit.messageHandlers
-            && window.webkit.messageHandlers.host
-            && window.webkit.messageHandlers.host.postMessage;
     }
 
     function webkitHostMsgFile(name,data,action) {
