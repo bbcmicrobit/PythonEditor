@@ -363,10 +363,11 @@ function web_editor(config) {
 
     // Indicate if editor can listen and respond to messages
     var inIframe = window !== window.parent;
-    var controllerMode = (inIframe && urlparse("controller") === "1") || urlparse("controller") === "2";
-    var enableAppMode = 0;
+    var controllerMode = (inIframe && urlparse("controller") === "1");
+    var appMode = urlparse("mobileApp") === "1";
 
     var usePartialFlashing = true;
+    var usePostMessageFlashing = false;
 
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
@@ -600,7 +601,7 @@ function web_editor(config) {
                 
                 // Parent is requesting app mode. Downloads will use postMessage
                 case EDITOR_IFRAME_MESSAGING.actions.enableappmode:
-                  enableAppMode = event.data.enabled;
+                  usePostMessageFlashing = event.data.enabled;
                   break;
 
                 default:
@@ -757,8 +758,7 @@ function web_editor(config) {
 
     // Downloads a file from the filesystem, main.py is renamed to the script name
     function downloadFileFromFilesystem(filename) {
-        //Use webkit host postMessage
-        if (enableAppMode) {
+        if (usePostMessageFlashing) {
             var output = FS.readBytes(filename);
             if (filename === 'main.py') {
                 filename = getSafeName() + '.py';
@@ -927,8 +927,7 @@ function web_editor(config) {
             alert(config.translate.alerts.error + '\n' + e.message);
             return;
         }
-        //Use webkit host postMessage
-        if (enableAppMode) {
+        if (usePostMessageFlashing) {
             var filename = getSafeName() + '.hex';
             webkitHostMsgSave(filename,output)
             return;
@@ -1415,7 +1414,7 @@ function web_editor(config) {
     }
 
     function doFlash() {
-        if (enableAppMode) {
+        if (usePostMessageFlashing) {
             webkitHostMsgFlash();
             return;
         }
@@ -1808,7 +1807,7 @@ function web_editor(config) {
             }
         });
           
-        if ( enableAppMode )
+        if ( appMode )
         {
           $("#command-connect").hide();
           $("#command-serial").hide();
@@ -1853,7 +1852,7 @@ function web_editor(config) {
     });
 
     // If iframe messaging allowed, initialize it
-    if (controllerMode) {
+    if (controllerMode || appMode) {
       initializeIframeMessaging();
     }
 }
