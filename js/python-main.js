@@ -45,7 +45,7 @@ function debounce(callback, wait) {
 // Constants used for iframe messaging
 var EDITOR_IFRAME_MESSAGING = Object.freeze({
   // Embed editor host type
-  host: "pyeditor",
+  type: "pyeditor",
   // Embed editor messaging actions
   actions: {
     workspacesync: "workspacesync",
@@ -554,7 +554,7 @@ function web_editor(config) {
 
     function initializeIframeMessaging() {
       window.addEventListener("load", function () {
-        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.type, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
       });
 
       window.addEventListener(
@@ -563,7 +563,7 @@ function web_editor(config) {
           if (event.data) {
             var type = event.data.type;
 
-            if (type === EDITOR_IFRAME_MESSAGING.host) {
+            if (type === EDITOR_IFRAME_MESSAGING.type) {
               var action = event.data.action;
               
               switch (action) {
@@ -586,7 +586,7 @@ function web_editor(config) {
                   }
                   EDITOR.setCode(event.data.projects[0]);
                   // Notify parent about editor successfully configured
-                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
+                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.type, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
                   break;
                
                 // Parent is sending HEX file
@@ -614,7 +614,7 @@ function web_editor(config) {
       );
 
       var debounceCodeChange = debounce(function (code) {
-        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
+        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.type, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
       }, 1000);
 
       EDITOR.setCode(" ");
@@ -624,6 +624,8 @@ function web_editor(config) {
     }
 
     function webkitHostMsgFile(name,data,action) {
+        // 'host' refers to the app embedding the editor. We use 'host' here to 
+        // match the MakeCode messageHandler name
         window.webkit.messageHandlers.host.postMessage({'name': name,action:data});
     }
                       
