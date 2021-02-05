@@ -882,7 +882,7 @@ function web_editor(config) {
         }
         // This works in all other browser
         var filename = getSafeName();
-        var blob = new Blob([output], { 'type': 'application/octet-stream' });
+        var blob = new Blob([output], { 'type': 'text/plain' });
         saveAs(blob, filename + '.hex');
     }
 
