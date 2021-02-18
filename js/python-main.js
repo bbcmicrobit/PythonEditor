@@ -1664,7 +1664,7 @@ function web_editor(config) {
             loadHex(filename, hexStr);
         },
         'loadFileToFs': function(filename, fileStr) {
-            loadFileToFilesystem(filename, fileStr);
+            loadPy(filename, fileStr);
         },
         'setMobileEditor': function(appFlash, appSave) {
             // Show the Download and Flash buttons and remove Serial
@@ -1701,8 +1701,6 @@ function web_editor(config) {
             doDownload = mobileHexDownload;
             // Downloading a Python file now sends it to the app
             downloadFileFromFilesystem = function(filename) {
-                // TODO: This was originally bytes
-                // var output = FS.readBytes(filename);
                 var output = FS.read(filename);
                 if (filename === 'main.py') {
                     filename = getSafeName() + '.py';

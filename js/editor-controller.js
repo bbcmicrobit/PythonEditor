@@ -25,9 +25,9 @@ var EditorController = function() {
             importproject: 'importproject',
             loadhex: 'loadhex',
             loadfile: 'loadfile',
-            downloadmode: 'downloadmode',
-            savefile: 'save',
-            flashhex: 'download',
+            mobilemode: 'mobilemode',
+            savefile: 'savefile',
+            flashhex: 'flashhex',
         }
     });
 
@@ -150,7 +150,7 @@ var EditorController = function() {
                         break;
 
                     // Parent is requesting postMessage downloads
-                    case CONTROLLER_MESSAGING.actions.downloadmode:
+                    case CONTROLLER_MESSAGING.actions.mobilemode:
                         _editorActions.setMobileEditor(hostFlashHex, hostSaveFile);
                         break;
 
@@ -216,12 +216,6 @@ var EditorController = function() {
             _editorActions.onCodeChange(function() {
                 debounceCodeChange(_editorActions.getCode());
             });
-        }
-
-        if (appControllerMode) {
-            // If the editor is loaded on the mobile apps it will change
-            // the buttons and how it deals with files
-            _editorActions.setMobileEditor(hostFlashHex, hostSaveFile);
         }
     };
 
