@@ -11,6 +11,7 @@ var EditorController = function() {
     var _returnObj = {};
 
     var _editorActions = null;
+    var _msgEventListener = null;
     var _controllerHost = null;
 
     /** Constants used for iframe messaging */
@@ -19,15 +20,50 @@ var EditorController = function() {
         type: 'pyeditor',
         // Embed editor messaging actions
         actions: {
+            // Editor sends it to then receive a project to load
+            // direction: Bidirectional
+            // dataOut: Nothing
+            // dataIn: projects - An array with python code, editor loads [0]
             workspacesync: 'workspacesync',
-            workspacesave: 'workspacesave',
+            // Notifies controller 'workspacesync' was successful
+            // direction: Output
+            // dataOut: Nothing
             workspaceloaded: 'workspaceloaded',
+            // Sends the editor code to the controller, configured to do this
+            // periodically
+            // direction: Output
+            // dataOut: project - A string with the editor code
+            workspacesave: 'workspacesave',
+            // Controller sends code to load into the editor
+            // direction: Input
+            // dataIn: project - A string with python code
             importproject: 'importproject',
+            // Controller sends a hex file to load into the editor
+            // direction: Input
+            // dataIn: filename - String with the hex file name
+            //         hexstring - String with the hex contents
             loadhex: 'loadhex',
+            // Controller sends a python file to load into the editor
+            // direction: Input
+            // dataIn: filename - String with the python file name
+            //         filestring - String with the python code from the file
             loadfile: 'loadfile',
-            mobilemode: 'mobilemode',
+            // Editor sends a python file to the controller
+            // direction: Output
+            // dataOut: filename - String with the python file name
+            //          data - String with the python code from the file
             savefile: 'savefile',
+            // Editor sends a hex file to the controller
+            // direction: Output
+            // dataOut: filename - String with the hex file name
+            //          data - String with the python code from the file
             flashhex: 'flashhex',
+            // Change the editor configuration for the mobile apps UX
+            // The serial and connect buttons are removed, flash button added,
+            // and the download and flash buttons send data to the controller
+            // direction: Input
+            // dataIn: Nothing
+            mobilemode: 'mobilemode',
         }
     });
 
@@ -54,12 +90,12 @@ var EditorController = function() {
     /**
      * Sending a postMessage to the host controller.
      */
-    function hostPostMessage() {
+    function hostPostMessage(message, targetOrigin) {
         if (_controllerHost) {
-            _controllerHost.postMessage.apply(null, arguments);
+            _controllerHost.postMessage(message, targetOrigin);
         } else {
             console.error('Trying to postMessage to undefined host controller:');
-            console.error(arguments);
+            console.error(message, targetOrigin);
         }
     }
 
@@ -73,7 +109,7 @@ var EditorController = function() {
         hostPostMessage({
             type: CONTROLLER_MESSAGING.type,
             action: CONTROLLER_MESSAGING.actions.savefile,
-            name: filename,
+            filename: filename,
             data: fileStr,
         }, '*');
     }
@@ -88,28 +124,37 @@ var EditorController = function() {
         hostPostMessage({
             type: CONTROLLER_MESSAGING.type,
             action: CONTROLLER_MESSAGING.actions.flashhex,
-            name: filename,
+            filename: filename,
             data: hexStr,
         }, '*');
     }
 
     /**
      * Set up the Editor Controller actions required by the protocol messages.
+     * This does not set up the 
      * 
      * @param {object} editorActions - Functions needed to control the editor:
-     *      - setCode() - Replace the code in the editor.
+     *      - setCode(code) - Replace the code in the editor.
+     *                        code - String with the code to add to the editor.
      *      - getCode() - Retrieve the code from the editor.
-     *      - onCodeChange() - Callback to run on every call change.
-     *      - loadHex() - Sending a hex into the editor to load it.
-     *      - loadFileToFs() - Sending a file to the editor to add it to the
-     *                         filesystem.
-     *      - setMobileEditor() - Function to run to set up the editor in a
-     *                            a special mode for the mobile apps.
+     *      - onCodeChange(callback) - Callback to run on every call change.
+     *                                 callback - Callback function.
+     *      - loadHex(filename, hexStr)
+     *              Sending a hex into the editor to load it.
+     *              filename - String with the file name
+     *              hexStr - String with the hex data
+     *      - loadFileToFs(filename, fileStr)
+     *              Sending a file to the editor to add it to the filesystem.
+     *              filename - String with the file name
+     *              fileStr - String with the python file text
+     *      - setMobileEditor(appFlash, appSave)
+     *              Set up the editor in a special UX mode for the mobile apps.
+     *              appFlash(filename, hexStr) - callback to send hex for flashing
+     *              appSave - 
      */
     _returnObj.setup = function(editorActions) {
         _editorActions = editorActions;
-
-        window.addEventListener('message', function(event) {
+        _msgEventListener = function(event) {
             if (!event.data) return;
 
             if (event.data.type === CONTROLLER_MESSAGING.type) {
@@ -141,11 +186,23 @@ var EditorController = function() {
 
                     // Parent is sending HEX file
                     case CONTROLLER_MESSAGING.actions.loadhex:
+                        if (!event.data.filename || typeof event.data.filename !== 'string') {
+                            throw new Error("Invalid 'filename' data type. String should be provided.");
+                        }
+                        if (!event.data.hexstring || typeof event.data.hexstring !== 'string') {
+                            throw new Error("Invalid 'filename' data type. String should be provided.");
+                        }
                         _editorActions.loadHex(event.data.filename, event.data.hexstring);
                         break;
 
                     // Parent is sending file for filesystem
                     case CONTROLLER_MESSAGING.actions.loadfile:
+                        if (!event.data.filename || typeof event.data.filename !== 'string') {
+                            throw new Error("Invalid 'filename' data type. String should be provided.");
+                        }
+                        if (!event.data.filestring || typeof event.data.filestring !== 'string') {
+                            throw new Error("Invalid 'filestring' data type. String should be provided.");
+                        }
                         _editorActions.loadFileToFs(event.data.filename, event.data.filestring);
                         break;
 
@@ -158,7 +215,7 @@ var EditorController = function() {
                         throw new Error('Unsupported action.')
                 }
             }
-        }, false);
+        };
     };
 
     /**
@@ -194,6 +251,12 @@ var EditorController = function() {
                 return;
             }
 
+            console.log('Activating editor controller mode.');
+            if (_msgEventListener) {
+                window.addEventListener('message', _msgEventListener, false);
+            } else {
+                throw new Error("The editor controller setup() has not been configured.");
+            }
             window.addEventListener('load', function() {
                 hostPostMessage({
                     type: CONTROLLER_MESSAGING.type,
@@ -203,6 +266,7 @@ var EditorController = function() {
         }
 
         if (iframeControllerMode) {
+            console.log('Configuring iframe controller.');
             // For classroom we clear the code in the editor
             _editorActions.setCode(' ');
             // Send code to the controller in real time (with a 1s debounce)

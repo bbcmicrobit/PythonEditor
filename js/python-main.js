@@ -1667,34 +1667,31 @@ function web_editor(config) {
             loadPy(filename, fileStr);
         },
         'setMobileEditor': function(appFlash, appSave) {
+            console.log('Configuring mobile mode.');
             // Show the Download and Flash buttons and remove Serial
             $('#command-connect').hide();
             $('#command-serial').hide();
             $('#command-download').show();
             $('#command-flash').show();
-            // Flash button to send the hex to the app
-            $('#command-flash').off('click', doFlash).on('click', function() {
+            // Sending a hex to one of the two argument callbacks
+            var sendHex = function(sendFunction) {
                 try {
                     updateMain();
-                    var output = FS.getUniversalHex();
+                    var hexStr = FS.getUniversalHex();
                 } catch(e) {
                     alert(config.translate.alerts.error + '\n' + e.message);
                     return;
                 }
                 var filename = getSafeName() + '.hex';
-                appFlash(filename, output);
+                sendFunction(filename, hexStr);
+            };
+            // Flash button to send the hex to the app
+            $('#command-flash').off('click', doFlash).on('click', function() {
+                sendHex(appFlash);
             });
             // Hex download buttons to send hex to the app
             var mobileHexDownload = function() {
-                try {
-                    updateMain();
-                    var output = FS.getUniversalHex();
-                } catch(e) {
-                    alert(config.translate.alerts.error + '\n' + e.message);
-                    return;
-                }
-                var filename = getSafeName() + '.hex';
-                appSave(filename, output);
+                sendHex(appSave);
             };
             $('#command-download').off('click', doDownload).on('click', mobileHexDownload);
             $('#save-hex').off('click', doDownload).on('click', mobileHexDownload);

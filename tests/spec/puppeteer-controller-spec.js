@@ -73,7 +73,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             });
         }
         // Now we can wait for the page to be fully loaded
-        await page.waitForNavigation(/*{waitUntil:'networkidle0'}*/);
+        await page.waitForNavigation({waitUntil:'networkidle0'});
         return page;
     }
 
@@ -103,6 +103,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
     it('iFrame controller: Sends the workspacesync message on load', async function() {
         const msgCollection = [];
         const page = await getEmbeddedPage('controller=1', msgCollection);
+
         await page.close();
 
         expect(msgCollection[0]).toEqual({type: 'pyeditor', action: 'workspacesync'});
@@ -121,5 +122,5 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
 
         expect(msgCollection[1]).toEqual({type: 'pyeditor', action: 'workspacesave', project: 'new content'});
         expect(msgCollection[2]).toEqual({type: 'pyeditor', action: 'workspacesave', project: 'replaced'});
-    });
+    }, 10000);
 });
