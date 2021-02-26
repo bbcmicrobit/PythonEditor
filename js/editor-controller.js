@@ -41,7 +41,7 @@ var EditorController = function() {
             // Controller sends a hex file to load into the editor
             // direction: Input
             // dataIn: filename - String with the hex file name
-            //         hexstring - String with the hex contents
+            //         filestring - String with the hex contents
             loadhex: 'loadhex',
             // Controller sends a python file to load into the editor
             // direction: Input
@@ -51,12 +51,12 @@ var EditorController = function() {
             // Editor sends a python file to the controller
             // direction: Output
             // dataOut: filename - String with the python file name
-            //          data - String with the python code from the file
+            //          filestring - String with the python code from the file
             savefile: 'savefile',
             // Editor sends a hex file to the controller
             // direction: Output
             // dataOut: filename - String with the hex file name
-            //          data - String with the python code from the file
+            //          filestring - String with the python code from the file
             flashhex: 'flashhex',
             // Change the editor configuration for the mobile apps UX
             // The serial and connect buttons are removed, flash button added,
@@ -110,7 +110,7 @@ var EditorController = function() {
             type: CONTROLLER_MESSAGING.type,
             action: CONTROLLER_MESSAGING.actions.savefile,
             filename: filename,
-            data: fileStr,
+            filestring: fileStr,
         }, '*');
     }
 
@@ -125,7 +125,7 @@ var EditorController = function() {
             type: CONTROLLER_MESSAGING.type,
             action: CONTROLLER_MESSAGING.actions.flashhex,
             filename: filename,
-            data: hexStr,
+            filestring: hexStr,
         }, '*');
     }
 
@@ -189,10 +189,10 @@ var EditorController = function() {
                         if (!event.data.filename || typeof event.data.filename !== 'string') {
                             throw new Error("Invalid 'filename' data type. String should be provided.");
                         }
-                        if (!event.data.hexstring || typeof event.data.hexstring !== 'string') {
+                        if (!event.data.filestring || typeof event.data.filestring !== 'string') {
                             throw new Error("Invalid 'filename' data type. String should be provided.");
                         }
-                        _editorActions.loadHex(event.data.filename, event.data.hexstring);
+                        _editorActions.loadHex(event.data.filename, event.data.filestring);
                         break;
 
                     // Parent is sending file for filesystem
