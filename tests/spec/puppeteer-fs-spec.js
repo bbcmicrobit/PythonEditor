@@ -13,7 +13,10 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
     beforeAll(async () => {
         // Setup a headless Chromium browser.
         // Flags allow Puppeteer to run within a container.
-        browser = await puppeteer.launch({headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]});
+        browser = await puppeteer.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+        });
     });
 
     afterAll(async () => {
@@ -50,7 +53,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         });
         for (let ms = 0; ms < (60000 * 3); ms += msStep) {
             if (fileLimit !== 0) break;
-            await page.waitFor(msStep);
+            await page.waitForTimeout(msStep);
         }
         await page.close();
         fileCleanUps.forEach(function(removeCallback) {
@@ -73,7 +76,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         for (let ms = 0; ms < 1000; ms += msStep) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
-            await page.waitFor(msStep);
+            await page.waitForTimeout(msStep);
         }
         page.on("dialog", async dialog => {
             if (dialog.message().includes("enough space")) {
@@ -112,7 +115,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await fileInput.uploadFile("./spec/test-files/too-large.py");
         for (let ms=0; ms<100; ms++) {
             if (rejectedLargeFileLoad) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         codeContent = await page.evaluate("window.EDITOR.getCode();");
         const codeName = await page.evaluate("document.getElementById('script-name').value");
@@ -157,7 +160,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await fileInput.uploadFile("./spec/test-files/main.py");
         for (let ms = 0; ms < 1000; ms += msStep) {
             if (fileListContents !== "") break;
-            await page.waitFor(msStep);
+            await page.waitForTimeout(msStep);
         }
         await page.close();
 
@@ -183,21 +186,21 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await page.click("#command-files");
         const magicFirstlineContent = await page.evaluate("window.EDITOR.getCode();");
         const magicFirstlineName = await page.evaluate("document.getElementById('script-name').value");
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
         await page.click("#command-files");
         fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/secondline.py");
         await page.click("#command-files");
         const magicSecondlineContent = await page.evaluate("window.EDITOR.getCode();");
         const magicSecondlineName = await page.evaluate("document.getElementById('script-name').value");
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
         await page.click("#command-files");
         fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/thirdline.py");
         await page.click("#command-files");
         const magicThirdlineContent = await page.evaluate("window.EDITOR.getCode();");
         const magicThirdlineName = await page.evaluate("document.getElementById('script-name').value");
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
         await page.click("#command-files");
         fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/fourthline.py");
@@ -205,7 +208,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         const magicFourthlineContent = await page.evaluate("window.EDITOR.getCode();");
         const magicFourthlineName = await page.evaluate("document.getElementById('script-name').value");
         const fileListContents = await page.evaluate("$('#fs-file-list').html()");
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Expect modules to not change the main.py file
         expect(fileListContents).toContain("firstline.py");
@@ -228,7 +231,7 @@ describe("Puppeteer filesystem tests for the Python Editor.", function() {
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplefile.py");
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
         const fileName = await page.evaluate("document.getElementById('script-name').value");
         expect(fileName).toContain("samplefile");
     });

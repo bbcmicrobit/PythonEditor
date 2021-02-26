@@ -2,6 +2,8 @@
 const { AxePuppeteer } = require('axe-puppeteer');
 const puppeteer = require('puppeteer');
 
+jest.setTimeout(30000);
+
 describe("Puppeteer accessibility tests for the Python Editor.", function() {
     'use strict';
 

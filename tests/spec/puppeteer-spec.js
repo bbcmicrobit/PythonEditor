@@ -51,7 +51,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await fileInput.uploadFile("./spec/test-files/makecode.hex");
         for (let ms=0; ms<100; ms++) {
             if (hasShownError) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         await page.close();
 
@@ -71,7 +71,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
@@ -94,7 +94,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
@@ -127,11 +127,11 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         for (let ms=0; ms<100; ms++) {
             codeContent = await page.evaluate("window.EDITOR.getCode();");
             if (codeContent != initialCode) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         const codeName = await page.evaluate("document.getElementById('script-name').value");
         // TODO: WHY is this wait necessary??
-        await page.waitFor(1000);
+        await page.waitForTimeout(1000);
         // But when we try to download the hex, we get an expected error
         page.removeListener("dialog", fileRejected);
         page.on("dialog", async (dialog) => {
@@ -143,7 +143,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         await page.click("#command-download");
         for (let ms=0; ms<100; ms++) {
             if (rejectedLargeHexDownload) break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         await page.close();
 
@@ -171,13 +171,13 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         for (let ms = 0; ms < 100; ms++) {
             let scriptName = await page.evaluate("document.getElementById('script-name').value");
             if (scriptName === "program test") break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         await page.click("#command-files");
         await page.click("#show-files");
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         await page.click(".save-button.save");
-        await page.waitFor(500);    //waiting to ensure file is saved
+        await page.waitForTimeout(500);    //waiting to ensure file is saved
         const fileExists = fs.existsSync(filePath);
         fs.unlinkSync(filePath);
         fs.rmdirSync(downloadFolder);
