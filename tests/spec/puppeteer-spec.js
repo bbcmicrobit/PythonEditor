@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const puppeteer = require("puppeteer");
 
-jest.setTimeout(20000);
+jest.setTimeout(30000);
 
 describe("Puppeteer basic tests for the Python Editor.", function() {
     "use strict";
@@ -22,6 +22,27 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         browser.close();
     });
 
+    async function getEditorPage() {
+        const page = await browser.newPage();
+        let fsLoaded = false;
+        page.on('console', (msg) => {
+            const msgTxt = msg.text();
+            if (msgTxt == 'FS fully initialised') {
+                fsLoaded = true;
+            } else {
+                console.log('PAGE LOG:', msgTxt);
+            }
+        });
+        await page.goto("http://localhost:5000/editor.html");
+        while (!fsLoaded) {
+            await page.waitForTimeout(5);
+        }
+        // The following two lines enable CPU throttling
+        // const client = await page.target().createCDPSession();
+        // await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+        return page;
+    }
+
     it("Correctly loads a script from an import URL.", async function() {
         const page = await browser.newPage();
         const projectURL = "http://localhost:5000/editor.html?#project:XQAAgAApAQAAAAAAAAA9gn0iDP5hOXUMBZ4M1sxt7nhTa/UMRecCSq6uHLM44uVEs1hTA1G/Oa3Hy9fjvqw9MOrrvyqKstR9g9oq4yc4pkk1m9E2hvucCCCVEeUdb6bwT0S5asuGStzirbKaXcmYjTAskliKk/1v60vUCxCI/fc8ZUstwqzchTG2zAzzDii/EzhUsce8bjtDMg+OOMAzY03WeyEN6x5Z3bkVA20HbuSfofyGzVIlKfTxKeZlZVU2Wt3DdOqe1ccGelN7y0dADIpV19vKoZ9AWI8K4l3FkQQ43EIIM/vyyq0+JjpgrLhtSv/8Ma+A";
@@ -37,21 +58,21 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Shows an error dialog when loading a MakeCode hex file", async function() {
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
 
         let hasShownError = false;
         page.on("dialog", async dialog => {
-            if (dialog.message().includes("Could not find valid Python code")) hasShownError = true;
+            if (dialog.message().includes("Could not find valid Python code")) {
+                hasShownError = true;
+            }
             await dialog.accept();
         });
         await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/makecode.hex");
-        for (let ms=0; ms<100; ms++) {
-            if (hasShownError) break;
-            await page.waitFor(10);
+        while (!hasShownError) {
+            await page.waitForTimeout(100);
         }
         await page.close();
 
@@ -59,19 +80,17 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Correctly loads a v1.0.1 hex file", async function() {
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
-        let codeContent = "";
 
         await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/1.0.1.hex");
-        for (let ms=0; ms<100; ms++) {
+        let codeContent = await page.evaluate("window.EDITOR.getCode();");
+        while (codeContent === initialCode) {
+            await page.waitForTimeout(10);
             codeContent = await page.evaluate("window.EDITOR.getCode();");
-            if (codeContent != initialCode) break;
-            await page.waitFor(10);
         }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
@@ -82,19 +101,17 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
     });
 
     it("Correctly loads a v0.9 hex file", async function() {
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
-        let codeContent = "";
 
         await page.click("#command-files");
         await page.click(".load-drag-target.load-toggle");
         let fileInput = await page.$("[name='load-form-file-upload']");
         await fileInput.uploadFile("./spec/test-files/0.9.hex");
-        for (let ms=0; ms<100; ms++) {
+        let codeContent = await page.evaluate("window.EDITOR.getCode();");
+        while (codeContent === initialCode) {
+            await page.waitForTimeout(10);
             codeContent = await page.evaluate("window.EDITOR.getCode();");
-            if (codeContent != initialCode) break;
-            await page.waitFor(10);
         }
         const codeName = await page.evaluate("$('#script-name').val()");
         await page.close();
@@ -102,14 +119,11 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         expect(codeContent).toHaveLength(31);
         expect(codeContent).toContain("PASS2");
         expect(codeName).toEqual("0.9");
-    });
+    }, 45 * 1000);
 
     it("Shows an error when trying to download a Hex file if the Python code is too large", async function() {
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
         const initialCode = await page.evaluate("window.EDITOR.getCode();");
-        const initialName = await page.evaluate("document.getElementById('script-name').value");
-        let codeContent = "";
         let rejectedLargeFileLoad = false;
         let rejectedLargeHexDownload = false;
         const fileRejected = async (dialog) => {
@@ -124,14 +138,14 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         const fileInput = await page.$("#file-upload-input");
         // A Python file will be loaded into the editor even if it's too large
         await fileInput.uploadFile("./spec/test-files/too-large.py");
-        for (let ms=0; ms<100; ms++) {
+        let codeContent = await page.evaluate("window.EDITOR.getCode();");
+        while (codeContent === initialCode) {
+            await page.waitForTimeout(10);
             codeContent = await page.evaluate("window.EDITOR.getCode();");
-            if (codeContent != initialCode) break;
-            await page.waitFor(10);
         }
         const codeName = await page.evaluate("document.getElementById('script-name').value");
         // TODO: WHY is this wait necessary??
-        await page.waitFor(1000);
+        await page.waitForTimeout(1000);
         // But when we try to download the hex, we get an expected error
         page.removeListener("dialog", fileRejected);
         page.on("dialog", async (dialog) => {
@@ -141,9 +155,8 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             await dialog.accept();
         });
         await page.click("#command-download");
-        for (let ms=0; ms<100; ms++) {
-            if (rejectedLargeHexDownload) break;
-            await page.waitFor(10);
+        while (!rejectedLargeHexDownload) {
+            await page.waitForTimeout(10);
         }
         await page.close();
 
@@ -160,56 +173,60 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
         const filePath = path.join(downloadFolder, "program_test.py");
         if (!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        const page = await browser.newPage();
+        const page = await getEditorPage();
         await page._client.send('Page.setDownloadBehavior', {
             behavior: 'allow',
             downloadPath: downloadFolder
         });
-        await page.goto("http://localhost:5000/editor.html");
 
         await page.evaluate(() => document.getElementById("script-name").value = "program test")
         for (let ms = 0; ms < 100; ms++) {
             let scriptName = await page.evaluate("document.getElementById('script-name').value");
             if (scriptName === "program test") break;
-            await page.waitFor(10);
+            await page.waitForTimeout(10);
         }
         await page.click("#command-files");
         await page.click("#show-files");
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         await page.click(".save-button.save");
-        await page.waitFor(500);    //waiting to ensure file is saved
+        await page.waitForTimeout(500);    // waiting to ensure file is saved
         const fileExists = fs.existsSync(filePath);
         fs.unlinkSync(filePath);
         fs.rmdirSync(downloadFolder);
+        await page.close();
 
         expect(fileExists).toBeTruthy();
     });
 
     it("Correctly handles an mpy file", async function(){
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
 
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/samplempyfile.mpy");
+        await page.waitForSelector("#modal-msg-content", { visible: true });
+        await page.waitForTimeout(5);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+        await page.close();
 
         expect(modalContent).toContain("This version of the Python Editor doesn\'t currently support adding .mpy files.");
         expect(modalDisplay).toContain("block");
-    });
+    }, 45 * 1000);
 
     it("Correctly handles a file with an invalid extension", async function(){
-        const page = await browser.newPage();
-        await page.goto("http://localhost:5000/editor.html");
+        const page = await getEditorPage();
 
         await page.click("#command-files");
         let fileInput = await page.$("#file-upload-input");
         await fileInput.uploadFile("./spec/test-files/sampletxtfile.txt");
+        await page.waitForSelector("#modal-msg-content", { visible: true });
+        await page.waitForTimeout(5);
         const modalContent = await page.evaluate("$('#modal-msg-content').text()");
         const modalDisplay = await page.evaluate("$('#modal-msg-overlay-container').css('display')");
+        await page.close();
 
         expect(modalContent).toContain("The Python Editor can only load files with the .hex or .py extensions.");
         expect(modalDisplay).toContain("block");
-    });
+    }, 45 * 1000);
 });
