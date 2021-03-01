@@ -22,10 +22,10 @@ var LANGUAGE = {
     "load_code": "¡Uy! No se pudo añadir el código en el archivo hex.",
     "unrecognised_hex": "Lo sentimos, no pudimos reconocer este archivo",
     "snippets": "Los fragmentos están deshabilitados cuando blockly está habilitado.",
-    "error": "Error:",
+    "error": "Error:\n",
     "empty": "El archivo Python no tiene ningún contenido.",
     "no_python": "No se pudo encontrar código válido de Python en el archivo hex.",
-    "no_script": "El archivo Hex no contiene un script Python adjunto.",
+    "no_script": "Hex file does not contain an appended Python script.",
     "no_main": "El archivo hex no contiene un archivo main.py.",
     "cant_add_file": "No se pudo añadir el archivo al sistema de archivos:",
     "module_added": "El módulo \"{{module_name}}\" se ha agregado al sistema de archivos.",
@@ -68,8 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "Necesitas <a target=\"_blank\" href=\"https://microbit.org/firmware/\">actualizar tu firmware micro:bit</a> para hacer uso de esta función.",
-      "update-req-title": "Por favor, actualice el firmware de micro:bit",
+      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
+      "update-req-title": "Please update the micro:bit firmware",
       "clear-connect": "Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.",
       "reconnect-microbit": "Por favor reconecta el micro:bit e intentalo de nuevo.",
       "partial-flashing-disable": "Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.",
@@ -83,8 +83,8 @@ var LANGUAGE = {
     "request-repl": "Envia CTRL-C para el REPL",
     "request-serial": "Envia CTRL-D para reiniciar",
     "flashing-title": "Flashing MicroPython",
-    "flashing-title-code": "Flasheando código",
-    "flashing-long-msg": "El flash inicial puede tardar más tiempo, los posteriores serán más rápidos.",
+    "flashing-title-code": "Flashing code",
+    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
     "download": "Descargar Hex"
   },
   "load": {

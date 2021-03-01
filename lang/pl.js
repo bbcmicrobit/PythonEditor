@@ -22,10 +22,10 @@ var LANGUAGE = {
     "load_code": "Ups! Nie można załadować kodu do pliku hex.",
     "unrecognised_hex": "Przepraszamy, nie mogliśmy rozpoznać tego pliku ",
     "snippets": "Fragmenty są wyłączone, gdy blockly jest włączony.",
-    "error": "Błąd:",
+    "error": "Błąd:\n",
     "empty": "Plik Pythona nie zawiera żadnego kodu.",
     "no_python": "Nie znaleziono poprawnego kodu Pythona w pliku hex.",
-    "no_script": "Plik hex nie zawiera załączonego skryptu Pythona.",
+    "no_script": "Hex file does not contain an appended Python script.",
     "no_main": "Plik hex nie zawiera pliku main.py.",
     "cant_add_file": "Plik nie mógł być dodany do systemu:",
     "module_added": "Moduł \"{{module_name}}\" został dodany do systemu plików.",
@@ -68,8 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "Musisz zaktualizować <a target=\"_blank\" href=\"https://microbit.org/firmware/\"> Twoje firmware micro:bit</a>, aby korzystać z tej funkcji.",
-      "update-req-title": "Proszę zaktualizować firmware micro:bit",
+      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
+      "update-req-title": "Please update the micro:bit firmware",
       "clear-connect": "Inny proces jest podłączony do tego urządzenia.<br> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.",
       "reconnect-microbit": "Podłącz jeszcze raz swój micro:bit i spróbuj ponownie.",
       "partial-flashing-disable": "Jeśli error się powtarza, spróbuj wyłączyć Quick Flash w opcjach beta.",
@@ -82,9 +82,9 @@ var LANGUAGE = {
     "close": "Zamknij",
     "request-repl": "Wyślij CTRL-C aby wystartować REPL",
     "request-serial": "Wyślij CTRL-D aby zresetować",
-    "flashing-title": "Migający MicroPython",
-    "flashing-title-code": "Migający kod ",
-    "flashing-long-msg": "Początkowe mignięcie może potrwać dłużej, kolejne błyski będą szybsze.",
+    "flashing-title": "Flashing MicroPython",
+    "flashing-title-code": "Flashing code",
+    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
     "download": "Download hex"
   },
   "load": {

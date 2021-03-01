@@ -22,7 +22,7 @@ var LANGUAGE = {
     "load_code": "哎呀！ 無法將代碼載入到十六進位檔案中。",
     "unrecognised_hex": "抱歉，我們無法識別這個檔案",
     "snippets": "啟用blockly時將禁用程式碼片段。",
-    "error": "Error:",
+    "error": "錯誤：",
     "empty": "Python 檔案沒有任何內容。",
     "no_python": "在hex檔案中找不到有效的Python代碼。",
     "no_script": "Hex file does not contain an appended Python script.",

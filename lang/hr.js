@@ -22,7 +22,7 @@ var LANGUAGE = {
     "load_code": "Uh! Kôd se ne može upisati u .hex datoteku.",
     "unrecognised_hex": "Nažalost ne prepoznajemo datoteku",
     "snippets": "Ulomci su isključeni kada je uključena \"blockly\" biblioteka.",
-    "error": "Error:",
+    "error": "Greška:\n",
     "empty": "Pythonova datoteka je prazna.",
     "no_python": "U .hex datoteci nije pronađen važeći Pythonov kôd.",
     "no_script": "Hex file does not contain an appended Python script.",
