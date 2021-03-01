@@ -22,10 +22,10 @@ var LANGUAGE = {
     "load_code": "哎呀！无法将代码加载到十六进制文件中。",
     "unrecognised_hex": "抱歉，我们无法识别这个文件",
     "snippets": "启用blockly时将禁用代码段。",
-    "error": "错误：",
+    "error": "Error:",
     "empty": "Python 文件没有任何内容。",
     "no_python": "在hex文件中找不到有效的Python代码。",
-    "no_script": "Hex 文件不包含 Python 脚本。",
+    "no_script": "Hex file does not contain an appended Python script.",
     "no_main": "Hex 文件没有包含 main.py 文件。",
     "cant_add_file": "不能添加文件到文件系统：",
     "module_added": "\"{{module_name}}\" 模块已添加到文件系统。",
@@ -68,7 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "需要 <a target=\"_blank\" href=\"https://microbit.org/firmware/\"> 更新 micro:bit 固件</a> 以使用这个功能.",
+      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
+      "update-req-title": "Please update the micro:bit firmware",
       "clear-connect": "另一个进程已连接到这个设备。<br>关闭其它可能使用 WebUSB 的标签（如 MakeCode、Python Editor），或者拔掉 micro:bit 插头再重新插上。",
       "reconnect-microbit": "请重新连接 micro:bit 然后再次尝试。",
       "partial-flashing-disable": "如果错误仍然存在，请尝试禁用beta选项中的快速下载。",
@@ -81,7 +82,9 @@ var LANGUAGE = {
     "close": "关闭",
     "request-repl": "发送 CTRL-C 到 REPL",
     "request-serial": "发送 CTRL-D 以复位",
-    "flashing-title": "编程 MicroPython",
+    "flashing-title": "Flashing MicroPython",
+    "flashing-title-code": "Flashing code",
+    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
     "download": "下载 Hex"
   },
   "load": {
@@ -123,13 +126,13 @@ var LANGUAGE = {
       "title": "克罗地亚语"
     },
     "zh-CN": {
-      "title": "Chinese (simplified)"
+      "title": "中文（简体）"
     },
     "zh-HK": {
-      "title": "Chinese (traditional, Hong Kong)"
+      "title": "繁体中文（中国香港）"
     },
     "zh-TW": {
-      "title": "Chinese (traditional, Taiwan)"
+      "title": "繁体中文（中国台湾）"
     }
   },
   "static-strings": {

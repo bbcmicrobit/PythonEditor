@@ -25,7 +25,7 @@ var LANGUAGE = {
     "error": "Błąd:",
     "empty": "Plik Pythona nie zawiera żadnego kodu.",
     "no_python": "Nie znaleziono poprawnego kodu Pythona w pliku hex.",
-    "no_script": "Plik hex nie zawiera skyrptu Pythona.",
+    "no_script": "Plik hex nie zawiera załączonego skryptu Pythona.",
     "no_main": "Plik hex nie zawiera pliku main.py.",
     "cant_add_file": "Plik nie mógł być dodany do systemu:",
     "module_added": "Moduł \"{{module_name}}\" został dodany do systemu plików.",
@@ -68,7 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "Musisz <a target=\"_blank\" href=\"https://microbit.org/firmware/\">zaktualizuj oprogramowanie układowe micro: bit</a>, aby skorzystać z tej funkcji.",
+      "update-req": "Musisz zaktualizować <a target=\"_blank\" href=\"https://microbit.org/firmware/\"> Twoje firmware micro:bit</a>, aby korzystać z tej funkcji.",
+      "update-req-title": "Proszę zaktualizować firmware micro:bit",
       "clear-connect": "Inny proces jest podłączony do tego urządzenia.<br> Zamknij wszystkie inne okna które mogą korzystać z WebUSB (np. MakeCode, Python Editor), lub odłącz i ponownie podłącz micro: bit przed ponowną próbą.",
       "reconnect-microbit": "Podłącz jeszcze raz swój micro:bit i spróbuj ponownie.",
       "partial-flashing-disable": "Jeśli error się powtarza, spróbuj wyłączyć Quick Flash w opcjach beta.",
@@ -81,7 +82,9 @@ var LANGUAGE = {
     "close": "Zamknij",
     "request-repl": "Wyślij CTRL-C aby wystartować REPL",
     "request-serial": "Wyślij CTRL-D aby zresetować",
-    "flashing-title": "Instalowanie na MicroPython",
+    "flashing-title": "Migający MicroPython",
+    "flashing-title-code": "Migający kod ",
+    "flashing-long-msg": "Początkowe mignięcie może potrwać dłużej, kolejne błyski będą szybsze.",
     "download": "Download hex"
   },
   "load": {
@@ -126,10 +129,10 @@ var LANGUAGE = {
       "title": "Chiński (uproszczony)"
     },
     "zh-HK": {
-      "title": "Chinese (traditional, Hong Kong)"
+      "title": "Chiński (tradycyjny, Hong Kong)"
     },
     "zh-TW": {
-      "title": "Chinese (traditional, Taiwan)"
+      "title": "Chiński (tradycyjny, Tajwan)"
     }
   },
   "static-strings": {
