@@ -30,7 +30,7 @@ describe("Puppeteer basic tests for the Python Editor.", function() {
             if (msgTxt == 'FS fully initialised') {
                 fsLoaded = true;
             } else {
-                console.log('PAGE LOG:', msgTxt);
+                // console.log('PAGE LOG:', msgTxt);
             }
         });
         await page.goto("http://localhost:5000/editor.html");
