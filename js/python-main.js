@@ -24,38 +24,7 @@ function script(url, id, onLoadCallback) {
     x.appendChild(s);
 }
 
-/**
- * JS debounce 
- * TODO: could be moved to some helper/util file
- */
-function debounce(callback, wait) {
-  var timeout = null;
-
-  return function () {
-    var args = arguments;
-    var next = function () {
-      return callback.apply(this, args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(next, wait);
-  }
-}
-
-// Constants used for iframe messaging
-var EDITOR_IFRAME_MESSAGING = Object.freeze({
-  // Embed editor host type
-  host: "pyeditor",
-  // Embed editor messaging actions
-  actions: {
-    workspacesync: "workspacesync",
-    workspacesave: "workspacesave",
-    workspaceloaded: "workspaceloaded",
-    importproject: "importproject"
-  }
-})
-
-//Allows for different CSS styling in IE10
+// Allows for different CSS styling in IE10
 var doc = document.documentElement;
 doc.setAttribute('data-useragent', navigator.userAgent);
 
@@ -352,15 +321,13 @@ function web_editor(config) {
     // Generating MicroPython hex with user code in the filesystem
     window.FS = microbitFsWrapper();
 
+    var CONTROLLER = EditorController();
+
     // Represents the REPL terminal
     var REPL = null;
 
     // Indicates if there are unsaved changes to the content of the editor.
     var dirty = false;
-
-    // Indicate if editor can listen and respond to messages
-    var inIframe = window !== window.parent;
-    var controllerMode = inIframe && urlparse("controller") === "1";
 
     var usePartialFlashing = true;
 
@@ -547,62 +514,6 @@ function web_editor(config) {
         $("#command-download").focus();
     }
 
-    function initializeIframeMessaging() {
-      window.addEventListener("load", function () {
-        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesync }, "*");
-      });
-
-      window.addEventListener(
-        "message",
-        function (event) {
-          if (event.data) {
-            var type = event.data.type;
-
-            if (type === EDITOR_IFRAME_MESSAGING.host) {
-              var action = event.data.action;
-              
-              switch (action) {
-                // Parent is sending code to update editor
-                case EDITOR_IFRAME_MESSAGING.actions.importproject:
-                  if (!event.data.project || typeof event.data.project !== "string") {
-                    throw new Error("Invalid 'project' data type. String should be provided.");
-                  }
-                  EDITOR.setCode(event.data.project);
-                  break;
-
-                // Parent is sending initial code for editor
-                // Also here we can sync parent data with editor's data
-                case EDITOR_IFRAME_MESSAGING.actions.workspacesync:
-                  if (!event.data.projects || !Array.isArray(event.data.projects)) {
-                    throw new Error("Invalid 'projects' data type. Array should be provided.");
-                  }
-                  if (event.data.projects.length < 1) {
-                    throw new Error("'projects' array should contain at least one item.");
-                  }
-                  EDITOR.setCode(event.data.projects[0]);
-                  // Notify parent about editor successfully configured
-                  window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspaceloaded }, "*");
-                  break;
-
-                default:
-                  throw new Error("Unsupported action.")
-              }
-            }
-          }
-        },
-        false
-      );
-
-      var debounceCodeChange = debounce(function (code) {
-        window.parent.postMessage({ type: EDITOR_IFRAME_MESSAGING.host, action: EDITOR_IFRAME_MESSAGING.actions.workspacesave, project: code }, "*");
-      }, 1000);
-
-      EDITOR.setCode(" ");
-      EDITOR.on_change(function () {
-        debounceCodeChange(EDITOR.getCode());
-      });
-    }
-
     // Based on the Python code magic comment it detects a module
     function isPyModule(codeStr) {
         var isModule = false;
@@ -712,7 +623,7 @@ function web_editor(config) {
     }
 
     // Downloads a file from the filesystem, main.py is renamed to the script name
-    function downloadFileFromFilesystem(filename) {
+    var downloadFileFromFilesystem = function(filename) {
         // Safari before v10 had issues downloading a file blob
         if ($.browser.safari && ($.browser.versionNumber < 10)) {
             alert(config.translate.alerts.save);
@@ -727,7 +638,7 @@ function web_editor(config) {
             filename = getSafeName() + '.py';
         }
         saveAs(blob, filename);
-    }
+    };
 
     // Update the widget that shows how much space is used in the filesystem
     function updateStorageBar() {
@@ -866,7 +777,7 @@ function web_editor(config) {
     }
 
     // This function describes what to do when the download button is clicked.
-    function doDownload() {
+    var doDownload = function() {
         try {
             updateMain();
             var output = FS.getUniversalHex();
@@ -906,9 +817,7 @@ function web_editor(config) {
                 focusModal("#files-modal");
                 $('#show-files').attr('title', loadStrings['show-files'] +' (' + FS.ls().length + ')');
                 document.getElementById('show-files').innerHTML = loadStrings['show-files'] + ' (' + FS.ls().length + ') <i class="fa fa-caret-down">';
-                $('#save-hex').click(function() {
-                    doDownload();
-                });
+                $('#save-hex').on('click', doDownload);
                 $('#save-py').click(function() {
                     if (FS.ls().length > 1) {
                         if (!confirm(config.translate.confirms.download_py_multiple.replace('{{file_name}}', getSafeName() + '.py'))) {
@@ -1609,12 +1518,8 @@ function web_editor(config) {
             $("#small-icons-left .status-icon").addClass("win-status-icon");
             $("#small-icons-right .status-icon").addClass("win-status-icon");
         }
-        $("#command-download").click(function () {
-            doDownload();
-        });
-        $("#command-flash").click(function () {
-            doFlash();
-        });
+        $('#command-download').on('click', doDownload);
+        $('#command-flash').on('click', doFlash);
         $("#command-files").click(function () {
             doFiles();
         });
@@ -1745,6 +1650,63 @@ function web_editor(config) {
         });
     }
 
+    CONTROLLER.setup({
+        'setCode': function(code) {
+            EDITOR.setCode(code);
+        },
+        'getCode': function() {
+            return EDITOR.getCode();
+        },
+        'onCodeChange': function(callback) {
+            EDITOR.on_change(callback);
+        },
+        'loadHex': function(filename, hexStr) {
+            loadHex(filename, hexStr);
+        },
+        'loadFileToFs': function(filename, fileStr) {
+            loadPy(filename, fileStr);
+        },
+        'setMobileEditor': function(appFlash, appSave) {
+            console.log('Configuring mobile mode.');
+            // Show the Download and Flash buttons and remove Serial
+            $('#command-connect').hide();
+            $('#command-serial').hide();
+            $('#command-download').show();
+            $('#command-flash').show();
+            // Sending a hex to one of the two argument callbacks
+            var sendHex = function(sendFunction) {
+                try {
+                    updateMain();
+                    var hexStr = FS.getUniversalHex();
+                } catch(e) {
+                    alert(config.translate.alerts.error + '\n' + e.message);
+                    return;
+                }
+                var filename = getSafeName() + '.hex';
+                sendFunction(filename, hexStr);
+            };
+            // Flash button to send the hex to the app
+            $('#command-flash').off('click', doFlash).on('click', function() {
+                sendHex(appFlash);
+            });
+            // Hex download buttons to send hex to the app
+            var mobileHexDownload = function() {
+                sendHex(appSave);
+            };
+            $('#command-download').off('click', doDownload).on('click', mobileHexDownload);
+            $('#save-hex').off('click', doDownload).on('click', mobileHexDownload);
+            doDownload = mobileHexDownload;
+            // Downloading a Python file now sends it to the app
+            downloadFileFromFilesystem = function(filename) {
+                var output = FS.read(filename);
+                if (filename === 'main.py') {
+                    filename = getSafeName() + '.py';
+                }
+                appSave(filename, output);
+            };
+        },
+    });
+
     // Extracts the query string and turns it into an object of key/value
     // pairs.
     function get_qs_context() {
@@ -1772,6 +1734,7 @@ function web_editor(config) {
     setupEditor(migration);
     setupButtons();
     setLanguage(qs.l || 'en');
+    CONTROLLER.initialise(qs);
     FS.setupFilesystem().then(function() {
         // Add the editor code to main.py
         FS.create('main.py', EDITOR.getCode());
@@ -1779,11 +1742,6 @@ function web_editor(config) {
     }).fail(function() {
         console.error('There was an issue initialising the file system.');
     });
-
-    // If iframe messaging allowed, initialize it
-    if (controllerMode) {
-      initializeIframeMessaging();
-    }
 }
 
 /*

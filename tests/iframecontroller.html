@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing iframe controller</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Adding the iframe with the same params from this page
+        var params = window.location.search;
+        document.body.insertAdjacentHTML("afterbegin",`
+            <iframe defer src="/editor.html${params}"
+                id="embeddedEditor" frameborder="0"
+                style="height:100%;width:100%;top:0px;left:0px;right:0px;bottom:0px">
+            </iframe>
+        `);
+
+        // If the 'mobileApp' flag is used we remove the window.parent
+        // reference from the iframe and replace it with window.host so that
+        // the autodection works
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mobileApp')) {
+            var parentRef = window.frames["embeddedEditor"].contentWindow.parent;
+            window.frames["embeddedEditor"].contentWindow.parent = undefined;
+            window.frames["embeddedEditor"].contentWindow.host = parentRef;
+        }
+
+        // Logging the messages received by the parent iframe to console and
+        // to a function that can be accessed by the puppeteer code
+        window.addEventListener('message', e => {
+            console.log({event: e, data: e.data});
+            if (typeof(logEventData) != "undefined") {
+                logEventData(e.data);
+            }
+        });
+
+        // Just a collection of examples we can manually try when debugging/dev
+        /*
+        window.frames["embeddedEditor"].contentWindow.postMessage({ type: 'pyeditor', action: 'mobilemode'}, '*');
+        window.frames["embeddedEditor"].contentWindow.postMessage({ type: 'pyeditor', action: 'loadfile', filename: 'hello.py', filestring: 'hello world'}, '*');
+        window.frames["embeddedEditor"].contentWindow.postMessage({ type: 'pyeditor', action: 'loadfile', filename: 'hello.py', filestring: '# microbit-module: hello@0.1.0\nhello world'}, '*');
+
+        window.parent.postMessage({ type: 'pyeditor', action: 'workspacesync'}, '*');
+        */
+    </script>
+</body>
+</html>
