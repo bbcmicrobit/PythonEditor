@@ -1,12 +1,13 @@
 next
 ----
 * MicroPython for V2 updated to v2.0.0-beta.4
+* Refactor the editor controller functionality into its own module
+* Added mobile features to the editor controller
 * Fix accessibility issue where beta option "Quick Flash" was not highlighted on selection
 * Fix issue where iOS Chrome didn't download hex files
 * Unused shared functionality has been removed
 * Updated js library FileSaver to v2.0.5
 * Multiple updates and fixes in the tests system
-
 
 2.1.1
 -----

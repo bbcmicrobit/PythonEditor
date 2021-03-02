@@ -31,7 +31,7 @@ var EditorController = function() {
             // dataOut: Nothing
             workspaceloaded: 'workspaceloaded',
             // Sends the editor code to the controller, configured to do this
-            // periodically
+            // periodically when the code changes
             // direction: Output
             // dataOut: project - A string with the editor code
             workspacesave: 'workspacesave',
