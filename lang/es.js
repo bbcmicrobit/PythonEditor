@@ -17,12 +17,12 @@ var LANGUAGE = {
     "try": "intenta hacer algo y maneja las excepciones (errores)"
   },
   "alerts": {
-    "download": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .hex. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
+    "download": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .hex. Alternativamente, usa un navegador como Firefox o Chrome. Estos navegadores no sufren de este error.",
     "save": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .py. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
     "load_code": "¡Uy! No se pudo añadir el código en el archivo hex.",
     "unrecognised_hex": "Lo sentimos, no pudimos reconocer este archivo",
     "snippets": "Los fragmentos están deshabilitados cuando blockly está habilitado.",
-    "error": "Error:\n",
+    "error": "Error:",
     "empty": "El archivo Python no tiene ningún contenido.",
     "no_python": "No se pudo encontrar código válido de Python en el archivo hex.",
     "no_script": "Hex file does not contain an appended Python script.",
@@ -46,7 +46,7 @@ var LANGUAGE = {
     },
     "issues-link": {
       "title": "Ver problemas abiertos para el editor de Python en GitHub",
-      "label": "Bug Tracker"
+      "label": "Seguimiento de errores"
     },
     "feedback-link": {
       "title": "Envíanos tus comentarios sobre el editor de Python",
@@ -57,7 +57,7 @@ var LANGUAGE = {
   },
   "confirms": {
     "quit": "Algunos de sus cambios no se han guardado. Salir de todos modos?",
-    "blocks": "Tienes un código sin guardar. Usar los bloques cambiará tu código. Puede perder tus cambios. ¿Quieres continuar?",
+    "blocks": "Tienes un código sin guardar. Usar los bloques cambiará tu código. Puedes perder tus cambios. ¿Quieres continuar?",
     "replace_main": "¡Agregar un archivo main.py reemplazará el código en el editor!",
     "replace_file": "¿Quieres reemplazar el archivo \"{{file_name}}\"?",
     "replace_module": "¿Quieres reemplazar el módulo \"{{module_name}}\"?",

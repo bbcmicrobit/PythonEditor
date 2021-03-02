@@ -22,10 +22,10 @@ var LANGUAGE = {
     "load_code": "Uh! Kôd se ne može upisati u .hex datoteku.",
     "unrecognised_hex": "Nažalost ne prepoznajemo datoteku",
     "snippets": "Ulomci su isključeni kada je uključena \"blockly\" biblioteka.",
-    "error": "Greška:\n",
+    "error": "Greška:",
     "empty": "Pythonova datoteka je prazna.",
     "no_python": "U .hex datoteci nije pronađen važeći Pythonov kôd.",
-    "no_script": "Hex file does not contain an appended Python script.",
+    "no_script": "U hex datoteci nije pronađen Pythonov programski kôd.",
     "no_main": "U hex datoteci nije pronađena main.py datoteka.",
     "cant_add_file": "Datoteka se ne može dodati u sustav:",
     "module_added": "Modul \"{{module_name}}\" dodan je u sustav.",
@@ -68,8 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
-      "update-req-title": "Please update the micro:bit firmware",
+      "update-req": "Trebaš <a target=\"_blank\" href=\"https://microbit.org/firmware/\">promijeniti svoj micro:bit firmware</a> da bi tu značajku mogao koristiti.",
+      "update-req-title": "Ažuriraj micro:bitov firmware",
       "clear-connect": "Za ovaj je uređaj vezan još jedan proces.<br>Zatvori sve tabove u kojima se koristi WebUSB (npr. MakeCode, Python Editor) ili isključi pa ponovo uključi micro:bit i onda pokušaj ponovo.",
       "reconnect-microbit": "Nanovo uključi svoj micro:bit i pokušaj opet.",
       "partial-flashing-disable": "Ako se greške ponavljaju, pokušaj u beta opcijama isključiti opciju Quick Flash.",
@@ -82,9 +82,9 @@ var LANGUAGE = {
     "close": "Zatvori",
     "request-repl": "Pošalji CTRL-C za REPL",
     "request-serial": "Pošalji CTRL-D za krenuti ispočetka",
-    "flashing-title": "Flashing MicroPython",
-    "flashing-title-code": "Flashing code",
-    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
+    "flashing-title": "'Flashanje' MicroPythona",
+    "flashing-title-code": "'Flashanje' kôda",
+    "flashing-long-msg": "Prvi 'flash' može potrajati, sljedeći će biti brži.",
     "download": "Preuzmi .hex"
   },
   "load": {
