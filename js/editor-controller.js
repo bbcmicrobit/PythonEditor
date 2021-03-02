@@ -20,7 +20,8 @@ var EditorController = function() {
         type: 'pyeditor',
         // Embed editor messaging actions
         actions: {
-            // Editor sends it to then receive a project to load
+            // Editor sends it to sync with controller and possibly receive a
+            // project to load
             // direction: Bidirectional
             // dataOut: Nothing
             // dataIn: projects - An array with python code, editor loads [0]
