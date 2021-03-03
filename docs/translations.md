@@ -64,9 +64,10 @@ Our process is to round trip the translation to and from Crowdin as the **last s
 
 To export/import translations from Crowdin:
 
-1. Save the API key as a variable to be used by the Crowdin CLI
+1. Save the project ID and generate and save a personal API token as a variable to be used by the Crowdin CLI
 
-`export CROWDIN_API_KEY=<API Key from Crowdin>`
+`export CROWDIN_PROJECT_ID=<Project ID from Crowdin>`
+`export CROWDIN_PERSONAL_TOKEN=<Personal API token from Crowdin>`
 
 2. Push an update to `en.js`
 

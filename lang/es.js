@@ -17,7 +17,7 @@ var LANGUAGE = {
     "try": "intenta hacer algo y maneja las excepciones (errores)"
   },
   "alerts": {
-    "download": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .hex. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
+    "download": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .hex. Alternativamente, usa un navegador como Firefox o Chrome. Estos navegadores no sufren de este error.",
     "save": "Safari tiene un error que significa que el trabajo se descargará como un archivo sin nombre. Por favor, cambia el nombre a algo que termine en .py. Alternativamente, usa un navegador como Firefox o Chrome. No sufren de este error.",
     "load_code": "¡Uy! No se pudo añadir el código en el archivo hex.",
     "unrecognised_hex": "Lo sentimos, no pudimos reconocer este archivo",
@@ -25,7 +25,7 @@ var LANGUAGE = {
     "error": "Error:",
     "empty": "El archivo Python no tiene ningún contenido.",
     "no_python": "No se pudo encontrar código válido de Python en el archivo hex.",
-    "no_script": "El archivo hex no contiene un script de Python.",
+    "no_script": "Hex file does not contain an appended Python script.",
     "no_main": "El archivo hex no contiene un archivo main.py.",
     "cant_add_file": "No se pudo añadir el archivo al sistema de archivos:",
     "module_added": "El módulo \"{{module_name}}\" se ha agregado al sistema de archivos.",
@@ -46,7 +46,7 @@ var LANGUAGE = {
     },
     "issues-link": {
       "title": "Ver problemas abiertos para el editor de Python en GitHub",
-      "label": "Bug Tracker"
+      "label": "Seguimiento de errores"
     },
     "feedback-link": {
       "title": "Envíanos tus comentarios sobre el editor de Python",
@@ -57,7 +57,7 @@ var LANGUAGE = {
   },
   "confirms": {
     "quit": "Algunos de sus cambios no se han guardado. Salir de todos modos?",
-    "blocks": "Tienes un código sin guardar. Usar los bloques cambiará tu código. Puede perder tus cambios. ¿Quieres continuar?",
+    "blocks": "Tienes un código sin guardar. Usar los bloques cambiará tu código. Puedes perder tus cambios. ¿Quieres continuar?",
     "replace_main": "¡Agregar un archivo main.py reemplazará el código en el editor!",
     "replace_file": "¿Quieres reemplazar el archivo \"{{file_name}}\"?",
     "replace_module": "¿Quieres reemplazar el módulo \"{{module_name}}\"?",
@@ -68,20 +68,23 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "Necesitas <a target=\"_blank\" href=\"https://microbit.org/firmware/\">actualizar el firmware del micro:bit </a> para poder usar esta función!",
+      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
+      "update-req-title": "Please update the micro:bit firmware",
       "clear-connect": "Hay otro proceso conectado a este dispositivo.<br>Cierre cualquier otra pestaña que pueda estar usando WebUSB (por ejemplo, MakeCode or Editor de Python), o desconecte y vuelva a conectar el micro:bit antes de volver a intentarlo.",
       "reconnect-microbit": "Por favor reconecta el micro:bit e intentalo de nuevo.",
       "partial-flashing-disable": "Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.",
       "device-disconnected": "Dispositivo desconectado.",
-      "timeout-error": "Unable to connect to the micro:bit",
+      "timeout-error": "No se pudo conectar a la micro:bit",
       "unavailable": "Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.",
       "find-more": "Saber más"
     },
-    "troubleshoot": "Troubleshoot",
+    "troubleshoot": "Resolución de problemas",
     "close": "Cerrar",
     "request-repl": "Envia CTRL-C para el REPL",
     "request-serial": "Envia CTRL-D para reiniciar",
-    "flashing-title": "Flasheando MicroPython",
+    "flashing-title": "Flashing MicroPython",
+    "flashing-title-code": "Flashing code",
+    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
     "download": "Descargar Hex"
   },
   "load": {
@@ -101,13 +104,13 @@ var LANGUAGE = {
     "fs-space-free": "disponible",
     "remove-but": "Borrar",
     "save-but": "Guardar",
-    "files-title": "Project Files",
-    "help-button": "Files Help",
-    "file-help-text": "The Project Files area shows you the files included in your program and lets you add or remove external python modules and other files. Find out more in the ",
-    "help-link": "Python Editor help documentation",
-    "invalid-file-title": "Invalid File Type",
-    "mpy-warning": "This version of the Python Editor doesn't currently support adding .mpy files.",
-    "extension-warning": "The Python Editor can only load files with the .hex or .py extensions."
+    "files-title": "Archivos del proyecto",
+    "help-button": "Ayuda de archivos",
+    "file-help-text": "El área de Archivos de Proyecto le muestra los archivos incluidos en su programa y le permite añadir o eliminar módulos python externos y otros archivos. Más información en el ",
+    "help-link": "Documentación de ayuda del Editor de Python",
+    "invalid-file-title": "Tipo de archivo inválido",
+    "mpy-warning": "Esta versión del Editor de Python no permite actualmente añadir archivos .mpy.",
+    "extension-warning": "El Editor de Python sólo puede cargar archivos con las extensiones .hex o .py."
   },
   "languages": {
     "en": {
@@ -120,16 +123,16 @@ var LANGUAGE = {
       "title": "Polaco"
     },
     "hr": {
-      "title": "Croatian"
+      "title": "Croata"
     },
     "zh-CN": {
-      "title": "Chinese (simplified)"
+      "title": "Chino (simplificado)"
     },
     "zh-HK": {
-      "title": "Chinese (traditional, Hong Kong)"
+      "title": "Chino (tradicional, Hong Kong)"
     },
     "zh-TW": {
-      "title": "Chinese (traditional, Taiwan)"
+      "title": "Chino (tradicional, Taiwan)"
     }
   },
   "static-strings": {
@@ -161,8 +164,8 @@ var LANGUAGE = {
         "label": "Conectar"
       },
       "command-connecting": {
-        "title": "Connecting to the micro:bit",
-        "label": "Connecting"
+        "title": "Conectando a la micro:bit",
+        "label": "Conectando"
       },
       "command-options": {
         "title": "Cambie la configuración del editor",
@@ -199,7 +202,7 @@ var LANGUAGE = {
       "on-enter": "Al presionar Intro",
       "partial-flashing": "Flasheo Rapido",
       "lang-select": "Seleccionar Idioma:",
-      "add-language-link": "Add a language"
+      "add-language-link": "Añadir un idioma"
     },
     "text-editor": {
       "aria-label": "editor de texto"
