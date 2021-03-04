@@ -35,6 +35,9 @@
 
 'use strict';
 
+let loggedBoardId = 'none';
+let loggedBoardFamilyHic = 'none';
+
 let PartialFlashingUtils = {
     pageSize: null,
     numPages: null,
@@ -172,16 +175,38 @@ class DAPWrapper {
         this.reconnected = false;
         this.flashing = true;
         this.device = device;
+        this.allocBoardInfo();
         this.allocDAP();
     }
 
-    allocBoardID() {
+    allocBoardInfo() {
         // The micro:bit board ID is the serial number first 4 hex digits
         if (!(this.device && this.device.serialNumber)) {
             throw new Error('Could not detected ID from connected board.');
         }
         this.boardId = this.device.serialNumber.substring(0,4);
+        this.boardFamilyId = this.device.serialNumber.substring(4, 8);
+        this.boardHic = this.device.serialNumber.slice(-8);
+        if (this.device.serialNumber.length !== 48) {
+            PartialFlashingUtils.log("USB serial number unexpected length: " +
+                this.device.serialNumber.length);
+        }
         PartialFlashingUtils.log("Detected board ID " + this.boardId);
+        let boardFamilyHic = this.boardFamilyId + this.boardHic;
+        if ((loggedBoardId != this.boardId) || (loggedBoardFamilyHic != boardFamilyHic)) {
+            document.dispatchEvent(new CustomEvent('webusb', { detail: {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'board-id/' + this.boardId,
+            }}));
+            document.dispatchEvent(new CustomEvent('webusb', { detail: {
+                'flash-type': 'webusb',
+                'event-type': 'info',
+                'message': 'board-family-hic/' + boardFamilyHic,
+            }}));
+            loggedBoardId = this.boardId;
+            loggedBoardFamilyHic = boardFamilyHic;
+        }
     }
 
     allocDAP() {
@@ -203,8 +228,7 @@ class DAPWrapper {
         }
         return p
             .then(() => self.daplink.connect())
-            .then(() => self.cortexM.connect())
-            .then(() => self.allocBoardID());
+            .then(() => self.cortexM.connect());
     }
 
     disconnectAsync() {

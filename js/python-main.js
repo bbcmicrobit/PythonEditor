@@ -1055,11 +1055,6 @@ function web_editor(config) {
                     'event-type': 'info',
                     'message': 'connected'
                 }}));
-                document.dispatchEvent(new CustomEvent('webusb', { detail: {
-                    'flash-type': 'webusb',
-                    'event-type': 'info',
-                    'message': 'board-id/' + window.dapwrapper.boardId,
-                }}));
 
                 // Update the Editor autocompletion MicroPython PI based on the board connected
                 var boardApi = microPythonApi.getCompatibleMicroPythonApi(window.dapwrapper.boardId);
