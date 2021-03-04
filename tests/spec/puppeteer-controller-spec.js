@@ -77,7 +77,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             projects: ['This code to the editor']
         });
         // The editor then sends the 'workspaceloaded' message
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const codeContent = await page.evaluate(iframeWindow + 'EDITOR.getCode();');
         await page.close();
 
@@ -91,9 +91,9 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
         const page = await getEmbeddedPage('controller=1', msgCollection);
 
         await page.evaluate(iframeWindow + 'EDITOR.setCode("new content");');
-        await page.waitFor(1100); // Debouncing waits 1 sec before sending code
+        await page.waitForTimeout(1100); // Debouncing waits 1 sec before sending code
         await page.evaluate(iframeWindow + 'EDITOR.setCode("replaced");');
-        await page.waitFor(1100); // Debouncing waits 1 sec before sending code
+        await page.waitForTimeout(1100); // Debouncing waits 1 sec before sending code
         await page.close();
 
         expect(msgCollection[1]).toEqual({type: 'pyeditor', action: 'workspacesave', project: 'new content'});
@@ -110,7 +110,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             project: 'This project code to load to the editor'
         });
         // The editor then sends the 'workspaceloaded' message
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const codeContent = await page.evaluate(iframeWindow + 'EDITOR.getCode();');
         await page.close();
 
@@ -136,7 +136,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             type: 'pyeditor',
             action: 'mobilemode',
         });
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const downloadButtonVisible = await page.evaluate(iframeWindow + "$('#command-download').is(':visible')");
         const flashButtonVisible = await page.evaluate(iframeWindow + "$('#command-flash').is(':visible')");
         const serialButtonVisible = await page.evaluate(iframeWindow + "$('#command-serial').is(':visible')");
@@ -148,7 +148,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
         await page.evaluate(iframeWindow + "$('#save-hex').click()");
         await page.evaluate(iframeWindow + "$('#save-py').click()");
         await page.evaluate(iframeWindow + "$('.action.save-button.save').click()");
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         await page.close();
 
         //console.error(msgCollection);
@@ -187,7 +187,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             filename: 'my_hex.hex',
             filestring: uPy1HexFile
         });
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const codeContent = await page.evaluate(iframeWindow + 'EDITOR.getCode();');
         const codeName = await page.evaluate(iframeWindow + '$("#script-name").val()');
         await page.close();
@@ -207,7 +207,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             filename: 'my_python_file.py',
             filestring: pyCode
         });
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const codeContent = await page.evaluate(iframeWindow + 'EDITOR.getCode();');
         const codeName = await page.evaluate(iframeWindow + '$("#script-name").val()');
         await page.close();
@@ -232,7 +232,7 @@ describe('Puppeteer tests for the Python Editor iframe controller.', function() 
             filename: 'firstline.py',
             filestring: pyCode
         });
-        await page.waitFor(10);
+        await page.waitForTimeout(10);
         const codeContent = await page.evaluate(iframeWindow + 'EDITOR.getCode();');
         const codeName = await page.evaluate(iframeWindow + '$("#script-name").val()');
         const filesInFs = await page.evaluate(iframeWindow + 'FS.ls()');
