@@ -291,6 +291,13 @@ Nicholas and Damien.
                                 <span class="menu-switch-slider"></span>
                             </label>
                         </div>
+                        <div class="buttons_menu_item experimental-checker hidden">
+                            <span id="code-checker" class="menu-switch-label">Code Checker:</span>
+                            <label class="menu-switch" id="menu-switch-code-checker-label">
+                                <input type="checkbox" class="action menu-switch-input" id="menu-switch-code-checker" tabindex="74">
+                                <span class="menu-switch-slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <a href="#" class="roundbutton action" id="command-help"
@@ -399,11 +406,13 @@ Nicholas and Damien.
         <script src="static/js/custom-event-polyfill.js"></script>
         <script src="static/js/lzma-d.min.js"></script>
         <script src="static/js/base64.js"></script>
+        <script src="static/js/tigerpython-parser.js"></script>
         <script src="static/js/microbit-fs.umd.min.js"></script>
         <script src="lang/en.js" id="lang"></script>
         <script src="js/micropythonapi.js"></script>
         <script src="js/urlparser.js"></script>
         <script src="js/editor-controller.js"></script>
+        <script src="js/error-checker.js"></script>
         <script src="js/fs.js"></script>
         <script src="js/python-main.js"></script>
         <script>vex.defaultOptions.className = 'vex-theme-wireframe';</script>
@@ -415,6 +424,7 @@ Nicholas and Damien.
                     blocks: false,
                     snippets: true,
                     experimental: false,
+                    checker: false,
                 },
             };
             web_editor(config);

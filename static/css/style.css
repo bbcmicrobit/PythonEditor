@@ -1147,3 +1147,10 @@ ul.tree li:last-child:before {
 #command-flash {
   display: none;
 }
+
+/* ACE errors */
+.parser_warning {
+    background: rgba(255, 50, 50, 0.6);
+    position: absolute;
+    min-width: 0.3em
+}

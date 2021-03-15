@@ -124,6 +124,50 @@ function pythonEditor(id) {
         }
     };
 
+    // Add ace "annotations" (box next to the line number with a mouse over
+    // message) and "markers" (text highlight) to the code to highlight errors.
+    // errors = [{line_start, column_start, line_end, column_end, message }]
+    var Range = ace.require("ace/range").Range;
+    editor.setErrors = function(errors) {
+        var aceSession = ACE.getSession();
+        // First remove previous errors from the editor
+        aceSession.clearAnnotations();
+        var markers = aceSession.getMarkers();
+        for (var m in markers) {
+            aceSession.removeMarker(m);
+        }
+        // Then add all the provided errors
+        var errorAnnotations = [];
+        errors.forEach(function(error) {
+            errorAnnotations.push({
+                row: error.line_start,   // 0 based
+                text: error.message,
+                type: "error"
+            });
+            // column_end is optional and null value marks until the line end
+            if (error.column_end == null) {
+                error.column_end = aceSession.getLine(error.line_end).length;;
+            }
+            // If the error marker is on the last line character we need to
+            // highlight the character after or the annotation is empty
+            if (error.line_start == error.line_end && error.column_start == error.column_end) {
+                error.column_end++;
+            }
+            aceSession.addMarker(
+                new Range(
+                    error.line_start,
+                    error.column_start,
+                    error.line_end,
+                    error.column_end
+                ),
+                'parser_warning',
+                'py_error',
+                false
+            );
+        });
+        aceSession.setAnnotations(errorAnnotations);
+    };
+
     return editor;
 }
 /* Attach to the global object if running in node */
@@ -314,13 +358,13 @@ function web_editor(config) {
 
     // Global (useful for testing) instance of the ACE wrapper object
     window.EDITOR = pythonEditor('editor', config.microPythonApi);
+    // Generating MicroPython hex with user code in the filesystem
+    window.FS = microbitFsWrapper();
+    // Python code error checker
+    window.CHECKER = ErrorChecker();
 
     var BLOCKS = blocks();
     var TRANSLATIONS = translations(config.translate);
-
-    // Generating MicroPython hex with user code in the filesystem
-    window.FS = microbitFsWrapper();
-
     var CONTROLLER = EditorController();
 
     // Represents the REPL terminal
@@ -430,6 +474,9 @@ function web_editor(config) {
             EDITOR.enableAutocomplete(true);
             $('#menu-switch-autocomplete').prop("checked", true);
             $('#menu-switch-autocomplete-enter').prop("checked", false);
+        }
+        if(config.flags.checker) {
+            $('.experimental-checker').removeClass('hidden');
         }
 
         // Update the help link to pass feature flag information.
@@ -1450,6 +1497,32 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
+    // Runs the code checker and highlights the errors in the editor
+    var currentErrors = 0;
+    function checkAndHighlightErrors() {
+        var parsedErrors = CHECKER.parseCode(EDITOR.getCode());
+        currentErrors = parsedErrors.length;
+        EDITOR.setErrors(parsedErrors);
+    }
+
+    // Enables/Disables the code checker running in the background
+    var checkerTimer = null;
+    function enableCodeChecker(enable) {
+        clearTimeout(checkerTimer);
+        if (enable) {
+            EDITOR.on_change(function() {
+                // Re-parse the code quicker if there are errors
+                if (currentErrors) {
+                    checkerTimer = window.setTimeout(checkAndHighlightErrors, 800);
+                } else {
+                    checkerTimer = window.setTimeout(checkAndHighlightErrors, 3000);
+                }
+            });
+        } else {
+            EDITOR.setErrors([]);
+        }
+    }
+
     function modalMsg(title, content, links){
         var overlayContainer = "#modal-msg-overlay-container";
         $(overlayContainer).css("display","block");
@@ -1627,6 +1700,10 @@ function web_editor(config) {
                 .catch(function(err) {
                     console.log('Error disconnecting when using ' + (setEnable ? 'partial' : 'full') + ' flashing:\r\n' + err);
                 })
+        });
+        $('#menu-switch-code-checker').on('change', function() {
+            var setEnable = $(this).is(':checked');
+            enableCodeChecker(setEnable);
         });
 
         window.addEventListener('resize', function() {
