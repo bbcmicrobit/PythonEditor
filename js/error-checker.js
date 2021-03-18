@@ -12,8 +12,10 @@ var ErrorChecker = function() {
     var sendErrorsCallbacks = [];
     var checkerWorker = null;
     var currentErrors = 0;
-    var lastCodeParsed = '';
     var nextCodeToParse = '';
+    // TODO: This should probably be a list of unique ids that we remove as we
+    // receive the results 
+    var parsingInProgress = false;
 
     // TPyParser configuration data
     var parserConfig = {
@@ -77,7 +79,6 @@ var ErrorChecker = function() {
         if (callbackIndex !== -1) {
             sendErrorsCallbacks.splice(callbackIndex, 1);
         }
-        // TODO: Throw error if it's not found?
     }
 
     /**
@@ -86,13 +87,13 @@ var ErrorChecker = function() {
      * @param {string} code - Code to send to the web worker to parse
      */
     function sendCodeToParse(code) {
-        if (lastCodeParsed !== code && checkerWorker) {
+        if (checkerWorker) {
+            parsingInProgress = true;
             // var date = new Date(); console.log('requesting parse', date.getSeconds(), date.getMilliseconds());
             checkerWorker.postMessage({
                 type: 'checker_code',
                 data: code,
             });
-            lastCodeParsed = code;
         }
     }
 
@@ -105,6 +106,7 @@ var ErrorChecker = function() {
      *      web worker parser.
      */
     function processReceivedParsedErrors(parsedErrors) {
+        parsingInProgress = false;
         // Keep track of this value in this attribute
         currentErrors = parsedErrors.length;
         // Convert to a custom format
@@ -121,8 +123,8 @@ var ErrorChecker = function() {
         // code sent and ignore all previous requests
         if (nextCodeToParse && sendErrorsCallbacks.length) {
             sendCodeToParse(nextCodeToParse);
-            nextCodeToParse = '';
         }
+        nextCodeToParse = '';
         sendErrorsCallbacks.forEach(function(callback) {
             callback(errorObjToSend);
         });
@@ -139,14 +141,15 @@ var ErrorChecker = function() {
     var sendDebounce = null;
     function parseCode(code) {
         if (sendErrorsCallbacks.length) {
-            if (!nextCodeToParse) {
+            if (parsingInProgress) {
+                nextCodeToParse = code;
+            } else {
                  // Send code to the web worker with a small debounce
                  clearTimeout(sendDebounce);
                  sendDebounce = window.setTimeout(function() {
                      sendCodeToParse(code);
                  }, 2000);
             }
-            nextCodeToParse = code;
         }
     }
 
