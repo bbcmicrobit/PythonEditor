@@ -109,6 +109,11 @@ function pythonEditor(id) {
         ACE.getSession().on('change', handler);
     };
 
+    // Remove a handler function to be run when code in the editor changes.
+    editor.on_change_remove = function(handler) {
+        ACE.getSession().off('change', handler);
+    };
+
     // Return details of all the snippets this editor knows about.
     editor.getSnippets = function() {
         var snippetManager = ace.require("ace/snippets").snippetManager;
@@ -1497,28 +1502,21 @@ function web_editor(config) {
         REPL.prefs_.set('font-size', getFontSize());
     }
 
-    // Runs the code checker and highlights the errors in the editor
-    var currentErrors = 0;
-    function checkAndHighlightErrors() {
-        var parsedErrors = CHECKER.parseCode(EDITOR.getCode());
-        currentErrors = parsedErrors.length;
-        EDITOR.setErrors(parsedErrors);
+    // Event to register to be called on key presses to run the code checker
+    function checkerOnEditorChange() {
+        CHECKER.parseCode(EDITOR.getCode());
     }
 
     // Enables/Disables the code checker running in the background
-    var checkerTimer = null;
     function enableCodeChecker(enable) {
-        clearTimeout(checkerTimer);
         if (enable) {
-            EDITOR.on_change(function() {
-                // Re-parse the code quicker if there are errors
-                if (currentErrors) {
-                    checkerTimer = window.setTimeout(checkAndHighlightErrors, 800);
-                } else {
-                    checkerTimer = window.setTimeout(checkAndHighlightErrors, 3000);
-                }
-            });
+            // TODO: try/catch this and show an error message to the user
+            CHECKER.enable(EDITOR.setErrors);
+            // Register an event on keystrokes, but rate limit dynamically
+            EDITOR.on_change(checkerOnEditorChange);
         } else {
+            CHECKER.disable(EDITOR.setErrors);
+            EDITOR.on_change_remove(checkerOnEditorChange);
             EDITOR.setErrors([]);
         }
     }
