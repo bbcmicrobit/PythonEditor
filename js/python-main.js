@@ -269,7 +269,7 @@ function translations(baseLanguage) {
     'use strict';
     // These values must be valid language codes
     // https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    var validLangs = ['en', 'es', 'pl', 'hr', 'zh-HK', 'zh-CN', 'zh-TW'];
+    var validLangs = ['en', 'es', 'fr', 'hr', 'ko', 'nb', 'nn', 'pl', 'pt', 'sr', 'zh-HK', 'zh-CN', 'zh-TW'];
 
     // This is the base language that will be extended with the translations.
     // It is assumed this translation object (likely 'en') contains all the
