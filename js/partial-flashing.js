@@ -430,7 +430,7 @@ class DAPWrapper {
     async waitForHaltCore(halted, timeout) {
         let self = this;
         if (new Date().getTime() > timeout) {
-            return Promise.reject(PartialFlashingUtils.timeoutMessage);
+            return Promise.reject("Timeout waiting for halt core.");
         }
         if (halted) {
             return Promise.resolve();

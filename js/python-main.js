@@ -1086,10 +1086,15 @@ function web_editor(config) {
 
     function showDisconnectError(event) {
         var error = {"name": "device-disconnected", "message": config["translate"]["webusb"]["err"]["device-disconnected"]};
+        document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
+            'flash-type': usePartialFlashing ? 'partial-flash' : 'full-flash',
+            'event-type': 'info',
+            'message': 'disconnected'
+        }}));
         webusbErrorHandler(error);
     }
 
-    function doConnect(serial) {
+    function doConnect() {
         // Change button to connecting
         $("#command-connect").hide();
         $("#command-connecting").show();
@@ -1123,13 +1128,8 @@ function web_editor(config) {
     }
 
     function webusbErrorHandler(err) {
-        // Display error handler modal
-        $("#flashing-overlay-container").css("display", "flex");
-        $("#flashing-info").addClass('hidden');
-
         // Log error to console for feedback
-        console.log("An error occurred whilst attempting to use WebUSB.");
-        console.log("Details of the error can be found below, and may be useful when trying to replicate and debug the error.");
+        console.log('An error occurred whilst attempting to use WebUSB, details below:');
         console.log(err);
         console.trace();
 
@@ -1168,10 +1168,9 @@ function web_editor(config) {
                     errorTitle = err.message;
                     errorDescription = config["translate"]["webusb"]["err"][errorType];
                 } else if (err.name === "device-disconnected") {
-                    errorType = "device-disconnected";
-                    errorTitle = err.message;
-                    // No additional message provided here, err.message is enough
-                    errorDescription = "";
+                    // If the device has been disconnected we don't show an error modal any more
+                    // the editor UI should be already updated and in "not connected" mode
+                    return;
                 } else if (err.name === "timeout-error") {
                     errorType = "timeout-error";
                     errorTitle = "Connection Timed Out";
@@ -1217,38 +1216,34 @@ function web_editor(config) {
                 }
         }
 
-        // If err is not device disconnected or if there is previous errors, append the download/troubleshoot buttons
-        var showOverlayButtons = "";
-        if(err.name !== 'device-disconnected' || $("#flashing-overlay-error").html() !== "") {
-            showOverlayButtons = '<a title="" href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
-                                    config["translate"]["webusb"]["download"] + 
-                                 '</a> | ' +
-                                 '<a title="" target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
-                                    config["translate"]["webusb"]["troubleshoot"] + 
-                                '</a> | ';
-        }
+        // Display error handler modal
+        $('#flashing-overlay-container').css('display', 'flex');
+        $('#flashing-info').addClass('hidden');
 
-        var errorHTML = 
-                    '<div>' + 
-                        '<h3 id="modal-overlay-title">' + errorTitle + '</h3>' +
-                        errorDescription + 
-                        (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
-                    '</div>' + 
-                    '<div class="flashing-overlay-buttons">' + 
-                        '<hr />' +
-                        showOverlayButtons + 
-                        '<a title="" href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>' + 
-                    '</div>';
-
-        // Show error message, or append to existing errors
+        // Add the error message, or append to existing error already displayed
+        var errorHTML =
+            '<div>' +
+                '<h3 id="modal-overlay-title">' + errorTitle + '</h3>' +
+                errorDescription +
+                (err.message ? ("<code>Error: " + err.message + "</code>") : "") +
+            '</div>';
         if($("#flashing-overlay-error").html() == "") {
             $("#flashing-overlay-error").html(errorHTML);
         } else {
-            $(".flashing-overlay-buttons").hide(); // Hide previous buttons
             $("#flashing-overlay-error").append("<hr />" + errorHTML);
         }
 
-        // Attach download handler
+        // Add the flash error buttons and attach handler
+        $("#flashing-overlay-error-buttons").html(
+            '<hr />' +
+            '<a title="" href="#" id="flashing-overlay-download" class="action" onclick="actionClickListener(event)">' +
+                config['translate']['webusb']['download'] +
+            '</a> | ' +
+            '<a title="" target="_blank" href="https://support.microbit.org/solution/articles/19000105428-webusb-troubleshooting/en" id="flashing-overlay-troubleshoot" class="action" onclick="actionClickListener(event)">' +
+                config['translate']['webusb']['troubleshoot'] +
+            '</a> | ' +
+            '<a title="" href="#" onclick="flashErrorClose()">' + config["translate"]["webusb"]["close"] + '</a>'
+        );
         $("#flashing-overlay-download").click(doDownload);
 
         // Make the modal accessible now that all the content is present
@@ -1265,7 +1260,7 @@ function web_editor(config) {
         // Send event
         document.dispatchEvent(new CustomEvent('webusb', { 'detail': {
             'flash-type': usePartialFlashing ? 'partial-flash' : 'full-flash',
-            'event-type': (err.name == 'device-disconnected') ? 'info' : 'error',
+            'event-type': 'error',
             'message': errorType + '/' + errorMessage
         }}));
     }
@@ -1331,7 +1326,8 @@ function web_editor(config) {
         $("#webusb-flashing-progress").val(0).hide();
         $("#webusb-flashing-complete").hide();
         $("#webusb-flashing-loader").show();
-        $('#flashing-overlay-error').html("");
+        $('#flashing-overlay-error').html('');
+        $('#flashing-overlay-error-buttons').html('');
         $("#flashing-info").removeClass('hidden');
         $("#flashing-overlay-container").css("display", "flex");
         $('#flashing-extra-msg').hide();
@@ -1818,7 +1814,8 @@ function web_editor(config) {
  * Function to close flash error box
  */
 function flashErrorClose() {
-    $('#flashing-overlay-error').html("");
+    $('#flashing-overlay-error').html('');
+    $('#flashing-overlay-error-buttons').html('');
     $('#flashing-overlay-container').hide();
     $('#flashing-overlay').off("keydown");
 }
