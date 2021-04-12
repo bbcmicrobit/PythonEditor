@@ -25,7 +25,7 @@ var LANGUAGE = {
     "error": "Erro:",
     "empty": "O ficheiro Python não tem nenhum conteúdo.",
     "no_python": "Não foi possível encontrar código Python válido no ficheiro hexadecimal.",
-    "no_script": "Hex file does not contain an appended Python script.",
+    "no_script": "O ficheiro Hex não contém nenhum script Python anexado.",
     "no_main": "O arquivo hexadecimal não contém um ficheiro main.py.",
     "cant_add_file": "Não foi possível adicionar o ficheiro no sistema de arquivos:",
     "module_added": "O módulo \"{{module_name}}\" foi adicionado ao sistema de ficheiros.",
@@ -68,8 +68,8 @@ var LANGUAGE = {
   },
   "webusb": {
     "err": {
-      "update-req": "You need to <a target=\"_blank\" href=\"https://microbit.org/firmware/\">update your micro:bit firmware</a> to make use of this feature.",
-      "update-req-title": "Please update the micro:bit firmware",
+      "update-req": "Precisas de <a target=\"_blank\" href=\"https://microbit.org/firmware/\">atualizar o teu firmware micro:bit</a> para usar esta função.",
+      "update-req-title": "Por favor, atualiza o firmware do micro:bit",
       "clear-connect": "Está a decorrer outro processo neste dispositivo. <br>Fecha qualquer outra aba que possa estar a usar WebUSB ( Por ex.: MakeCode, Editor Python) ou desliga e volta a ligar o micro:bit antes de tentar novamente.",
       "reconnect-microbit": "Por favor, volta a ligar o teu micro:bit e tenta novamente.",
       "partial-flashing-disable": "Se os erros persistirem, tenta desligar o Quick Flash nas opções beta.",
@@ -82,9 +82,9 @@ var LANGUAGE = {
     "close": "Fechar",
     "request-repl": "Carrega em CTRL-C para REPL",
     "request-serial": "Carrega em CTRL-D para reiniciar",
-    "flashing-title": "Flashing MicroPython",
-    "flashing-title-code": "Flashing code",
-    "flashing-long-msg": "Initial flash might take longer, subsequent flashes will be quicker.",
+    "flashing-title": "A descarregar o MicroPython",
+    "flashing-title-code": "A descarregar o código",
+    "flashing-long-msg": "A primeira vez que descarregas o programa demora mais tempo que nas vezes seguintes.",
     "download": "Descarrega Hex"
   },
   "load": {
