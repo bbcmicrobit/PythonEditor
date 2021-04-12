@@ -180,8 +180,17 @@ class DAPWrapper {
     }
 
     allocBoardInfo() {
+        if (!this.device) {
+            throw new Error('Could not obtain device info.');
+        }
+        // Check if the micro:bit is connected in MAINTENANCE mode (DAPLink bootloader)
+        if (this.device.deviceClass == "0") {
+            // This message is intercepted by python-main.js/webusbErrorHandler()
+            // so ensure changes are reflected there as well
+            throw new Error('device-bootloader');
+        }
         // The micro:bit board ID is the serial number first 4 hex digits
-        if (!(this.device && this.device.serialNumber)) {
+        if (!this.device.serialNumber) {
             throw new Error('Could not detected ID from connected board.');
         }
         this.boardId = this.device.serialNumber.substring(0,4);
