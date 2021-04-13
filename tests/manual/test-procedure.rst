@@ -60,7 +60,7 @@ the "Test Cases" opening paragraphs carefully.
 You will need
 '''''''''''''
 
-- Internet Explorer 10: non-Chrome-based
+- Internet Explorer 11: non-Chrome-based
 
 - A modern version of Edge
 
@@ -109,7 +109,7 @@ The test cases listed below always need to be run in a chrome-based browser:
 - WebUSB error modal links are working.
 
 For a Primary Editor release run all the tests in all browsers. For a Beta
-Editor release, run all tests in Internet Explorer 10, except for the
+Editor release, run all tests in Internet Explorer 11, except for the
 test cases listed above that need to be run in a chrome-based browser.
 
 Start each test case in a new instance of the Python Editor.
@@ -409,12 +409,18 @@ Test Case: Language options work
 - Confirm that selecting each language option changes it to the corresponding language
 
 - [ ] English
-- [ ] Spanish
-- [ ] Polish
-- [ ] Croatian
 - [ ] Chinese (simplified)
 - [ ] Chinese (traditional Hong Kong)
 - [ ] Traditional Taiwanese
+- [ ] Croatian
+- [ ] Polish
+- [ ] Spanish
+- [ ] French
+- [ ] Korean
+- [ ] Norwegian Bokmal
+- [ ] Norwegian Nynorsk
+- [ ] Portugese
+- [ ] Serbian
 
 
 Test Case: Connect and Flash over WebUSB and use REPL
