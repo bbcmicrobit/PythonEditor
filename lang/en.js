@@ -119,15 +119,6 @@ var LANGUAGE = {
     'en': {
       'title': 'English'
     },
-    'es': {
-      'title': 'Spanish'
-    },
-    'pl': {
-      'title': 'Polish'
-    },
-    'hr': {
-      'title': 'Croatian'
-    },
     'zh-CN': {
       'title': 'Chinese (simplified)'
     },
@@ -136,6 +127,33 @@ var LANGUAGE = {
     },
     'zh-TW': {
       'title': 'Chinese (traditional, Taiwan)'
+    },
+    'hr': {
+      'title': 'Croatian'
+    },
+    'pl': {
+      'title': 'Polish'
+    },
+    'es': {
+      'title': 'Spanish'
+    },
+    'fr': {
+      'title': 'French'
+    },
+    'ko': {
+      'title': 'Korean'
+    },
+    'nb': {
+      'title': 'Norwegian Bokmal'
+    },
+    'nn': {
+      'title': 'Norwegian Nynorsk'
+    },
+    'pt': {
+      'title': 'Portugese'
+    },
+    'sr': {
+      'title': 'Serbian'
     }
   },
   'static-strings': {
