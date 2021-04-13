@@ -150,7 +150,7 @@ var LANGUAGE = {
       'title': 'Norwegian Nynorsk'
     },
     'pt': {
-      'title': 'Portugese'
+      'title': 'Portuguese'
     },
     'sr': {
       'title': 'Serbian'
