@@ -60,6 +60,8 @@ the "Test Cases" opening paragraphs carefully.
 You will need
 '''''''''''''
 
+- Internet Explorer 11: non-Chrome-based
+
 - A modern version of Edge
 
   - Edge v44 or lower: non-Chrome-based
@@ -107,7 +109,8 @@ The test cases listed below always need to be run in a chrome-based browser:
 - WebUSB error modal links are working.
 
 For a Primary Editor release run all the tests in all browsers. For a Beta
-Editor release, run all tests in a Chrome-based browser.
+Editor release, run all tests in Internet Explorer 11, except for the
+test cases listed above that need to be run in a chrome-based browser.
 
 Start each test case in a new instance of the Python Editor.
 
