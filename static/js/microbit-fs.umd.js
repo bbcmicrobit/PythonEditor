@@ -4810,6 +4810,7 @@
 
 	/**
 	 * General utilities.
+	 * @packageDocumentation
 	 *
 	 * (c) 2020 Micro:bit Educational Foundation and the project contributors.
 	 * SPDX-License-Identifier: MIT
@@ -5290,11 +5291,27 @@
 	var V1_BOARD_IDS = [0x9900, 0x9901];
 	var BLOCK_SIZE = 512;
 	/**
-	 * Converts an Intel Hex file string into a Universal Hex ready hex string using
-	 * custom records and 512 byte blocks.
+	 * The Board ID is used to identify the different targets from a Universal Hex.
+	 * In this case the target represents a micro:bit version.
+	 * For micro:bit V1 (v1.3, v1.3B and v1.5) the `boardId` is `0x9900`, and for
+	 * V2 `0x9903`.
+	 */
+
+	var microbitBoardId;
+
+	(function (microbitBoardId) {
+	  microbitBoardId[microbitBoardId["V1"] = 39168] = "V1";
+	  microbitBoardId[microbitBoardId["V2"] = 39171] = "V2";
+	})(microbitBoardId || (microbitBoardId = {}));
+	/**
+	 * Converts an Intel Hex string into a Hex string using the 512 byte blocks
+	 * format and the Universal Hex specific record types.
 	 *
-	 * More information on the format:
-	 *   https://github.com/microbit-foundation/universal-hex
+	 * The output of this function is not a fully formed Universal Hex, but one part
+	 * of a Universal Hex, ready to be merged by the calling code.
+	 *
+	 * More information on this "block" format:
+	 *   https://github.com/microbit-foundation/spec-universal-hex
 	 *
 	 * @throws {Error} When the Board ID is not between 0 and 2^16.
 	 * @throws {Error} When there is an EoF record not at the end of the file.
@@ -5303,6 +5320,7 @@
 	 *    byte blocks and the customer records.
 	 * @returns New Intel Hex string with the custom format.
 	 */
+
 
 	function iHexToCustomFormatBlocks(iHexStr, boardId) {
 	  // Hex files for v1.3 and v1.5 continue using the normal Data Record Type
@@ -5316,7 +5334,13 @@
 	  var endRecordBaseLen = blockEndRecord(0).length;
 	  var padRecordBaseLen = paddedDataRecord(0).length;
 	  var hexRecords = iHexToRecordStrs(iHexStr);
-	  var recordPaddingCapacity = findDataFieldLength(hexRecords); // Each loop iteration corresponds to a 512-bytes block
+	  var recordPaddingCapacity = findDataFieldLength(hexRecords);
+	  if (!hexRecords.length) return '';
+
+	  if (isUniversalHexRecords(hexRecords)) {
+	    throw new Error("Board ID " + boardId + " Hex is already a Universal Hex.");
+	  } // Each loop iteration corresponds to a 512-bytes block
+
 
 	  var ih = 0;
 	  var blockLines = [];
@@ -5364,7 +5388,12 @@
 	    if (endOfFile) {
 	      // Error if we encounter an EoF record and it's not the end of the file
 	      if (ih !== hexRecords.length) {
-	        throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex");
+	        // Might be MakeCode hex for V1 as they did this with the EoF record
+	        if (isMakeCodeForV1HexRecords(hexRecords)) {
+	          throw new Error("Board ID " + boardId + " Hex is from MakeCode, import this hex into the MakeCode editor to create a Universal Hex.");
+	        } else {
+	          throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex");
+	        }
 	      } // The EoF record goes after the Block End Record, it won't break 512-byte
 	      // boundary as it was already calculated in the previous loop that it fits
 
@@ -5389,11 +5418,14 @@
 	  return blockLines.join('\n');
 	}
 	/**
-	 * Converts an Intel Hex file string into a Universal Hex ready hex string using
-	 * custom records and sections aligned with 512-byte boundaries.
+	 * Converts an Intel Hex string into a Hex string using custom records and
+	 * aligning the content size to a 512-byte boundary.
 	 *
-	 * More information on the format:
-	 *   https://github.com/microbit-foundation/universal-hex
+	 * The output of this function is not a fully formed Universal Hex, but one part
+	 * of a Universal Hex, ready to be merged by the calling code.
+	 *
+	 * More information on this "section" format:
+	 *   https://github.com/microbit-foundation/spec-universal-hex
 	 *
 	 * @throws {Error} When the Board ID is not between 0 and 2^16.
 	 * @throws {Error} When there is an EoF record not at the end of the file.
@@ -5419,7 +5451,12 @@
 	  };
 
 	  var hexRecords = iHexToRecordStrs(iHexStr);
-	  if (!hexRecords.length) return ''; // If first record is not an Extended Segmented/Linear Address we start at 0x0
+	  if (!hexRecords.length) return '';
+
+	  if (isUniversalHexRecords(hexRecords)) {
+	    throw new Error("Board ID " + boardId + " Hex is already a Universal Hex.");
+	  } // If first record is not an Extended Segmented/Linear Address we start at 0x0
+
 
 	  var iHexFirstRecordType = getRecordType(hexRecords[0]);
 
@@ -5456,7 +5493,12 @@
 	  }
 
 	  if (ih !== hexRecords.length) {
-	    throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex ");
+	    // The End Of File record was encountered mid-file, might be a MakeCode hex
+	    if (isMakeCodeForV1HexRecords(hexRecords)) {
+	      throw new Error("Board ID " + boardId + " Hex is from MakeCode, import this hex into the MakeCode editor to create a Universal Hex.");
+	    } else {
+	      throw new Error("EoF record found at record " + ih + " of " + hexRecords.length + " in Board ID " + boardId + " hex ");
+	    }
 	  } // Add to the section size calculation the minimum length for the Block End
 	  // record that will be placed at the end (no padding included yet)
 
@@ -5483,13 +5525,19 @@
 	  return sectionLines.join('\n');
 	}
 	/**
-	 * Creates a Universal Hex from an collection of Intel Hex strings and their
+	 * Creates a Universal Hex from a collection of Intel Hex strings and their
 	 * board IDs.
 	 *
-	 * @param hexes An array of objects containing an Intel Hex strings and the
-	 *     board ID associated with it.
-	 * @param blocks Indicate if the Universal Hex should be blocks instead of
-	 *     sections.
+	 * For the current micro:bit board versions use the values from the
+	 * `microbitBoardId` enum.
+	 *
+	 * @param hexes An array of objects containing an Intel Hex string and the board
+	 *     ID associated with it.
+	 * @param blocks Indicate if the Universal Hex format should be "blocks"
+	 *     instead of "sections". The current specification recommends using the
+	 *     default "sections" format as is much quicker in micro:bits with DAPLink
+	 *     version 0234.
+	 * @returns A Universal Hex string.
 	 */
 
 
@@ -5525,13 +5573,14 @@
 	  return customHexes.join('');
 	}
 	/**
-	 * Checks if the provided hex string is a universal hex.
+	 * Checks if the provided hex string is a Universal Hex.
 	 *
 	 * Very simple test only checking for the opening Extended Linear Address and
 	 * Block Start records.
 	 *
-	 * The string is manually checked as this method can be x20 faster than breaking
-	 * the string into records and checking their types with the ihex functions.
+	 * The string is manually iterated as this method can be x20 faster than
+	 * breaking the string into records and checking their types with the ihex
+	 * functions.
 	 *
 	 * @param hexStr Hex string to check
 	 * @return True if the hex is an Universal Hex.
@@ -5562,7 +5611,53 @@
 	  return true;
 	}
 	/**
-	 * Separates a Universal Hex into the individual hexes.
+	 * Checks if the provided array of hex records form part of a Universal Hex.
+	 *
+	 * @param records Array of hex records to check.
+	 * @return True if the records belong to a Universal Hex.
+	 */
+
+
+	function isUniversalHexRecords(records) {
+	  return getRecordType(records[0]) === RecordType.ExtendedLinearAddress && getRecordType(records[1]) === RecordType.BlockStart && getRecordType(records[records.length - 1]) === RecordType.EndOfFile;
+	}
+	/**
+	 * Checks if the array of records belongs to an Intel Hex file from MakeCode for
+	 * micro:bit V1.
+	 *
+	 * @param records Array of hex records to check.
+	 * @return True if the records belong to a MakeCode hex file for micro:bit V1.
+	 */
+
+
+	function isMakeCodeForV1HexRecords(records) {
+	  var i = records.indexOf(endOfFileRecord());
+
+	  if (i === records.length - 1) {
+	    // A MakeCode v0 hex file will place the metadata in RAM before the EoF
+	    while (--i > 0) {
+	      if (records[i] === extLinAddressRecord(0x20000000)) {
+	        return true;
+	      }
+	    }
+	  }
+
+	  while (++i < records.length) {
+	    // Other data records used to store the MakeCode project metadata (v2 and v3)
+	    if (getRecordType(records[i]) === RecordType.OtherData) {
+	      return true;
+	    } // In MakeCode v1 metadata went to RAM memory space 0x2000_0000
+
+
+	    if (records[i] === extLinAddressRecord(0x20000000)) {
+	      return true;
+	    }
+	  }
+
+	  return false;
+	}
+	/**
+	 * Separates a Universal Hex into its individual Intel Hexes.
 	 *
 	 * @param universalHexStr Universal Hex string with the Universal Hex.
 	 * @returns An array of object with boardId and hex keys.
@@ -5571,10 +5666,10 @@
 
 	function separateUniversalHex(universalHexStr) {
 	  var records = iHexToRecordStrs(universalHexStr);
-	  if (!records.length) throw new Error('Empty Universal Hex.'); // The format has to start with an Extended Linear Address and Block Start
+	  if (!records.length) throw new Error('Empty Universal Hex.');
 
-	  if (getRecordType(records[0]) !== RecordType.ExtendedLinearAddress || getRecordType(records[1]) !== RecordType.BlockStart || getRecordType(records[records.length - 1]) !== RecordType.EndOfFile) {
-	    throw new Error('Universal Hex block format invalid.');
+	  if (!isUniversalHexRecords(records)) {
+	    throw new Error('Universal Hex format invalid.');
 	  }
 
 	  var passThroughRecords = [RecordType.Data, RecordType.EndOfFile, RecordType.ExtendedSegmentAddress, RecordType.StartSegmentAddress]; // Initialise the structure to hold the different hexes
@@ -5968,8 +6063,8 @@
 	    fsStartAddress: fsStartAddress,
 	    fsEndAddress: fsEndAddress,
 	    uPyVersion: uPyVersion,
-	    deviceVersion: 2
-	    /* two */
+	    deviceVersion: "V2"
+	    /* V2 */
 
 	  };
 	}
@@ -5984,15 +6079,15 @@
 	 * SPDX-License-Identifier: MIT
 	 */
 	var DEVICE_INFO = [{
-	  deviceVersion: 1
-	  /* one */
+	  deviceVersion: "V1"
+	  /* V1 */
 	  ,
 	  magicHeader: 0x17eeb07c,
 	  flashSize: 256 * 1024,
 	  fsEnd: 256 * 1024
 	}, {
-	  deviceVersion: 2
-	  /* two */
+	  deviceVersion: "V2"
+	  /* V2 */
 	  ,
 	  magicHeader: 0x47eeb07c,
 	  flashSize: 512 * 1024,
@@ -6216,10 +6311,17 @@
 	}
 
 	/**
-	 * .
+	 * Retrieves the device information stored inside a MicroPython hex file.
 	 *
 	 * (c) 2020 Micro:bit Educational Foundation and the microbit-fs contributors.
 	 * SPDX-License-Identifier: MIT
+	 */
+	/**
+	 * Attempts to retrieve the device memory data from an MicroPython Intel Hex
+	 * memory map.
+	 *
+	 * @param {MemoryMap} intelHexMap MicroPython Intel Hex memory map to scan.
+	 * @returns {DeviceMemInfo} Device data.
 	 */
 
 	function getHexMapDeviceMemInfo(intelHexMap) {
@@ -6238,10 +6340,10 @@
 	  }
 	}
 	/**
-	 * .
+	 * Attempts to retrieve the device memory data from an MicroPython Intel Hex.
 	 *
 	 * @param intelHex - MicroPython Intel Hex string.
-	 * @returns .
+	 * @returns {DeviceMemInfo} Device data.
 	 */
 
 
@@ -6367,8 +6469,8 @@
 	  var endAddress = deviceMem.fsEndAddress; // TODO: Maybe we should move this inside the UICR module to calculate
 	  // the real fs area in that step
 
-	  if (deviceMem.deviceVersion === 1
-	  /* one */
+	  if (deviceMem.deviceVersion === "V1"
+	  /* V1 */
 	  ) {
 	      if (isAppendedScriptPresent(intelHexMap)) {
 	        endAddress = exports.AppendedBlock.StartAdd;
@@ -6867,6 +6969,15 @@
 	  return SimpleFile;
 	}();
 
+	/**
+	 * The Board ID is used to identify the different targets from a Universal Hex.
+	 * In this case the target represents a micro:bit version.
+	 * For micro:bit V1 (v1.3, v1.3B and v1.5) the `boardId` is `0x9900`, and for
+	 * V2 `0x9903`.
+	 * This is being re-exported from the @microbit/microbit-universal-hex package.
+	 */
+
+	var microbitBoardId$1 = microbitBoardId;
 	/**
 	 * Manage filesystem files in one or multiple MicroPython hex files.
 	 *
@@ -7441,6 +7552,7 @@
 	exports.getIntelHexAppendedScript = getIntelHexAppendedScript;
 	exports.getIntelHexDeviceMemInfo = getIntelHexDeviceMemInfo;
 	exports.isAppendedScriptPresent = isAppendedScriptPresent;
+	exports.microbitBoardId = microbitBoardId$1;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
