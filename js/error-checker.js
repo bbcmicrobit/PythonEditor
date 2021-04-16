@@ -33,7 +33,8 @@ var ErrorChecker = function() {
      */
     function enable(sendErrorsCallback_) {
         if (!checkerWorker) {
-            if (!window.Worker) {
+            var isIE = /MSIE|Trident/.test(window.navigator.userAgent);
+            if (!window.Worker || isIE) {
                 throw new Error('Code Checker cannot be used in this browser, please try with Chrome.');
             }
             checkerWorker = new Worker('js/error-checker-worker.js');
