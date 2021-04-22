@@ -143,9 +143,6 @@ var LANGUAGE = {
     'ko': {
       'title': 'Korean'
     },
-    'nb': {
-      'title': 'Norwegian Bokmal'
-    },
     'nn': {
       'title': 'Norwegian Nynorsk'
     },
