@@ -251,18 +251,18 @@ Code block 8::
     display.show(Image.PACMAN)
 
 
-Test Case: module.py file can be loaded by file picker and used in main.py
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Load by Load/Save > Or browse for a file, the file ``emoji.py``
-- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+Test Case: module.py file can be loaded by modal file picker and used in main.py
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by "Load/Save > Or browse for a file" the file ``emoji.py``
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
+  to the filesystem.'
+- Click "Show Files (2)"
 - [ ] Confirm the file shows up in the files list with the same title.
+- Return to the editor and replace the current script with "Code block 9".
+- [ ] Program by any method this file to the micro:bit and confirm that it
+  behaves as expected, showing emojis for the appropriate gestures and buttons.
 
-
-Test Case: module.py file can be loaded by file picker and used in main.py
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Load by Load/Save > Add file the file ``emoji.py``
-- [ ] Confirm the file shows up in the files list with the same title.
-- Return to the editor and replace the current script with the following::
+Code block 9::
 
     from microbit import *
     from emoji import *
@@ -280,65 +280,26 @@ Test Case: module.py file can be loaded by file picker and used in main.py
             sleep(2000)
         sleep(100)
 
-- [ ] Program by any method this file to the micro:bit and confirm that it
-  behaves as expected, showing emojis for the appropriate gestures and buttons.
+
+Test Case: module.py file can be loaded by filesystem file picker
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+- Load by "Load/Save > Show Files > Add file" the file ``emoji.py``
+- [ ] Confirm the file shows up in the files list with the same title.
 
 
-Test Case: module.py file can be 'magically' loaded into the editor by drag&drop and used in main.py
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by drag&drop into the editor the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
   to the filesystem.'
 - [ ] Confirm the file shows up in the files list with the same title.
-- Return to the editor and replace the current script with the following::
 
 
-    from microbit import *
-    from emoji import *
-
-    while True:
-        display.show(😃)
-        if accelerometer.was_gesture('shake'):
-            display.show(😡)
-            sleep(2000)
-        if button_a.was_pressed():
-            display.show(💖)
-            sleep(2000)
-        elif button_b.was_pressed():
-            display.show(🏠)
-            sleep(2000)
-        sleep(100)
-
-- [ ] Program by any method this file to the micro:bit and confirm that it
-  behaves as expected, showing emojis for the appropriate gestures and buttons.
-
-
-Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in main.py
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Test Case: module.py file can be loaded by Load/Save modal drag&drop
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by Load/Save drop area drag&drop the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
   to the filesystem.'
-- Return to the editor and replace the current script with the following::
-
-
-    from microbit import *
-    from emoji import *
-
-    while True:
-        display.show(😃)
-        if accelerometer.was_gesture('shake'):
-            display.show(😡)
-            sleep(2000)
-        if button_a.was_pressed():
-            display.show(💖)
-            sleep(2000)
-        elif button_b.was_pressed():
-            display.show(🏠)
-            sleep(2000)
-        sleep(100)
-
-- [ ] Program by any method this file to the micro:bit and confirm that it
-  behaves as expected, showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: Hex file containing module can be loaded in the editor
@@ -366,10 +327,10 @@ Test Case: Snippets inject code into the Text Editor
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Click the "Snippets" button.
 - Click on the "if" trigger.
-- [ ] Confirm the contents defined in "Code block 9" were injected to the end
+- [ ] Confirm the contents defined in "Code block 10" were injected to the end
   of the Text Editor (where the cursor should be by default).
 
-Code block 9::
+Code block 10::
 
     if condition:
         # TODO: write code...
