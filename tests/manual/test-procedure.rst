@@ -23,17 +23,18 @@ Nomenclature and Definitions
 - **Load by editor drag&drop**: Load a file into the Python Editor by dragging
   a file from the user OS, to the Text Editor area.
 
-- **Load by drop area drag&drop**: Load a file into the Python Editor by
-  clicking on the "Load/Save button" and then dragging a file from the user OS to
-  the large grey box that says "Drag and drop a .hex or .py file in here to
+- **Load by modal drag&drop**: Load a file into the Python Editor by
+clicking on the "Load/Save button" and then dragging a file from the user OS
+  to the large grey box that says "Drag and drop a .hex or .py file in here to
   open it".
 
 - **Load by file picker**: Load a file into the Python Editor by clicking on
-  the "Load/Save button", then clicking on the "Or Browse for a file" button, selecting a 
-  file in the browser file picker, and finally clicking on the "Open" button.
+  the "Load/Save button", then clicking on the "Or Browse for a file" button,
+  selecting a file in the browser file picker, and finally clicking on the
+  "Open" button.
 
 - **Load by any method**: Load a file into the Python Editor using either
-  of the three options: "Load by editor drag&drop", "Load by drop area
+  of the three options: "Load by editor drag&drop", "Load by modal
   drag&drop", or "Load by file picker".
 
 - **Connect to the REPL**: Use any type of serial terminal to connect with the
@@ -44,8 +45,9 @@ Nomenclature and Definitions
 
 - **Test Case**: A set of test steps to verify a related set of conditions.
 
-- **Program by any method**: Write a file onto the micro:bit. This can be done by dragging the
-  file into the MICROBIT drive or through the connect button.
+- **Program by any method**: Write a file onto the micro:bit. This can be done
+  by dragging the file into the MICROBIT drive or through the WebUSB connect
+  button.
 
 
 Preparation
@@ -71,20 +73,20 @@ You will need
 
 - A modern version of Firefox: non-Chrome-based
 
-- A modern version of Safari: non-Chrome-based with **Press Tab to highlight each item on a web page**
-  enabled for A11y tests (https://support.apple.com/en-gb/guide/safari/ibrw1075/mac)
-  
+- A modern version of Safari: non-Chrome-based with **Press Tab to highlight
+  each item on a web page** enabled for A11y tests
+  (https://support.apple.com/en-gb/guide/safari/ibrw1075/mac)
+
 - A text editor (the one included in most operating systems is fine)
 
 - Access to the Python Editor under test
 
-- The version number for the Python Editor under test
+- The expected version number for the Python Editor under test
 
-- The version number for the MicroPython interpreter included in the Python
-  Editor under tests
+- The expected version number for the MicroPython interpreter included in the
+  Python Editor under tests
 
-- The test files from
-  https://github.com/bbcmicrobit/PythonEditor/tree/master/tests/manual/test-files
+- The test files from `./test-files/`
 
 - A micro:bit
 
@@ -105,14 +107,15 @@ Tests Execution
 
 The test cases listed below always need to be run in a chrome-based browser:
 
-- Connect and Flash over WebUSB and use REPL.
-- WebUSB error modal links are working.
+- Connect and Flash over WebUSB and use REPL
+- Full Flash over WebUSB
+- WebUSB error modal links are working
 
 For a Primary Editor release run all the tests in all browsers. For a Beta
 Editor release, run all tests in Internet Explorer 11, except for the
 test cases listed above that need to be run in a chrome-based browser.
 
-Start each test case in a new instance of the Python Editor.
+**Start each test case in a new instance of the Python Editor.**
 
 When a Test Case bullet point starts with a checkbox (denoted by a ``[ ]``) it
 indicates a boolean condition (Pass/Fail) that needs to be checked and the
@@ -139,8 +142,7 @@ Test Case: Generated hex file can be loaded to the editor
   can be generated".
 - [ ] Confirm the Script Name is the same as the hex filename without the
   extension.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 1".
 
 Code block 1::
 
@@ -156,12 +158,11 @@ Code block 1::
 
 Test Case: Editor v0 hex file can be loaded to the drop area
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Load by drop area drag&drop the file ``example-editor-v0.hex``.
+- Load by modal drag&drop the file ``example-editor-v0.hex``.
 - [ ] Confirm the Script Name is ``example-editor-v0``.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 2".
 
-Code block 1::
+Code block 2::
 
     # This is a Python Editor v0 file
     from microbit import *
@@ -172,10 +173,9 @@ Test Case: Editor v1.1 (MicroPython v1.0) hex file can be loaded by file picker
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by file picker the file ``example-editor-v1.hex``.
 - [ ] Confirm the Script Name is ``example-editor-v1``.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 3".
 
-Code block 1::
+Code block 4::
 
     # This is a Python Editor v1.1.0 file (MicroPython v1.0.0)
     from microbit import *
@@ -188,11 +188,10 @@ Test Case: Python file can be saved
 - Click the "Download Python Script" button.
 - [ ] Confirm the file downloaded is named "microbit_program.py".
 - Open the contents in a text editor from your operating system.
-- [ ] Confirm the file contains the exact contents defined in the "Code block
-  1" at the bottom of this Test Case.
+- [ ] Confirm the file contains the exact contents from "Code block 5".
 - Save this Python file for the following test case.
 
-Code block 1::
+Code block 5::
 
     # Add your Python code here. E.g.
     from microbit import *
@@ -212,10 +211,9 @@ Test Case: Saved Python file can be loaded to the editor
   Python file can be saved".
 - [ ] Confirm the Script Name is the same as the Python filename without the
   extension.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 6".
 
-Code block 1::
+Code block 6::
 
     # Add your Python code here. E.g.
     from microbit import *
@@ -229,12 +227,11 @@ Code block 1::
 
 Test Case: Python file can be loaded to the drop area
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
-- Load by drop area drag&drop the file ``python-example.py``.
+- Load by modal drag&drop the file ``python-example.py``.
 - [ ] Confirm the Script Name is ``python-example``.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 7".
 
-Code block 1::
+Code block 7::
 
     # This is a simple Python file
     from microbit import *
@@ -245,10 +242,9 @@ Test Case: Python file can be loaded by file picker
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by file picker the file ``python-example.py``.
 - [ ] Confirm the Script Name is ``python-example``.
-- [ ] Confirm the Text Editor contains the exact contents defined in the
-  "Code block 1" at the bottom of this Test Case.
+- [ ] Confirm the Text Editor contains the exact contents from "Code block 8".
 
-Code block 1::
+Code block 8::
 
     # This is a simple Python file
     from microbit import *
@@ -284,14 +280,15 @@ Test Case: module.py file can be loaded by file picker and used in main.py
             sleep(2000)
         sleep(100)
 
-- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
-  showing emojis for the appropriate gestures and buttons.
+- [ ] Program by any method this file to the micro:bit and confirm that it
+  behaves as expected, showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: module.py file can be 'magically' loaded into the editor by drag&drop and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by drag&drop into the editor the file ``emoji.py``
-- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
+  to the filesystem.'
 - [ ] Confirm the file shows up in the files list with the same title.
 - Return to the editor and replace the current script with the following::
 
@@ -312,14 +309,15 @@ Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
             sleep(2000)
         sleep(100)
 
-- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
-  showing emojis for the appropriate gestures and buttons.
+- [ ] Program by any method this file to the micro:bit and confirm that it
+  behaves as expected, showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Load by Load/Save drop area drag&drop the file ``emoji.py``
-- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added to the filesystem.'
+- [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
+  to the filesystem.'
 - Return to the editor and replace the current script with the following::
 
 
@@ -339,8 +337,8 @@ Test Case: module.py file can be loaded by Load/Save modal drag&drop and used in
             sleep(2000)
         sleep(100)
 
-- [ ] Program by any method this file to the micro:bit and confirm that it behaves as expected,
-  showing emojis for the appropriate gestures and buttons.
+- [ ] Program by any method this file to the micro:bit and confirm that it
+  behaves as expected, showing emojis for the appropriate gestures and buttons.
 
 
 Test Case: Hex file containing module can be loaded in the editor
@@ -368,11 +366,10 @@ Test Case: Snippets inject code into the Text Editor
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 - Click the "Snippets" button.
 - Click on the "if" trigger.
-- [ ] Confirm the contents defined in the "Code block 1", at the bottom of this
-  Test Case, were injected to the end of the Text Editor (where the cursor
-  should be by default).
+- [ ] Confirm the contents defined in "Code block 9" were injected to the end
+  of the Text Editor (where the cursor should be by default).
 
-Code block 1::
+Code block 9::
 
     if condition:
         # TODO: write code...
@@ -393,7 +390,6 @@ Test Case: Help menu expands and links work
   opened.
 - Click the "Support" link.
 - [ ] Confirm the entry point for https://support.microbit.org has been opened.
-
 
 
 Test Case: Zoom changes the Text Editor font size
@@ -427,8 +423,10 @@ Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
 Carry out this test in Chrome or a chrome-based browser:
 
-- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
-- [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
+- [ ] Connect to micro:bit and confirm that menu now shows options to
+  "Flash" and "Disconnect".
+- [ ] Confirm you can flash the default program to the micro:bit via WebUSB
+  and that it behaves as expected.
 - [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
 - [ ] Type ``help()`` and confirm that you see a result.
 - [ ] Disconnect and confirm that menu returns to "Download" and "Connect".
@@ -441,8 +439,10 @@ Carry out this test in Chrome or a chrome-based browser:
 
 - Click the 'Beta Options' button.
 - Click the 'Quick Flash' toggle to disable it.
-- [ ] Connect to micro:bit and confirm that menu now shows options to "Flash" and "Disconnect".
-- [ ] Confirm you can flash the default program to the micro:bit via WebUSB and that it behaves as expected.
+- [ ] Connect to micro:bit and confirm that menu now shows options to
+  "Flash" and "Disconnect".
+- [ ] Confirm you can flash the default program to the micro:bit via WebUSB
+  and that it behaves as expected.
 - [ ] "Open Serial" and confirm you can enter the REPL by click or CTRL-C.
 
 
@@ -469,7 +469,8 @@ Carry out this test in Chrome or a chrome-based browser:
 - Click the 'Download Hex' link in the modal that opens.
 - [ ] Confirm a hex file with the name 'microbit_program.hex' is downloaded.
 - Click the 'Troubleshoot' link.
-- [ ] Confirm that https://support.microbit.org/support/solutions/articles/19000105428-webusb-troubleshooting is opened in a new tab.
+- [ ] Confirm that https://support.microbit.org/support/solutions/articles/19000105428-webusb-troubleshooting
+  is opened in a new tab.
 - Close the troubleshooting tab.
 - Click the 'Close' link.
 - [ ] Confirm the modal closes.
@@ -479,16 +480,17 @@ Test Case: Autocomplete
 '''''''''''''''''''''''
 This feature will only be available in the beta versions.
 
-- [ ] Start typing in the editor and confirm that autocomplete offers suggestions
-  eg type 'di' and be offered 'display'.
-- [ ] Disable autocomplete in "Options" and confirm that autocomplete no longer offers suggestions.
+- [ ] Start typing in the editor and confirm that autocomplete offers
+  suggestions eg type 'di' and be offered 'display'.
+- [ ] Disable autocomplete in "Options" and confirm that autocomplete no
+  longer offers suggestions.
 
 
 Test Case A11y: Keyboard focus order follows the visual layout
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 - [ ] Using your keyboard, navigate through the menu and any submenus using the
-  `tab` and `enter` or `space` keysand confirm  they follow natural order of the
-  page elements eg.left to right and top top bottom.
+  `tab` and `enter` or `space` keysand confirm  they follow natural order of
+  the page elements eg.left to right and top top bottom.
 - [ ] Using your keyboard, navigate through the modal windows using the `tab`
   and `enter` or `space` keys and confirm  they follow natural order of the
   page elements eg.left to right and top top bottom.
