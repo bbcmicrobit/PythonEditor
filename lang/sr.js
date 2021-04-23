@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "Поново повежите свој micro:bit и покушајте поново.",
       "partial-flashing-disable": "Ако се грешке и даље јављају, покушајте да онемогућите Брзи флеш у бета опцијама.",
       "device-disconnected": "Уређај је искључен.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "Није могуће повезивање са micro:bit.",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "Помоћу WebUSB-a можете да програмирате свој micro:bit и директно га из едитора повезати на серијску конзолу.<br/>Нажалост, овај прегледач не подржава WebUSB. Препоручујемо Хром прегледач или неки други изведен из њега да бисте користили WebUSB.",
       "find-more": "Сазнајте више"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "Енглески"
     },
-    "es": {
-      "title": "Шпански"
-    },
-    "pl": {
-      "title": "Пољски"
-    },
-    "hr": {
-      "title": "Хрватски"
-    },
     "zh-CN": {
       "title": "Кинески (поједностављен)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "Кинески (традиционални, Тајван)"
+    },
+    "hr": {
+      "title": "Хрватски"
+    },
+    "pl": {
+      "title": "Пољски"
+    },
+    "es": {
+      "title": "Шпански"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {

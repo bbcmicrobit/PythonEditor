@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "請重新連接 micro:bit 然後再次嘗試。",
       "partial-flashing-disable": "如果錯誤仍然存在，請嘗試禁用beta選項中的快速下載。",
       "device-disconnected": "設備已斷開。",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "不能連接到 micro:bit",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "使用 WebUSB 可以從編輯器中直接給 micro:bit 編程並連接到串口控制枱。<br/>不幸的是，這個瀏覽器不支持 WebUSB。推薦使用 Chrome, 或 Chrome 內核的瀏覽器。",
       "find-more": "瞭解更多"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "英文"
     },
-    "es": {
-      "title": "西班牙語"
-    },
-    "pl": {
-      "title": "波蘭語"
-    },
-    "hr": {
-      "title": "克羅地亞語"
-    },
     "zh-CN": {
       "title": "中文（簡體）"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "中文（繁體，台灣）"
+    },
+    "hr": {
+      "title": "克羅地亞語"
+    },
+    "pl": {
+      "title": "波蘭語"
+    },
+    "es": {
+      "title": "西班牙語"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {

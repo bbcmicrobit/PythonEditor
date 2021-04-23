@@ -69,12 +69,15 @@ var LANGUAGE = {
   "webusb": {
     "err": {
       "update-req": "Vous devez <a target=\"_blank\" href=\"https://microbit.org/firmware/\">mettre à jour le firmware de votre carte micro:bit</a> pour utiliser cette fonctionnalité.",
-      "update-req-title": "Veuillez mettre à jour le firmware de la carte micro:bit",
+      "update-req-title": "Veuillez mettre à jour le firmware du micro:bit",
       "clear-connect": "Un autre processus est connecté à cet appareil.<br>Fermez tous les autres onglets qui peuvent utiliser WebUSB (e. . MakeCode, éditeur Python), ou débranchez et rebranchez le micro:bit avant de réessayer.",
       "reconnect-microbit": "Veuillez reconnecter votre micro:bit et réessayer.",
       "partial-flashing-disable": "Si les erreurs persistent, essayez de désactiver Quick Flash dans les options bêta.",
       "device-disconnected": "Appareil déconnecté.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "Impossible de se connecter au micro:bit",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "Avec WebUSB, vous pouvez programmer votre micro:bit et vous connecter à la console série directement à partir de l'éditeur en ligne.<br/>Malheureusement, WebUSB n'est pas pris en charge dans ce navigateur. Nous recommandons Chrome, ou à un navigateur basé sur Chrome pour utiliser WebUSB.",
       "find-more": "En savoir plus"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "Français"
     },
-    "es": {
-      "title": "Espagnol"
-    },
-    "pl": {
-      "title": "Polonais"
-    },
-    "hr": {
-      "title": "Croate"
-    },
     "zh-CN": {
       "title": "Chinois (simplifié)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "Chinois (traditionnel, Taiwan)"
+    },
+    "hr": {
+      "title": "Croate"
+    },
+    "pl": {
+      "title": "Polonais"
+    },
+    "es": {
+      "title": "Espagnol"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {
@@ -151,7 +169,7 @@ var LANGUAGE = {
       },
       "command-files": {
         "title": "Charger/Enregistrer les fichiers",
-        "label": "Charger/Enregistrer"
+        "label": "Ouvrir/Enregistrer"
       },
       "command-serial": {
         "title": "Connecter le micro:bit via le port série",

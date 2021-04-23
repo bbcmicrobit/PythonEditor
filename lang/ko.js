@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "micro:bit 연결을 확인한 후, 다시 시도해 보세요.",
       "partial-flashing-disable": "오류가 계속되면, Beta options 에서 빠른 업로드 (Quick Flash) 기능을 해제하세요.",
       "device-disconnected": "연결이 해제되었습니다.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "micro:bit 에 연결할 수 없습니다.",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "WebUSB를 사용하면, 온라인 편집기에서 바로 micro:bit 를 프로그래밍하고 시리얼 통신으로 직접 연결할 수 있습니다.<br/>하지만, 이 웹브라우저에서는 WebUSB가 지원되지 않습니다. WebUSB 기능을 사용하려면 Chrome 이나 크롬 기반 웹브라우저를 사용하는 것을 추천합니다.",
       "find-more": "더 알아보기"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "한국어"
     },
-    "es": {
-      "title": "스페인어"
-    },
-    "pl": {
-      "title": "폴란드어"
-    },
-    "hr": {
-      "title": "크로아티아어"
-    },
     "zh-CN": {
       "title": "중국어(간체)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "중국어 (번체)"
+    },
+    "hr": {
+      "title": "크로아티아어"
+    },
+    "pl": {
+      "title": "폴란드어"
+    },
+    "es": {
+      "title": "스페인어"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {

@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "Podłącz jeszcze raz swój micro:bit i spróbuj ponownie.",
       "partial-flashing-disable": "Jeśli błąd się powtarza, spróbuj wyłączyć Quick Flash w opcjach beta.",
       "device-disconnected": "Urządzenie odłączone.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "Nie można połączyć się z micro:bit",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "Za pomocą WebUSB możesz zaprogramować swój micro:bit i połączyć się z konsolą szeregową bezpośrednio z edytora online.<br/> Niestety, WebUSB nie jest obsługiwany w tej przeglądarce. Do korzystania z WebUSB zalecamy Chrome lub inną przeglądarkę opartą na Chrome.",
       "find-more": "Dowiedz się więcej"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "Angielski"
     },
-    "es": {
-      "title": "Hiszpański"
-    },
-    "pl": {
-      "title": "Polski"
-    },
-    "hr": {
-      "title": "Chorwacki"
-    },
     "zh-CN": {
       "title": "Chiński (uproszczony)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "Chiński (tradycyjny, Tajwan)"
+    },
+    "hr": {
+      "title": "Chorwacki"
+    },
+    "pl": {
+      "title": "Polski"
+    },
+    "es": {
+      "title": "Hiszpański"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {
