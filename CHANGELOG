@@ -1,18 +1,20 @@
-next
-----
+2.2.0
+-----
 * Updated existing translations
 * Added the following languages:
     - French
     - Korean
-    - Norwegian Bokmal
     - Norwegian Nynorsk
     - Portuguese
     - Serbian
+* Shows a friendlier error message when the device is WebUSB connected in MAINTENANCE mode
 * No error modal shown during a WebUSB connection if the device is physically unplugged
     - We assume this is purposeful action by the user and automatically disconnect
+* Fixed issues downloading the hex file in Internet Explorer
+* Dropped IE10 compatibility
 * Refactored the editor controller functionality into its own module
 * Added mobile features to the editor controller
-* Added a disabled experimental code checker
+* Added a, by default disabled, experimental code checker
 * Fixed accessibility issue where beta option "Quick Flash" was not highlighted on selection
 * Fixed issue where iOS Chrome didn't download hex files
 * Unused shared functionality has been removed
