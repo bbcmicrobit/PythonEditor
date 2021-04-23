@@ -405,15 +405,14 @@ Test Case: Language options work
 - Confirm that selecting each language option changes it to the corresponding language
 
 - [ ] English
+- [ ] Chinese (Hong Kong)
 - [ ] Chinese (simplified)
-- [ ] Chinese (traditional Hong Kong)
-- [ ] Traditional Taiwanese
+- [ ] Chinese (Taiwan)
 - [ ] Croatian
 - [ ] Polish
 - [ ] Spanish
 - [ ] French
 - [ ] Korean
-- [ ] Norwegian Bokmal
 - [ ] Norwegian Nynorsk
 - [ ] Portugese
 - [ ] Serbian
