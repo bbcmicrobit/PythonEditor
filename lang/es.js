@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "Por favor reconecta el micro:bit e intentalo de nuevo.",
       "partial-flashing-disable": "Si el error persiste, intenta deshabilitar el flasheo rapido en las opciones beta.",
       "device-disconnected": "Dispositivo desconectado.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "No se pudo conectar a la micro:bit",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "Con WebUSB puedes programar tu micro: bit y conectarte a la consola de serie directamente desde el Editor de Python.<br/>Desafortunadamente, WebUSB no es compatible con este navegador. Recomendamos Chrome o un navegador basado en Chrome para usar WebUSB.",
       "find-more": "Saber más"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "Inglés"
     },
-    "es": {
-      "title": "Español"
-    },
-    "pl": {
-      "title": "Polaco"
-    },
-    "hr": {
-      "title": "Croata"
-    },
     "zh-CN": {
       "title": "Chino (simplificado)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "Chino (tradicional, Taiwan)"
+    },
+    "hr": {
+      "title": "Croata"
+    },
+    "pl": {
+      "title": "Polaco"
+    },
+    "es": {
+      "title": "Español"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {

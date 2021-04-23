@@ -74,7 +74,10 @@ var LANGUAGE = {
       "reconnect-microbit": "Kople til micro:bit igjen og prøv på nytt.",
       "partial-flashing-disable": "Om feila held fram, kan du prøve å deaktivere Quick Flash i beta-innstillingane.",
       "device-disconnected": "Eininga er kopla frå.",
+      "device-bootloader": "Please unplug the micro:bit and connect it again without pressing the reset button.<br>More info:",
+      "device-bootloader-title": "micro:bit in MAINTENANCE mode",
       "timeout-error": "Kan ikkje kople til micro:biten",
+      "timeout-error-title": "Connection Timed Out",
       "unavailable": "Med WebUSB kan du programmere micro:bit og kople til seriellkonsollen direkte frå redigeringsprogrammet på nett.<br/>Dessverre støttar ikkje nettlesaren din WebUSB. Vi rår deg til å nytte Chrome, eller ein nettlesar tufta på Chrome, for å bruke WebUSB.",
       "find-more": "Finn ut meir"
     },
@@ -116,15 +119,6 @@ var LANGUAGE = {
     "en": {
       "title": "Norsk Nynorsk"
     },
-    "es": {
-      "title": "Spansk"
-    },
-    "pl": {
-      "title": "Polsk"
-    },
-    "hr": {
-      "title": "Kroatisk"
-    },
     "zh-CN": {
       "title": "Kinesisk (forenkla)"
     },
@@ -133,6 +127,30 @@ var LANGUAGE = {
     },
     "zh-TW": {
       "title": "Kinesisk (tradisjonelt, Taiwan)"
+    },
+    "hr": {
+      "title": "Kroatisk"
+    },
+    "pl": {
+      "title": "Polsk"
+    },
+    "es": {
+      "title": "Spansk"
+    },
+    "fr": {
+      "title": "French"
+    },
+    "ko": {
+      "title": "Korean"
+    },
+    "nn": {
+      "title": "Norwegian Nynorsk"
+    },
+    "pt": {
+      "title": "Portuguese"
+    },
+    "sr": {
+      "title": "Serbian"
     }
   },
   "static-strings": {
