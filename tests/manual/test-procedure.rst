@@ -88,7 +88,9 @@ You will need
 
 - The test files from `./test-files/`
 
-- A micro:bit
+- A micro:bit V1
+
+- A micro:bit V2
 
 - One from the following:
 
@@ -253,14 +255,18 @@ Code block 8::
 
 Test Case: module.py file can be loaded by modal file picker and used in main.py
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Run this test case with a micro:bit **V1**.
+
 - Load by "Load/Save > Or browse for a file" the file ``emoji.py``
 - [ ] Confirm the modal dialogue displays 'The "emoji" module has been added
   to the filesystem.'
 - Click "Show Files (2)"
 - [ ] Confirm the file shows up in the files list with the same title.
 - Return to the editor and replace the current script with "Code block 9".
-- [ ] Program by any method this file to the micro:bit and confirm that it
-  behaves as expected, showing emojis for the appropriate gestures and buttons.
+- [ ] Click the "Download" button, copy the hex file via OS drag&drop it into
+  the MICROBIT, confirm it flashes successfully.
+- [ ] Confirm that the programme behaves as expected, showing emojis for the
+  appropriate gestures and buttons.
 
 Code block 9::
 
@@ -283,8 +289,15 @@ Code block 9::
 
 Test Case: module.py file can be loaded by filesystem file picker
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Run this test case with a micro:bit **V2**.
+
 - Load by "Load/Save > Show Files > Add file" the file ``emoji.py``
 - [ ] Confirm the file shows up in the files list with the same title.
+- Return to the editor and replace the current script with "Code block 9".
+- [ ] Click the "Download" button, copy the hex file via OS drag&drop it into
+  the MICROBIT, confirm it flashes successfully.
+- [ ] Confirm that the programme behaves as expected, showing emojis for the
+  appropriate gestures and buttons.
 
 
 Test Case: module.py file can be 'magically' loaded into the editor by drag&drop
@@ -381,7 +394,8 @@ Test Case: Language options work
 
 Test Case: Connect and Flash over WebUSB and use REPL
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
-Carry out this test in Chrome or a chrome-based browser:
+Carry out this test in Chrome or a chrome-based browser.
+Run this test case twice, once with a micro:bit V1 and once with a V2.
 
 - [ ] Connect to micro:bit and confirm that menu now shows options to
   "Flash" and "Disconnect".
@@ -395,7 +409,8 @@ Carry out this test in Chrome or a chrome-based browser:
 Test Case: Full Flash over WebUSB
 '''''''''''''''''''''''''''''''''
 This feature will only be available in the beta versions.
-Carry out this test in Chrome or a chrome-based browser:
+Carry out this test in Chrome or a chrome-based browser.
+Run this test case twice, once with a micro:bit V1 and once with a V2.
 
 - Click the 'Beta Options' button.
 - Click the 'Quick Flash' toggle to disable it.
