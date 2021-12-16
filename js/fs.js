@@ -28,6 +28,11 @@ var microbitFsWrapper = function() {
         'size',
         'write',
     ];
+    var v1BoardIds = ['9900', '9901'];
+    var v2BoardIds = ['9903', '9904', '9905', '9906'];
+    // TODO: We need to use ID 9901 for mobile app compatibility, but can soon be changed to 9900 (as per spec)
+    var hexBoardIdV1 = 0x9901;
+    var hexBoardIdV2 = microbitFs.microbitBoardId.V2;
 
     /**
      * Duplicates some of the methods from the MicropythonFsHex class by
@@ -64,10 +69,9 @@ var microbitFsWrapper = function() {
             if (!uPyV1 || !uPyV2) {
                 console.error('There was an issue loading the MicroPython Hex files.');
             }
-            // TODO: We need to use ID 9901 for app compatibility, but can soon be changed to 9900 (as per spec)
             uPyFs = new microbitFs.MicropythonFsHex([
-                { hex: uPyV1, boardId: 0x9901 },
-                { hex: uPyV2, boardId: 0x9903 },
+                { hex: uPyV1, boardId: hexBoardIdV1 },
+                { hex: uPyV2, boardId: hexBoardIdV2 },
             ], {
                 'maxFsSize': commonFsSize,
             });
@@ -80,10 +84,10 @@ var microbitFsWrapper = function() {
      * @returns Uint8Array with the data for the given Board ID.
      */
     fsWrapper.getBytesForBoardId = function(boardId) {
-        if (boardId == '9900' || boardId == '9901') {
-            return uPyFs.getIntelHexBytes(0x9901);
-        } else if (boardId == '9903' || boardId == '9904') {
-            return uPyFs.getIntelHexBytes(0x9903);
+        if (v1BoardIds.indexOf(boardId) >= 0) {
+            return uPyFs.getIntelHexBytes(hexBoardIdV1);
+        } else if (v2BoardIds.indexOf(boardId) >= 0) {
+            return uPyFs.getIntelHexBytes(hexBoardIdV2);
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }
@@ -94,10 +98,10 @@ var microbitFsWrapper = function() {
      * @returns ArrayBuffer with the Intel Hex data for the given Board ID.
      */
     fsWrapper.getIntelHexForBoardId = function(boardId) {
-        if (boardId == '9900' || boardId == '9901') {
-            var hexStr = uPyFs.getIntelHex(0x9901);
-        } else if (boardId == '9903' || boardId == '9904') {
-            var hexStr = uPyFs.getIntelHex(0x9903);
+        if (v1BoardIds.indexOf(boardId) >= 0) {
+            var hexStr = uPyFs.getIntelHex(hexBoardIdV1);
+        } else if (v2BoardIds.indexOf(boardId) >= 0) {
+            var hexStr = uPyFs.getIntelHex(hexBoardIdV2);
         } else {
             throw Error('Could not recognise the Board ID ' + boardId);
         }

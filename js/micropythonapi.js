@@ -141,10 +141,10 @@ var microPythonApi = (function () {
      *   the MicroPython version relevant to the board ID.
      */
     var getCompatibleMicroPythonApi = function(boardId) {
-        if (boardId == '9903' || boardId == '9904') {
-            return getFullMicroPythonApi();
-        } else {
+        if (boardId == '9900' || boardId == '9901') {
             return getBaseMicroPythonApi();
+        } else {
+            return getFullMicroPythonApi();
         }
     }
 
@@ -217,9 +217,9 @@ var microPythonApi = (function () {
     };
 
     var isApiUsedCompatible = function(boardId, pyCode) {
-        if (boardId == '9903' || boardId == '9904') {
+        if (['9903', '9904', '9905', '9906'].indexOf(boardId) >= 0) {
             return true;
-        } else if (boardId == '9900' || boardId == '9901') {
+        } else if (['9900', '9901'].indexOf(boardId) >= 0) {
             var additionalModules = Object.keys(extraModules)
             var includesExtra = false;
             var imports = detectImports(pyCode);
