@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "Denne versjonen av Python støttar ikkje høvet til å leggje til .mpy-filer.",
     "extension-warning": "Python kan berre laste filer med .hex eller .py-utvidingar."
   },
-  "languages": {
-    "en": {
-      "title": "Norsk Nynorsk"
-    },
-    "zh-CN": {
-      "title": "Kinesisk (forenkla)"
-    },
-    "zh-HK": {
-      "title": "Kinesisk (tradisjonelt, Hongkong)"
-    },
-    "zh-TW": {
-      "title": "Kinesisk (tradisjonelt, Taiwan)"
-    },
-    "hr": {
-      "title": "Kroatisk"
-    },
-    "pl": {
-      "title": "Polsk"
-    },
-    "es": {
-      "title": "Spansk"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {

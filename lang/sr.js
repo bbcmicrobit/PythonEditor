@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "Ова верзија Python едитора не подржава додавање .mpy датотеке.",
     "extension-warning": "Python едитор може да учита само датотеке са екстензијама .hex или .py."
   },
-  "languages": {
-    "en": {
-      "title": "Енглески"
-    },
-    "zh-CN": {
-      "title": "Кинески (поједностављен)"
-    },
-    "zh-HK": {
-      "title": "Кинески (традиционални, Хонг Конг)"
-    },
-    "zh-TW": {
-      "title": "Кинески (традиционални, Тајван)"
-    },
-    "hr": {
-      "title": "Хрватски"
-    },
-    "pl": {
-      "title": "Пољски"
-    },
-    "es": {
-      "title": "Шпански"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {

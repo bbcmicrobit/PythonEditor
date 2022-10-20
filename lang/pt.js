@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "Esta versão do Editor Python por enquanto não permite adicionar ficheiros .mpy",
     "extension-warning": "O Editor Python só permite carregar ficheiros com extensões .hex ou .py."
   },
-  "languages": {
-    "en": {
-      "title": "Inglês"
-    },
-    "zh-CN": {
-      "title": "Chinês (simplificado)"
-    },
-    "zh-HK": {
-      "title": "Chinês (tradicional, Hong Kong)"
-    },
-    "zh-TW": {
-      "title": "Chinês (tradicional, Taiwan)"
-    },
-    "hr": {
-      "title": "Croata"
-    },
-    "pl": {
-      "title": "Polaco"
-    },
-    "es": {
-      "title": "Castelhano"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {
