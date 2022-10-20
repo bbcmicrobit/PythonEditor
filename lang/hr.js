@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "Ova verzija Pythonova uređivača nažalost još ne podržava dodavanje .mpy datoteka.",
     "extension-warning": "Pythonov uređivač može učitati samo datoteke s ekstenzijama .hex ili .py."
   },
-  "languages": {
-    "en": {
-      "title": "Engleski"
-    },
-    "zh-CN": {
-      "title": "Kineski (pojednostavljeni)"
-    },
-    "zh-HK": {
-      "title": "Kineski (tradicionalni, Hong Kong)"
-    },
-    "zh-TW": {
-      "title": "Kineski (tradicionalni)"
-    },
-    "hr": {
-      "title": "Hrvatski"
-    },
-    "pl": {
-      "title": "Poljski"
-    },
-    "es": {
-      "title": "Španjolski"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {

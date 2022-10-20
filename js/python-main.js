@@ -336,12 +336,6 @@ function translations(baseLanguage) {
                 $('#' + object).attr('title', helpStrings[object]['title']);
             }
         }
-        var languages = _extendedLang['languages'];
-        for (var object in languages) {
-            if (languages.hasOwnProperty(object)) {
-                $('#' + object).attr('title',languages[object]['title']);
-            }
-        }
         // WebUSB flashing modal
         $('#flashing-extra-msg').text(_extendedLang['webusb']['flashing-long-msg']);
         $('#flashing-title').text(_extendedLang['webusb']['flashing-title']);

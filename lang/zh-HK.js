@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "這個版本的 Python Editor 不支持添加 .mpy 檔案。",
     "extension-warning": "Python Editor 只能載入 .hex 或 .py 檔案。"
   },
-  "languages": {
-    "en": {
-      "title": "英文"
-    },
-    "zh-CN": {
-      "title": "中文（簡體）"
-    },
-    "zh-HK": {
-      "title": "中文 (繁體，香港)"
-    },
-    "zh-TW": {
-      "title": "中文（繁體，台灣）"
-    },
-    "hr": {
-      "title": "克羅地亞語"
-    },
-    "pl": {
-      "title": "波蘭語"
-    },
-    "es": {
-      "title": "西班牙語"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {

@@ -115,44 +115,6 @@ var LANGUAGE = {
     "mpy-warning": "이 버전에서는 .mpy 파일 추가를 지원하지 않습니다.",
     "extension-warning": "파이썬 편집기는 .hex 나 .py 확장 파일들만 불러올 수 있습니다."
   },
-  "languages": {
-    "en": {
-      "title": "한국어"
-    },
-    "zh-CN": {
-      "title": "중국어(간체)"
-    },
-    "zh-HK": {
-      "title": "중국어(홍콩)"
-    },
-    "zh-TW": {
-      "title": "중국어 (번체)"
-    },
-    "hr": {
-      "title": "크로아티아어"
-    },
-    "pl": {
-      "title": "폴란드어"
-    },
-    "es": {
-      "title": "스페인어"
-    },
-    "fr": {
-      "title": "French"
-    },
-    "ko": {
-      "title": "Korean"
-    },
-    "nn": {
-      "title": "Norwegian Nynorsk"
-    },
-    "pt": {
-      "title": "Portuguese"
-    },
-    "sr": {
-      "title": "Serbian"
-    }
-  },
   "static-strings": {
     "buttons": {
       "command-download": {
